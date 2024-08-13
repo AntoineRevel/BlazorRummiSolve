@@ -4,7 +4,7 @@ public static class Program
 {
     public static void Main()
     {
-        var tileCollection = new TileCollection();
+        var tileCollection = new Set();
 
         foreach (Color color in Enum.GetValues(typeof(Color)))
         {
@@ -19,10 +19,7 @@ public static class Program
         Console.WriteLine("All tiles in the collection:");
         tileCollection.PrintAllTiles();
         
-        Console.WriteLine("Run:");
-        foreach (var tiles in tileCollection.GetGroups())
-        {
-            tiles.PrintAllTiles();
-        }
+        tileCollection.GetSolution().PrintSolution();
+        
     }
 }

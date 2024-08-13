@@ -1,6 +1,6 @@
 namespace RummiSolve;
 
-public class Run : TileCollection
+public class Run : Set
 {
     public bool IsValidRun()
     {

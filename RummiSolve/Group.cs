@@ -1,6 +1,6 @@
 namespace RummiSolve;
 
-public class Group : TileCollection
+public class Group : Set
 {
     public bool IsValidGroup()
     {

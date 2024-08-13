@@ -16,8 +16,6 @@ public class Tile
         TileColor = color;
     }
 
-
-    
     public void PrintTile()
     {
         Console.ForegroundColor = TileColor switch
@@ -32,22 +30,21 @@ public class Tile
         Console.Write(Number + " ");
         Console.ResetColor();
     }
-    
+
     private bool Equals(Tile other)
     {
         return Number == other.Number && TileColor == other.TileColor;
     }
-    
+
     public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == this.GetType() && Equals((Tile) obj);
+        return obj.GetType() == this.GetType() && Equals((Tile)obj);
     }
-    
+
     public override int GetHashCode()
     {
         return HashCode.Combine(Number, (int)TileColor);
     }
-
 }
