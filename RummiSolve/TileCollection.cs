@@ -2,11 +2,11 @@ namespace RummiSolve;
 
 public class TileCollection
 {
-    private readonly List<Tile> _tiles = [];
+    protected readonly List<Tile> Tiles = [];
 
     private void AddTile(Tile tile)
     {
-        _tiles.Add(tile);
+        Tiles.Add(tile);
     }
 
     public void AddTilesFromInput(string input, Color color)
@@ -29,7 +29,7 @@ public class TileCollection
 
     public void PrintAllTiles()
     {
-        foreach (var tile in _tiles)
+        foreach (var tile in Tiles)
         {
             tile.PrintTile();
         }
@@ -37,7 +37,7 @@ public class TileCollection
 
     private void SortTiles()
     {
-        _tiles.Sort((x, y) =>
+        Tiles.Sort((x, y) =>
         {
             var colorComparison = x.TileColor.CompareTo(y.TileColor);
             return colorComparison != 0 ? colorComparison : x.Number.CompareTo(y.Number);
