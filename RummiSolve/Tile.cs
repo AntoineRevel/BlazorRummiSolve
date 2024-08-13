@@ -15,11 +15,8 @@ public class Tile
         Number = number;
         TileColor = color;
     }
-    
-    protected bool Equals(Tile other)
-    {
-        return Number == other.Number && TileColor == other.TileColor;
-    }
+
+
     
     public void PrintTile()
     {
@@ -34,6 +31,18 @@ public class Tile
 
         Console.Write(Number + " ");
         Console.ResetColor();
+    }
+    
+    private bool Equals(Tile other)
+    {
+        return Number == other.Number && TileColor == other.TileColor;
+    }
+    
+    public override bool Equals(object? obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        return obj.GetType() == this.GetType() && Equals((Tile) obj);
     }
     
     public override int GetHashCode()

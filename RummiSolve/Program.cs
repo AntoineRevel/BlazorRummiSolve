@@ -20,7 +20,7 @@ public static class Program
         tileCollection.PrintAllTiles();
         
         Console.WriteLine("Run:");
-        foreach (var tiles in tileCollection.GetRuns())
+        foreach (var tiles in tileCollection.GetGroups())
         {
             tiles.PrintAllTiles();
         }

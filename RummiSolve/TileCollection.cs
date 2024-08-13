@@ -83,4 +83,27 @@ public class TileCollection
 
         return runs;
     }
+
+    public List<Group> GetGroups()
+    {
+        var groups = new List<Group>();
+
+        if (Tiles.Count == 0) return groups;
+
+        var firstTile = Tiles[0];
+        var number = firstTile.Number;
+        var color = firstTile.TileColor;
+
+        var sameNumberTiles = Tiles.Where(tile => tile.Number == number && tile.TileColor != color).Distinct().ToList();
+
+        if (sameNumberTiles.Count < 2) return groups;
+
+        groups.Add(new Group { Tiles = [firstTile, ..sameNumberTiles] });
+        if (sameNumberTiles.Count != 3) return groups;
+        groups.Add(new Group { Tiles = [firstTile, sameNumberTiles[0], sameNumberTiles[1]] });
+        groups.Add(new Group { Tiles = [firstTile, sameNumberTiles[1], sameNumberTiles[2]] });
+        groups.Add(new Group { Tiles = [firstTile, sameNumberTiles[0], sameNumberTiles[2]] });
+
+        return groups;
+    }
 }
