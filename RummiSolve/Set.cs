@@ -2,11 +2,31 @@ namespace RummiSolve;
 
 public class Set
 {
-    protected List<Tile> Tiles { get; private init; } = [];
+    protected List<Tile> Tiles;
 
+    public Set()
+    {
+        Tiles = new List<Tile>();
+    }
+
+    private Set(List<Tile> tiles)
+    {
+        Tiles = tiles;
+    }
+    
+    public int Count()
+    {
+        return Tiles.Count;
+    }
     private void AddTile(Tile tile)
     {
         Tiles.Add(tile);
+    }
+    
+    public void AddTiles(Set set)
+    {
+        Tiles.AddRange(set.Tiles);
+        SortTiles();
     }
 
     public void AddTilesFromInput(string input, Color color)
@@ -47,7 +67,7 @@ public class Set
         });
     }
 
-    public List<Run> GetRuns()
+    private List<Run> GetRuns()
     {
         var runs = new List<Run>();
 
@@ -84,7 +104,7 @@ public class Set
         return runs;
     }
 
-    public List<Group> GetGroups()
+    private List<Group> GetGroups()
     {
         var groups = new List<Group>();
 
@@ -144,5 +164,30 @@ public class Set
         }
 
         return Solution.GetInvalidSolution();
+    }
+    
+    public List<Set> GetSets(int n)
+    {
+        var combinations = GetCombinations(Tiles, n);
+
+        return combinations.Select(combination => new Set(combination)).ToList();
+    }
+
+    private static IEnumerable<List<Tile>> GetCombinations(List<Tile> list, int length)
+    {
+        if (length == 0) yield return [];
+        else
+        {
+            for (var i = 0; i < list.Count; i++)
+            {
+                var element = list[i];
+                var remainingList = list.Skip(i + 1).ToList();
+                foreach (var combination in GetCombinations(remainingList, length - 1))
+                {
+                    combination.Insert(0, element);
+                    yield return combination;
+                }
+            }
+        }
     }
 }

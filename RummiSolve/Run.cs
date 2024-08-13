@@ -1,6 +1,6 @@
 namespace RummiSolve;
 
-public class Run : Set
+public class Run: Set
 {
     public bool IsValidRun()
     {
