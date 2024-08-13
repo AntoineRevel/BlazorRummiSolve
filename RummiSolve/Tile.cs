@@ -15,7 +15,12 @@ public class Tile
         Number = number;
         TileColor = color;
     }
-
+    
+    protected bool Equals(Tile other)
+    {
+        return Number == other.Number && TileColor == other.TileColor;
+    }
+    
     public void PrintTile()
     {
         Console.ForegroundColor = TileColor switch
@@ -30,4 +35,10 @@ public class Tile
         Console.Write(Number + " ");
         Console.ResetColor();
     }
+    
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Number, (int)TileColor);
+    }
+
 }

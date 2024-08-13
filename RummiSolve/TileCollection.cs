@@ -2,7 +2,7 @@ namespace RummiSolve;
 
 public class TileCollection
 {
-    protected readonly List<Tile> Tiles = [];
+    protected List<Tile> Tiles { get; private init; } = [];
 
     private void AddTile(Tile tile)
     {
@@ -24,6 +24,7 @@ public class TileCollection
                 Console.WriteLine($"Invalid number: {numberStr}. Skipping.");
             }
         }
+
         SortTiles();
     }
 
@@ -33,6 +34,8 @@ public class TileCollection
         {
             tile.PrintTile();
         }
+
+        Console.WriteLine();
     }
 
     private void SortTiles()
@@ -42,5 +45,42 @@ public class TileCollection
             var colorComparison = x.TileColor.CompareTo(y.TileColor);
             return colorComparison != 0 ? colorComparison : x.Number.CompareTo(y.Number);
         });
+    }
+
+    public List<Run> GetRuns()
+    {
+        var runs = new List<Run>();
+
+        if (Tiles.Count == 0) return runs;
+
+        var firstTile = Tiles[0];
+        var currentRun = new Run();
+        currentRun.AddTile(firstTile);
+
+        var lastNumber = firstTile.Number;
+
+        for (var i = 1; i < Tiles.Count; i++)
+        {
+            var currentTile = Tiles[i];
+
+            if (currentTile.TileColor == firstTile.TileColor)
+            {
+                if (currentTile.Number == lastNumber + 1)
+                {
+                    currentRun.AddTile(currentTile);
+                    lastNumber = currentTile.Number;
+
+                    if (currentRun.Tiles.Count >= 3)
+                    {
+                        runs.Add(new Run { Tiles = [..currentRun.Tiles] });
+                    }
+                }
+                else if (currentTile.Number == lastNumber) continue;
+                else break;
+            }
+            else break;
+        }
+
+        return runs;
     }
 }

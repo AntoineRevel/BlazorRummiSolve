@@ -18,5 +18,11 @@ public static class Program
 
         Console.WriteLine("All tiles in the collection:");
         tileCollection.PrintAllTiles();
+        
+        Console.WriteLine("Run:");
+        foreach (var tiles in tileCollection.GetRuns())
+        {
+            tiles.PrintAllTiles();
+        }
     }
 }
