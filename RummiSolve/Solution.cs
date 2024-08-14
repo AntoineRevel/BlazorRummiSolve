@@ -63,21 +63,25 @@ public class Solution
             Console.WriteLine("Invalid solution");
             return;
         }
-
-        Console.WriteLine("Runs:");
         foreach (var run in _runs)
         {
             run.PrintAllTiles();
         }
 
-        Console.WriteLine("Groups:");
+        Console.WriteLine();
         foreach (var group in _groups)
         {
             group.PrintAllTiles();
         }
     }
+    
+    public Set GetSet()
+    {
+        var tiles = _runs.SelectMany(run => run.Tiles).Concat(_groups.SelectMany(group => group.Tiles)).ToList();
+        return new Set { Tiles = tiles };
+    }
 
-    public bool IsValidSet()
+    public bool IsValidSolution()
     {
         return _runs.All(run => run.IsValidRun()) && _groups.All(group => group.IsValidGroup());
     }

@@ -2,27 +2,13 @@ namespace RummiSolve;
 
 public class Set
 {
-    protected List<Tile> Tiles;
+    public required List<Tile> Tiles { get; init; } //TODO made private
 
-    public Set()
-    {
-        Tiles = new List<Tile>();
-    }
-
-    private Set(List<Tile> tiles)
-    {
-        Tiles = tiles;
-    }
-    
-    public int Count()
-    {
-        return Tiles.Count;
-    }
     private void AddTile(Tile tile)
     {
         Tiles.Add(tile);
     }
-    
+
     public void AddTiles(Set set)
     {
         Tiles.AddRange(set.Tiles);
@@ -47,6 +33,8 @@ public class Set
 
         SortTiles();
     }
+    
+    //je veux une fonction removeAll
 
     public void PrintAllTiles()
     {
@@ -74,8 +62,7 @@ public class Set
         if (Tiles.Count == 0) return runs;
 
         var firstTile = Tiles[0];
-        var currentRun = new Run();
-        currentRun.AddTile(firstTile);
+        var currentRun = new Run { Tiles = [firstTile] };
 
         var lastNumber = firstTile.Number;
 
@@ -129,8 +116,10 @@ public class Set
 
     public Solution GetSolution()
     {
+        SortTiles();
         return GetSolution(new Solution());
     }
+
     private Solution GetSolution(Solution solution)
     {
         switch (Tiles.Count)
@@ -152,10 +141,9 @@ public class Set
             var newSolution = GetSolution(solution.GetSolutionWithAddedRun(run));
             if (newSolution.IsValid) return newSolution;
             Tiles.AddRange(run.Tiles);
-            
         }
 
-        foreach (var group in groups)     
+        foreach (var group in groups)
         {
             group.Tiles.ForEach(tile => Tiles.Remove(tile));
             var newSolution = GetSolution(solution.GetSolutionWithAddedGroup(group));
@@ -165,12 +153,14 @@ public class Set
 
         return Solution.GetInvalidSolution();
     }
-    
-    public List<Set> GetSets(int n)
+
+    public List<Set> GetBestSets(int n)
     {
         var combinations = GetCombinations(Tiles, n);
-
-        return combinations.Select(combination => new Set(combination)).ToList();
+        return combinations
+            .Select(combination => new Set { Tiles = combination })
+            .OrderByDescending(tiles => tiles.GetScore())
+            .ToList();
     }
 
     private static IEnumerable<List<Tile>> GetCombinations(List<Tile> list, int length)
@@ -189,5 +179,10 @@ public class Set
                 }
             }
         }
+    }
+    
+    public int GetScore()
+    {
+        return Tiles.Sum(tile => tile.Number);
     }
 }
