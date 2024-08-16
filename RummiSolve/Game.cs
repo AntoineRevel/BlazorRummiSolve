@@ -9,23 +9,25 @@ public class Game
 
     public void Start()
     {
+        var isFirst = false;
         AddTileToRack();
-        
         while (_rackSet.Tiles.Count > 0)
         {
             AddTileToBoard();
-            var solution = Solve();
+            var solution = Solve(isFirst);
             PrintAllTiles();
             if (!solution.IsValid)
             {
                 AddTileToRack();
             }
+            else isFirst = false;
+            
         }
     }
     
     private void AddTileToRack()
     {
-        WriteLine("Player tiles:");
+        WriteLine("Complete player tiles:");
         foreach (Color color in Enum.GetValues(typeof(Color)))
         {
             WriteLine($"Enter tile numbers for {color} (separated by spaces):");
@@ -42,7 +44,7 @@ public class Game
         var boardSet = _boardSolution.GetSet();
         while (true)
         {
-            WriteLine("Board tiles:");
+            WriteLine("Complete board tiles:");
             foreach (Color color in Enum.GetValues(typeof(Color)))
             {
                 WriteLine($"Enter tile numbers for {color} (separated by spaces):");
@@ -66,8 +68,7 @@ public class Game
             break;
         }
     }
-
-
+    
     private void PrintAllTiles()
     {
         WriteLine("Player tiles:");
@@ -76,26 +77,24 @@ public class Game
         WriteLine("Board tiles:");
         _boardSolution.PrintSolution();
     }
-
-
-    private Solution Solve()
+    
+    private Solution Solve(bool isFirst)
     {
         for (var tileCount = _rackSet.Tiles.Count; tileCount > 0; tileCount--)
         {
             var setsToTry = _rackSet.GetBestSets(tileCount);
 
-            foreach (var set in setsToTry)
+            foreach (var trialSet in setsToTry)
             {
-                var setToRemove = new List<Tile>(set.Tiles);
-                set.PrintAllTiles(); //TODO test ordering
-                //TODO for the first if set.score <30 continue
-                set.AddTiles(_boardSolution.GetSet());
-                var solution = set.GetSolution();
-
+                if (isFirst && trialSet.GetScore() < 30) break;
+                var trialSetCopy = trialSet.Copy();
+                trialSetCopy.AddTiles(_boardSolution.GetSet());
+                var solution = trialSetCopy.GetSolution();
+                
                 if (!solution.IsValid) continue;
-
-                solution.PrintSolution();
-                _rackSet.Tiles.RemoveAll(tile => setToRemove.Contains(tile));
+                Write("Play : ");
+                trialSet.PrintAllTiles();
+                _rackSet.RemoveAll(trialSet);
                 _boardSolution = solution;
                 return solution;
             }

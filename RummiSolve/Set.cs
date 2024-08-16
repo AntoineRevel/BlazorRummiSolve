@@ -1,8 +1,15 @@
+using System.Reflection;
+
 namespace RummiSolve;
 
 public class Set
 {
     public required List<Tile> Tiles { get; init; } //TODO made private
+    
+    public Set Copy()
+    {
+        return new Set { Tiles = [..Tiles] };
+    }
 
     private void AddTile(Tile tile)
     {
@@ -34,7 +41,13 @@ public class Set
         SortTiles();
     }
     
-    //je veux une fonction removeAll
+    public void RemoveAll(Set set)
+    {
+        foreach (var tile in set.Tiles)
+        {
+            Tiles.Remove(tile);
+        }
+    }
 
     public void PrintAllTiles()
     {
@@ -116,7 +129,7 @@ public class Set
 
     public Solution GetSolution()
     {
-        SortTiles();
+        SortTiles(); //TODO delete after testing private atrribute tiles
         return GetSolution(new Solution());
     }
 

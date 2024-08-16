@@ -56,8 +56,6 @@ public class Solution
 
     public void PrintSolution()
     {
-        Console.WriteLine("Solution:");
-
         if (!IsValid)
         {
             Console.WriteLine("Invalid solution");
