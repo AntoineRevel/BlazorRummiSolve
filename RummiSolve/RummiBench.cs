@@ -140,12 +140,34 @@ public class RummiBench
         notValidLocalSet.GetSolutionArray();
     }
     
-    public Set GenerateRandomValidSet()
+    public static void TestBench()
+    {
+        var randSet = GenerateRandomValidSet();
+        var randSol = randSet.GetSolution();
+        var randSolArray = randSet.GetSolutionArray();
+
+        while (randSol.IsValid && randSolArray.IsValid)
+        {
+            randSet = GenerateRandomValidSet();
+            randSet.ShuffleTiles();
+            randSol = randSet.GetSolution();
+            randSolArray = randSet.GetSolutionArray();
+        }
+        
+        randSet.PrintAllTiles();
+        
+        randSol.PrintSolution();
+        
+        randSolArray.PrintSolution();
+        
+    }
+    
+    private static Set GenerateRandomValidSet()
     {
         var random = new Random();
         var tiles = new List<Tile>();
 
-        // Décider aléatoirement du nombre de groupes et de runs à générer
+        // Décider aléatoirement du nombre de runs et de groupes à générer
         int numberOfRuns = random.Next(1, 3); // 1 à 2 runs
         int numberOfGroups = random.Next(1, 3); // 1 à 2 groupes
 
@@ -153,24 +175,31 @@ public class RummiBench
         for (int i = 0; i < numberOfRuns; i++)
         {
             var color = (Tile.Color)random.Next(0, 4); // Couleur aléatoire
-            int startNumber = random.Next(1, 11); // Un run peut commencer entre 1 et 10 pour permettre un run de 3 tuiles
+            int startNumber = random.Next(1, 13); // Un run peut commencer entre 1 et 13
+            int maxRunLength = 14 - startNumber; // Calculer la longueur maximale du run possible
 
-            var run = new List<Tile>();
-            for (int j = 0; j < 3; j++) // Toujours 3 tuiles par run
+            if (maxRunLength >= 3)
             {
-                run.Add(new Tile(startNumber + j, color));
+                int runLength = random.Next(3, maxRunLength + 1); // Longueur aléatoire entre 3 et la longueur maximale possible
+
+                var run = new List<Tile>();
+                for (int j = 0; j < runLength; j++)
+                {
+                    run.Add(new Tile(startNumber + j, color));
+                }
+                tiles.AddRange(run);
             }
-            tiles.AddRange(run);
         }
 
         // Générer les groupes
         for (int i = 0; i < numberOfGroups; i++)
         {
             int number = random.Next(1, 14); // Numéro aléatoire entre 1 et 13
+            int groupSize = random.Next(3, 5); // Taille aléatoire entre 3 et 4
 
             var availableColors = new List<Tile.Color> { Tile.Color.Blue, Tile.Color.Red, Tile.Color.Yellow, Tile.Color.Black };
             var group = new List<Tile>();
-            for (int j = 0; j < 3; j++) // Toujours 3 tuiles par groupe
+            for (int j = 0; j < groupSize; j++)
             {
                 var color = availableColors[random.Next(availableColors.Count)];
                 availableColors.Remove(color); // Assurer que les couleurs sont uniques dans le groupe
@@ -181,4 +210,6 @@ public class RummiBench
 
         return new Set { Tiles = tiles };
     }
+    
+    
 }

@@ -140,7 +140,7 @@ public class Set
                 return Solution.GetInvalidSolution();
         }
 
-        //SortTiles();
+        SortTiles();
 
         var runs = GetRuns();
         var groups = GetGroups();
@@ -333,9 +333,23 @@ public class Set
             }
         }
     }
-
+    
     public int GetScore()
     {
         return Tiles.Sum(tile => tile.Number);
+    }
+    
+    public Set ShuffleTiles()
+    {
+        var random = new Random();
+        var n = Tiles.Count;
+
+        for (var i = n - 1; i > 0; i--)
+        {
+            var j = random.Next(0, i + 1);
+            (Tiles[i], Tiles[j]) = (Tiles[j], Tiles[i]);
+        }
+
+        return this;
     }
 }

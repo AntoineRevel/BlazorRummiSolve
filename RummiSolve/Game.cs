@@ -28,7 +28,7 @@ public class Game
     private void AddTileToRack()
     {
         WriteLine("Complete player tiles:");
-        foreach (Color color in Enum.GetValues(typeof(Color)))
+        foreach (Tile.Color color in Enum.GetValues(typeof(Tile.Color)))
         {
             WriteLine($"Enter tile numbers for {color} (separated by spaces):");
             var input = ReadLine();
@@ -45,7 +45,7 @@ public class Game
         while (true)
         {
             WriteLine("Complete board tiles:");
-            foreach (Color color in Enum.GetValues(typeof(Color)))
+            foreach (Tile.Color color in Enum.GetValues(typeof(Tile.Color)))
             {
                 WriteLine($"Enter tile numbers for {color} (separated by spaces):");
                 var input = ReadLine();

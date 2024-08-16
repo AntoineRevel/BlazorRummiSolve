@@ -8,17 +8,10 @@ public static class Program
     public static void Main()
     {
         BenchmarkRunner.Run<RummiBench>();
-        //TestBench();
+        //RummiBench.TestBench();
     }
 
-    private static void TestBench()
-    {
-        var bench = new RummiBench();
-        bench.GetSolutions();
 
-        Console.WriteLine(" array :");
-        bench.GetSolutionsArray();
-    }
 
     private static void Play()
     {
