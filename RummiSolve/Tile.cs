@@ -5,6 +5,13 @@ public class Tile
     public int Number { get; }
     public Color TileColor { get; }
 
+    public enum Color
+    {
+        Blue,
+        Red,
+        Yellow,
+        Black
+    }
     public Tile(int number, Color color)
     {
         if (number is < 1 or > 13)
