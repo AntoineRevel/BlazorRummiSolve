@@ -65,108 +65,7 @@ public class Set
         });
     }
 
-    private List<Run> GetRuns()
-    {
-        var runs = new List<Run>();
-
-        if (Tiles.Count == 0) return runs;
-
-        var firstTile = Tiles[0];
-        var currentRun = new Run { Tiles = [firstTile] };
-
-        var lastNumber = firstTile.Number;
-
-        for (var i = 1; i < Tiles.Count; i++)
-        {
-            var currentTile = Tiles[i];
-
-            if (currentTile.TileColor == firstTile.TileColor)
-            {
-                if (currentTile.Number == lastNumber + 1)
-                {
-                    currentRun.AddTile(currentTile);
-                    lastNumber = currentTile.Number;
-
-                    if (currentRun.Tiles.Count >= 3)
-                    {
-                        runs.Add(new Run { Tiles = [..currentRun.Tiles] });
-                    }
-                }
-                else if (currentTile.Number == lastNumber) continue;
-                else break;
-            }
-            else break;
-        }
-
-        return runs;
-    }
-
-    private List<Group> GetGroups()
-    {
-        var groups = new List<Group>();
-
-        if (Tiles.Count == 0) return groups;
-
-        var firstTile = Tiles[0];
-        var number = firstTile.Number;
-        var color = firstTile.TileColor;
-
-        var sameNumberTiles = Tiles.Where(tile => tile.Number == number && tile.TileColor != color).Distinct().ToList();
-
-        if (sameNumberTiles.Count < 2) return groups;
-
-        groups.Add(new Group { Tiles = [firstTile, ..sameNumberTiles] });
-        if (sameNumberTiles.Count != 3) return groups;
-        groups.Add(new Group { Tiles = [firstTile, sameNumberTiles[0], sameNumberTiles[1]] });
-        groups.Add(new Group { Tiles = [firstTile, sameNumberTiles[1], sameNumberTiles[2]] });
-        groups.Add(new Group { Tiles = [firstTile, sameNumberTiles[0], sameNumberTiles[2]] });
-
-        return groups;
-    }
-
-
     public Solution GetSolution()
-    {
-        return GetSolution(new Solution());
-    }
-
-    private Solution GetSolution(Solution solution)
-    {
-        switch (Tiles.Count)
-        {
-            case 0:
-                return solution;
-            case 1 or 2:
-                return Solution.GetInvalidSolution();
-        }
-
-        SortTiles();
-
-        var runs = GetRuns();
-        var groups = GetGroups();
-
-        if (runs.Count == 0 && groups.Count == 0) return Solution.GetInvalidSolution();
-
-        foreach (var run in runs)
-        {
-            run.Tiles.ForEach(tile => Tiles.Remove(tile));
-            var newSolution = GetSolution(solution.GetSolutionWithAddedRun(run));
-            if (newSolution.IsValid) return newSolution;
-            Tiles.AddRange(run.Tiles);
-        }
-
-        foreach (var group in groups)
-        {
-            group.Tiles.ForEach(tile => Tiles.Remove(tile));
-            var newSolution = GetSolution(solution.GetSolutionWithAddedGroup(group));
-            if (newSolution.IsValid) return newSolution;
-            Tiles.AddRange(group.Tiles);
-        }
-
-        return Solution.GetInvalidSolution();
-    }
-
-    public Solution GetSolutionArray()
     {
         SortTiles();
         var usedTiles = new bool[Tiles.Count];
@@ -195,7 +94,7 @@ public class Set
         var runs = GetRuns(firstTileIndex, ref usedTiles);
         var groups = GetGroups(firstTileIndex, usedTiles);
 
-        if (runs.Count == 0 && groups.Count == 0) return Solution.GetInvalidSolution();
+        if (runs.Count == 0 && groups.Length == 0) return Solution.GetInvalidSolution();
 
         foreach (var run in runs)
         {
@@ -252,14 +151,12 @@ public class Set
             else break;
         }
 
-        return runs;
+        return runs.OrderByDescending(run => run.Tiles.Count).ToList();
     }
 
-    private List<Group> GetGroups(int firstTileIndex, bool[] usedTiles)
+    private Group[] GetGroups(int firstTileIndex, bool[] usedTiles)
     {
-        var groups = new List<Group>();
-
-        if (Tiles.Count == 0) return groups;
+        if (Tiles.Count == 0) return [];
 
         var firstTile = Tiles[firstTileIndex];
         var number = firstTile.Number;
@@ -270,15 +167,21 @@ public class Set
             .Distinct()
             .ToList();
 
-        if (sameNumberTiles.Count < 2) return groups;
+        var size = sameNumberTiles.Count;
 
-        groups.Add(new Group { Tiles = [firstTile, ..sameNumberTiles] });
-        if (sameNumberTiles.Count != 3) return groups;
-        groups.Add(new Group { Tiles = [firstTile, sameNumberTiles[0], sameNumberTiles[1]] });
-        groups.Add(new Group { Tiles = [firstTile, sameNumberTiles[1], sameNumberTiles[2]] });
-        groups.Add(new Group { Tiles = [firstTile, sameNumberTiles[0], sameNumberTiles[2]] });
-
-        return groups;
+        return size switch
+        {
+            < 2 => [],
+            2 => [new Group { Tiles = [firstTile, ..sameNumberTiles] }],
+            3 =>
+            [
+                new Group { Tiles = [firstTile, ..sameNumberTiles] },
+                new Group { Tiles = [firstTile, sameNumberTiles[0], sameNumberTiles[1]] },
+                new Group { Tiles = [firstTile, sameNumberTiles[1], sameNumberTiles[2]] },
+                new Group { Tiles = [firstTile, sameNumberTiles[0], sameNumberTiles[2]] }
+            ],
+            _ => []
+        };
     }
 
     private void MarkTilesAsUsed(Set runOrGroup, ref bool[] usedTiles)
@@ -298,7 +201,7 @@ public class Set
     {
         foreach (var tile in runOrGroup.Tiles)
         {
-            for (var i = Tiles.Count - 1; i > 0; i--)
+            for (var i = Tiles.Count - 1; i > -1; i--)
             {
                 if (!usedTiles[i] || !Tiles[i].Equals(tile)) continue;
                 usedTiles[i] = false;
@@ -333,12 +236,12 @@ public class Set
             }
         }
     }
-    
+
     public int GetScore()
     {
         return Tiles.Sum(tile => tile.Number);
     }
-    
+
     public Set ShuffleTiles()
     {
         var random = new Random();
