@@ -64,7 +64,7 @@ public class Set
             return colorComparison != 0 ? colorComparison : x.Number.CompareTo(y.Number);
         });
     }
-
+    
     public Solution GetSolution()
     {
         SortTiles();
@@ -99,18 +99,18 @@ public class Set
 
         foreach (var run in runs)
         {
-            unusedTile = MarkTilesAsUsed(run, usedTiles, unusedTile);
+            MarkTilesAsUsedRef(run, usedTiles, ref unusedTile);
             var newSolution = GetSolution(solution.GetSolutionWithAddedRun(run), usedTiles, unusedTile);
             if (newSolution.IsValid) return newSolution;
-            unusedTile = MarkTilesAsNotUsed(run, usedTiles, unusedTile);
+            MarkTilesAsNotUsedRef(run, usedTiles, ref unusedTile);
         }
 
         foreach (var group in groups)
         {
-            unusedTile = MarkTilesAsUsed(group, usedTiles, unusedTile);
+            MarkTilesAsUsedRef(group, usedTiles, ref unusedTile);
             var newSolution = GetSolution(solution.GetSolutionWithAddedGroup(group), usedTiles, unusedTile);
             if (newSolution.IsValid) return newSolution;
-            unusedTile = MarkTilesAsNotUsed(group, usedTiles, unusedTile);
+            MarkTilesAsNotUsedRef(group, usedTiles, ref unusedTile);
         }
 
         return Solution.GetInvalidSolution();
@@ -184,8 +184,8 @@ public class Set
             _ => []
         };
     }
-
-    private int MarkTilesAsUsed(Set runOrGroup, bool[] usedTiles, int unusedTile)
+    
+    private void MarkTilesAsUsedRef(Set runOrGroup, bool[] usedTiles, ref int unusedTile)
     {
         foreach (var tile in runOrGroup.Tiles)
         {
@@ -197,11 +197,9 @@ public class Set
                 break;
             }
         }
-
-        return unusedTile;
     }
 
-    private int MarkTilesAsNotUsed(Set runOrGroup, bool[] usedTiles, int unusedTile)
+    private void MarkTilesAsNotUsedRef(Set runOrGroup, bool[] usedTiles, ref int unusedTile)
     {
         foreach (var tile in runOrGroup.Tiles)
         {
@@ -213,10 +211,8 @@ public class Set
                 break;
             }
         }
-
-        return unusedTile;
     }
-
+    
     public List<Set> GetBestSets(int n)
     {
         var combinations = GetCombinations(Tiles, n);

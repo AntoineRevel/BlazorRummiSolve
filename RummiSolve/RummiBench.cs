@@ -118,48 +118,7 @@ public class RummiBench
             new Tile(13, Tile.Color.Black),
         ]
     };
-
-    private static readonly Set ExGroupSet = new()
-    {
-        Tiles =
-        [
-            new Tile(10, Tile.Color.Yellow),
-            new Tile(13, Tile.Color.Black),
-            new Tile(11, Tile.Color.Black),
-            new Tile(12, Tile.Color.Black),
-            new Tile(10, Tile.Color.Blue),
-            new Tile(10, Tile.Color.Black),
-        ]
-    };
     
-    private static readonly Set ExGroupSet2 = new()
-    {
-        Tiles =
-        [
-            new Tile(1, Tile.Color.Red),
-            new Tile(2, Tile.Color.Red),
-            new Tile(3, Tile.Color.Red),
-            new Tile(4, Tile.Color.Red),
-            new Tile(5, Tile.Color.Red),
-            new Tile(6, Tile.Color.Red),
-            new Tile(7, Tile.Color.Red),
-            new Tile(8, Tile.Color.Red),
-            new Tile(9, Tile.Color.Red),
-            new Tile(10, Tile.Color.Red),
-            new Tile(11, Tile.Color.Red),
-            new Tile(12, Tile.Color.Red),
-            
-            new Tile(2, Tile.Color.Yellow),
-            new Tile(2, Tile.Color.Black),
-            new Tile(2, Tile.Color.Blue),
-            
-            new Tile(2, Tile.Color.Black),
-            new Tile(2, Tile.Color.Blue),
-            new Tile(2, Tile.Color.Red),
-           
-        ]
-    };
-
     
     [Benchmark]
     public void GetSolutionNew()
@@ -180,13 +139,6 @@ public class RummiBench
         var notValidLocalSet = _exampleNotValidSet.Copy();
         notValidLocalSet.GetSolution();
     }
-
-
-
-    public static void TestGroup()
-    {
-        ExGroupSet2.GetSolution().PrintSolution();
-    }
     
     public static void TestRandomValidSet()
     {
@@ -206,8 +158,6 @@ public class RummiBench
         }
 
         randSol.PrintSolution();
-
-        //randSolArray.PrintSolution();
     }
 
     private static Set GenerateRandomValidSet()
