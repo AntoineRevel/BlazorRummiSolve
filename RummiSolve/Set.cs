@@ -70,7 +70,7 @@ public class Set
         SortTiles();
         var lenght = Tiles.Count;
         var usedTiles = new bool[lenght];
-        var firstUnusedTileIndex = 0;
+        const int firstUnusedTileIndex = 0;
         return GetSolution(new Solution(), usedTiles, lenght, firstUnusedTileIndex);
     }
 
