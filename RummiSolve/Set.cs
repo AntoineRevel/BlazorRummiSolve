@@ -62,7 +62,7 @@ public class Set
             return colorComparison != 0 ? colorComparison : x.Number.CompareTo(y.Number);
         });
     }
-    
+
     public Solution GetSolution()
     {
         SortTiles();
@@ -82,7 +82,7 @@ public class Set
             case 1 or 2:
                 return Solution.GetInvalidSolution();
         }
-        
+
         while (firstUnusedTileIndex < Tiles.Count && usedTiles[firstUnusedTileIndex])
         {
             firstUnusedTileIndex++;
@@ -95,20 +95,20 @@ public class Set
 
         foreach (var run in runs)
         {
-            MarkTilesAsUsedRef(run, usedTiles, ref unusedTile);
+            MarkTilesAsUsed(run, true, usedTiles, ref unusedTile);
             var newSolution = GetSolution(solution.GetSolutionWithAddedRun(run), usedTiles, unusedTile,
                 firstUnusedTileIndex);
             if (newSolution.IsValid) return newSolution;
-            MarkTilesAsNotUsedRef(run, usedTiles, ref unusedTile);
+            MarkTilesAsUsed(run, false, usedTiles, ref unusedTile);
         }
 
         foreach (var group in groups)
         {
-            MarkTilesAsUsedRef(group, usedTiles, ref unusedTile);
+            MarkTilesAsUsed(group, true, usedTiles, ref unusedTile);
             var newSolution = GetSolution(solution.GetSolutionWithAddedGroup(group), usedTiles,
                 unusedTile, firstUnusedTileIndex);
             if (newSolution.IsValid) return newSolution;
-            MarkTilesAsNotUsedRef(group, usedTiles, ref unusedTile);
+            MarkTilesAsUsed(group, false, usedTiles, ref unusedTile);
         }
 
         return Solution.GetInvalidSolution();
@@ -182,29 +182,16 @@ public class Set
         };
     }
 
-    private void MarkTilesAsUsedRef(Set runOrGroup, bool[] usedTiles, ref int unusedTile)
+    private void MarkTilesAsUsed(Set runOrGroup, bool isUsed, bool[] usedTiles, ref int unusedTile)
     {
         foreach (var tile in runOrGroup.Tiles)
         {
             for (var i = 0; i < Tiles.Count; i++)
             {
-                if (usedTiles[i] || !Tiles[i].Equals(tile)) continue;
-                usedTiles[i] = true;
-                unusedTile--;
-                break;
-            }
-        }
-    }
+                if (usedTiles[i] == isUsed || !Tiles[i].Equals(tile)) continue;
 
-    private void MarkTilesAsNotUsedRef(Set runOrGroup, bool[] usedTiles, ref int unusedTile)
-    {
-        foreach (var tile in runOrGroup.Tiles)
-        {
-            for (var i = Tiles.Count - 1; i > -1; i--)
-            {
-                if (!usedTiles[i] || !Tiles[i].Equals(tile)) continue;
-                usedTiles[i] = false;
-                unusedTile++;
+                usedTiles[i] = isUsed;
+                unusedTile += isUsed ? -1 : 1;
                 break;
             }
         }
