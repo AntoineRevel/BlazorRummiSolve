@@ -70,10 +70,12 @@ public class Set
         SortTiles();
         var lenght = Tiles.Count;
         var usedTiles = new bool[lenght];
-        return GetSolution(new Solution(), usedTiles, lenght);
+        var firstUnusedTileIndex = 0;
+        return GetSolution(new Solution(), usedTiles, lenght, firstUnusedTileIndex);
     }
 
-    private Solution GetSolution(Solution solution, bool[] usedTiles, int unusedTile)
+    private Solution GetSolution(Solution solution, bool[] usedTiles, int unusedTile,
+        int firstUnusedTileIndex)
     {
         switch (unusedTile)
         {
@@ -82,25 +84,22 @@ public class Set
             case 1 or 2:
                 return Solution.GetInvalidSolution();
         }
-
-        var firstTileIndex = 0;
-        for (var i = 0; i < Tiles.Count; i++)
+        
+        while (firstUnusedTileIndex < Tiles.Count && usedTiles[firstUnusedTileIndex])
         {
-            if (usedTiles[i]) continue;
-            firstTileIndex = i;
-
-            break;
+            firstUnusedTileIndex++;
         }
 
-        var runs = GetRuns(firstTileIndex, usedTiles);
-        var groups = GetGroups(firstTileIndex, usedTiles);
+        var runs = GetRuns(firstUnusedTileIndex, usedTiles);
+        var groups = GetGroups(firstUnusedTileIndex, usedTiles);
 
         if (runs.Count == 0 && groups.Length == 0) return Solution.GetInvalidSolution();
 
         foreach (var run in runs)
         {
             MarkTilesAsUsedRef(run, usedTiles, ref unusedTile);
-            var newSolution = GetSolution(solution.GetSolutionWithAddedRun(run), usedTiles, unusedTile);
+            var newSolution = GetSolution(solution.GetSolutionWithAddedRun(run), usedTiles, unusedTile,
+                firstUnusedTileIndex);
             if (newSolution.IsValid) return newSolution;
             MarkTilesAsNotUsedRef(run, usedTiles, ref unusedTile);
         }
@@ -108,7 +107,8 @@ public class Set
         foreach (var group in groups)
         {
             MarkTilesAsUsedRef(group, usedTiles, ref unusedTile);
-            var newSolution = GetSolution(solution.GetSolutionWithAddedGroup(group), usedTiles, unusedTile);
+            var newSolution = GetSolution(solution.GetSolutionWithAddedGroup(group), usedTiles,
+                unusedTile, firstUnusedTileIndex);
             if (newSolution.IsValid) return newSolution;
             MarkTilesAsNotUsedRef(group, usedTiles, ref unusedTile);
         }
@@ -184,7 +184,7 @@ public class Set
             _ => []
         };
     }
-    
+
     private void MarkTilesAsUsedRef(Set runOrGroup, bool[] usedTiles, ref int unusedTile)
     {
         foreach (var tile in runOrGroup.Tiles)
@@ -212,7 +212,7 @@ public class Set
             }
         }
     }
-    
+
     public List<Set> GetBestSets(int n)
     {
         var combinations = GetCombinations(Tiles, n);

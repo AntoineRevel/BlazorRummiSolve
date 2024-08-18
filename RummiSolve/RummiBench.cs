@@ -118,20 +118,9 @@ public class RummiBench
             new Tile(13, Tile.Color.Black),
         ]
     };
-    
-    
+
     [Benchmark]
-    public void GetSolutionNew()
-    {
-        var validLocalSet = _exampleValidSet.Copy();
-        validLocalSet.GetSolution();
-        
-        var notValidLocalSet = _exampleNotValidSet.Copy();
-        notValidLocalSet.GetSolution();
-    }
-    
-    [Benchmark]
-    public void GetSolutions()
+    public void New()
     {
         var validLocalSet = _exampleValidSet.Copy();
         validLocalSet.GetSolution();
@@ -139,7 +128,17 @@ public class RummiBench
         var notValidLocalSet = _exampleNotValidSet.Copy();
         notValidLocalSet.GetSolution();
     }
-    
+
+    [Benchmark]
+    public void Old()
+    {
+        var validLocalSet = _exampleValidSet.Copy();
+        validLocalSet.GetSolution();
+
+        var notValidLocalSet = _exampleNotValidSet.Copy();
+        notValidLocalSet.GetSolution();
+    }
+
     public static void TestRandomValidSet()
     {
         var randSet = GenerateRandomValidSet().ShuffleTiles();
