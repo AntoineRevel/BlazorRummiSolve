@@ -69,10 +69,10 @@ public class Set
     {
         SortTiles();
         var usedTiles = new bool[Tiles.Count];
-        return GetSolution(new Solution(), ref usedTiles);
+        return GetSolution(new Solution(), usedTiles);
     }
 
-    private Solution GetSolution(Solution solution, ref bool[] usedTiles)
+    private Solution GetSolution(Solution solution, bool[] usedTiles)
     {
         switch (usedTiles.Count(b => !b))
         {
@@ -91,31 +91,31 @@ public class Set
             break;
         }
 
-        var runs = GetRuns(firstTileIndex, ref usedTiles);
+        var runs = GetRuns(firstTileIndex, usedTiles);
         var groups = GetGroups(firstTileIndex, usedTiles);
 
         if (runs.Count == 0 && groups.Length == 0) return Solution.GetInvalidSolution();
 
         foreach (var run in runs)
         {
-            MarkTilesAsUsed(run, ref usedTiles);
-            var newSolution = GetSolution(solution.GetSolutionWithAddedRun(run), ref usedTiles);
+            MarkTilesAsUsed(run, usedTiles);
+            var newSolution = GetSolution(solution.GetSolutionWithAddedRun(run), usedTiles);
             if (newSolution.IsValid) return newSolution;
-            MarkTilesAsNotUsed(run, ref usedTiles);
+            MarkTilesAsNotUsed(run, usedTiles);
         }
 
         foreach (var group in groups)
         {
-            MarkTilesAsUsed(group, ref usedTiles);
-            var newSolution = GetSolution(solution.GetSolutionWithAddedGroup(group), ref usedTiles);
+            MarkTilesAsUsed(group, usedTiles);
+            var newSolution = GetSolution(solution.GetSolutionWithAddedGroup(group), usedTiles);
             if (newSolution.IsValid) return newSolution;
-            MarkTilesAsNotUsed(group, ref usedTiles);
+            MarkTilesAsNotUsed(group, usedTiles);
         }
 
         return Solution.GetInvalidSolution();
     }
 
-    private List<Run> GetRuns(int firstTileIndex, ref bool[] usedTiles)
+    private List<Run> GetRuns(int firstTileIndex, bool[] usedTiles)
     {
         var runs = new List<Run>();
 
@@ -184,7 +184,7 @@ public class Set
         };
     }
 
-    private void MarkTilesAsUsed(Set runOrGroup, ref bool[] usedTiles)
+    private void MarkTilesAsUsed(Set runOrGroup, bool[] usedTiles)
     {
         foreach (var tile in runOrGroup.Tiles)
         {
@@ -197,7 +197,7 @@ public class Set
         }
     }
 
-    private void MarkTilesAsNotUsed(Set runOrGroup, ref bool[] usedTiles)
+    private void MarkTilesAsNotUsed(Set runOrGroup, bool[] usedTiles)
     {
         foreach (var tile in runOrGroup.Tiles)
         {
