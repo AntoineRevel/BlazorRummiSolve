@@ -211,29 +211,27 @@ public class RummiBench
         var tiles = new List<Tile>();
 
         // Décider aléatoirement du nombre de runs et de groupes à générer
-        int numberOfRuns = random.Next(1, 3); // 1 à 2 runs
-        int numberOfGroups = random.Next(1, 3); // 1 à 2 groupes
+        int numberOfRuns = random.Next(1, 6); // 1 à 2 runs
+        int numberOfGroups = random.Next(1, 6); // 1 à 2 groupes
 
         // Générer les runs
-        for (int i = 0; i < numberOfRuns; i++)
+        for (var i = 0; i < numberOfRuns; i++)
         {
             var color = (Tile.Color)random.Next(0, 4); // Couleur aléatoire
-            int startNumber = random.Next(1, 13); // Un run peut commencer entre 1 et 13
-            int maxRunLength = 14 - startNumber; // Calculer la longueur maximale du run possible
+            var startNumber = random.Next(1, 13); // Un run peut commencer entre 1 et 13
+            var maxRunLength = 14 - startNumber; // Calculer la longueur maximale du run possible
 
-            if (maxRunLength >= 3)
+            if (maxRunLength < 3) continue;
+            var runLength =
+                random.Next(3, maxRunLength + 1); // Longueur aléatoire entre 3 et la longueur maximale possible
+
+            var run = new List<Tile>();
+            for (int j = 0; j < runLength; j++)
             {
-                int runLength =
-                    random.Next(3, maxRunLength + 1); // Longueur aléatoire entre 3 et la longueur maximale possible
-
-                var run = new List<Tile>();
-                for (int j = 0; j < runLength; j++)
-                {
-                    run.Add(new Tile(startNumber + j, color));
-                }
-
-                tiles.AddRange(run);
+                run.Add(new Tile(startNumber + j, color));
             }
+
+            tiles.AddRange(run);
         }
 
         // Générer les groupes
