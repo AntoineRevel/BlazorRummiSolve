@@ -6,12 +6,15 @@ namespace RummiSolve;
 public static class Program
 {
     public static void Main()
-    {
+    { 
         BenchmarkRunner.Run<RummiBench>();
-        //RummiBench.TestBench();
-        //RummiBench.TestGroup();
+        
     }
 
+    public static void TestRand()
+    {
+        RummiBench.TestRandomValidSet();
+    }
 
 
     private static void Play()
