@@ -68,13 +68,14 @@ public class Set
     public Solution GetSolution()
     {
         SortTiles();
-        var usedTiles = new bool[Tiles.Count];
-        return GetSolution(new Solution(), usedTiles);
+        var lenght = Tiles.Count;
+        var usedTiles = new bool[lenght];
+        return GetSolution(new Solution(), usedTiles, lenght);
     }
 
-    private Solution GetSolution(Solution solution, bool[] usedTiles)
+    private Solution GetSolution(Solution solution, bool[] usedTiles, int unusedTile)
     {
-        switch (usedTiles.Count(b => !b))
+        switch (unusedTile)
         {
             case 0:
                 return solution;
@@ -98,18 +99,18 @@ public class Set
 
         foreach (var run in runs)
         {
-            MarkTilesAsUsed(run, usedTiles);
-            var newSolution = GetSolution(solution.GetSolutionWithAddedRun(run), usedTiles);
+            unusedTile = MarkTilesAsUsed(run, usedTiles, unusedTile);
+            var newSolution = GetSolution(solution.GetSolutionWithAddedRun(run), usedTiles, unusedTile);
             if (newSolution.IsValid) return newSolution;
-            MarkTilesAsNotUsed(run, usedTiles);
+            unusedTile = MarkTilesAsNotUsed(run, usedTiles, unusedTile);
         }
 
         foreach (var group in groups)
         {
-            MarkTilesAsUsed(group, usedTiles);
-            var newSolution = GetSolution(solution.GetSolutionWithAddedGroup(group), usedTiles);
+            unusedTile = MarkTilesAsUsed(group, usedTiles, unusedTile);
+            var newSolution = GetSolution(solution.GetSolutionWithAddedGroup(group), usedTiles, unusedTile);
             if (newSolution.IsValid) return newSolution;
-            MarkTilesAsNotUsed(group, usedTiles);
+            unusedTile = MarkTilesAsNotUsed(group, usedTiles, unusedTile);
         }
 
         return Solution.GetInvalidSolution();
@@ -184,7 +185,7 @@ public class Set
         };
     }
 
-    private void MarkTilesAsUsed(Set runOrGroup, bool[] usedTiles)
+    private int MarkTilesAsUsed(Set runOrGroup, bool[] usedTiles, int unusedTile)
     {
         foreach (var tile in runOrGroup.Tiles)
         {
@@ -192,12 +193,15 @@ public class Set
             {
                 if (usedTiles[i] || !Tiles[i].Equals(tile)) continue;
                 usedTiles[i] = true;
+                unusedTile--;
                 break;
             }
         }
+
+        return unusedTile;
     }
 
-    private void MarkTilesAsNotUsed(Set runOrGroup, bool[] usedTiles)
+    private int MarkTilesAsNotUsed(Set runOrGroup, bool[] usedTiles, int unusedTile)
     {
         foreach (var tile in runOrGroup.Tiles)
         {
@@ -205,9 +209,12 @@ public class Set
             {
                 if (!usedTiles[i] || !Tiles[i].Equals(tile)) continue;
                 usedTiles[i] = false;
+                unusedTile++;
                 break;
             }
         }
+
+        return unusedTile;
     }
 
     public List<Set> GetBestSets(int n)

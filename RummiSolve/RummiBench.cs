@@ -165,10 +165,10 @@ public class RummiBench
     public void GetSolutionNew()
     {
         var validLocalSet = _exampleValidSet.Copy();
-        validLocalSet.GetSolutionUsedTiles();
+        validLocalSet.GetSolution();
         
         var notValidLocalSet = _exampleNotValidSet.Copy();
-        notValidLocalSet.GetSolutionUsedTiles();
+        notValidLocalSet.GetSolution();
     }
     
     [Benchmark]
