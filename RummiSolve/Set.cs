@@ -1,5 +1,3 @@
-using System.Reflection;
-
 namespace RummiSolve;
 
 public class Set
@@ -146,8 +144,7 @@ public class Set
                         runs.Add(new Run { Tiles = [..currentRun.Tiles] });
                     }
                 }
-                else if (currentTile.Number == lastNumber) continue;
-                else break;
+                else if (currentTile.Number != lastNumber) break;
             }
             else break;
         }
