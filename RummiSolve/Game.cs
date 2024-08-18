@@ -4,14 +4,14 @@ namespace RummiSolve;
 
 public class Game
 {
-    private readonly Set _rackSet = new() { Tiles = [] };
+    private List<Tile> _rackSet = [];
     private Solution _boardSolution = new();
 
     public void Start()
     {
         var isFirst = false;
         AddTileToRack();
-        while (_rackSet.Tiles.Count > 0)
+        while (_rackSet.Count > 0)
         {
             AddTileToBoard();
             var solution = Solve(isFirst);
@@ -21,10 +21,9 @@ public class Game
                 AddTileToRack();
             }
             else isFirst = false;
-            
         }
     }
-    
+
     private void AddTileToRack()
     {
         WriteLine("Complete player tiles:");
@@ -34,14 +33,16 @@ public class Game
             var input = ReadLine();
             if (!string.IsNullOrEmpty(input))
             {
-                _rackSet.AddTilesFromInput(input, color);
+                _rackSet = Set.GetTilesFromInput(input, color);
             }
         }
     }
 
     private void AddTileToBoard()
     {
-        var boardSet = _boardSolution.GetSet();
+        var boardTiles = _boardSolution.GetAllTiles();
+        var tilesToAdd = new List<Tile>();
+
         while (true)
         {
             WriteLine("Complete board tiles:");
@@ -50,10 +51,11 @@ public class Game
                 WriteLine($"Enter tile numbers for {color} (separated by spaces):");
                 var input = ReadLine();
                 if (string.IsNullOrEmpty(input)) continue;
-                boardSet.AddTilesFromInput(input, color);
+                tilesToAdd.AddRange(Set.GetTilesFromInput(input, color));
             }
 
-            var boardSolution = boardSet.GetSolution();
+            var allTiles = Set.ConcatTiles(boardTiles, tilesToAdd.ToArray());
+            var boardSolution = allTiles.GetSolution();
             if (boardSolution.IsValid)
             {
                 _boardSolution = boardSolution;
@@ -61,40 +63,41 @@ public class Game
             else
             {
                 WriteLine("Invalid board tiles. Please try again.");
-                boardSet = _boardSolution.GetSet();
+                tilesToAdd.Clear();
                 continue;
             }
 
             break;
         }
     }
-    
+
     private void PrintAllTiles()
     {
         WriteLine("Player tiles:");
-        _rackSet.PrintAllTiles();
-        
+        _rackSet.ForEach(t=>t.PrintTile());
+
         WriteLine("Board tiles:");
         _boardSolution.PrintSolution();
     }
-    
+
     private Solution Solve(bool isFirst)
     {
-        for (var tileCount = _rackSet.Tiles.Count; tileCount > 0; tileCount--)
+        var boardTiles = _boardSolution.GetAllTiles();
+        for (var tileCount = _rackSet.Count; tileCount > 0; tileCount--)
         {
-            var setsToTry = _rackSet.GetBestSets(tileCount);
+            var rackSetsToTry = Set.GetBestSets(_rackSet, tileCount);
 
-            foreach (var trialSet in setsToTry)
+            foreach (var rackSetToTry in rackSetsToTry)
             {
-                if (isFirst && trialSet.GetScore() < 30) break;
-                var trialSetCopy = trialSet.Copy();
-                trialSetCopy.AddTiles(_boardSolution.GetSet());
-                var solution = trialSetCopy.GetSolution();
-                
+                if (isFirst && rackSetToTry.Sum(tile => tile.Number) < 30) break;
+                var setToTry = Set.ConcatTiles(rackSetToTry, boardTiles);
+                var solution = setToTry.GetSolution();
                 if (!solution.IsValid) continue;
                 Write("Play : ");
-                trialSet.PrintAllTiles();
-                _rackSet.RemoveAll(trialSet);
+                foreach (var tile in rackSetToTry)
+                {
+                    _rackSet.Remove(tile);
+                }
                 _boardSolution = solution;
                 return solution;
             }

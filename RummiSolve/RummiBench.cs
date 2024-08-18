@@ -122,21 +122,15 @@ public class RummiBench
     [Benchmark]
     public void New()
     {
-        var validLocalSet = _exampleValidSet.Copy();
-        validLocalSet.GetSolution();
-
-        var notValidLocalSet = _exampleNotValidSet.Copy();
-        notValidLocalSet.GetSolution();
+        _exampleValidSet.GetSolution();
+        _exampleNotValidSet.GetSolution();
     }
 
     [Benchmark]
     public void Old()
     {
-        var validLocalSet = _exampleValidSet.Copy();
-        validLocalSet.GetSolution();
-
-        var notValidLocalSet = _exampleNotValidSet.Copy();
-        notValidLocalSet.GetSolution();
+        _exampleValidSet.GetSolution();
+        _exampleNotValidSet.GetSolution();
     }
 
     public static void TestRandomValidSet()
@@ -149,7 +143,7 @@ public class RummiBench
         {
             randSet = GenerateRandomValidSet();
             randSet.PrintAllTiles();
-            Console.WriteLine(randSet.Tiles.Count);
+            Console.WriteLine(randSet.Tiles.Length);
             randSet.ShuffleTiles();
             randSol = randSet.GetSolution();
             randSol.PrintSolution();
@@ -207,6 +201,6 @@ public class RummiBench
             tiles.AddRange(group);
         }
 
-        return new Set { Tiles = tiles };
+        return new Set { Tiles = tiles.ToArray() };
     }
 }

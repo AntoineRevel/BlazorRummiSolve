@@ -1,6 +1,6 @@
 namespace RummiSolve;
 
-public class Tile
+public class Tile : IComparable<Tile>
 {
     public int Number { get; }
     public Color TileColor { get; }
@@ -41,6 +41,13 @@ public class Tile
     private bool Equals(Tile other)
     {
         return Number == other.Number && TileColor == other.TileColor;
+    }
+
+    public int CompareTo(Tile? other)
+    {
+        if (other == null) return 1;
+        var colorComparison = TileColor.CompareTo(other.TileColor);
+        return colorComparison != 0 ? colorComparison : Number.CompareTo(other.Number);
     }
 
     public override bool Equals(object? obj)

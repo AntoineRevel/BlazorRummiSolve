@@ -21,7 +21,7 @@ public class Solution
         _groups = [..existingSolution._groups];
         IsValid = existingSolution.IsValid;
     }
-    
+
     public Solution GetSolutionWithAddedRun(Run run)
     {
         ArgumentNullException.ThrowIfNull(run);
@@ -37,7 +37,7 @@ public class Solution
 
         _runs.Add(run);
     }
-    
+
     public Solution GetSolutionWithAddedGroup(Group group)
     {
         ArgumentNullException.ThrowIfNull(group);
@@ -61,6 +61,7 @@ public class Solution
             Console.WriteLine("Invalid solution");
             return;
         }
+
         foreach (var run in _runs)
         {
             run.PrintAllTiles();
@@ -72,12 +73,6 @@ public class Solution
             group.PrintAllTiles();
         }
     }
-    
-    public Set GetSet()
-    {
-        var tiles = _runs.SelectMany(run => run.Tiles).Concat(_groups.SelectMany(group => group.Tiles)).ToList();
-        return new Set { Tiles = tiles };
-    }
 
     public bool IsValidSolution()
     {
@@ -87,5 +82,28 @@ public class Solution
     public static Solution GetInvalidSolution()
     {
         return new Solution { IsValid = false };
+    }
+
+    public Tile[] GetAllTiles()
+    {
+        var totalSize = _runs.Sum(run => run.Tiles.Length) + _groups.Sum(group => group.Tiles.Length);
+
+        var allTiles = new Tile[totalSize];
+
+        var currentIndex = 0;
+
+        foreach (var run in _runs)
+        {
+            Array.Copy(run.Tiles, 0, allTiles, currentIndex, run.Tiles.Length);
+            currentIndex += run.Tiles.Length;
+        }
+
+        foreach (var group in _groups)
+        {
+            Array.Copy(group.Tiles, 0, allTiles, currentIndex, group.Tiles.Length);
+            currentIndex += group.Tiles.Length;
+        }
+
+        return allTiles;
     }
 }

@@ -4,7 +4,7 @@ public class Group: Set
 {
     public bool IsValidGroup()
     {
-        if (Tiles.Count is < 3 or > 4)
+        if (Tiles.Length is < 3 or > 4)
         {
             return false;
         }

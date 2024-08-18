@@ -1,14 +1,12 @@
-﻿using System.Xml;
-using BenchmarkDotNet.Running;
+﻿using BenchmarkDotNet.Running;
 
 namespace RummiSolve;
 
 public static class Program
 {
     public static void Main()
-    { 
+    {
         BenchmarkRunner.Run<RummiBench>();
-        
     }
 
     public static void TestRand()
@@ -16,8 +14,7 @@ public static class Program
         RummiBench.TestRandomValidSet();
     }
 
-
-    private static void Play()
+    public static void Play()
     {
         var game = new Game();
         game.Start();

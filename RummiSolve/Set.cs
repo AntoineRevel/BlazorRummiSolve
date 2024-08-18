@@ -2,47 +2,7 @@ namespace RummiSolve;
 
 public class Set
 {
-    public required List<Tile> Tiles { get; init; } //TODO made private
-
-    public Set Copy()
-    {
-        return new Set { Tiles = [..Tiles] };
-    }
-
-    private void AddTile(Tile tile)
-    {
-        Tiles.Add(tile);
-    }
-
-    public void AddTiles(Set set)
-    {
-        Tiles.AddRange(set.Tiles);
-    }
-
-    public void AddTilesFromInput(string input, Tile.Color color)
-    {
-        var numbers = input.Split(' ');
-        foreach (var numberStr in numbers)
-        {
-            if (int.TryParse(numberStr, out var number) && number is >= 1 and <= 13)
-            {
-                var tile = new Tile(number, color);
-                AddTile(tile);
-            }
-            else
-            {
-                Console.WriteLine($"Invalid number: {numberStr}. Skipping.");
-            }
-        }
-    }
-
-    public void RemoveAll(Set set)
-    {
-        foreach (var tile in set.Tiles)
-        {
-            Tiles.Remove(tile);
-        }
-    }
+    public required Tile[] Tiles { get; init; }
 
     public void PrintAllTiles()
     {
@@ -50,30 +10,20 @@ public class Set
         {
             tile.PrintTile();
         }
-
+        
         Console.WriteLine();
-    }
-
-    private void SortTiles()
-    {
-        Tiles.Sort((x, y) =>
-        {
-            var colorComparison = x.TileColor.CompareTo(y.TileColor);
-            return colorComparison != 0 ? colorComparison : x.Number.CompareTo(y.Number);
-        });
     }
 
     public Solution GetSolution()
     {
-        SortTiles();
-        var lenght = Tiles.Count;
+        Array.Sort(Tiles);
+        var lenght = Tiles.Length;
         var usedTiles = new bool[lenght];
         const int firstUnusedTileIndex = 0;
         return GetSolution(new Solution(), usedTiles, lenght, firstUnusedTileIndex);
     }
 
-    private Solution GetSolution(Solution solution, bool[] usedTiles, int unusedTile,
-        int firstUnusedTileIndex)
+    private Solution GetSolution(Solution solution, bool[] usedTiles, int unusedTile, int firstUnusedTileIndex)
     {
         switch (unusedTile)
         {
@@ -83,7 +33,7 @@ public class Set
                 return Solution.GetInvalidSolution();
         }
 
-        while (firstUnusedTileIndex < Tiles.Count && usedTiles[firstUnusedTileIndex])
+        while (firstUnusedTileIndex < Tiles.Length && usedTiles[firstUnusedTileIndex])
         {
             firstUnusedTileIndex++;
         }
@@ -118,15 +68,15 @@ public class Set
     {
         var runs = new List<Run>();
 
-        if (Tiles.Count == 0) return runs;
+        if (Tiles.Length == 0) return runs;
 
         var firstTile = Tiles[firstTileIndex];
 
-        var currentRun = new Run { Tiles = [firstTile] };
+        var currentRun = new List<Tile> { firstTile };
 
         var lastNumber = firstTile.Number;
 
-        for (var j = firstTileIndex + 1; j < Tiles.Count; j++)
+        for (var j = firstTileIndex + 1; j < Tiles.Length; j++)
         {
             if (usedTiles[j]) continue;
 
@@ -136,12 +86,12 @@ public class Set
             {
                 if (currentTile.Number == lastNumber + 1)
                 {
-                    currentRun.AddTile(currentTile);
+                    currentRun.Add(currentTile);
                     lastNumber = currentTile.Number;
 
-                    if (currentRun.Tiles.Count >= 3)
+                    if (currentRun.Count >= 3)
                     {
-                        runs.Add(new Run { Tiles = [..currentRun.Tiles] });
+                        runs.Add(new Run { Tiles = currentRun.ToArray() });
                     }
                 }
                 else if (currentTile.Number != lastNumber) break;
@@ -149,12 +99,12 @@ public class Set
             else break;
         }
 
-        return runs.OrderByDescending(run => run.Tiles.Count).ToList();
+        return runs.OrderByDescending(run => run.Tiles.Length).ToList();
     }
 
     private Group[] GetGroups(int firstTileIndex, bool[] usedTiles)
     {
-        if (Tiles.Count == 0) return [];
+        if (Tiles.Length == 0) return [];
 
         var firstTile = Tiles[firstTileIndex];
         var number = firstTile.Number;
@@ -186,7 +136,7 @@ public class Set
     {
         foreach (var tile in runOrGroup.Tiles)
         {
-            for (var i = 0; i < Tiles.Count; i++)
+            for (var i = 0; i < Tiles.Length; i++)
             {
                 if (usedTiles[i] == isUsed || !Tiles[i].Equals(tile)) continue;
 
@@ -196,13 +146,58 @@ public class Set
             }
         }
     }
-
-    public List<Set> GetBestSets(int n)
+    
+    public Set ShuffleTiles()
     {
-        var combinations = GetCombinations(Tiles, n);
+        var random = new Random();
+        var n = Tiles.Length;
+
+        for (var i = n - 1; i > 0; i--)
+        {
+            var j = random.Next(0, i + 1);
+            (Tiles[i], Tiles[j]) = (Tiles[j], Tiles[i]);
+        }
+
+        return this;
+    }
+
+    public static List<Tile> GetTilesFromInput(string input, Tile.Color color)
+    {
+        var tiles = new List<Tile>();
+        var numbers = input.Split(' ');
+        foreach (var numberStr in numbers)
+        {
+            if (int.TryParse(numberStr, out var number) && number is >= 1 and <= 13)
+            {
+                var tile = new Tile(number, color);
+                tiles.Add(tile);
+            }
+            else
+            {
+                Console.WriteLine($"Invalid number: {numberStr}. Skipping.");
+            }
+        }
+
+        return tiles;
+    }
+
+    public static Set ConcatTiles(Tile[] tiles1, Tile[] tiles2)
+    {
+        var combinedTiles = new Tile[tiles1.Length + tiles2.Length];
+
+        Array.Copy(tiles1, 0, combinedTiles, 0, tiles1.Length);
+
+        Array.Copy(tiles2, 0, combinedTiles, tiles1.Length, tiles2.Length);
+
+        return new Set { Tiles = combinedTiles };
+    }
+
+    public static List<Tile[]> GetBestSets(List<Tile> tiles, int n)
+    {
+        var combinations = GetCombinations(tiles, n);
         return combinations
-            .Select(combination => new Set { Tiles = combination })
-            .OrderByDescending(tiles => tiles.GetScore())
+            .Select(combination => combination.ToArray())
+            .OrderByDescending(t => t.Sum(tile => tile.Number))
             .ToList();
     }
 
@@ -222,24 +217,5 @@ public class Set
                 }
             }
         }
-    }
-
-    public int GetScore()
-    {
-        return Tiles.Sum(tile => tile.Number);
-    }
-
-    public Set ShuffleTiles()
-    {
-        var random = new Random();
-        var n = Tiles.Count;
-
-        for (var i = n - 1; i > 0; i--)
-        {
-            var j = random.Next(0, i + 1);
-            (Tiles[i], Tiles[j]) = (Tiles[j], Tiles[i]);
-        }
-
-        return this;
     }
 }
