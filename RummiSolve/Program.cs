@@ -15,6 +15,12 @@ public static class Program
         var rummiBench = new RummiBench();
         rummiBench.OldHand().PrintSolution();
     }
+
+    public static void PlaySoloGame()
+    {
+        var game = new Game();
+        game.PlaySoloGame();
+    }
     public static void TestRand()
     {
         RummiBench.TestRandomValidSet();

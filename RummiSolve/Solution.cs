@@ -62,18 +62,30 @@ public class Solution
             return;
         }
 
+        var hasPrintedRun = false;
+        var hasPrintedGroup = false;
+
         foreach (var run in _runs)
         {
+            if (hasPrintedRun) Console.Write("| ");
+
             run.PrintAllTiles();
+            hasPrintedRun = true;
         }
 
-        Console.WriteLine();
+        if (hasPrintedRun) Console.WriteLine();
+
         foreach (var group in _groups)
         {
-            group.PrintAllTiles();
-        }
-    }
+            if (hasPrintedGroup) Console.Write("| ");
 
+            group.PrintAllTiles();
+            hasPrintedGroup = true;
+        }
+
+        if (hasPrintedGroup) Console.WriteLine();
+    }
+    
     public bool IsValidSolution()
     {
         return _runs.All(run => run.IsValidRun()) && _groups.All(group => group.IsValidGroup());

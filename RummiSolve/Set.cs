@@ -10,12 +10,11 @@ public class Set
         {
             tile.PrintTile();
         }
-        Console.WriteLine();
     }
 
     public Solution GetSolution()
     {
-        Array.Sort(Tiles);
+        Array.Sort(Tiles); //TODO look
         var lenght = Tiles.Length;
         var usedTiles = new bool[lenght];
         const int firstUnusedTileIndex = 0;

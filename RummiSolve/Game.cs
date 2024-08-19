@@ -6,7 +6,85 @@ public class Game
 {
     public List<Tile> RackTiles { get; set; } = [];
     public Solution BoardSolution { get; set; } = new();
-    
+    private List<Tile> TilePool { get; set; } = [];
+
+    private void InitializeTilePool()
+    {
+        foreach (Tile.Color color in Enum.GetValues(typeof(Tile.Color)))
+        {
+            for (var i = 1; i <= 13; i++)
+            {
+                TilePool.Add(new Tile(i, color));
+                TilePool.Add(new Tile(i, color));
+            }
+        }
+
+        //TODO Ajouter les jokers
+
+        TilePool = TilePool.OrderBy(t => Guid.NewGuid()).ToList();
+    }
+
+    private void InitializeRackTiles()
+    {
+        for (var i = 0; i < 14; i++)
+        {
+            RackTiles.Add(DrawTile());
+        }
+    }
+
+    private Tile DrawTile()
+    {
+        if (TilePool.Count == 0)
+        {
+            throw new InvalidOperationException("No tiles left in the pool.");
+        }
+
+        var drawnTile = TilePool[0];
+        TilePool.RemoveAt(0);
+        return drawnTile;
+    }
+
+    private void DrawAndAddTileToRack()
+    {
+        var newTile = DrawTile();
+        RackTiles.Add(newTile);
+        Write("Drew tile: ");
+        newTile.PrintTile();
+        WriteLine();
+    }
+
+    public void PlaySoloGame()
+    {
+        InitializeTilePool();
+        InitializeRackTiles();
+        
+        PrintAllTiles();
+        var isFirstMove = true;
+
+        while (RackTiles.Count > 0)
+        {
+            var solution = Solve(isFirstMove);
+
+            if (solution.IsValid)
+            {
+                isFirstMove = false;
+                if (RackTiles.Count > 0 && TilePool.Count > 0)
+                {
+                    Write("Can play but not finish : ");
+                    DrawAndAddTileToRack();
+                }
+            }
+            else
+            {
+                Write("Can't play : ");
+                DrawAndAddTileToRack();
+            }
+
+            PrintAllTiles();
+        }
+
+        WriteLine("Congratulations, you have played all your tiles!");
+    }
 
     public void StartConsole()
     {
@@ -24,7 +102,7 @@ public class Game
             else isFirst = false;
         }
     }
-    
+
     private void AddTileToRackConsole()
     {
         WriteLine("Complete player tiles:");
@@ -72,15 +150,16 @@ public class Game
         }
     }
 
-    public void PrintAllTiles()
+    private void PrintAllTiles()
     {
         WriteLine("Player tiles:");
         RackTiles.ForEach(t => t.PrintTile());
 
         WriteLine();
-        
+
         WriteLine("Board tiles:");
         BoardSolution.PrintSolution();
+        Console.WriteLine();
     }
 
     public Solution Solve(bool isFirst)
@@ -92,16 +171,21 @@ public class Game
 
             foreach (var rackSetToTry in rackSetsToTry)
             {
-                foreach (var tile in rackSetToTry)
-                {
-                    tile.PrintTile();
-                }
-                WriteLine(rackSetToTry.Sum(tile => tile.Number));
+                // WriteLine();
+                // foreach (var tile in rackSetToTry)
+                // {
+                //     tile.PrintTile();
+                // }
+                // Write(rackSetToTry.Sum(tile => tile.Number));
+
                 if (isFirst && rackSetToTry.Sum(tile => tile.Number) < 30) break;
+
                 var setToTry = Set.ConcatTiles(rackSetToTry, boardTiles);
+
                 var solution = setToTry.GetSolution();
+
                 if (!solution.IsValid) continue;
-                Write("Play : ");
+
                 foreach (var tile in rackSetToTry)
                 {
                     RackTiles.Remove(tile);
