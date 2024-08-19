@@ -6,9 +6,15 @@ public static class Program
 {
     public static void Main()
     {
-        BenchmarkRunner.Run<RummiBench>();
+        //BenchmarkRunner.Run<RummiBench>();
+        TestBench();
     }
 
+    public static void TestBench()
+    {
+        var rummiBench = new RummiBench();
+        rummiBench.OldHand().PrintSolution();
+    }
     public static void TestRand()
     {
         RummiBench.TestRandomValidSet();
@@ -17,6 +23,6 @@ public static class Program
     public static void Play()
     {
         var game = new Game();
-        game.Start();
+        game.StartConsole();
     }
 }

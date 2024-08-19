@@ -119,18 +119,53 @@ public class RummiBench
         ]
     };
 
-    [Benchmark]
-    public void New()
+    private readonly List<Tile> _exampleRackTiles =
+    [
+        new Tile(4, Tile.Color.Blue),
+        new Tile(5, Tile.Color.Blue),
+
+        new Tile(6, Tile.Color.Red),
+
+        new Tile(1, Tile.Color.Blue),
+        new Tile(12, Tile.Color.Yellow),
+
+        new Tile(4, Tile.Color.Black),
+        new Tile(5, Tile.Color.Black),
+        new Tile(6, Tile.Color.Black),
+        new Tile(3, Tile.Color.Black),
+
+        new Tile(2, Tile.Color.Yellow),
+        new Tile(3, Tile.Color.Yellow),
+        new Tile(4, Tile.Color.Yellow),
+
+        new Tile(8, Tile.Color.Yellow),
+        new Tile(8, Tile.Color.Red)
+    ];
+
+
+    //[Benchmark]
+    public void NewSolution()
+    {
+        _exampleValidSet.GetSolution();
+        _exampleNotValidSet.GetSolution();
+    }
+
+    //[Benchmark]
+    public void OldSolution()
     {
         _exampleValidSet.GetSolution();
         _exampleNotValidSet.GetSolution();
     }
 
     [Benchmark]
-    public void Old()
+    public Solution OldHand()
     {
-        _exampleValidSet.GetSolution();
-        _exampleNotValidSet.GetSolution();
+        var game = new Game
+        {
+            BoardSolution = _exampleValidSet.GetSolution(),
+            RackTiles = _exampleRackTiles
+        };
+        return game.Solve(false);
     }
 
     public static void TestRandomValidSet()
