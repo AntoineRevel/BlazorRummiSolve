@@ -6,6 +6,7 @@ public class Game
 {
     public List<Tile> RackTiles { get; set; } = [];
     public Solution BoardSolution { get; set; } = new();
+    
 
     public void StartConsole()
     {
@@ -23,8 +24,7 @@ public class Game
             else isFirst = false;
         }
     }
-
-
+    
     private void AddTileToRackConsole()
     {
         WriteLine("Complete player tiles:");
