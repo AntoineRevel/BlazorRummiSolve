@@ -10,7 +10,6 @@ public class Set
         {
             tile.PrintTile();
         }
-        
         Console.WriteLine();
     }
 
