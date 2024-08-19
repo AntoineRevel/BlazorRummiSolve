@@ -6,6 +6,8 @@ public class Solution
     private readonly List<Group> _groups;
     public bool IsValid;
 
+    private static readonly Solution InvalidSolution = new() { IsValid = false };
+
     public Solution()
     {
         _runs = [];
@@ -20,6 +22,11 @@ public class Solution
         _runs = [..existingSolution._runs];
         _groups = [..existingSolution._groups];
         IsValid = existingSolution.IsValid;
+    }
+    
+    public static Solution GetInvalidSolution()
+    {
+        return InvalidSolution;
     }
 
     public Solution GetSolutionWithAddedRun(Run run)
@@ -85,15 +92,10 @@ public class Solution
 
         if (hasPrintedGroup) Console.WriteLine();
     }
-    
+
     public bool IsValidSolution()
     {
         return _runs.All(run => run.IsValidRun()) && _groups.All(group => group.IsValidGroup());
-    }
-
-    public static Solution GetInvalidSolution()
-    {
-        return new Solution { IsValid = false };
     }
 
     public Tile[] GetAllTiles()
