@@ -77,24 +77,20 @@ public class Set
             if (usedTiles[j]) continue;
 
             var currentTile = Tiles[j];
-
-            if (currentTile.TileColor == firstTile.TileColor)
+            if (currentTile.TileColor == firstTile.TileColor && currentTile.Number == lastNumber + 1)
             {
-                if (currentTile.Number == lastNumber + 1)
-                {
-                    currentRun.Add(currentTile);
-                    lastNumber = currentTile.Number;
+                currentRun.Add(currentTile);
+                lastNumber = currentTile.Number;
 
-                    if (currentRun.Count >= 3)
-                    {
-                        runs.Add(new Run { Tiles = currentRun.ToArray() });
-                    }
+                if (currentRun.Count >= 3)
+                {
+                    runs.Add(new Run { Tiles = currentRun.ToArray() });
                 }
-                else if (currentTile.Number != lastNumber) break;
             }
-            else break;
+            
+            if (currentTile.Number != lastNumber) break;
         }
-        
+
         return runs;
     }
 
@@ -142,7 +138,7 @@ public class Set
             }
         }
     }
-    
+
     public Set ShuffleTiles()
     {
         var random = new Random();
