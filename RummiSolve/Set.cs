@@ -39,10 +39,9 @@ public class Set
         var runs = GetRuns(firstUnusedTileIndex, usedTiles);
         var groups = GetGroups(firstUnusedTileIndex, usedTiles);
 
-        if (runs.Count == 0 && groups.Length == 0) return Solution.GetInvalidSolution();
-
-        foreach (var run in runs)
+        for (var i = runs.Count - 1; i >= 0; i--)
         {
+            var run = runs[i];
             MarkTilesAsUsed(run, true, usedTiles, ref unusedTile);
             var newSolution = GetSolution(solution.GetSolutionWithAddedRun(run), usedTiles, unusedTile,
                 firstUnusedTileIndex);
@@ -96,8 +95,8 @@ public class Set
             }
             else break;
         }
-
-        return runs.OrderByDescending(run => run.Tiles.Length).ToList();
+        
+        return runs;
     }
 
     private Group[] GetGroups(int firstTileIndex, bool[] usedTiles)
@@ -111,9 +110,9 @@ public class Set
         var sameNumberTiles = Tiles
             .Where((tile, index) => !usedTiles[index] && tile.Number == number && tile.TileColor != color)
             .Distinct()
-            .ToList();
+            .ToArray();
 
-        var size = sameNumberTiles.Count;
+        var size = sameNumberTiles.Length;
 
         return size switch
         {
@@ -190,13 +189,12 @@ public class Set
         return new Set { Tiles = combinedTiles };
     }
 
-    public static List<Tile[]> GetBestSets(List<Tile> tiles, int n)
+    public static IEnumerable<Tile[]> GetBestSets(List<Tile> tiles, int n)
     {
         var combinations = GetCombinations(tiles, n);
         return combinations
             .Select(combination => combination.ToArray())
-            .OrderByDescending(t => t.Sum(tile => tile.Number))
-            .ToList();
+            .OrderByDescending(t => t.Sum(tile => tile.Number));
     }
 
     private static IEnumerable<List<Tile>> GetCombinations(List<Tile> list, int length)
