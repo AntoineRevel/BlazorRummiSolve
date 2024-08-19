@@ -14,16 +14,15 @@ public class Set
 
     public Solution GetSolution()
     {
-        Array.Sort(Tiles); //TODO look
-        var lenght = Tiles.Length;
-        var usedTiles = new bool[lenght];
-        const int firstUnusedTileIndex = 0;
-        return GetSolution(new Solution(), usedTiles, lenght, firstUnusedTileIndex);
+        Array.Sort(Tiles);
+        var length = Tiles.Length;
+        var usedTiles = new bool[length];
+        return GetSolution(new Solution(), usedTiles, length, 0);
     }
 
-    private Solution GetSolution(Solution solution, bool[] usedTiles, int unusedTile, int firstUnusedTileIndex)
+    private Solution GetSolution(Solution solution, bool[] usedTiles, int unusedTileCount, int firstUnusedTileIndex)
     {
-        switch (unusedTile)
+        switch (unusedTileCount)
         {
             case 0:
                 return solution;
@@ -42,20 +41,20 @@ public class Set
         for (var i = runs.Count - 1; i >= 0; i--)
         {
             var run = runs[i];
-            MarkTilesAsUsed(run, true, usedTiles, ref unusedTile);
-            var newSolution = GetSolution(solution.GetSolutionWithAddedRun(run), usedTiles, unusedTile,
+            MarkTilesAsUsed(run, true, usedTiles, ref unusedTileCount);
+            var newSolution = GetSolution(solution.GetSolutionWithAddedRun(run), usedTiles, unusedTileCount,
                 firstUnusedTileIndex);
             if (newSolution.IsValid) return newSolution;
-            MarkTilesAsUsed(run, false, usedTiles, ref unusedTile);
+            MarkTilesAsUsed(run, false, usedTiles, ref unusedTileCount);
         }
 
         foreach (var group in groups)
         {
-            MarkTilesAsUsed(group, true, usedTiles, ref unusedTile);
+            MarkTilesAsUsed(group, true, usedTiles, ref unusedTileCount);
             var newSolution = GetSolution(solution.GetSolutionWithAddedGroup(group), usedTiles,
-                unusedTile, firstUnusedTileIndex);
+                unusedTileCount, firstUnusedTileIndex);
             if (newSolution.IsValid) return newSolution;
-            MarkTilesAsUsed(group, false, usedTiles, ref unusedTile);
+            MarkTilesAsUsed(group, false, usedTiles, ref unusedTileCount);
         }
 
         return Solution.GetInvalidSolution();
