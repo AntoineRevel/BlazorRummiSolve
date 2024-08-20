@@ -95,7 +95,7 @@ public class Set
                     runs.Add(new Run { Tiles = currentRun.ToArray() });
                 }
             }
-            
+
             if (currentTile.Number != lastNumber) break;
         }
 
@@ -205,6 +205,7 @@ public class Set
         if (length == 0) yield return [];
         else
         {
+            HashSet<string> seenCombinations = [];
             for (var i = 0; i < list.Count; i++)
             {
                 var element = list[i];
@@ -212,26 +213,29 @@ public class Set
                 foreach (var combination in GetCombinations(remainingList, length - 1))
                 {
                     combination.Insert(0, element);
-                    yield return combination;
+                    combination.Sort();
+                    var combinationKey = GetKey(combination);
+                    if (seenCombinations.Add(combinationKey)) yield return combination;
                 }
             }
         }
     }
 
-    public static string GetKey(IEnumerable<Tile> sortedTiles)
+    private static string GetKey(IEnumerable<Tile> sortedTiles)
     {
         return string.Join("-", sortedTiles);
     }
-    
+
     public static Tile[] ParseKey(string key)
     {
         var tileStrings = key.Split('-');
-        
+
         var tiles = new Tile[tileStrings.Length];
         for (var i = 0; i < tileStrings.Length; i++)
         {
             tiles[i] = Tile.FromString(tileStrings[i]);
         }
+
         return tiles;
     }
 }

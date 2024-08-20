@@ -129,15 +129,9 @@ public class RummiBench
             new Tile(2, Tile.Color.Black),
             new Tile(3, Tile.Color.Black),
         ];
-
-        var key = Set.GetKey(tryCombiSet);
-        Console.WriteLine(key);
-
-        var retour = Set.ParseKey(key);
         
 
-
-        foreach (var tiles in Set.GetBestSets(tryCombiSet, 4))
+        foreach (var tiles in Set.GetBestSets(tryCombiSet, 3))
         {
             foreach (var tile in tiles)
             {
