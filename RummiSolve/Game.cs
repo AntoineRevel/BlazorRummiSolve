@@ -65,12 +65,12 @@ public class Game
         PrintAllTiles();
         var isFirstMove = true;
         var playedTiles = 0;
-        var IsBoardChanged = false;
+        Tile? newTile = null;
 
         while (RackTiles.Count > 0)
         {
             Write(playedTiles + " => ");
-            var solution = Solve(isFirstMove);
+            var solution = Solve(isFirstMove, false, newTile);
 
             if (solution.IsValid)
             {
@@ -78,13 +78,13 @@ public class Game
                 if (RackTiles.Count > 0 && TilePool.Count > 0)
                 {
                     Write("Can play but not finish : ");
-                    DrawAndAddTileToRack(ref playedTiles);
+                    newTile = DrawAndAddTileToRack(ref playedTiles);
                 }
             }
             else
             {
                 Write("Can't play : ");
-                DrawAndAddTileToRack(ref playedTiles);
+                newTile = DrawAndAddTileToRack(ref playedTiles);
             }
 
             PrintAllTiles();
@@ -169,18 +169,19 @@ public class Game
         Console.WriteLine();
     }
 
-    public Solution Solve(bool isFirst)
+    public Solution Solve(bool isFirst, bool isBoardChanged = false, Tile? newTile = null)
     {
         var boardTiles = BoardSolution.GetAllTiles();
         var lockObj = new object(); // Un objet pour synchroniser l'accès à la solution trouvée
         var finalSolution = Solution.GetInvalidSolution(); // La solution finale
 
-        
-        for (var tileCount = RackTiles.Count; tileCount > (boardTiles.Length==0?3:0); tileCount--)
+
+        for (var tileCount = RackTiles.Count; tileCount > (boardTiles.Length == 0 ? 3 : 0); tileCount--)
         {
             var rackSetsToTry = Set.GetBestSets(RackTiles, tileCount);
+            var rackSetsToTryWhithNewTile = rackSetsToTry.Where(tab => tab.Contains(newTile));
 
-            Parallel.ForEach(rackSetsToTry, (rackSetToTry, state) =>
+            Parallel.ForEach(rackSetsToTryWhithNewTile, (rackSetToTry, state) =>
             {
                 if (isFirst && rackSetToTry.Sum(tile => tile.Number) < 30) return;
 
