@@ -63,6 +63,8 @@ public class Game
 
         while (RackTiles.Count > 0)
         {
+            var playedTiles = 104 - TilePool.Count;
+            Write(playedTiles + " => ");
             var solution = Solve(isFirstMove);
 
             if (solution.IsValid)
