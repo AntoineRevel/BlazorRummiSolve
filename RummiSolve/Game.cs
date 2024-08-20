@@ -60,10 +60,9 @@ public class Game
         
         PrintAllTiles();
         var isFirstMove = true;
-
+        var playedTiles = 0;
         while (RackTiles.Count > 0)
         {
-            var playedTiles = 104 - TilePool.Count;
             Write(playedTiles + " => ");
             var solution = Solve(isFirstMove);
 
@@ -74,18 +73,48 @@ public class Game
                 {
                     Write("Can play but not finish : ");
                     DrawAndAddTileToRack();
+                    playedTiles++;
                 }
             }
             else
             {
                 Write("Can't play : ");
                 DrawAndAddTileToRack();
+                playedTiles++;
             }
 
             PrintAllTiles();
         }
 
         WriteLine("Congratulations, you have played all your tiles!");
+    }
+
+    public void PlaySoloGameBench()
+    {
+        InitializeTilePool();
+        InitializeRackTiles();
+
+        var isFirstMove = true;
+        var playedTiles = 0;
+        while (RackTiles.Count > 0 && playedTiles < 6)
+        {
+            var solution = Solve(isFirstMove);
+
+            if (solution.IsValid)
+            {
+                isFirstMove = false;
+                if (RackTiles.Count > 0 && TilePool.Count > 0)
+                {
+                    DrawAndAddTileToRack();
+                    playedTiles++;
+                }
+            }
+            else
+            {
+                DrawAndAddTileToRack();
+                playedTiles++;
+            }
+        }
     }
 
     public void StartConsole()
