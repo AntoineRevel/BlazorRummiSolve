@@ -44,23 +44,30 @@ public class Game
         return drawnTile;
     }
 
-    private void DrawAndAddTileToRack()
+    private Tile DrawAndAddTileToRack(ref int playedTiles)
     {
         var newTile = DrawTile();
+        var rackContainNewTile = RackTiles.Contains(newTile); //and board don't change
         RackTiles.Add(newTile);
+        playedTiles++;
         Write("Drew tile: ");
         newTile.PrintTile();
         WriteLine();
+        if (rackContainNewTile) newTile = DrawAndAddTileToRack(ref playedTiles);
+        return newTile;
     }
 
     public void PlaySoloGame()
     {
         InitializeTilePool();
         InitializeRackTiles();
-        
+
         PrintAllTiles();
         var isFirstMove = true;
         var playedTiles = 0;
+        var IsBoardChanged = false;
+        Tile lastTileDraw = null;
+
         while (RackTiles.Count > 0)
         {
             Write(playedTiles + " => ");
@@ -72,15 +79,13 @@ public class Game
                 if (RackTiles.Count > 0 && TilePool.Count > 0)
                 {
                     Write("Can play but not finish : ");
-                    DrawAndAddTileToRack();
-                    playedTiles++;
+                    DrawAndAddTileToRack(ref playedTiles);
                 }
             }
             else
             {
                 Write("Can't play : ");
-                DrawAndAddTileToRack();
-                playedTiles++;
+                DrawAndAddTileToRack(ref playedTiles);
             }
 
             PrintAllTiles();
