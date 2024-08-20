@@ -63,6 +63,8 @@ public class Game
 
         while (RackTiles.Count > 0)
         {
+            var playedTiles = 104 - TilePool.Count;
+            Write(playedTiles + " => ");
             var solution = Solve(isFirstMove);
 
             if (solution.IsValid)
@@ -165,34 +167,43 @@ public class Game
     public Solution Solve(bool isFirst)
     {
         var boardTiles = BoardSolution.GetAllTiles();
+        var lockObj = new object(); // Un objet pour synchroniser l'accès à la solution trouvée
+        var finalSolution = Solution.GetInvalidSolution(); // La solution finale
+
         for (var tileCount = RackTiles.Count; tileCount > 0; tileCount--)
         {
             var rackSetsToTry = Set.GetBestSets(RackTiles, tileCount);
 
-            foreach (var rackSetToTry in rackSetsToTry)
+            Parallel.ForEach(rackSetsToTry, (rackSetToTry, state) =>
             {
-                // WriteLine();
-                // foreach (var tile in rackSetToTry)
-                // {
-                //     tile.PrintTile();
-                // }
-                // Write(rackSetToTry.Sum(tile => tile.Number));
-
-                if (isFirst && rackSetToTry.Sum(tile => tile.Number) < 30) break;
+                if (isFirst && rackSetToTry.Sum(tile => tile.Number) < 30) return;
 
                 var setToTry = Set.ConcatTiles(rackSetToTry, boardTiles);
-
                 var solution = setToTry.GetSolution();
 
-                if (!solution.IsValid) continue;
+                if (!solution.IsValid) return;
 
-                foreach (var tile in rackSetToTry)
+                lock (lockObj)
                 {
-                    RackTiles.Remove(tile);
-                }
+                    if (finalSolution.IsValid)
+                    {
+                        return;
+                    }
 
-                BoardSolution = solution;
-                return solution;
+                    foreach (var tile in rackSetToTry)
+                    {
+                        RackTiles.Remove(tile);
+                    }
+
+                    BoardSolution = solution;
+                    finalSolution = solution;
+                    state.Stop(); // Arrête le parallélisme si une solution valide est trouvée
+                }
+            });
+
+            if (finalSolution.IsValid)
+            {
+                return finalSolution;
             }
         }
 
