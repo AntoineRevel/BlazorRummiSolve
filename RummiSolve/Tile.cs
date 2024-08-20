@@ -52,7 +52,7 @@ public class Tile : IComparable<Tile>
             Color.Blue => ConsoleColor.Blue,
             Color.Red => ConsoleColor.Red,
             Color.Mango => ConsoleColor.Yellow,
-            Color.Black => ConsoleColor.Black,
+            Color.Black => ConsoleColor.White,
             _ => Console.ForegroundColor
         };
 

@@ -66,7 +66,6 @@ public class Game
         var isFirstMove = true;
         var playedTiles = 0;
         var IsBoardChanged = false;
-        Tile lastTileDraw = null;
 
         while (RackTiles.Count > 0)
         {
@@ -176,7 +175,8 @@ public class Game
         var lockObj = new object(); // Un objet pour synchroniser l'accès à la solution trouvée
         var finalSolution = Solution.GetInvalidSolution(); // La solution finale
 
-        for (var tileCount = RackTiles.Count; tileCount > 0; tileCount--)
+        
+        for (var tileCount = RackTiles.Count; tileCount > (boardTiles.Length==0?3:0); tileCount--)
         {
             var rackSetsToTry = Set.GetBestSets(RackTiles, tileCount);
 
