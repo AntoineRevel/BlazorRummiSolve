@@ -221,7 +221,7 @@ public class Set
         }
     }
 
-    private static string GetKey(IEnumerable<Tile> sortedTiles)
+    public static string GetKey(IEnumerable<Tile> sortedTiles)
     {
         return string.Join("-", sortedTiles);
     }
