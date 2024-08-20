@@ -3,6 +3,7 @@ namespace RummiSolve;
 public class Set
 {
     public required Tile[] Tiles { get; init; }
+    private bool _isSorted;
 
     public void PrintAllTiles()
     {
@@ -12,9 +13,16 @@ public class Set
         }
     }
 
+    private void Sort()
+    {
+        if (_isSorted) return;
+        Array.Sort(Tiles);
+        _isSorted = true;
+    }
+
     public Solution GetSolution()
     {
-        Array.Sort(Tiles);
+        Sort();
         var length = Tiles.Length;
         var usedTiles = new bool[length];
         return GetSolution(new Solution(), usedTiles, length, 0);
@@ -208,5 +216,22 @@ public class Set
                 }
             }
         }
+    }
+
+    public static string GetKey(IEnumerable<Tile> sortedTiles)
+    {
+        return string.Join("-", sortedTiles);
+    }
+    
+    public static Tile[] ParseKey(string key)
+    {
+        var tileStrings = key.Split('-');
+        
+        var tiles = new Tile[tileStrings.Length];
+        for (var i = 0; i < tileStrings.Length; i++)
+        {
+            tiles[i] = Tile.FromString(tileStrings[i]);
+        }
+        return tiles;
     }
 }

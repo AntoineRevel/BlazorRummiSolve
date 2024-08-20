@@ -9,9 +9,10 @@ public class Tile : IComparable<Tile>
     {
         Blue,
         Red,
-        Yellow,
+        Mango,
         Black
     }
+
     public Tile(int number, Color color)
     {
         if (number is < 1 or > 13)
@@ -22,6 +23,27 @@ public class Tile : IComparable<Tile>
         Number = number;
         TileColor = color;
     }
+    
+    public static Tile FromString(string tileString)
+    {
+        var parts = tileString.Split(':');
+        if (parts.Length != 2)
+        {
+            throw new ArgumentException("Input string must be in the format 'Number:Color'.", nameof(tileString));
+        }
+
+        if (!int.TryParse(parts[0], out var number))
+        {
+            throw new ArgumentException("Invalid number format.", nameof(tileString));
+        }
+
+        if (!Enum.TryParse(parts[1], true, out Color color))
+        {
+            throw new ArgumentException($"Invalid color '{parts[1]}'. Must be one of: Blue, Red, Mango, Black.", nameof(tileString));
+        }
+
+        return new Tile(number, color);
+    }
 
     public void PrintTile()
     {
@@ -29,13 +51,19 @@ public class Tile : IComparable<Tile>
         {
             Color.Blue => ConsoleColor.Blue,
             Color.Red => ConsoleColor.Red,
-            Color.Yellow => ConsoleColor.Yellow,
+            Color.Mango => ConsoleColor.Yellow,
             Color.Black => ConsoleColor.Black,
             _ => Console.ForegroundColor
         };
 
         Console.Write(Number + " ");
         Console.ResetColor();
+    }
+
+
+    public override string ToString()
+    {
+        return $"{Number}:{TileColor}";
     }
 
     private bool Equals(Tile other)
