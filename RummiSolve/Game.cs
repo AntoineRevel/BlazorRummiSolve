@@ -89,34 +89,6 @@ public class Game
         WriteLine("Congratulations, you have played all your tiles!");
     }
 
-    public void PlaySoloGameBench()
-    {
-        InitializeTilePool();
-        InitializeRackTiles();
-
-        var isFirstMove = true;
-        var playedTiles = 0;
-        while (RackTiles.Count > 0 && playedTiles < 6)
-        {
-            var solution = Solve(isFirstMove);
-
-            if (solution.IsValid)
-            {
-                isFirstMove = false;
-                if (RackTiles.Count > 0 && TilePool.Count > 0)
-                {
-                    DrawAndAddTileToRack();
-                    playedTiles++;
-                }
-            }
-            else
-            {
-                DrawAndAddTileToRack();
-                playedTiles++;
-            }
-        }
-    }
-
     public void StartConsole()
     {
         var isFirst = false;

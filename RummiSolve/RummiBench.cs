@@ -167,14 +167,7 @@ public class RummiBench
         };
         return game.Solve(false);
     }
-
-    [Benchmark]
-    public void Solo20()
-    {
-        var game = new Game();
-        game.PlaySoloGameBench();
-    }
-
+    
     public static void TestRandomValidSet()
     {
         var randSet = GenerateRandomValidSet().ShuffleTiles();

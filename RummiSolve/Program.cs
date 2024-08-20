@@ -20,6 +20,7 @@ public static class Program
         var game = new Game();
         game.PlaySoloGame();
     }
+    
     public static void TestRand()
     {
         RummiBench.TestRandomValidSet();
