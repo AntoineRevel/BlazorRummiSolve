@@ -63,7 +63,7 @@ public class Game
 
     public void PlaySoloGame()
     {
-        InitializeTilePool();
+        InitializeTilePool(1);
         InitializeRackTiles();
 
         PrintAllTiles();
