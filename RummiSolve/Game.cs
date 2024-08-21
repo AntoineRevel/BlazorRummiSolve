@@ -8,7 +8,7 @@ public class Game
     public Solution BoardSolution { get; set; } = new();
     private List<Tile> TilePool { get; set; } = [];
 
-    private void InitializeTilePool()
+    private void InitializeTilePool(int seed)
     {
         foreach (Tile.Color color in Enum.GetValues(typeof(Tile.Color)))
         {
@@ -21,7 +21,11 @@ public class Game
 
         //TODO Ajouter les jokers
 
-        TilePool = TilePool.OrderBy(t => Guid.NewGuid()).ToList();
+        // Créer une instance de Random avec le seed donné
+        var rng = new Random(seed);
+
+        // Mélanger la liste de manière déterministe
+        TilePool = TilePool.OrderBy(_ => rng.Next()).ToList();
     }
 
     private void InitializeRackTiles()
