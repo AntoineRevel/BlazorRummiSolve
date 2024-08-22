@@ -34,7 +34,7 @@ public class Game
         {
             RackTiles.Add(TilePool[i]);
         }
-        
+
         TilePool.RemoveRange(0, 14);
     }
 
@@ -73,10 +73,10 @@ public class Game
         var playedTiles = 0;
         Tile? newTile = null;
 
-        while (RackTiles.Count > 0)
+        while (RackTiles.Count > 0 && playedTiles < 21)
         {
             Write(playedTiles + " => ");
-            var solution = Solve(isFirstMove,newTile);
+            var solution = Solve(isFirstMove, newTile);
 
             if (solution.IsValid)
             {
@@ -87,7 +87,7 @@ public class Game
                 }
             }
             else Write("Can't play : ");
-            
+
             newTile = DrawAndAddTileToRack(ref playedTiles);
             PrintAllTiles();
         }
@@ -187,11 +187,27 @@ public class Game
 
             Parallel.ForEach(rackSetsToTryWhithNewTile, (rackSetToTry, state) =>
             {
-                if (isFirst && rackSetToTry.GetScore() < 30) return;
-                
+                if (isFirst && rackSetToTry.GetScore() < 0) return;
+                Solution? solution = null;
 
-                var setToTry = Set.ConcatTiles(rackSetToTry.Tiles, boardTiles);
-                var solution = setToTry.GetSolution();
+                var rackSolutionIsValid = false;
+                if (rackSetToTry.Tiles.Length > 3)
+                {
+                    var rackSolution = rackSetToTry.GetSolution();
+                    rackSolutionIsValid = rackSolution.IsValid;
+                    if (rackSolutionIsValid)
+                    {
+                        solution = BoardSolution;
+                        solution.AddSolution(rackSolution);
+                    }
+                }
+
+                if (!rackSolutionIsValid)
+                {
+                    var setToTry = Set.ConcatTiles(rackSetToTry.Tiles, boardTiles);
+                    solution = setToTry.GetSolution();
+                }
+
 
                 if (!solution.IsValid) return;
 
@@ -209,7 +225,7 @@ public class Game
 
                     BoardSolution = solution;
                     finalSolution = solution;
-                    state.Stop(); // Arrête le parallélisme si une solution valide est trouvée
+                    state.Stop();
                 }
             });
 

@@ -23,10 +23,23 @@ public class Solution
         _groups = [..existingSolution._groups];
         IsValid = existingSolution.IsValid;
     }
-    
+
     public static Solution GetInvalidSolution()
     {
         return InvalidSolution;
+    }
+
+    public void AddSolution(Solution solution)
+    {
+        if (solution == null || !solution.IsValid)
+        {
+            IsValid = false;
+            return;
+        }
+
+        _groups.AddRange(solution._groups);
+
+        _runs.AddRange(solution._runs);
     }
 
     public Solution GetSolutionWithAddedRun(Run run)

@@ -23,7 +23,7 @@ public class Tile : IComparable<Tile>
         Number = number;
         TileColor = color;
     }
-    
+
     public static Tile FromString(string tileString)
     {
         var parts = tileString.Split(':');
@@ -39,7 +39,8 @@ public class Tile : IComparable<Tile>
 
         if (!Enum.TryParse(parts[1], true, out Color color))
         {
-            throw new ArgumentException($"Invalid color '{parts[1]}'. Must be one of: Blue, Red, Mango, Black.", nameof(tileString));
+            throw new ArgumentException($"Invalid color '{parts[1]}'. Must be one of: Blue, Red, Mango, Black.",
+                nameof(tileString));
         }
 
         return new Tile(number, color);

@@ -98,7 +98,7 @@ public class RummiBench
             BoardSolution = _exampleValidSet.GetSolution(),
             RackTiles = _exampleRackTiles
         };
-        return game.Solve(false);
+        return game.Solve(true);
     }
 
     public static void TestRandomValidSet()
@@ -123,13 +123,14 @@ public class RummiBench
 
     public static void testCombi()
     {
-        List<Tile> tryCombiSet = [
+        List<Tile> tryCombiSet =
+        [
             new Tile(1, Tile.Color.Black),
             new Tile(1, Tile.Color.Black),
             new Tile(2, Tile.Color.Black),
             new Tile(3, Tile.Color.Black),
         ];
-        
+
 
         foreach (var tiles in Set.GetBestSets(tryCombiSet, 3))
         {
@@ -137,6 +138,7 @@ public class RummiBench
             {
                 tile.PrintTile();
             }
+
             Console.WriteLine();
         }
     }
