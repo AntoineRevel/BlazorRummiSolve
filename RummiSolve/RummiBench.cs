@@ -133,7 +133,7 @@ public class RummiBench
 
         foreach (var tiles in Set.GetBestSets(tryCombiSet, 3))
         {
-            foreach (var tile in tiles)
+            foreach (var tile in tiles.Tiles)
             {
                 tile.PrintTile();
             }

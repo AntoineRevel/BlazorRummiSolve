@@ -32,8 +32,10 @@ public class Game
     {
         for (var i = 0; i < 14; i++)
         {
-            RackTiles.Add(DrawTile());
+            RackTiles.Add(TilePool[i]);
         }
+        
+        TilePool.RemoveRange(0, 14);
     }
 
     private Tile DrawTile()
@@ -63,7 +65,7 @@ public class Game
 
     public void PlaySoloGame()
     {
-        InitializeTilePool(4);
+        InitializeTilePool(1);
         InitializeRackTiles();
 
         PrintAllTiles();
@@ -181,13 +183,14 @@ public class Game
         {
             var rackSetsToTry = Set.GetBestSets(RackTiles, tileCount);
             var rackSetsToTryWhithNewTile =
-                !isFirst ? rackSetsToTry.Where(tab => tab.Contains(lastTileDrawn)) : rackSetsToTry;
+                !isFirst ? rackSetsToTry.Where(tab => tab.Tiles.Contains(lastTileDrawn)) : rackSetsToTry;
 
             Parallel.ForEach(rackSetsToTryWhithNewTile, (rackSetToTry, state) =>
             {
-                if (isFirst && rackSetToTry.Sum(tile => tile.Number) < 30) return;
+                if (isFirst && rackSetToTry.GetScore() < 30) return;
+                
 
-                var setToTry = Set.ConcatTiles(rackSetToTry, boardTiles);
+                var setToTry = Set.ConcatTiles(rackSetToTry.Tiles, boardTiles);
                 var solution = setToTry.GetSolution();
 
                 if (!solution.IsValid) return;
@@ -199,7 +202,7 @@ public class Game
                         return;
                     }
 
-                    foreach (var tile in rackSetToTry)
+                    foreach (var tile in rackSetToTry.Tiles)
                     {
                         RackTiles.Remove(tile);
                     }

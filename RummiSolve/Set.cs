@@ -1,3 +1,5 @@
+using Perfolizer.Mathematics.QuantileEstimators;
+
 namespace RummiSolve;
 
 public class Set
@@ -18,6 +20,11 @@ public class Set
         if (_isSorted) return;
         Array.Sort(Tiles);
         _isSorted = true;
+    }
+
+    public int GetScore()
+    {
+        return Tiles.Sum(t => t.Number);
     }
 
     public Solution GetSolution()
@@ -192,12 +199,12 @@ public class Set
         return new Set { Tiles = combinedTiles };
     }
 
-    public static IEnumerable<Tile[]> GetBestSets(List<Tile> tiles, int n)
+    public static IEnumerable<Set> GetBestSets(List<Tile> tiles, int n)
     {
         var combinations = GetCombinations(tiles, n);
         return combinations
-            .Select(combination => combination.ToArray())
-            .OrderByDescending(t => t.Sum(tile => tile.Number));
+            .Select(combination => new Set() { Tiles = combination.ToArray() })
+            .OrderByDescending(t => t.GetScore());
     }
 
     private static IEnumerable<List<Tile>> GetCombinations(List<Tile> list, int length)
