@@ -31,12 +31,6 @@ public class Solution
 
     public void AddSolution(Solution solution)
     {
-        if (solution == null || !solution.IsValid)
-        {
-            IsValid = false;
-            return;
-        }
-
         _groups.AddRange(solution._groups);
 
         _runs.AddRange(solution._runs);
