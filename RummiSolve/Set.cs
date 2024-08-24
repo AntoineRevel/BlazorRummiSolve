@@ -67,12 +67,16 @@ public class Set
         {
             var run = runs[i];
             MarkTilesAsUsed(run, true, usedTiles, ref unusedTileCount);
-            var key = GetKey(usedTiles, unusedTileCount);
+            //var key = GetKey(usedTiles, unusedTileCount);
             var newSolution = GetSolution(solution, usedTiles, unusedTileCount,
                 firstUnusedTileIndex);
             //Console.WriteLine(key + " => " + newSolution.GetKey());
-            newSolution.AddRun(run);
-            if (newSolution.IsValid) return newSolution;
+
+            if (newSolution.IsValid)
+            {
+                newSolution.AddRun(run);
+                return newSolution;
+            }
 
             MarkTilesAsUsed(run, false, usedTiles, ref unusedTileCount);
         }
@@ -80,12 +84,17 @@ public class Set
         foreach (var group in groups)
         {
             MarkTilesAsUsed(group, true, usedTiles, ref unusedTileCount);
-            var key = GetKey(usedTiles, unusedTileCount);
+            //var key = GetKey(usedTiles, unusedTileCount);
             var newSolution = GetSolution(solution, usedTiles, unusedTileCount,
                 firstUnusedTileIndex);
             //Console.WriteLine(key + " => " + newSolution.GetKey());
-            newSolution.AddGroup(group);
-            if (newSolution.IsValid) return newSolution;
+
+            if (newSolution.IsValid)
+            {
+                newSolution.AddGroup(group);
+                return newSolution;
+            }
+
             MarkTilesAsUsed(group, false, usedTiles, ref unusedTileCount);
         }
 
