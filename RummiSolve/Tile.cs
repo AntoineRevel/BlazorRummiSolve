@@ -24,6 +24,12 @@ public class Tile : IComparable<Tile>
         TileColor = color;
     }
 
+    private string GetKey()
+    {
+        var colorCode = (int)TileColor;
+        return $"{Number}:{colorCode}";
+    }
+
     public static Tile FromString(string tileString)
     {
         var parts = tileString.Split(':');
@@ -64,7 +70,7 @@ public class Tile : IComparable<Tile>
 
     public override string ToString()
     {
-        return $"{Number}:{TileColor}";
+        return GetKey();
     }
 
     private bool Equals(Tile other)

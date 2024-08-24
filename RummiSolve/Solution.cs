@@ -5,6 +5,7 @@ public class Solution
     private readonly List<Run> _runs;
     private readonly List<Group> _groups;
     public bool IsValid;
+    //TODO cheeck if needed private string? _key=null;
 
     private static readonly Solution InvalidSolution = new() { IsValid = false };
 
@@ -13,6 +14,56 @@ public class Solution
         _runs = [];
         _groups = [];
         IsValid = true;
+    }
+    
+    public Solution(string key)
+    {
+        if (key == "InvalidSolution")
+        {
+            IsValid = false;
+            _runs = [];
+            _groups = [];
+            return;
+        }
+
+        IsValid = true;
+        
+        var parts = key.Split(["||"], StringSplitOptions.None);
+        if (parts.Length != 2)
+        {
+            throw new ArgumentException("Clé invalide pour une Solution.");
+        }
+        
+        _runs = parts[0]
+            .Split('|')
+            .Where(runKey => !string.IsNullOrWhiteSpace(runKey))
+            .Select(runKey => new Run(runKey))
+            .ToList();
+        
+        _groups = parts[1]
+            .Split('|')
+            .Where(groupKey => !string.IsNullOrWhiteSpace(groupKey))
+            .Select(groupKey => new Group(groupKey))
+            .ToList();
+    }
+    
+    public string GetKey()
+    {
+        if (!IsValid)
+        {
+            return "InvalidSolution";
+        }
+        
+        var runKeys = _runs.Select(run => run.GetKey()).ToList();
+        var groupKeys = _groups.Select(group => group.GetKey()).ToList();
+        
+        runKeys.Sort();
+        groupKeys.Sort();
+        
+        var combinedRunKeys = string.Join("|", runKeys);
+        var combinedGroupKeys = string.Join("|", groupKeys);
+        
+        return $"{combinedRunKeys}||{combinedGroupKeys}";
     }
 
     private Solution(Solution existingSolution)
@@ -36,32 +87,15 @@ public class Solution
         _runs.AddRange(solution._runs);
     }
 
-    public Solution GetSolutionWithAddedRun(Run run)
-    {
-        ArgumentNullException.ThrowIfNull(run);
-
-        var newSolution = new Solution(this);
-        newSolution.AddRun(run);
-        return newSolution;
-    }
-
-    private void AddRun(Run run)
+    public void AddRun(Run run)
     {
         ArgumentNullException.ThrowIfNull(run);
 
         _runs.Add(run);
     }
+    
 
-    public Solution GetSolutionWithAddedGroup(Group group)
-    {
-        ArgumentNullException.ThrowIfNull(group);
-
-        var newSolution = new Solution(this);
-        newSolution.AddGroup(group);
-        return newSolution;
-    }
-
-    private void AddGroup(Group group)
+    public void AddGroup(Group group)
     {
         ArgumentNullException.ThrowIfNull(group);
 

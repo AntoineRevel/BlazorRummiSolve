@@ -2,8 +2,20 @@ namespace RummiSolve;
 
 public class Set
 {
-    public required Tile[] Tiles { get; init; }
+    public Tile[] Tiles;
     private bool _isSorted;
+
+    public Set()
+    {
+        Tiles = [];
+        _isSorted = false;
+    }
+
+    protected Set(string key)
+    {
+        _isSorted = true;
+        Tiles = ParseKey(key);
+    }
 
     public void PrintAllTiles()
     {
@@ -55,18 +67,34 @@ public class Set
         {
             var run = runs[i];
             MarkTilesAsUsed(run, true, usedTiles, ref unusedTileCount);
-            var newSolution = GetSolution(solution.GetSolutionWithAddedRun(run), usedTiles, unusedTileCount,
+            //var key = GetKey(usedTiles, unusedTileCount);
+            var newSolution = GetSolution(solution, usedTiles, unusedTileCount,
                 firstUnusedTileIndex);
-            if (newSolution.IsValid) return newSolution;
+            //Console.WriteLine(key + " => " + newSolution.GetKey());
+
+            if (newSolution.IsValid)
+            {
+                newSolution.AddRun(run);
+                return newSolution;
+            }
+
             MarkTilesAsUsed(run, false, usedTiles, ref unusedTileCount);
         }
 
         foreach (var group in groups)
         {
             MarkTilesAsUsed(group, true, usedTiles, ref unusedTileCount);
-            var newSolution = GetSolution(solution.GetSolutionWithAddedGroup(group), usedTiles,
-                unusedTileCount, firstUnusedTileIndex);
-            if (newSolution.IsValid) return newSolution;
+            //var key = GetKey(usedTiles, unusedTileCount);
+            var newSolution = GetSolution(solution, usedTiles, unusedTileCount,
+                firstUnusedTileIndex);
+            //Console.WriteLine(key + " => " + newSolution.GetKey());
+
+            if (newSolution.IsValid)
+            {
+                newSolution.AddGroup(group);
+                return newSolution;
+            }
+
             MarkTilesAsUsed(group, false, usedTiles, ref unusedTileCount);
         }
 
@@ -226,7 +254,27 @@ public class Set
         }
     }
 
-    public static string GetKey(IEnumerable<Tile> sortedTiles)
+    public string GetKey()
+    {
+        return string.Join<Tile>("-", Tiles);
+    }
+
+    private string GetKey(bool[] usedTiles, int unusedTileCount)
+    {
+        var selectedTiles = new Tile[unusedTileCount];
+        var index = 0;
+        for (var i = 0; i < Tiles.Length; i++)
+        {
+            if (!usedTiles[i])
+            {
+                selectedTiles[index++] = Tiles[i];
+            }
+        }
+
+        return string.Join<Tile>("-", selectedTiles);
+    }
+
+    private static string GetKey(IEnumerable<Tile> sortedTiles)
     {
         return string.Join("-", sortedTiles);
     }
