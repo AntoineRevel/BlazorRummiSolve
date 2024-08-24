@@ -42,63 +42,62 @@ public class Set
         Sort();
         var length = Tiles.Length;
         var usedTiles = new bool[length];
-        return GetSolution(new Solution(), usedTiles, length, 0);
+        return FindSolution(new Solution(), usedTiles, length, 0);
     }
 
-    private Solution GetSolution(Solution solution, bool[] usedTiles, int unusedTileCount, int firstUnusedTileIndex)
+    private Solution FindSolution(Solution solution, bool[] usedTiles, int unusedTileCount, int firstUnusedTileIndex)
     {
-        switch (unusedTileCount)
+        if (unusedTileCount <= 2)
         {
-            case 0:
-                return solution;
-            case 1 or 2:
-                return Solution.GetInvalidSolution();
+            return unusedTileCount == 0 ? solution : Solution.GetInvalidSolution();
         }
 
-        while (firstUnusedTileIndex < Tiles.Length && usedTiles[firstUnusedTileIndex])
-        {
-            firstUnusedTileIndex++;
-        }
+        firstUnusedTileIndex = GetNextUnusedTileIndex(usedTiles, firstUnusedTileIndex);
 
         var runs = GetRuns(firstUnusedTileIndex, usedTiles);
         var groups = GetGroups(firstUnusedTileIndex, usedTiles);
 
-        for (var i = runs.Count - 1; i >= 0; i--)
+        if (TryAddSets(solution, runs, usedTiles, ref unusedTileCount, firstUnusedTileIndex,
+                (sol, set) => sol.AddRun(set))
+            ||
+            TryAddSets(solution, groups, usedTiles, ref unusedTileCount, firstUnusedTileIndex,
+                (sol, set) => sol.AddGroup(set)))
         {
-            var run = runs[i];
-            MarkTilesAsUsed(run, true, usedTiles, ref unusedTileCount);
-            //var key = GetKey(usedTiles, unusedTileCount);
-            var newSolution = GetSolution(solution, usedTiles, unusedTileCount,
-                firstUnusedTileIndex);
-            //Console.WriteLine(key + " => " + newSolution.GetKey());
-
-            if (newSolution.IsValid)
-            {
-                newSolution.AddRun(run);
-                return newSolution;
-            }
-
-            MarkTilesAsUsed(run, false, usedTiles, ref unusedTileCount);
-        }
-
-        foreach (var group in groups)
-        {
-            MarkTilesAsUsed(group, true, usedTiles, ref unusedTileCount);
-            //var key = GetKey(usedTiles, unusedTileCount);
-            var newSolution = GetSolution(solution, usedTiles, unusedTileCount,
-                firstUnusedTileIndex);
-            //Console.WriteLine(key + " => " + newSolution.GetKey());
-
-            if (newSolution.IsValid)
-            {
-                newSolution.AddGroup(group);
-                return newSolution;
-            }
-
-            MarkTilesAsUsed(group, false, usedTiles, ref unusedTileCount);
+            return solution;
         }
 
         return Solution.GetInvalidSolution();
+    }
+
+    private int GetNextUnusedTileIndex(bool[] usedTiles, int startIndex)
+    {
+        while (startIndex < Tiles.Length && usedTiles[startIndex])
+        {
+            startIndex++;
+        }
+
+        return startIndex;
+    }
+
+    private bool TryAddSets<T>(Solution solution, IEnumerable<T> sets, bool[] usedTiles, ref int unusedTileCount,
+        int firstUnusedTileIndex, Action<Solution, T> addSetAction)
+        where T : Set
+    {
+        foreach (var set in sets)
+        {
+            MarkTilesAsUsed(set, true, usedTiles, ref unusedTileCount);
+            var newSolution = FindSolution(solution, usedTiles, unusedTileCount, firstUnusedTileIndex);
+
+            if (newSolution.IsValid)
+            {
+                addSetAction(newSolution, set);
+                return true;
+            }
+
+            MarkTilesAsUsed(set, false, usedTiles, ref unusedTileCount);
+        }
+
+        return false;
     }
 
     private List<Run> GetRuns(int firstTileIndex, bool[] usedTiles)
