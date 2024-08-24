@@ -1,4 +1,5 @@
 ﻿using BenchmarkDotNet.Running;
+using DotNetEnv;
 using StackExchange.Redis;
 
 namespace RummiSolve;
@@ -7,34 +8,28 @@ public static class Program
 {
     private static void Main(string[] args)
     {
-        // Configuration de la connexion
+        Env.Load("/Users/antoinerevel/Documents/Projet perso/RummiSolve/RummiSolve/RummiSolve/.env");
+
+        var redisUser = Env.GetString("REDIS_USER");
+        var redisPassword = Env.GetString("REDIS_PASSWORD");
+        var redisHost = Env.GetString("REDIS_HOST");
+        var redisPort = Env.GetString("REDIS_PORT");
+        
         var options = new ConfigurationOptions
         {
-            EndPoints = { "192.168.1.88:6379" },
-            User = "Rummi.net", // Nom d'utilisateur
-            Password = "votre_mot_de_passe", // Mot de passe de l'utilisateur
-            AbortOnConnectFail = false, // Permet de ne pas échouer immédiatement en cas de problème de connexion
-            Ssl = false // Activer si vous utilisez SSL
+            EndPoints = { $"{redisHost}:{redisPort}" },
+            User = redisUser,
+            Password = redisPassword,
+            AbortOnConnectFail = false,
+            Ssl = false
         };
 
-        try
-        {
-            // Création de la connexion
-            using (var connection = ConnectionMultiplexer.Connect(options))
-            {
-                // Accéder à la base de données Redis
-                IDatabase db = connection.GetDatabase();
+        var redisConn = ConnectionMultiplexer.Connect(options);
+        var db = redisConn.GetDatabase();
+        db.Ping();
+        db.StringGetSet("foo","bar");
+        Console.WriteLine(db.StringGet("foo"));
 
-                // Exemple d'opération : SET et GET d'une clé
-                db.StringSet("cle", "valeur");
-                string valeur = db.StringGet("cle");
-                Console.WriteLine($"La valeur pour 'cle' est : {valeur}");
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Erreur lors de la connexion à Redis : {ex.Message}");
-        }
     }
 
     public static void TestBench()
