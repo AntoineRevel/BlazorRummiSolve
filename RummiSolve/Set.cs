@@ -42,16 +42,16 @@ public class Set
         Sort();
         var length = Tiles.Length;
         var usedTiles = new bool[length];
+        if (length <= 2)
+        {
+            return length == 0 ? new Solution() : Solution.GetInvalidSolution();
+        }
+
         return FindSolution(new Solution(), usedTiles, length, 0);
     }
 
     private Solution FindSolution(Solution solution, bool[] usedTiles, int unusedTileCount, int firstUnusedTileIndex)
     {
-        if (unusedTileCount <= 2)
-        {
-            return unusedTileCount == 0 ? solution : Solution.GetInvalidSolution();
-        }
-
         firstUnusedTileIndex = GetNextUnusedTileIndex(usedTiles, firstUnusedTileIndex);
 
         var runs = GetRuns(firstUnusedTileIndex, usedTiles);
@@ -86,24 +86,22 @@ public class Set
         foreach (var set in sets)
         {
             MarkTilesAsUsed(set, true, usedTiles, ref unusedTileCount);
-
-            if (unusedTileCount is not (1 or 2))
+            Solution newSolution;
+            if (unusedTileCount <= 2)
             {
-                Solution newSolution;
-                if (unusedTileCount == 0) newSolution = solution;
-                else
-                {
-                    var key = GetKey(usedTiles, unusedTileCount);
-                    newSolution = FindSolution(solution, usedTiles, unusedTileCount, firstUnusedTileIndex);
-                    Console.WriteLine(key + " => \n" + newSolution.GetKey() + "\n");
-                }
+                newSolution = unusedTileCount == 0 ? solution : Solution.GetInvalidSolution();
+            }
+            else
+            {
+                //var key = GetKey(usedTiles, unusedTileCount);
+                newSolution = FindSolution(solution, usedTiles, unusedTileCount, firstUnusedTileIndex);
+                //Console.WriteLine(key + " => \n" + newSolution.GetKey() + "\n");
+            }
 
-                if (newSolution.IsValid)
-                {
-                    addSetAction(newSolution, set);
-
-                    return true;
-                }
+            if (newSolution.IsValid)
+            {
+                addSetAction(newSolution, set);
+                return true;
             }
 
             MarkTilesAsUsed(set, false, usedTiles, ref unusedTileCount);
@@ -143,6 +141,7 @@ public class Set
             if (currentTile.Number != lastNumber) break;
         }
 
+        //TODO runs.Reverse();
         return runs;
     }
 
