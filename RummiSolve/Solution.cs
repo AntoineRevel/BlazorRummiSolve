@@ -87,32 +87,15 @@ public class Solution
         _runs.AddRange(solution._runs);
     }
 
-    public Solution GetSolutionWithAddedRun(Run run)
-    {
-        ArgumentNullException.ThrowIfNull(run);
-
-        var newSolution = new Solution(this);
-        newSolution.AddRun(run);
-        return newSolution;
-    }
-
-    private void AddRun(Run run)
+    public void AddRun(Run run)
     {
         ArgumentNullException.ThrowIfNull(run);
 
         _runs.Add(run);
     }
+    
 
-    public Solution GetSolutionWithAddedGroup(Group group)
-    {
-        ArgumentNullException.ThrowIfNull(group);
-
-        var newSolution = new Solution(this);
-        newSolution.AddGroup(group);
-        return newSolution;
-    }
-
-    private void AddGroup(Group group)
+    public void AddGroup(Group group)
     {
         ArgumentNullException.ThrowIfNull(group);
 

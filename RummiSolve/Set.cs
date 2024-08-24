@@ -71,7 +71,8 @@ public class Set
             var newSolution = GetSolution(solution, usedTiles, unusedTileCount,
                 firstUnusedTileIndex);
             //Console.WriteLine(key + " => " + newSolution.GetKey());
-            if (newSolution.IsValid) return newSolution.GetSolutionWithAddedRun(run);
+            newSolution.AddRun(run);
+            if (newSolution.IsValid) return newSolution;
 
             MarkTilesAsUsed(run, false, usedTiles, ref unusedTileCount);
         }
@@ -83,7 +84,8 @@ public class Set
             var newSolution = GetSolution(solution, usedTiles, unusedTileCount,
                 firstUnusedTileIndex);
             //Console.WriteLine(key + " => " + newSolution.GetKey());
-            if (newSolution.IsValid) return newSolution.GetSolutionWithAddedGroup(group);
+            newSolution.AddGroup(group);
+            if (newSolution.IsValid) return newSolution;
             MarkTilesAsUsed(group, false, usedTiles, ref unusedTileCount);
         }
 

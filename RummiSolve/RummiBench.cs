@@ -134,10 +134,9 @@ public class RummiBench
 
         while (randSol.IsValid)
         {
-            randSet = GenerateRandomValidSet();
+            randSet = GenerateRandomValidSet().ShuffleTiles();
             randSet.PrintAllTiles();
             Console.WriteLine(randSet.Tiles.Length);
-            randSet.ShuffleTiles();
             randSol = randSet.GetSolution();
             randSol.PrintSolution();
             Console.WriteLine();
