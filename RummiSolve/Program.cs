@@ -6,7 +6,7 @@ public static class Program
 {
     public static void Main()
     {
-        //BenchmarkRunner.Run<RummiBench>();
+        BenchmarkRunner.Run<RummiBench>();
         // PlaySoloGame();
     }
 
