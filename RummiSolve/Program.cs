@@ -13,7 +13,8 @@ public static class Program
     public static void TestBench()
     {
         var rummiBench = new RummiBench();
-        rummiBench.OldHand().PrintSolution();
+        //rummiBench.OldHand().PrintSolution();
+        rummiBench.getSolValid();
     }
 
     public static void PlaySoloGame()

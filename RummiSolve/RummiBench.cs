@@ -4,6 +4,20 @@ namespace RummiSolve;
 
 public class RummiBench
 {
+    private readonly Set _exampleSimpleValidSet = new()
+    {
+        Tiles =
+        [
+            new Tile(1, Tile.Color.Blue),
+            new Tile(1, Tile.Color.Red),
+            new Tile(1, Tile.Color.Black),
+
+            new Tile(2, Tile.Color.Blue),
+            new Tile(3, Tile.Color.Blue),
+            new Tile(4, Tile.Color.Blue)
+        ]
+    };
+
     private readonly Set _exampleValidSet = new()
     {
         Tiles =
@@ -89,6 +103,17 @@ public class RummiBench
         new Tile(8, Tile.Color.Red)
     ];
 
+    public void getSolValid()
+    {
+        var sol = _exampleValidSet.GetSolution();
+        Console.WriteLine();
+        sol.PrintSolution();
+        var key = sol.GetKey();
+        Console.WriteLine(key);
+        var sameSol = new Solution(key);
+        sameSol.PrintSolution();
+
+    }
 
     [Benchmark]
     public Solution OldHand()

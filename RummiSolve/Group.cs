@@ -2,6 +2,14 @@ namespace RummiSolve;
 
 public class Group: Set
 {
+    public Group()
+    {
+    }
+
+    public Group(string key) : base(key)
+    {
+    }
+
     public bool IsValidGroup()
     {
         if (Tiles.Length is < 3 or > 4)
