@@ -89,16 +89,12 @@ public class Solution
 
     public void AddRun(Run run)
     {
-        ArgumentNullException.ThrowIfNull(run);
-
         _runs.Add(run);
     }
     
 
     public void AddGroup(Group group)
     {
-        ArgumentNullException.ThrowIfNull(group);
-
         _groups.Add(group);
     }
 

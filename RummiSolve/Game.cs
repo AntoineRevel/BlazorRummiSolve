@@ -20,11 +20,9 @@ public class Game
         }
 
         //TODO Ajouter les jokers
-
-        // Créer une instance de Random avec le seed donné
+        
         var rng = new Random(seed);
-
-        // Mélanger la liste de manière déterministe
+        
         TilePool = TilePool.OrderBy(_ => rng.Next()).ToList();
     }
 
