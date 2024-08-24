@@ -86,12 +86,24 @@ public class Set
         foreach (var set in sets)
         {
             MarkTilesAsUsed(set, true, usedTiles, ref unusedTileCount);
-            var newSolution = FindSolution(solution, usedTiles, unusedTileCount, firstUnusedTileIndex);
 
-            if (newSolution.IsValid)
+            if (unusedTileCount is not (1 or 2))
             {
-                addSetAction(newSolution, set);
-                return true;
+                Solution newSolution;
+                if (unusedTileCount == 0) newSolution = solution;
+                else
+                {
+                    var key = GetKey(usedTiles, unusedTileCount);
+                    newSolution = FindSolution(solution, usedTiles, unusedTileCount, firstUnusedTileIndex);
+                    Console.WriteLine(key + " => \n" + newSolution.GetKey() + "\n");
+                }
+
+                if (newSolution.IsValid)
+                {
+                    addSetAction(newSolution, set);
+
+                    return true;
+                }
             }
 
             MarkTilesAsUsed(set, false, usedTiles, ref unusedTileCount);
@@ -164,9 +176,9 @@ public class Set
         };
     }
 
-    private void MarkTilesAsUsed(Set runOrGroup, bool isUsed, bool[] usedTiles, ref int unusedTile)
+    private void MarkTilesAsUsed(Set set, bool isUsed, bool[] usedTiles, ref int unusedTile)
     {
-        foreach (var tile in runOrGroup.Tiles)
+        foreach (var tile in set.Tiles)
         {
             for (var i = 0; i < Tiles.Length; i++)
             {
