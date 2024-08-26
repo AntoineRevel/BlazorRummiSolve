@@ -71,7 +71,7 @@ public class Game
         var playedTiles = 0;
         Tile? newTile = null;
 
-        while (RackTiles.Count > 0 && playedTiles < 21)
+        while (RackTiles.Count > 0)
         {
             Write(playedTiles + " => ");
             var solution = Solve(isFirstMove, newTile);
