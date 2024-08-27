@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using static System.Console;
 
 namespace RummiSolve;
@@ -70,9 +71,13 @@ public class Game
         var isFirstMove = true;
         var playedTiles = 0;
         Tile? newTile = null;
-
-        while (RackTiles.Count > 0 && playedTiles < 21)
+        
+        var totalStopwatch = Stopwatch.StartNew();
+    
+        while (RackTiles.Count > 0)
         {
+            var turnStopwatch = Stopwatch.StartNew();
+        
             Write(playedTiles + " => ");
             var solution = Solve(isFirstMove, newTile);
 
@@ -87,10 +92,16 @@ public class Game
             else Write("Can't play : ");
 
             newTile = DrawAndAddTileToRack(ref playedTiles);
+            
+            turnStopwatch.Stop();
+            WriteLine($"Time for this turn: {turnStopwatch.ElapsedMilliseconds} ms");
+            WriteLine($"Total time since start: {totalStopwatch.ElapsedMilliseconds} ms");
             PrintAllTiles();
+            
         }
 
         WriteLine("Congratulations, you have played all your tiles!");
+        totalStopwatch.Stop();
     }
 
     public void StartConsole()
