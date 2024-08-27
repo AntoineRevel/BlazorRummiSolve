@@ -200,7 +200,7 @@ public class Game
                 Solution? solution = null;
 
                 var rackSolutionIsValid = false;
-                if (rackSetToTry.Tiles.Length > 3)
+                if (rackSetToTry.Tiles.Length % 3 == 0 &&false)
                 {
                     var rackSolution = rackSetToTry.GetSolution();
                     rackSolutionIsValid = rackSolution.IsValid;

@@ -42,12 +42,19 @@ public class Set
         Sort();
         var length = Tiles.Length;
         var usedTiles = new bool[length];
+        var key = GetKey();
+        Solution solution;
         if (length <= 2)
         {
             return length == 0 ? new Solution() : Solution.GetInvalidSolution();
         }
 
-        return FindSolution(new Solution(), usedTiles, length, 0);
+        //if (GlobalCache.Instance.TryGetSolution(key, out solution)) return solution;
+        
+        solution = FindSolution(new Solution(), usedTiles, length, 0);
+        //GlobalCache.Instance.SetSolution(key, solution);
+
+        return solution;
     }
 
     private Solution FindSolution(Solution solution, bool[] usedTiles, int unusedTileCount, int firstUnusedTileIndex)
@@ -87,15 +94,16 @@ public class Set
         {
             MarkTilesAsUsed(set, true, usedTiles, ref unusedTileCount);
             Solution newSolution;
+            var key = GetKey(usedTiles, unusedTileCount);
+
             if (unusedTileCount <= 2)
             {
                 newSolution = unusedTileCount == 0 ? solution : Solution.GetInvalidSolution();
             }
-            else
+            else//else if (!GlobalCache.Instance.TryGetSolution(key, out newSolution))
             {
-                //var key = GetKey(usedTiles, unusedTileCount);
                 newSolution = FindSolution(solution, usedTiles, unusedTileCount, firstUnusedTileIndex);
-                //Console.WriteLine(key + " => \n" + newSolution.GetKey() + "\n");
+                //GlobalCache.Instance.SetSolution(key, newSolution);
             }
 
             if (newSolution.IsValid)
