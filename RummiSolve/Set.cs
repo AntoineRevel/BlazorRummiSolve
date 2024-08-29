@@ -44,15 +44,17 @@ public class Set
         var usedTiles = new bool[length];
         var key = GetKey();
         Solution solution;
+        String solutionKey;
         if (length <= 2)
         {
             return length == 0 ? new Solution() : Solution.GetInvalidSolution();
         }
 
-        //if (GlobalCache.Instance.TryGetSolution(key, out solution)) return solution;
-        
+        if (GlobalCache.Instance.TryGetSolution(key, out solutionKey)) return new Solution(solutionKey);
+
         solution = FindSolution(new Solution(), usedTiles, length, 0);
-        //GlobalCache.Instance.SetSolution(key, solution);
+        GlobalCache.Instance.SetSolution(key, solution.GetKey());
+        GlobalCache.Instance.SaveCacheToFile();
 
         return solution;
     }
@@ -93,6 +95,7 @@ public class Set
         foreach (var set in sets)
         {
             MarkTilesAsUsed(set, true, usedTiles, ref unusedTileCount);
+            String solutionKey;
             Solution newSolution;
             var key = GetKey(usedTiles, unusedTileCount);
 
@@ -100,10 +103,14 @@ public class Set
             {
                 newSolution = unusedTileCount == 0 ? solution : Solution.GetInvalidSolution();
             }
-            else//else if (!GlobalCache.Instance.TryGetSolution(key, out newSolution))
+            else if (GlobalCache.Instance.TryGetSolution(key, out solutionKey))
+            {
+                newSolution = new Solution(solutionKey);
+            }
+            else
             {
                 newSolution = FindSolution(solution, usedTiles, unusedTileCount, firstUnusedTileIndex);
-                //GlobalCache.Instance.SetSolution(key, newSolution);
+                GlobalCache.Instance.SetSolution(key, newSolution.GetKey());
             }
 
             if (newSolution.IsValid)

@@ -16,12 +16,14 @@ public static class Program
         var rummiBench = new RummiBench();
         //rummiBench.OldHand().PrintSolution();
         rummiBench.getSolValid();
+        GlobalCache.Instance.SaveCacheToFile();
     }
 
     public static void PlaySoloGame()
     {
         var game = new Game();
         game.PlaySoloGame();
+        GlobalCache.Instance.SaveCacheToFile();
     }
 
     public static void TestRand()

@@ -21,9 +21,9 @@ public class Game
         }
 
         //TODO Ajouter les jokers
-        
+
         var rng = new Random(seed);
-        
+
         TilePool = TilePool.OrderBy(_ => rng.Next()).ToList();
     }
 
@@ -71,13 +71,13 @@ public class Game
         var isFirstMove = true;
         var playedTiles = 0;
         Tile? newTile = null;
-        
+
         var totalStopwatch = Stopwatch.StartNew();
-    
+
         while (RackTiles.Count > 0)
         {
             var turnStopwatch = Stopwatch.StartNew();
-        
+
             Write(playedTiles + " => ");
             var solution = Solve(isFirstMove, newTile);
 
@@ -92,7 +92,7 @@ public class Game
             else Write("Can't play : ");
 
             newTile = DrawAndAddTileToRack(ref playedTiles);
-            
+
             turnStopwatch.Stop();
             WriteLine($"Time for this turn: {turnStopwatch.ElapsedMilliseconds} ms");
             WriteLine($"Total time since start: {totalStopwatch.ElapsedMilliseconds} ms");
@@ -177,30 +177,27 @@ public class Game
 
         WriteLine("Board tiles:");
         BoardSolution.PrintSolution();
-        Console.WriteLine();
+        WriteLine();
     }
 
     public Solution Solve(bool isFirst, Tile? lastTileDrawn = null, List<Tile>? lastBoardTileAdded = null)
     {
         if (!isFirst && lastTileDrawn == null && lastBoardTileAdded == null) return Solution.GetInvalidSolution();
         var boardTiles = BoardSolution.GetAllTiles();
-        var lockObj = new object(); // Un objet pour synchroniser l'accès à la solution trouvée
-        var finalSolution = Solution.GetInvalidSolution(); // La solution finale
-
-
         for (var tileCount = RackTiles.Count; tileCount > (boardTiles.Length == 0 ? 3 : 0); tileCount--)
         {
             var rackSetsToTry = Set.GetBestSets(RackTiles, tileCount);
             var rackSetsToTryWhithNewTile =
                 !isFirst ? rackSetsToTry.Where(tab => tab.Tiles.Contains(lastTileDrawn)) : rackSetsToTry;
 
-            Parallel.ForEach(rackSetsToTryWhithNewTile, (rackSetToTry, state) =>
+            //TODO Parallel.ForEach
+            foreach (var rackSetToTry in rackSetsToTryWhithNewTile)
             {
-                if (isFirst && rackSetToTry.GetScore() < 0) return;
+                if (isFirst && rackSetToTry.GetScore() < 0) return Solution.GetInvalidSolution();
                 Solution? solution = null;
 
                 var rackSolutionIsValid = false;
-                if (rackSetToTry.Tiles.Length % 3 == 0 &&false)
+                if (rackSetToTry.Tiles.Length % 3 == 0)
                 {
                     var rackSolution = rackSetToTry.GetSolution();
                     rackSolutionIsValid = rackSolution.IsValid;
@@ -218,32 +215,19 @@ public class Game
                 }
 
 
-                if (!solution.IsValid) return;
+                if (!solution.IsValid) continue;
 
-                lock (lockObj)
+
+                foreach (var tile in rackSetToTry.Tiles)
                 {
-                    if (finalSolution.IsValid)
-                    {
-                        return;
-                    }
-
-                    foreach (var tile in rackSetToTry.Tiles)
-                    {
-                        RackTiles.Remove(tile);
-                    }
-
-                    BoardSolution = solution;
-                    finalSolution = solution;
-                    state.Stop();
+                    RackTiles.Remove(tile);
                 }
-            });
 
-            if (finalSolution.IsValid)
-            {
-                return finalSolution;
+                BoardSolution = solution;
+                return solution;
             }
         }
-
+        
         return Solution.GetInvalidSolution();
     }
 }
