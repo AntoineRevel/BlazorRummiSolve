@@ -187,15 +187,14 @@ public class Game
         for (var tileCount = RackTiles.Count; tileCount > (boardTiles.Length == 0 ? 3 : 0); tileCount--)
         {
             var rackSetsToTry = Set.GetBestSets(RackTiles, tileCount);
-            var rackSetsToTryWhithNewTile =
+            var rackSetsToTryWithNewTile =
                 !isFirst ? rackSetsToTry.Where(tab => tab.Tiles.Contains(lastTileDrawn)) : rackSetsToTry;
-
-            //TODO Parallel.ForEach
-            foreach (var rackSetToTry in rackSetsToTryWhithNewTile)
+            
+            foreach (var rackSetToTry in rackSetsToTryWithNewTile)
             {
-                if (isFirst && rackSetToTry.GetScore() < 0) return Solution.GetInvalidSolution();
-                Solution? solution = null;
-
+                var solution = Solution.GetInvalidSolution();
+                if (isFirst && rackSetToTry.GetScore() < 30) return solution;
+                
                 var rackSolutionIsValid = false;
                 if (rackSetToTry.Tiles.Length % 3 == 0)
                 {
@@ -213,11 +212,9 @@ public class Game
                     var setToTry = Set.ConcatTiles(rackSetToTry.Tiles, boardTiles);
                     solution = setToTry.GetSolution();
                 }
-
-
+                
                 if (!solution.IsValid) continue;
-
-
+                
                 foreach (var tile in rackSetToTry.Tiles)
                 {
                     RackTiles.Remove(tile);

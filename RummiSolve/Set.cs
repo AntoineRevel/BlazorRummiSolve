@@ -42,20 +42,12 @@ public class Set
         Sort();
         var length = Tiles.Length;
         var usedTiles = new bool[length];
-        var key = GetKey();
-        Solution solution;
-        String solutionKey;
         if (length <= 2)
         {
             return length == 0 ? new Solution() : Solution.GetInvalidSolution();
         }
-
-        if (GlobalCache.Instance.TryGetSolution(key, out solutionKey)) return new Solution(solutionKey);
-
-        solution = FindSolution(new Solution(), usedTiles, length, 0);
-        GlobalCache.Instance.SetSolution(key, solution.GetKey());
-        GlobalCache.Instance.SaveCacheToFile();
-
+        
+        var solution = FindSolution(new Solution(), usedTiles, length, 0);
         return solution;
     }
 
@@ -95,22 +87,14 @@ public class Set
         foreach (var set in sets)
         {
             MarkTilesAsUsed(set, true, usedTiles, ref unusedTileCount);
-            String solutionKey;
             Solution newSolution;
-            var key = GetKey(usedTiles, unusedTileCount);
-
             if (unusedTileCount <= 2)
             {
                 newSolution = unusedTileCount == 0 ? solution : Solution.GetInvalidSolution();
             }
-            else if (GlobalCache.Instance.TryGetSolution(key, out solutionKey))
-            {
-                newSolution = new Solution(solutionKey);
-            }
             else
             {
                 newSolution = FindSolution(solution, usedTiles, unusedTileCount, firstUnusedTileIndex);
-                GlobalCache.Instance.SetSolution(key, newSolution.GetKey());
             }
 
             if (newSolution.IsValid)
@@ -272,7 +256,7 @@ public class Set
                 {
                     combination.Insert(0, element);
                     combination.Sort();
-                    var combinationKey = GetKey(combination);
+                    var combinationKey = GetKey(combination); //TODO RST-54 pk passer par un string, utiliser le equals et hash de Tile ?
                     if (seenCombinations.Add(combinationKey)) yield return combination;
                 }
             }
