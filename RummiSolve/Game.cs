@@ -180,7 +180,7 @@ public class Game
         WriteLine();
     }
 
-    public Solution Solve(bool isFirst, Tile? lastTileDrawn = null, List<Tile>? lastBoardTileAdded = null)
+    public Solution Solve2(bool isFirst, Tile? lastTileDrawn = null, List<Tile>? lastBoardTileAdded = null)
     {
         if (!isFirst && lastTileDrawn == null && lastBoardTileAdded == null) return Solution.GetInvalidSolution();
         var boardTiles = BoardSolution.GetAllTiles();
@@ -189,12 +189,12 @@ public class Game
             var rackSetsToTry = Set.GetBestSets(RackTiles, tileCount);
             var rackSetsToTryWithNewTile =
                 !isFirst ? rackSetsToTry.Where(tab => tab.Tiles.Contains(lastTileDrawn)) : rackSetsToTry;
-            
+
             foreach (var rackSetToTry in rackSetsToTryWithNewTile)
             {
                 var solution = Solution.GetInvalidSolution();
                 if (isFirst && rackSetToTry.GetScore() < 30) return solution;
-                
+
                 var rackSolutionIsValid = false;
                 if (rackSetToTry.Tiles.Length % 3 == 0)
                 {
@@ -212,9 +212,9 @@ public class Game
                     var setToTry = Set.ConcatTiles(rackSetToTry.Tiles, boardTiles);
                     solution = setToTry.GetSolution();
                 }
-                
+
                 if (!solution.IsValid) continue;
-                
+
                 foreach (var tile in rackSetToTry.Tiles)
                 {
                     RackTiles.Remove(tile);
@@ -224,7 +224,79 @@ public class Game
                 return solution;
             }
         }
-        
+
         return Solution.GetInvalidSolution();
+    }
+
+    public Solution Solve(bool isFirst, Tile? lastTileDrawn = null, List<Tile>? lastBoardTileAdded = null)
+    {
+        if (!isFirst && lastTileDrawn == null && lastBoardTileAdded == null)
+            return Solution.GetInvalidSolution();
+
+        var boardTiles = BoardSolution.GetAllTiles();
+        var locker = new object();
+        Solution finalSolution = Solution.GetInvalidSolution();
+        bool solutionFound = false;
+
+        for (var tileCount = RackTiles.Count; tileCount > (boardTiles.Length == 0 ? 3 : 0); tileCount--)
+        {
+            var rackSetsToTry = Set.GetBestSets(RackTiles, tileCount);
+            var rackSetsToTryWithNewTile = !isFirst
+                ? rackSetsToTry.Where(tab => tab.Tiles.Contains(lastTileDrawn))
+                : rackSetsToTry;
+
+            Parallel.ForEach(rackSetsToTryWithNewTile, (rackSetToTry, state) =>
+            {
+                if (solutionFound) state.Stop();
+
+                var solution = Solution.GetInvalidSolution();
+                if (isFirst && rackSetToTry.GetScore() < 30)
+                {
+                    state.Stop();
+                    return;
+                }
+
+                var rackSolutionIsValid = false;
+                if (rackSetToTry.Tiles.Length % 3 == 0)
+                {
+                    var rackSolution = rackSetToTry.GetSolution();
+                    rackSolutionIsValid = rackSolution.IsValid;
+                    if (rackSolutionIsValid)
+                    {
+                        lock (locker)
+                        {
+                            solution = BoardSolution;
+                            solution.AddSolution(rackSolution);
+                        }
+                    }
+                }
+
+                if (!rackSolutionIsValid)
+                {
+                    var setToTry = Set.ConcatTiles(rackSetToTry.Tiles, boardTiles);
+                    solution = setToTry.GetSolution();
+                }
+
+                if (!solution.IsValid) return;
+
+                lock (locker)
+                {
+                    foreach (var tile in rackSetToTry.Tiles)
+                    {
+                        RackTiles.Remove(tile);
+                    }
+
+                    BoardSolution = solution;
+                    finalSolution = solution;
+                    solutionFound = true;
+                }
+
+                state.Stop();
+            });
+
+            if (solutionFound) break;
+        }
+
+        return finalSolution;
     }
 }
