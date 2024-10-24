@@ -194,8 +194,9 @@ public class Game
         if (!isFirst && lastTileAdded.Count == 0) return Solution.GetInvalidSolution();
 
         var boardTiles = BoardSolution.GetAllTiles();
-        
+
         var finalSolution = Solution.GetInvalidSolution();
+        var locker = new object();
         Set finalRackSet = null;
 
         for (var tileCount = RackTiles.Count; tileCount > (boardTiles.Length == 0 ? 3 : 0); tileCount--)
@@ -207,37 +208,42 @@ public class Game
 
             Parallel.ForEach(rackSetsToTry, (currentRackSet, state) =>
             {
-                if (finalRackSet!=null) state.Stop();
+                if (finalRackSet != null) state.Stop();
 
                 var solution = Solution.GetInvalidSolution();
 
                 if (isFirst && currentRackSet.GetScore() < 30)
                 {
                     state.Stop();
-                    return;
                 }
 
                 var setToTry = Set.ConcatTiles(currentRackSet.Tiles, boardTiles);
-                
+
                 solution = setToTry.GetSolution();
 
                 if (!solution.IsValid) return;
 
-                finalRackSet = currentRackSet;
-                finalSolution = solution;
-                state.Stop();
+                lock (locker)
+                {
+                    if (finalRackSet == null)
+                    {
+                        finalRackSet = currentRackSet;
+                        finalSolution = solution;
+                        state.Stop();
+                    }
+                }
             });
 
-            if (finalRackSet!=null) break;
+            if (finalRackSet != null) break;
         }
-        
+
         if (finalRackSet == null) return finalSolution;
-        
+
         foreach (var tile in finalRackSet.Tiles)
         {
             RackTiles.Remove(tile);
         }
-        
+
         BoardSolution = finalSolution;
 
         return finalSolution;
