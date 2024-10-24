@@ -288,7 +288,7 @@ public class Set
         return string.Join("-", sortedTiles);
     }
 
-    public static Tile[] ParseKey(string key)
+    private static Tile[] ParseKey(string key)
     {
         var tileStrings = key.Split('-');
 
