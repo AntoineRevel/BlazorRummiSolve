@@ -256,7 +256,7 @@ public class Set
                 {
                     combination.Insert(0, element);
                     combination.Sort();
-                    var combinationKey = GetKey(combination); //TODO RST-54 pk passer par un string, utiliser le equals et hash de Tile ?
+                    var combinationKey = GetKey(combination);
                     if (seenCombinations.Add(combinationKey)) yield return combination;
                 }
             }
