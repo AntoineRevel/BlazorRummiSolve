@@ -238,7 +238,7 @@ public class Set
     {
         var combinations = GetCombinations(tiles, n);
         return combinations
-            .Select(combination => new Set() { Tiles = combination.ToArray() })
+            .Select(combination => new Set { Tiles = combination.ToArray() })
             .OrderByDescending(t => t.GetScore());
     }
 

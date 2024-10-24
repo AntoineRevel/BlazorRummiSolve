@@ -67,7 +67,6 @@ public class Tile : IComparable<Tile>
         Console.ResetColor();
     }
 
-
     public override string ToString()
     {
         return GetKey();

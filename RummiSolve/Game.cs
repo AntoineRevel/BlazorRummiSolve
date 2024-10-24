@@ -212,9 +212,7 @@ public class Game
 
                 if (isFirst && currentRackSet.GetScore() < 30) state.Stop();
 
-                var setToTry = Set.ConcatTiles(currentRackSet.Tiles, boardTiles);
-
-                var solution = setToTry.GetSolution();
+                var solution = Set.ConcatTiles(currentRackSet.Tiles, boardTiles).GetSolution();
 
                 if (!solution.IsValid) return;
 
