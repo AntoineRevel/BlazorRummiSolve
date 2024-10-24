@@ -157,4 +157,6 @@ public class Solution
 
         return allTiles;
     }
+
+    public int Count() => _groups.Sum(g => g.Tiles.Length) + _runs.Sum(s => s.Tiles.Length);
 }

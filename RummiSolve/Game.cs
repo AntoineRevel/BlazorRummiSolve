@@ -1,4 +1,6 @@
+using System.Collections.Concurrent;
 using System.Diagnostics;
+using CommandLine;
 using static System.Console;
 
 namespace RummiSolve;
@@ -79,7 +81,14 @@ public class Game
             var turnStopwatch = Stopwatch.StartNew();
 
             Write(playedTiles + " => ");
+            var rack1 = RackTiles.Count;
+            var board1 = BoardSolution.Count();
             var solution = Solve(isFirstMove, newTiles);
+            var rack2 = RackTiles.Count;
+            var board2 = BoardSolution.Count();
+
+            if (rack1 + board1 != rack2 + board2)
+                Console.WriteLine("Big souci " + rack1 + board1 + " " + rack2 + board2);
             newTiles.Clear();
             if (solution.IsValid)
             {
@@ -185,68 +194,51 @@ public class Game
         if (!isFirst && lastTileAdded.Count == 0) return Solution.GetInvalidSolution();
 
         var boardTiles = BoardSolution.GetAllTiles();
-        var locker = new object();
+        
         var finalSolution = Solution.GetInvalidSolution();
-        var solutionFound = false;
+        Set finalRackSet = null;
 
         for (var tileCount = RackTiles.Count; tileCount > (boardTiles.Length == 0 ? 3 : 0); tileCount--)
         {
             var rackSetsToTry = Set.GetBestSets(RackTiles, tileCount);
-            var rackSetsToTryWithNewTile = !isFirst
+            rackSetsToTry = !isFirst
                 ? rackSetsToTry.Where(tab => tab.Tiles.Intersect(lastTileAdded).Any())
                 : rackSetsToTry;
 
-            Parallel.ForEach(rackSetsToTryWithNewTile, (rackSetToTry, state) =>
+            Parallel.ForEach(rackSetsToTry, (currentRackSet, state) =>
             {
-                if (solutionFound) state.Stop();
+                if (finalRackSet!=null) state.Stop();
 
                 var solution = Solution.GetInvalidSolution();
-                if (isFirst && rackSetToTry.GetScore() < 30)
+
+                if (isFirst && currentRackSet.GetScore() < 30)
                 {
                     state.Stop();
                     return;
                 }
 
-                var rackSolutionIsValid = false;
-                if (rackSetToTry.Tiles.Length % 3 == 0 || rackSetToTry.Tiles.Length % 4 == 0)
-                {
-                    var rackSolution = rackSetToTry.GetSolution();
-                    rackSolutionIsValid = rackSolution.IsValid;
-                    if (rackSolutionIsValid)
-                    {
-                        lock (locker)
-                        {
-                            solution = BoardSolution;
-                            solution.AddSolution(rackSolution);
-                        }
-                    }
-                }
-
-                if (!rackSolutionIsValid)
-                {
-                    var setToTry = Set.ConcatTiles(rackSetToTry.Tiles, boardTiles);
-                    solution = setToTry.GetSolution();
-                }
+                var setToTry = Set.ConcatTiles(currentRackSet.Tiles, boardTiles);
+                
+                solution = setToTry.GetSolution();
 
                 if (!solution.IsValid) return;
 
-                lock (locker)
-                {
-                    foreach (var tile in rackSetToTry.Tiles)
-                    {
-                        RackTiles.Remove(tile);
-                    }
-
-                    BoardSolution = solution;
-                    finalSolution = solution;
-                    solutionFound = true;
-                }
-
+                finalRackSet = currentRackSet;
+                finalSolution = solution;
                 state.Stop();
             });
 
-            if (solutionFound) break;
+            if (finalRackSet!=null) break;
         }
+        
+        if (finalRackSet == null) return finalSolution;
+        
+        foreach (var tile in finalRackSet.Tiles)
+        {
+            RackTiles.Remove(tile);
+        }
+        
+        BoardSolution = finalSolution;
 
         return finalSolution;
     }
