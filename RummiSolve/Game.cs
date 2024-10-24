@@ -179,55 +179,7 @@ public class Game
         BoardSolution.PrintSolution();
         WriteLine();
     }
-
-    public Solution Solve2(bool isFirst, Tile? lastTileDrawn = null, List<Tile>? lastBoardTileAdded = null)
-    {
-        if (!isFirst && lastTileDrawn == null && lastBoardTileAdded == null) return Solution.GetInvalidSolution();
-        var boardTiles = BoardSolution.GetAllTiles();
-        for (var tileCount = RackTiles.Count; tileCount > (boardTiles.Length == 0 ? 3 : 0); tileCount--)
-        {
-            var rackSetsToTry = Set.GetBestSets(RackTiles, tileCount);
-            var rackSetsToTryWithNewTile =
-                !isFirst ? rackSetsToTry.Where(tab => tab.Tiles.Contains(lastTileDrawn)) : rackSetsToTry;
-
-            foreach (var rackSetToTry in rackSetsToTryWithNewTile)
-            {
-                var solution = Solution.GetInvalidSolution();
-                if (isFirst && rackSetToTry.GetScore() < 30) return solution;
-
-                var rackSolutionIsValid = false;
-                if (rackSetToTry.Tiles.Length % 3 == 0)
-                {
-                    var rackSolution = rackSetToTry.GetSolution();
-                    rackSolutionIsValid = rackSolution.IsValid;
-                    if (rackSolutionIsValid)
-                    {
-                        solution = BoardSolution;
-                        solution.AddSolution(rackSolution);
-                    }
-                }
-
-                if (!rackSolutionIsValid)
-                {
-                    var setToTry = Set.ConcatTiles(rackSetToTry.Tiles, boardTiles);
-                    solution = setToTry.GetSolution();
-                }
-
-                if (!solution.IsValid) continue;
-
-                foreach (var tile in rackSetToTry.Tiles)
-                {
-                    RackTiles.Remove(tile);
-                }
-
-                BoardSolution = solution;
-                return solution;
-            }
-        }
-
-        return Solution.GetInvalidSolution();
-    }
-
+    
     public Solution Solve(bool isFirst, Tile? lastTileDrawn = null, List<Tile>? lastBoardTileAdded = null)
     {
         if (!isFirst && lastTileDrawn == null && lastBoardTileAdded == null)
@@ -257,7 +209,7 @@ public class Game
                 }
 
                 var rackSolutionIsValid = false;
-                if (rackSetToTry.Tiles.Length % 3 == 0)
+                if (rackSetToTry.Tiles.Length % 3 == 0 || rackSetToTry.Tiles.Length % 4 == 0)
                 {
                     var rackSolution = rackSetToTry.GetSolution();
                     rackSolutionIsValid = rackSolution.IsValid;
