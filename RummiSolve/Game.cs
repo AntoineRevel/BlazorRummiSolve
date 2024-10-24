@@ -70,7 +70,7 @@ public class Game
         PrintAllTiles();
         var isFirstMove = true;
         var playedTiles = 0;
-        Tile? newTile = null;
+        var newTiles = new List<Tile>();
 
         var totalStopwatch = Stopwatch.StartNew();
 
@@ -79,8 +79,8 @@ public class Game
             var turnStopwatch = Stopwatch.StartNew();
 
             Write(playedTiles + " => ");
-            var solution = Solve(isFirstMove, newTile);
-
+            var solution = Solve(isFirstMove, newTiles);
+            newTiles.Clear();
             if (solution.IsValid)
             {
                 isFirstMove = false;
@@ -91,13 +91,12 @@ public class Game
             }
             else Write("Can't play : ");
 
-            newTile = DrawAndAddTileToRack(ref playedTiles);
+            newTiles.Add(DrawAndAddTileToRack(ref playedTiles));
 
             turnStopwatch.Stop();
             WriteLine($"Time for this turn: {turnStopwatch.ElapsedMilliseconds} ms");
             WriteLine($"Total time since start: {totalStopwatch.ElapsedMilliseconds} ms");
             PrintAllTiles();
-            
         }
 
         WriteLine("Congratulations, you have played all your tiles!");
@@ -107,11 +106,12 @@ public class Game
     public void StartConsole()
     {
         var isFirst = false;
+        var newTiles = new List<Tile>();
         AddTileToRackConsole();
         while (RackTiles.Count > 0)
         {
             AddTileToBoardConsole();
-            var solution = Solve(isFirst);
+            var solution = Solve(isFirst, newTiles);
             PrintAllTiles();
             if (!solution.IsValid)
             {
@@ -179,22 +179,21 @@ public class Game
         BoardSolution.PrintSolution();
         WriteLine();
     }
-    
-    public Solution Solve(bool isFirst, Tile? lastTileDrawn = null, List<Tile>? lastBoardTileAdded = null)
+
+    public Solution Solve(bool isFirst, List<Tile> lastTileAdded)
     {
-        if (!isFirst && lastTileDrawn == null && lastBoardTileAdded == null)
-            return Solution.GetInvalidSolution();
+        if (!isFirst && lastTileAdded.Count == 0) return Solution.GetInvalidSolution();
 
         var boardTiles = BoardSolution.GetAllTiles();
         var locker = new object();
-        Solution finalSolution = Solution.GetInvalidSolution();
-        bool solutionFound = false;
+        var finalSolution = Solution.GetInvalidSolution();
+        var solutionFound = false;
 
         for (var tileCount = RackTiles.Count; tileCount > (boardTiles.Length == 0 ? 3 : 0); tileCount--)
         {
             var rackSetsToTry = Set.GetBestSets(RackTiles, tileCount);
             var rackSetsToTryWithNewTile = !isFirst
-                ? rackSetsToTry.Where(tab => tab.Tiles.Contains(lastTileDrawn))
+                ? rackSetsToTry.Where(tab => tab.Tiles.Intersect(lastTileAdded).Any())
                 : rackSetsToTry;
 
             Parallel.ForEach(rackSetsToTryWithNewTile, (rackSetToTry, state) =>

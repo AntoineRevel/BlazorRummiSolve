@@ -112,18 +112,18 @@ public class RummiBench
         Console.WriteLine(key);
         var sameSol = new Solution(key);
         sameSol.PrintSolution();
-
     }
 
     [Benchmark]
     public Solution OldHand()
     {
+        var newTiles = new List<Tile>();
         var game = new Game
         {
             BoardSolution = _exampleValidSet.GetSolution(),
             RackTiles = _exampleRackTiles
         };
-        return game.Solve(true);
+        return game.Solve(true, newTiles);
     }
 
     public static void TestRandomValidSet()
