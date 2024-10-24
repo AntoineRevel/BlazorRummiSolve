@@ -197,7 +197,7 @@ public class Game
 
         var finalSolution = Solution.GetInvalidSolution();
         var locker = new object();
-        Set finalRackSet = null;
+        Set finalRackSet = null!;
 
         for (var tileCount = RackTiles.Count; tileCount > (boardTiles.Length == 0 ? 3 : 0); tileCount--)
         {
@@ -210,16 +210,11 @@ public class Game
             {
                 if (finalRackSet != null) state.Stop();
 
-                var solution = Solution.GetInvalidSolution();
-
-                if (isFirst && currentRackSet.GetScore() < 30)
-                {
-                    state.Stop();
-                }
+                if (isFirst && currentRackSet.GetScore() < 30) state.Stop();
 
                 var setToTry = Set.ConcatTiles(currentRackSet.Tiles, boardTiles);
 
-                solution = setToTry.GetSolution();
+                var solution = setToTry.GetSolution();
 
                 if (!solution.IsValid) return;
 
