@@ -11,12 +11,6 @@ public class Set
         _isSorted = false;
     }
 
-    protected Set(string key)
-    {
-        _isSorted = true;
-        Tiles = ParseKey(key);
-    }
-
     public void PrintAllTiles()
     {
         foreach (var tile in Tiles)
@@ -46,7 +40,7 @@ public class Set
         {
             return length == 0 ? new Solution() : Solution.GetInvalidSolution();
         }
-        
+
         var solution = FindSolution(new Solution(), usedTiles, length, 0);
         return solution;
     }
@@ -54,6 +48,12 @@ public class Set
     private Solution FindSolution(Solution solution, bool[] usedTiles, int unusedTileCount, int firstUnusedTileIndex)
     {
         firstUnusedTileIndex = GetNextUnusedTileIndex(usedTiles, firstUnusedTileIndex);
+
+        // var availableJokerIndices = Tiles
+        //     .Select((tile, index) => new { Tile = tile, Index = index })
+        //     .Where(t => !usedTiles[t.Index] && t.Tile.IsJoker)
+        //     .Select(t => t.Index)
+        //     .ToList();
 
         var runs = GetRuns(firstUnusedTileIndex, usedTiles);
         var groups = GetGroups(firstUnusedTileIndex, usedTiles);
@@ -262,42 +262,9 @@ public class Set
             }
         }
     }
-
-    public string GetKey()
-    {
-        return string.Join<Tile>("-", Tiles);
-    }
-
-    private string GetKey(bool[] usedTiles, int unusedTileCount)
-    {
-        var selectedTiles = new Tile[unusedTileCount];
-        var index = 0;
-        for (var i = 0; i < Tiles.Length; i++)
-        {
-            if (!usedTiles[i])
-            {
-                selectedTiles[index++] = Tiles[i];
-            }
-        }
-
-        return string.Join<Tile>("-", selectedTiles);
-    }
-
+    
     private static string GetKey(IEnumerable<Tile> sortedTiles)
     {
         return string.Join("-", sortedTiles);
-    }
-
-    private static Tile[] ParseKey(string key)
-    {
-        var tileStrings = key.Split('-');
-
-        var tiles = new Tile[tileStrings.Length];
-        for (var i = 0; i < tileStrings.Length; i++)
-        {
-            tiles[i] = Tile.FromString(tileStrings[i]);
-        }
-
-        return tiles;
     }
 }

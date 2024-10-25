@@ -1,15 +1,7 @@
 namespace RummiSolve;
 
-public class Run: Set
+public class Run : Set
 {
-    public Run()
-    {
-    }
-
-    public Run(string key) : base(key)
-    {
-    }
-
     public bool IsValidRun()
     {
         if (Tiles.Length is < 3 or > 13)

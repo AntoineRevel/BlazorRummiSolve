@@ -16,56 +16,6 @@ public class Solution
         IsValid = true;
     }
     
-    public Solution(string key)
-    {
-        if (key == "InvalidSolution")
-        {
-            IsValid = false;
-            _runs = [];
-            _groups = [];
-            return;
-        }
-
-        IsValid = true;
-        
-        var parts = key.Split(["||"], StringSplitOptions.None);
-        if (parts.Length != 2)
-        {
-            throw new ArgumentException("Clé invalide pour une Solution.");
-        }
-        
-        _runs = parts[0]
-            .Split('|')
-            .Where(runKey => !string.IsNullOrWhiteSpace(runKey))
-            .Select(runKey => new Run(runKey))
-            .ToList();
-        
-        _groups = parts[1]
-            .Split('|')
-            .Where(groupKey => !string.IsNullOrWhiteSpace(groupKey))
-            .Select(groupKey => new Group(groupKey))
-            .ToList();
-    }
-    
-    public string GetKey()
-    {
-        if (!IsValid)
-        {
-            return "InvalidSolution";
-        }
-        
-        var runKeys = _runs.Select(run => run.GetKey()).ToList();
-        var groupKeys = _groups.Select(group => group.GetKey()).ToList();
-        
-        runKeys.Sort();
-        groupKeys.Sort();
-        
-        var combinedRunKeys = string.Join("|", runKeys);
-        var combinedGroupKeys = string.Join("|", groupKeys);
-        
-        return $"{combinedRunKeys}||{combinedGroupKeys}";
-    }
-
     private Solution(Solution existingSolution)
     {
         ArgumentNullException.ThrowIfNull(existingSolution);

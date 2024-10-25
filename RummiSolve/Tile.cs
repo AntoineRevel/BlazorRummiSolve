@@ -4,6 +4,7 @@ public class Tile : IComparable<Tile>
 {
     public int Number { get; }
     public Color TileColor { get; }
+    public bool IsJoker { get; }
 
     public enum Color
     {
@@ -13,7 +14,7 @@ public class Tile : IComparable<Tile>
         Black
     }
 
-    public Tile(int number, Color color)
+    public Tile(int number, Color color, bool isJoker = false)
     {
         if (number is < 1 or > 13)
         {
@@ -22,77 +23,79 @@ public class Tile : IComparable<Tile>
 
         Number = number;
         TileColor = color;
+        IsJoker = isJoker;
     }
-
-    private string GetKey()
-    {
-        var colorCode = (int)TileColor;
-        return $"{Number}:{colorCode}";
-    }
-
-    public static Tile FromString(string tileString)
-    {
-        var parts = tileString.Split(':');
-        if (parts.Length != 2)
-        {
-            throw new ArgumentException("Input string must be in the format 'Number:Color'.", nameof(tileString));
-        }
-
-        if (!int.TryParse(parts[0], out var number))
-        {
-            throw new ArgumentException("Invalid number format.", nameof(tileString));
-        }
-
-        if (!Enum.TryParse(parts[1], true, out Color color))
-        {
-            throw new ArgumentException($"Invalid color '{parts[1]}'. Must be one of: Blue, Red, Mango, Black.",
-                nameof(tileString));
-        }
-
-        return new Tile(number, color);
-    }
-
+    
     public void PrintTile()
     {
-        Console.ForegroundColor = TileColor switch
+        if (IsJoker)
         {
-            Color.Blue => ConsoleColor.Blue,
-            Color.Red => ConsoleColor.Red,
-            Color.Mango => ConsoleColor.Yellow,
-            Color.Black => ConsoleColor.White,
-            _ => Console.ForegroundColor
-        };
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.Write("J ");
+        }
+        else
+        {
+            Console.ForegroundColor = TileColor switch
+            {
+                Color.Blue => ConsoleColor.Blue,
+                Color.Red => ConsoleColor.Red,
+                Color.Mango => ConsoleColor.Yellow,
+                Color.Black => ConsoleColor.White,
+                _ => Console.ForegroundColor 
+            };
 
-        Console.Write(Number + " ");
+            Console.Write(Number + " ");
+        }
+        
         Console.ResetColor();
     }
 
     public override string ToString()
     {
-        return GetKey();
-    }
-
-    private bool Equals(Tile other)
-    {
-        return Number == other.Number && TileColor == other.TileColor;
+        if (IsJoker)
+        {
+            return "J";
+        }
+        var colorCode = (int)TileColor;
+        return $"{Number}:{colorCode}";
     }
 
     public int CompareTo(Tile? other)
     {
         if (other == null) return 1;
+
+        switch (IsJoker)
+        {
+            case true when other.IsJoker: return 0;
+            case true: return 1;
+        }
+
+        if (other.IsJoker) return -1;
+
         var colorComparison = TileColor.CompareTo(other.TileColor);
         return colorComparison != 0 ? colorComparison : Number.CompareTo(other.Number);
     }
 
     public override bool Equals(object? obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
-        if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == this.GetType() && Equals((Tile)obj);
+        if (obj == null || GetType() != obj.GetType()) return false;
+
+        var other = (Tile)obj;
+
+        if (IsJoker && other.IsJoker) return true;
+
+        if (IsJoker || other.IsJoker) return false;
+
+        return Number == other.Number && TileColor == other.TileColor;
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(Number, (int)TileColor);
+        if (IsJoker) return 0;
+
+        var hash = 17;
+        hash = hash * 31 + Number.GetHashCode();
+        hash = hash * 31 + TileColor.GetHashCode();
+        return hash;
     }
 }

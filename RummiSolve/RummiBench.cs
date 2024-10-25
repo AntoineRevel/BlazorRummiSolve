@@ -102,18 +102,7 @@ public class RummiBench
         new Tile(8, Tile.Color.Mango),
         new Tile(8, Tile.Color.Red)
     ];
-
-    public void getSolValid()
-    {
-        var sol = _exampleValidSet.GetSolution();
-        Console.WriteLine();
-        sol.PrintSolution();
-        var key = sol.GetKey();
-        Console.WriteLine(key);
-        var sameSol = new Solution(key);
-        sameSol.PrintSolution();
-    }
-
+    
     [Benchmark]
     public Solution OldHand()
     {
