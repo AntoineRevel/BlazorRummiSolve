@@ -4,18 +4,18 @@ public class Set
 {
     public List<Tile> Tiles; //TODO check if List is the best
     private bool _isSorted;
-    public int _jokers; //TODO private
+    public int Jokers; //TODO private
 
     public Set()
     {
-        _jokers = 0;
+        Jokers = 0;
         Tiles = [];
         _isSorted = false;
     }
 
     public Set(string input, Tile.Color color)
     {
-        _jokers = 0;
+        Jokers = 0;
         _isSorted = false;
 
         Tiles = [];
@@ -31,7 +31,7 @@ public class Set
             else if (numberStr.Equals("J", StringComparison.OrdinalIgnoreCase))
             {
                 var jokerTile = new Tile(0, Tile.Color.Black, true);
-                _jokers++;
+                Jokers++;
                 Tiles.Add(jokerTile);
             }
             else
@@ -46,7 +46,7 @@ public class Set
         ArgumentNullException.ThrowIfNull(tile);
 
         Tiles.Add(tile);
-        if (tile.IsJoker) _jokers++;
+        if (tile.IsJoker) Jokers++;
         _isSorted = false;
     }
 
@@ -65,7 +65,7 @@ public class Set
         ArgumentNullException.ThrowIfNull(set);
 
         Tiles.AddRange(set.Tiles);
-        _jokers += set._jokers;
+        Jokers += set.Jokers;
         _isSorted = false;
 
         return this;
@@ -79,11 +79,11 @@ public class Set
         {
             Tiles = [..Tiles],
             _isSorted = _isSorted,
-            _jokers = _jokers
+            Jokers = Jokers
         };
 
         newSet.Tiles.AddRange(set.Tiles);
-        newSet._jokers += set._jokers;
+        newSet.Jokers += set.Jokers;
         newSet._isSorted = false;
 
         return newSet;
@@ -97,7 +97,7 @@ public class Set
         var removed = Tiles.Remove(tile);
 
         if (!removed) return removed;
-        if (tile.IsJoker) _jokers--;
+        if (tile.IsJoker) Jokers--;
 
         return removed;
     }
@@ -110,7 +110,7 @@ public class Set
         }
 
         if (!_isSorted) return;
-        for (var i = 0; i < _jokers; i++)
+        for (var i = 0; i < Jokers; i++)
         {
             Tile.PrintJoker();
         }
@@ -135,9 +135,9 @@ public class Set
         var length = Tiles.Count;
         var usedTiles = new bool[length];
 
-        if (length + _jokers <= 2) return length == 0 ? new Solution() : Solution.GetInvalidSolution();
+        if (length + Jokers <= 2) return length == 0 ? new Solution() : Solution.GetInvalidSolution();
 
-        var solution = FindSolution(new Solution(), usedTiles, length, 0, _jokers);
+        var solution = FindSolution(new Solution(), usedTiles, length, 0, Jokers);
         return solution;
     }
 
@@ -224,7 +224,7 @@ public class Set
                     runs.Add(new Run
                     {
                         Tiles = [..currentRun],
-                        _jokers = jokersUsed
+                        Jokers = jokersUsed
                     });
             }
 
@@ -239,7 +239,7 @@ public class Set
                 runs.Add(new Run
                 {
                     Tiles = [..currentRun],
-                    _jokers = jokersUsed
+                    Jokers = jokersUsed
                 });
             }
         }

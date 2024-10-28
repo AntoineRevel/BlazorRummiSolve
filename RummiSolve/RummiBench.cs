@@ -132,7 +132,7 @@ public class RummiBench
                 new Tile(3, Tile.Color.Mango),
                 new Tile(4, Tile.Color.Mango),
             ],
-            _jokers = 2
+            Jokers = 2
         };
 
         setToTest.Sort();
