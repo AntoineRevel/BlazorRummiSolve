@@ -86,9 +86,8 @@ public class Game
             var solution = Solve(isFirstMove, newTiles);
             var rack2 = RackTilesSet.Tiles.Count;
             var board2 = BoardSolution.Count();
-
-            if (rack1 + board1 != rack2 + board2)
-                Console.WriteLine("Big souci " + rack1 + board1 + " " + rack2 + board2);
+            
+            if (rack1 + board1 != rack2 + board2) Console.WriteLine("Big souci " + rack1 + board1 + " " + rack2 + board2);
             newTiles.Clear();
             if (solution.IsValid)
             {

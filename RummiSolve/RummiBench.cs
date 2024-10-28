@@ -118,7 +118,24 @@ public class RummiBench
         };
         return game.Solve(true, newTiles);
     }
-    
+
+    public static void TestJoker()
+    {
+        var setToTest = new Set
+        {
+            Tiles =
+            [
+                new Tile(1, Tile.Color.Blue),
+                new Tile(2, Tile.Color.Blue)
+            ],
+            _jokers = 1
+        };
+
+        setToTest.PrintAllTiles();
+        Console.WriteLine();
+        setToTest.GetSolution().PrintSolution();
+    }
+
     public static void TestRandomValidSet()
     {
         var isValid = true;
@@ -146,8 +163,7 @@ public class RummiBench
             new(1, Tile.Color.Black),
             new(2, Tile.Color.Black),
             new(3, Tile.Color.Black),
-            new(true),
-            new(true)
+            new(3, Tile.Color.Black, true),
         ];
 
 

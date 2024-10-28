@@ -10,14 +10,14 @@ public class Solution
 
     private static readonly Solution InvalidSolution = new() { IsValid = false };
 
-    public Solution(int jokers=0)
+    public Solution()
     {
         _runs = [];
         _groups = [];
         IsValid = true;
-        _jokers = jokers;
+        _jokers = 0;
     }
-    
+
     private Solution(Solution existingSolution)
     {
         ArgumentNullException.ThrowIfNull(existingSolution);
@@ -44,7 +44,7 @@ public class Solution
     {
         _runs.Add(run);
     }
-    
+
 
     public void AddGroup(Group group)
     {
@@ -87,11 +87,11 @@ public class Solution
     {
         return _runs.All(run => run.IsValidRun()) && _groups.All(group => group.IsValidGroup());
     }
-    
+
     public Set GetSet()
     {
-        var result = new Set(_jokers);
-        
+        var result = new Set();
+
         foreach (var run in _runs)
         {
             result.Concat(run);

@@ -2,7 +2,7 @@ namespace RummiSolve;
 
 public class Tile : IComparable<Tile>
 {
-    public int Number { get; }
+    public int Value { get; }
     public Color TileColor { get; }
     public bool IsJoker { get; }
 
@@ -14,24 +14,27 @@ public class Tile : IComparable<Tile>
         Black
     }
 
-    public Tile(int number, Color color)
+    public Tile(int value, Color color, bool isJoker = false)
     {
-        if (number is < 1 or > 13)
+        if (value is < 1 or > 13)
         {
-            throw new ArgumentOutOfRangeException(nameof(number), "Number must be between 1 and 13.");
+            throw new ArgumentOutOfRangeException(nameof(value), "Number must be between 1 and 13.");
         }
 
-        Number = number;
+        Value = value;
         TileColor = color;
-        IsJoker = false;
+        IsJoker = isJoker;
     }
     
     public Tile(bool isJoker)
     {
-        Number = -24;
+
+        Value = 0;
+        TileColor = Color.Black;
         IsJoker = isJoker;
     }
-    
+
+
     public void PrintTile()
     {
         if (IsJoker)
@@ -47,12 +50,12 @@ public class Tile : IComparable<Tile>
                 Color.Red => ConsoleColor.Red,
                 Color.Mango => ConsoleColor.Yellow,
                 Color.Black => ConsoleColor.White,
-                _ => Console.ForegroundColor 
+                _ => Console.ForegroundColor
             };
 
-            Console.Write(Number + " ");
+            Console.Write(Value + " ");
         }
-        
+
         Console.ResetColor();
     }
 
@@ -62,8 +65,9 @@ public class Tile : IComparable<Tile>
         {
             return "J";
         }
+
         var colorCode = (int)TileColor;
-        return $"{Number}:{colorCode}";
+        return $"{Value}:{colorCode}";
     }
 
     public int CompareTo(Tile? other)
@@ -79,7 +83,7 @@ public class Tile : IComparable<Tile>
         if (other.IsJoker) return -1;
 
         var colorComparison = TileColor.CompareTo(other.TileColor);
-        return colorComparison != 0 ? colorComparison : Number.CompareTo(other.Number);
+        return colorComparison != 0 ? colorComparison : Value.CompareTo(other.Value);
     }
 
     public override bool Equals(object? obj)
@@ -92,7 +96,7 @@ public class Tile : IComparable<Tile>
 
         if (IsJoker || other.IsJoker) return false;
 
-        return Number == other.Number && TileColor == other.TileColor;
+        return Value == other.Value && TileColor == other.TileColor;
     }
 
     public override int GetHashCode()
@@ -100,7 +104,7 @@ public class Tile : IComparable<Tile>
         if (IsJoker) return 0;
 
         var hash = 17;
-        hash = hash * 31 + Number.GetHashCode();
+        hash = hash * 31 + Value.GetHashCode();
         hash = hash * 31 + TileColor.GetHashCode();
         return hash;
     }

@@ -9,9 +9,9 @@ public class Group : Set
             return false;
         }
 
-        var number = Tiles[0].Number;
+        var number = Tiles[0].Value;
         var colors = new HashSet<Tile.Color>();
 
-        return Tiles.All(tile => tile.Number == number && colors.Add(tile.TileColor));
+        return Tiles.All(tile => tile.Value == number && colors.Add(tile.TileColor));
     }
 }

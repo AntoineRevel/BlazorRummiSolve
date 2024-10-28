@@ -4,11 +4,11 @@ public class Set
 {
     public List<Tile> Tiles; //TODO check if List is the best
     private bool _isSorted;
-    private int _jokers;
+    public int _jokers; //TODO private
 
-    public Set(int jokers = 0)
+    public Set()
     {
-        _jokers = jokers;
+        _jokers = 0;
         Tiles = [];
         _isSorted = false;
     }
@@ -30,7 +30,7 @@ public class Set
             }
             else if (numberStr.Equals("J", StringComparison.OrdinalIgnoreCase))
             {
-                var jokerTile = new Tile(true);
+                var jokerTile = new Tile(0, Tile.Color.Black, true);
                 _jokers++;
                 Tiles.Add(jokerTile);
             }
@@ -75,10 +75,11 @@ public class Set
     {
         ArgumentNullException.ThrowIfNull(set);
 
-        var newSet = new Set(_jokers)
+        var newSet = new Set
         {
             Tiles = [..Tiles],
-            _isSorted = _isSorted
+            _isSorted = _isSorted,
+            _jokers = _jokers
         };
 
         newSet.Tiles.AddRange(set.Tiles);
@@ -118,20 +119,18 @@ public class Set
 
     public int GetScore()
     {
-        return Tiles.Sum(t => t.Number);
+        return Tiles.Sum(t => t.Value);
     }
 
     public Solution GetSolution()
     {
         Sort();
-        
-        if (_jokers > 0) Tiles.RemoveRange(Tiles.Count - _jokers, _jokers);
-        
+
         var length = Tiles.Count;
         var usedTiles = new bool[length];
-        
-        if (length <= 2) return length == 0 ? new Solution() : Solution.GetInvalidSolution();
-        
+
+        if (length + _jokers <= 2) return length == 0 ? new Solution() : Solution.GetInvalidSolution();
+
         var solution = FindSolution(new Solution(), usedTiles, length, 0, _jokers);
         return solution;
     }
@@ -192,7 +191,7 @@ public class Set
         return false;
     }
 
-    private List<Run> GetRuns(int firstTileIndex, bool[] usedTiles, int availableJokers)
+    private List<Run> GetRunSJ(int firstTileIndex, bool[] usedTiles, int availableJokers)
     {
         var runs = new List<Run>();
 
@@ -202,23 +201,22 @@ public class Set
 
         var currentRun = new List<Tile> { firstTile };
 
-        var lastNumber = firstTile.Number;
+        var lastNumber = firstTile.Value;
 
         for (var j = firstTileIndex + 1; j < Tiles.Count; j++)
         {
             if (usedTiles[j]) continue;
 
             var currentTile = Tiles[j];
-            if (currentTile.TileColor == firstTile.TileColor && currentTile.Number == lastNumber + 1)
+
+            if (currentTile.Value == lastNumber) continue;
+
+            if (currentTile.TileColor == firstTile.TileColor && currentTile.Value == lastNumber + 1)
             {
                 currentRun.Add(currentTile);
-                lastNumber = currentTile.Number;
-                
-
+                lastNumber = currentTile.Value;
             }
 
-            if (currentTile.Number != lastNumber) break;
-            
             if (currentRun.Count >= 3)
             {
                 runs.Add(new Run { Tiles = [..currentRun] });
@@ -229,16 +227,60 @@ public class Set
         return runs;
     }
 
+    private List<Run> GetRuns(int tileIndex, bool[] usedTiles, int availableJokers)
+    {
+        var runs = new List<Run>();
+        var firstTile = Tiles[tileIndex];
+        var color = firstTile.TileColor;
+        var currentRun = new List<Tile> { firstTile };
+        var jokersUsed = 0;
+        var i = tileIndex + 1;
+
+        while (true)
+        {
+            for (; i < Tiles.Count; i++)
+            {
+                if (Tiles[i].TileColor != color) break;
+
+                if (usedTiles[i] || Tiles[i].Value == currentRun[^1].Value) continue;
+
+                if (Tiles[i].Value == currentRun[^1].Value + 1) currentRun.Add(Tiles[i]);
+
+                if (currentRun.Count >= 3)
+                    runs.Add(new Run
+                    {
+                        Tiles = [..currentRun],
+                        _jokers = jokersUsed
+                    });
+            }
+
+            if (availableJokers <= 0) return runs;
+
+            currentRun.Add(new Tile(currentRun[^1].Value + 1, color, true));
+            availableJokers -= 1;
+            jokersUsed++;
+
+            if (currentRun.Count >= 3)
+            {
+                runs.Add(new Run
+                {
+                    Tiles = [..currentRun],
+                    _jokers = jokersUsed
+                });
+            }
+        }
+    }
+
     private Group[] GetGroups(int firstTileIndex, bool[] usedTiles, int availableJokers)
     {
         if (Tiles.Count == 0) return [];
 
         var firstTile = Tiles[firstTileIndex];
-        var number = firstTile.Number;
+        var number = firstTile.Value;
         var color = firstTile.TileColor;
 
         var sameNumberTiles = Tiles
-            .Where((tile, index) => !usedTiles[index] && tile.Number == number && tile.TileColor != color)
+            .Where((tile, index) => !usedTiles[index] && tile.Value == number && tile.TileColor != color)
             .Distinct()
             .ToArray();
 
