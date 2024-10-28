@@ -5,15 +5,17 @@ public class Solution
     private readonly List<Run> _runs;
     private readonly List<Group> _groups;
     public bool IsValid;
-    //TODO cheeck if needed private string? _key=null;
+    private int _jokers;
+    //todo int totalTiles
 
     private static readonly Solution InvalidSolution = new() { IsValid = false };
 
-    public Solution()
+    public Solution(int jokers=0)
     {
         _runs = [];
         _groups = [];
         IsValid = true;
+        _jokers = jokers;
     }
     
     private Solution(Solution existingSolution)
@@ -23,6 +25,7 @@ public class Solution
         _runs = [..existingSolution._runs];
         _groups = [..existingSolution._groups];
         IsValid = existingSolution.IsValid;
+        _jokers = existingSolution._jokers;
     }
 
     public static Solution GetInvalidSolution()
@@ -84,29 +87,23 @@ public class Solution
     {
         return _runs.All(run => run.IsValidRun()) && _groups.All(group => group.IsValidGroup());
     }
-
-    public Tile[] GetAllTiles()
+    
+    public Set GetSet()
     {
-        var totalSize = _runs.Sum(run => run.Tiles.Length) + _groups.Sum(group => group.Tiles.Length);
-
-        var allTiles = new Tile[totalSize];
-
-        var currentIndex = 0;
-
+        var result = new Set(_jokers);
+        
         foreach (var run in _runs)
         {
-            Array.Copy(run.Tiles, 0, allTiles, currentIndex, run.Tiles.Length);
-            currentIndex += run.Tiles.Length;
+            result.Concat(run);
         }
 
         foreach (var group in _groups)
         {
-            Array.Copy(group.Tiles, 0, allTiles, currentIndex, group.Tiles.Length);
-            currentIndex += group.Tiles.Length;
+            result.Concat(group);
         }
 
-        return allTiles;
+        return result;
     }
 
-    public int Count() => _groups.Sum(g => g.Tiles.Length) + _runs.Sum(s => s.Tiles.Length);
+    public int Count() => _groups.Sum(g => g.Tiles.Count) + _runs.Sum(s => s.Tiles.Count); //TODO temporaire
 }

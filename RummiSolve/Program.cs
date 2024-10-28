@@ -1,6 +1,4 @@
 ﻿using BenchmarkDotNet.Running;
-using DotNetEnv;
-using StackExchange.Redis;
 
 namespace RummiSolve;
 
@@ -27,4 +25,5 @@ public static class Program
         var game = new Game();
         game.StartConsole();
     }
+    
 }

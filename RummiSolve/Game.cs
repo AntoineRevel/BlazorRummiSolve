@@ -7,7 +7,7 @@ namespace RummiSolve;
 
 public class Game
 {
-    public List<Tile> RackTiles { get; set; } = [];
+    public Set RackTilesSet { get; set; } = new();
     public Solution BoardSolution { get; set; } = new();
     private List<Tile> TilePool { get; set; } = [];
 
@@ -33,7 +33,7 @@ public class Game
     {
         for (var i = 0; i < 14; i++)
         {
-            RackTiles.Add(TilePool[i]);
+            RackTilesSet.AddTile(TilePool[i]);
         }
 
         TilePool.RemoveRange(0, 14);
@@ -54,8 +54,8 @@ public class Game
     private Tile DrawAndAddTileToRack(ref int playedTiles)
     {
         var newTile = DrawTile();
-        var rackContainNewTile = RackTiles.Contains(newTile);
-        RackTiles.Add(newTile);
+        var rackContainNewTile = RackTilesSet.Tiles.Contains(newTile);
+        RackTilesSet.AddTile(newTile);
         playedTiles++;
         Write("Drew tile: ");
         newTile.PrintTile();
@@ -76,15 +76,15 @@ public class Game
 
         var totalStopwatch = Stopwatch.StartNew();
 
-        while (RackTiles.Count > 0)
+        while (RackTilesSet.Tiles.Count > 0)
         {
             var turnStopwatch = Stopwatch.StartNew();
 
             Write(playedTiles + " => ");
-            var rack1 = RackTiles.Count;
+            var rack1 = RackTilesSet.Tiles.Count;
             var board1 = BoardSolution.Count();
             var solution = Solve(isFirstMove, newTiles);
-            var rack2 = RackTiles.Count;
+            var rack2 = RackTilesSet.Tiles.Count;
             var board2 = BoardSolution.Count();
 
             if (rack1 + board1 != rack2 + board2)
@@ -93,7 +93,7 @@ public class Game
             if (solution.IsValid)
             {
                 isFirstMove = false;
-                if (RackTiles.Count > 0 && TilePool.Count > 0)
+                if (RackTilesSet.Tiles.Count > 0 && TilePool.Count > 0)
                 {
                     Write("Can play but not finish : ");
                 }
@@ -114,10 +114,9 @@ public class Game
 
     public void StartConsole()
     {
-        var isFirst = false;
+        var isFirst = true;
         var newTiles = new List<Tile>();
-        AddTileToRackConsole();
-        while (RackTiles.Count > 0)
+        while (RackTilesSet.Tiles.Count > 0 || isFirst)
         {
             AddTileToBoardConsole();
             var solution = Solve(isFirst, newTiles);
@@ -139,15 +138,15 @@ public class Game
             var input = ReadLine();
             if (!string.IsNullOrEmpty(input))
             {
-                RackTiles = Set.GetTilesFromInput(input, color);
+                RackTilesSet = new Set(input, color);
             }
         }
     }
 
     private void AddTileToBoardConsole()
     {
-        var boardTiles = BoardSolution.GetAllTiles();
-        var tilesToAdd = new List<Tile>();
+        var boardSet = BoardSolution.GetSet();
+        var setToAdd = new Set();
 
         while (true)
         {
@@ -157,11 +156,11 @@ public class Game
                 WriteLine($"Enter tile numbers for {color} (separated by spaces):");
                 var input = ReadLine();
                 if (string.IsNullOrEmpty(input)) continue;
-                tilesToAdd.AddRange(Set.GetTilesFromInput(input, color));
+                var newSet = new Set(input, color);
+                setToAdd.Concat(newSet);
             }
-
-            var allTiles = Set.ConcatTiles(boardTiles, tilesToAdd.ToArray());
-            var boardSolution = allTiles.GetSolution();
+            
+            var boardSolution = boardSet.Concat(setToAdd).GetSolution();
             if (boardSolution.IsValid)
             {
                 BoardSolution = boardSolution;
@@ -169,7 +168,7 @@ public class Game
             else
             {
                 WriteLine("Invalid board tiles. Please try again.");
-                tilesToAdd.Clear();
+                setToAdd = new Set();
                 continue;
             }
 
@@ -180,7 +179,7 @@ public class Game
     private void PrintAllTiles()
     {
         WriteLine("Player tiles:");
-        RackTiles.ForEach(t => t.PrintTile());
+        RackTilesSet.Tiles.ForEach(t => t.PrintTile());
 
         WriteLine();
 
@@ -193,15 +192,15 @@ public class Game
     {
         if (!isFirst && lastTileAdded.Count == 0) return Solution.GetInvalidSolution();
 
-        var boardTiles = BoardSolution.GetAllTiles();
+        var boardSet = BoardSolution.GetSet();
 
         var finalSolution = Solution.GetInvalidSolution();
         var locker = new object();
         Set finalRackSet = null!;
 
-        for (var tileCount = RackTiles.Count; tileCount > (boardTiles.Length == 0 ? 3 : 0); tileCount--)
+        for (var tileCount = RackTilesSet.Tiles.Count; tileCount > (boardSet.Tiles.Count == 0 ? 3 : 0); tileCount--)
         {
-            var rackSetsToTry = Set.GetBestSets(RackTiles, tileCount);
+            var rackSetsToTry = Set.GetBestSets(RackTilesSet.Tiles, tileCount);
             rackSetsToTry = !isFirst
                 ? rackSetsToTry.Where(tab => tab.Tiles.Intersect(lastTileAdded).Any())
                 : rackSetsToTry;
@@ -212,7 +211,7 @@ public class Game
 
                 if (isFirst && currentRackSet.GetScore() < 30) state.Stop();
 
-                var solution = Set.ConcatTiles(currentRackSet.Tiles, boardTiles).GetSolution();
+                var solution = boardSet.ConcatNew(currentRackSet).GetSolution();
 
                 if (!solution.IsValid) return;
 
@@ -234,7 +233,7 @@ public class Game
 
         foreach (var tile in finalRackSet.Tiles)
         {
-            RackTiles.Remove(tile);
+            RackTilesSet.Remove(tile);
         }
 
         BoardSolution = finalSolution;

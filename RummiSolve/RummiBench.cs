@@ -14,7 +14,9 @@ public class RummiBench
 
             new Tile(2, Tile.Color.Blue),
             new Tile(3, Tile.Color.Blue),
-            new Tile(4, Tile.Color.Blue)
+            new Tile(4, Tile.Color.Blue),
+            new Tile(true),
+            new Tile(true)
         ]
     };
 
@@ -110,7 +112,7 @@ public class RummiBench
         var game = new Game
         {
             BoardSolution = _exampleValidSet.GetSolution(),
-            RackTiles = _exampleRackTiles
+            RackTilesSet = new Set()
         };
         return game.Solve(true, newTiles);
     }
@@ -125,7 +127,7 @@ public class RummiBench
         {
             randSet = GenerateRandomValidSet().ShuffleTiles();
             randSet.PrintAllTiles();
-            Console.WriteLine(randSet.Tiles.Length);
+            Console.WriteLine(randSet.Tiles.Count);
             randSol = randSet.GetSolution();
             randSol.PrintSolution();
             Console.WriteLine();
@@ -138,14 +140,16 @@ public class RummiBench
     {
         List<Tile> tryCombiSet =
         [
-            new Tile(1, Tile.Color.Black),
-            new Tile(1, Tile.Color.Black),
-            new Tile(2, Tile.Color.Black),
-            new Tile(3, Tile.Color.Black),
+            new(1, Tile.Color.Black),
+            new(1, Tile.Color.Black),
+            new(2, Tile.Color.Black),
+            new(3, Tile.Color.Black),
+            new(true),
+            new(true)
         ];
 
 
-        foreach (var tiles in Set.GetBestSets(tryCombiSet, 3))
+        foreach (var tiles in Set.GetBestSets(tryCombiSet, 2))
         {
             foreach (var tile in tiles.Tiles)
             {
@@ -204,6 +208,6 @@ public class RummiBench
             tiles.AddRange(group);
         }
 
-        return new Set { Tiles = tiles.ToArray() };
+        return new Set { Tiles = tiles };
     }
 }

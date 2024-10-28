@@ -14,7 +14,7 @@ public class Tile : IComparable<Tile>
         Black
     }
 
-    public Tile(int number, Color color, bool isJoker = false)
+    public Tile(int number, Color color)
     {
         if (number is < 1 or > 13)
         {
@@ -23,6 +23,12 @@ public class Tile : IComparable<Tile>
 
         Number = number;
         TileColor = color;
+        IsJoker = false;
+    }
+    
+    public Tile(bool isJoker)
+    {
+        Number = -24;
         IsJoker = isJoker;
     }
     
