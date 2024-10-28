@@ -49,7 +49,7 @@ public class Set
         if (tile.IsJoker) _jokers++;
         _isSorted = false;
     }
-    
+
     public void AddTiles(IEnumerable<Tile> tiles)
     {
         ArgumentNullException.ThrowIfNull(tiles);
@@ -59,7 +59,7 @@ public class Set
             AddTile(tile);
         }
     }
-    
+
     public Set Concat(Set set)
     {
         ArgumentNullException.ThrowIfNull(set);
@@ -70,34 +70,34 @@ public class Set
 
         return this;
     }
-    
+
     public Set ConcatNew(Set set)
     {
         ArgumentNullException.ThrowIfNull(set);
-        
+
         var newSet = new Set(_jokers)
         {
             Tiles = [..Tiles],
             _isSorted = _isSorted
         };
-        
+
         newSet.Tiles.AddRange(set.Tiles);
         newSet._jokers += set._jokers;
         newSet._isSorted = false;
 
         return newSet;
     }
-    
-    
+
+
     public bool Remove(Tile tile)
     {
         ArgumentNullException.ThrowIfNull(tile);
-        
+
         var removed = Tiles.Remove(tile);
 
         if (!removed) return removed;
         if (tile.IsJoker) _jokers--;
-        
+
         return removed;
     }
 
@@ -125,7 +125,7 @@ public class Set
     {
         Sort();
         var length = Tiles.Count;
-        var usedTiles = new bool[length - _jokers];
+        var usedTiles = new bool[length];
         if (length <= 2)
         {
             return length == 0 ? new Solution() : Solution.GetInvalidSolution();
@@ -140,8 +140,8 @@ public class Set
     {
         firstUnusedTileIndex = GetNextUnusedTileIndex(usedTiles, firstUnusedTileIndex);
 
-        var runs = GetRuns(firstUnusedTileIndex, usedTiles, 0);
-        var groups = GetGroups(firstUnusedTileIndex, usedTiles, 0);
+        var runs = GetRuns(firstUnusedTileIndex, usedTiles, availableJokers);
+        var groups = GetGroups(firstUnusedTileIndex, usedTiles, availableJokers);
 
         //TODO concat joker at the end
 
@@ -284,7 +284,7 @@ public class Set
 
         return this;
     }
-    
+
     public static IEnumerable<Set> GetBestSets(List<Tile> tiles, int n)
     {
         var combinations = GetCombinations(tiles, n);

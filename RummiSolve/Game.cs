@@ -160,7 +160,7 @@ public class Game
                 setToAdd.Concat(newSet);
             }
             
-            var boardSolution = boardSet.Concat(setToAdd).GetSolution();
+            var boardSolution = boardSet.ConcatNew(setToAdd).GetSolution();
             if (boardSolution.IsValid)
             {
                 BoardSolution = boardSolution;
@@ -211,6 +211,8 @@ public class Game
 
                 if (isFirst && currentRackSet.GetScore() < 30) state.Stop();
 
+                //TODO try currentRackSet.GetSolution();
+                
                 var solution = boardSet.ConcatNew(currentRackSet).GetSolution();
 
                 if (!solution.IsValid) return;
