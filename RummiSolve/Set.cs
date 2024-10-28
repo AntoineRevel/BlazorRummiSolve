@@ -108,9 +108,15 @@ public class Set
         {
             tile.PrintTile();
         }
+
+        if (!_isSorted) return;
+        for (var i = 0; i < _jokers; i++)
+        {
+            Tile.PrintJoker();
+        }
     }
 
-    private void Sort()
+    public void Sort()
     {
         if (_isSorted) return;
         Tiles.Sort();
@@ -143,7 +149,7 @@ public class Set
         var runs = GetRuns(firstUnusedTileIndex, usedTiles, availableJokers);
         var groups = GetGroups(firstUnusedTileIndex, usedTiles, availableJokers);
 
-        //TODO concat joker at the end
+        //TODO concat joker at the end if Lents 
 
         if (TryAddSets(solution, runs, usedTiles, ref unusedTileCount, firstUnusedTileIndex
                 , ref availableJokers, (sol, set) => sol.AddRun(set))
@@ -169,15 +175,13 @@ public class Set
         foreach (var set in sets)
         {
             MarkTilesAsUsed(set, true, usedTiles, ref unusedTileCount, ref availableJokers);
-            Solution newSolution;
-            if (unusedTileCount <= 2)
+
+            var newSolution = unusedTileCount switch
             {
-                newSolution = unusedTileCount == 0 ? solution : Solution.GetInvalidSolution();
-            }
-            else
-            {
-                newSolution = FindSolution(solution, usedTiles, unusedTileCount, firstUnusedTileIndex, availableJokers);
-            }
+                0 when availableJokers == 0 => solution,
+                0 when availableJokers != 0 => Solution.GetInvalidSolution(),
+                _ => FindSolution(solution, usedTiles, unusedTileCount, firstUnusedTileIndex, availableJokers)
+            };
 
             if (newSolution.IsValid)
             {
@@ -189,42 +193,6 @@ public class Set
         }
 
         return false;
-    }
-
-    private List<Run> GetRunSJ(int firstTileIndex, bool[] usedTiles, int availableJokers)
-    {
-        var runs = new List<Run>();
-
-        if (Tiles.Count == 0) return runs;
-
-        var firstTile = Tiles[firstTileIndex];
-
-        var currentRun = new List<Tile> { firstTile };
-
-        var lastNumber = firstTile.Value;
-
-        for (var j = firstTileIndex + 1; j < Tiles.Count; j++)
-        {
-            if (usedTiles[j]) continue;
-
-            var currentTile = Tiles[j];
-
-            if (currentTile.Value == lastNumber) continue;
-
-            if (currentTile.TileColor == firstTile.TileColor && currentTile.Value == lastNumber + 1)
-            {
-                currentRun.Add(currentTile);
-                lastNumber = currentTile.Value;
-            }
-
-            if (currentRun.Count >= 3)
-            {
-                runs.Add(new Run { Tiles = [..currentRun] });
-            }
-        }
-
-        //TODO runs.Reverse();
-        return runs;
     }
 
     private List<Run> GetRuns(int tileIndex, bool[] usedTiles, int availableJokers)
@@ -240,11 +208,17 @@ public class Set
         {
             for (; i < Tiles.Count; i++)
             {
-                if (Tiles[i].TileColor != color) break;
+                if (Tiles[i].TileColor != color)
+                {
+                    i = Tiles.Count;
+                    break;
+                }
 
                 if (usedTiles[i] || Tiles[i].Value == currentRun[^1].Value) continue;
 
-                if (Tiles[i].Value == currentRun[^1].Value + 1) currentRun.Add(Tiles[i]);
+                if (Tiles[i].Value != currentRun[^1].Value + 1) break;
+
+                currentRun.Add(Tiles[i]);
 
                 if (currentRun.Count >= 3)
                     runs.Add(new Run
@@ -305,6 +279,11 @@ public class Set
     {
         foreach (var tile in set.Tiles)
         {
+            if (tile.IsJoker)
+            {
+                availableJokers += isUsed ? -1 : 1;
+            }
+
             for (var i = 0; i < Tiles.Count; i++)
             {
                 if (usedTiles[i] == isUsed || !Tiles[i].Equals(tile)) continue;

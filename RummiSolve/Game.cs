@@ -22,7 +22,8 @@ public class Game
             }
         }
 
-        //TODO Ajouter les jokers
+        TilePool.Add(new Tile(true));
+        TilePool.Add(new Tile(true));
 
         var rng = new Random(seed);
 
@@ -54,13 +55,11 @@ public class Game
     private Tile DrawAndAddTileToRack(ref int playedTiles)
     {
         var newTile = DrawTile();
-        var rackContainNewTile = RackTilesSet.Tiles.Contains(newTile);
         RackTilesSet.AddTile(newTile);
         playedTiles++;
         Write("Drew tile: ");
         newTile.PrintTile();
         WriteLine();
-        if (rackContainNewTile) newTile = null;
         return newTile;
     }
 

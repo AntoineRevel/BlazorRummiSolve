@@ -59,6 +59,12 @@ public class Tile : IComparable<Tile>
         Console.ResetColor();
     }
 
+    public static void PrintJoker()
+    {
+        Console.ForegroundColor = ConsoleColor.Magenta;
+        Console.Write("J ");
+    }
+
     public override string ToString()
     {
         if (IsJoker)

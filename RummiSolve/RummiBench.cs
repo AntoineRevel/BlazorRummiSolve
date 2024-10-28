@@ -126,11 +126,16 @@ public class RummiBench
             Tiles =
             [
                 new Tile(1, Tile.Color.Blue),
-                new Tile(2, Tile.Color.Blue)
+                new Tile(2, Tile.Color.Blue),
+                new Tile(4, Tile.Color.Blue),
+                new Tile(2, Tile.Color.Mango),
+                new Tile(3, Tile.Color.Mango),
+                new Tile(4, Tile.Color.Mango),
             ],
-            _jokers = 1
+            _jokers = 2
         };
 
+        setToTest.Sort();
         setToTest.PrintAllTiles();
         Console.WriteLine();
         setToTest.GetSolution().PrintSolution();
