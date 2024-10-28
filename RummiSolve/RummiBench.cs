@@ -8,15 +8,17 @@ public class RummiBench
     {
         Tiles =
         [
-            new Tile(1, Tile.Color.Blue),
-            new Tile(1, Tile.Color.Red),
-            new Tile(1, Tile.Color.Black),
-
-            new Tile(2, Tile.Color.Blue),
-            new Tile(3, Tile.Color.Blue),
-            new Tile(4, Tile.Color.Blue),
-            new Tile(true),
-            new Tile(true)
+            new Tile(11, Tile.Color.Blue),
+            new Tile(13, Tile.Color.Black),
+            new Tile(10, Tile.Color.Blue),
+            new Tile(9, Tile.Color.Blue),
+            new Tile(6, Tile.Color.Blue),
+            new Tile(12, Tile.Color.Blue),
+            new Tile(8, Tile.Color.Blue),
+            new Tile(5, Tile.Color.Blue),
+            new Tile(13, Tile.Color.Mango),
+            new Tile(7, Tile.Color.Blue),
+            new Tile(13, Tile.Color.Blue),
         ]
     };
 
@@ -104,7 +106,7 @@ public class RummiBench
         new Tile(8, Tile.Color.Mango),
         new Tile(8, Tile.Color.Red)
     ];
-    
+
     [Benchmark]
     public Solution OldHand()
     {
@@ -116,24 +118,24 @@ public class RummiBench
         };
         return game.Solve(true, newTiles);
     }
-
+    
     public static void TestRandomValidSet()
     {
-        var randSet = GenerateRandomValidSet().ShuffleTiles();
-        randSet.PrintAllTiles();
-        var randSol = randSet.GetSolution();
+        var isValid = true;
 
-        while (randSol.IsValid)
+        while (isValid)
         {
-            randSet = GenerateRandomValidSet().ShuffleTiles();
+            var randSet = GenerateRandomValidSet();
             randSet.PrintAllTiles();
-            Console.WriteLine(randSet.Tiles.Count);
-            randSol = randSet.GetSolution();
+            Console.WriteLine("ok");
+            var shuffleTiles = randSet.ShuffleTiles();
+            shuffleTiles.PrintAllTiles();
+            Console.WriteLine(shuffleTiles.Tiles.Count);
+            var randSol = randSet.GetSolution();
             randSol.PrintSolution();
-            Console.WriteLine();
+            isValid = randSol.IsValid;
+            Console.WriteLine("   ---   ");
         }
-
-        randSol.PrintSolution();
     }
 
     public static void testCombi()
@@ -166,8 +168,8 @@ public class RummiBench
         var tiles = new List<Tile>();
 
         // Décider aléatoirement du nombre de runs et de groupes à générer
-        var numberOfRuns = random.Next(1, 6); // 1 à 2 runs
-        var numberOfGroups = random.Next(1, 6); // 1 à 2 groupes
+        var numberOfRuns = random.Next(1, 2); // 1 à 2 runs
+        var numberOfGroups = random.Next(1, 2); // 1 à 2 groupes
 
         // Générer les runs
         for (var i = 0; i < numberOfRuns; i++)

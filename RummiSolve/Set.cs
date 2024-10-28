@@ -124,13 +124,14 @@ public class Set
     public Solution GetSolution()
     {
         Sort();
+        
+        if (_jokers > 0) Tiles.RemoveRange(Tiles.Count - _jokers, _jokers);
+        
         var length = Tiles.Count;
         var usedTiles = new bool[length];
-        if (length <= 2)
-        {
-            return length == 0 ? new Solution() : Solution.GetInvalidSolution();
-        }
-
+        
+        if (length <= 2) return length == 0 ? new Solution() : Solution.GetInvalidSolution();
+        
         var solution = FindSolution(new Solution(), usedTiles, length, 0, _jokers);
         return solution;
     }
@@ -212,14 +213,16 @@ public class Set
             {
                 currentRun.Add(currentTile);
                 lastNumber = currentTile.Number;
+                
 
-                if (currentRun.Count >= 3)
-                {
-                    runs.Add(new Run { Tiles = currentRun });
-                }
             }
 
             if (currentTile.Number != lastNumber) break;
+            
+            if (currentRun.Count >= 3)
+            {
+                runs.Add(new Run { Tiles = [..currentRun] });
+            }
         }
 
         //TODO runs.Reverse();
