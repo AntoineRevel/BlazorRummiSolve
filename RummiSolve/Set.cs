@@ -282,7 +282,7 @@ public class Set
             if (tile.IsJoker)
             {
                 availableJokers += isUsed ? -1 : 1;
-//TODO continue;
+                continue;
             }
 
             for (var i = 0; i < Tiles.Count; i++)

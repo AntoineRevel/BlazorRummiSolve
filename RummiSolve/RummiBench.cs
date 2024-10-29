@@ -132,7 +132,7 @@ public class RummiBench
                 new Tile(3, Tile.Color.Mango),
                 new Tile(4, Tile.Color.Mango),
             ],
-            Jokers = 2
+            Jokers = 1
         };
 
         setToTest.Sort();
@@ -170,8 +170,7 @@ public class RummiBench
             new(3, Tile.Color.Black),
             new(3, Tile.Color.Black, true),
         ];
-
-
+        
         foreach (var tiles in Set.GetBestSets(tryCombiSet, 2))
         {
             foreach (var tile in tiles.Tiles)
