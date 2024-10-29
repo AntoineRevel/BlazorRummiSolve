@@ -119,6 +119,31 @@ public class RummiBench
         return game.Solve(true, newTile);
     }
 
+    public static void TestGroupJoker()
+    {
+        var groupSet = new Set()
+        {
+            Tiles =
+            [
+                new Tile(1, Tile.Color.Blue),
+                new Tile(1, Tile.Color.Black),
+                new Tile(true),
+                new Tile(true),
+                
+                new Tile(2, Tile.Color.Blue),
+                new Tile(3, Tile.Color.Blue),
+                new Tile(4, Tile.Color.Blue),
+                
+            ],
+            Jokers = 2
+        };
+        
+        groupSet.PrintAllTiles();
+
+        Console.WriteLine();
+        groupSet.GetSolution().PrintSolution();
+    }
+
     public static void TestJoker()
     {
         var setToTest = new Set
@@ -172,9 +197,9 @@ public class RummiBench
             ],
             Jokers = 0
         };
-        
+
         setToTest.Sort();
-        
+
         setToTest.PrintAllTiles();
         Console.WriteLine();
 
@@ -191,14 +216,13 @@ public class RummiBench
         var sol = game.Solve(false, new Tile(true));
         sol.PrintSolution();
     }
-    
-        public static void TestJoker2()
+
+    public static void TestJoker2()
     {
         var setToTest = new Set
         {
             Tiles =
             [
-
                 new Tile(11, Tile.Color.Mango),
                 new Tile(10, Tile.Color.Mango),
                 new Tile(true)
@@ -228,9 +252,9 @@ public class RummiBench
             ],
             Jokers = 0
         };
-        
+
         setToTest.Sort();
-        
+
         setToTest.PrintAllTiles();
         Console.WriteLine();
 
