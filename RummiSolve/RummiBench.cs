@@ -110,13 +110,13 @@ public class RummiBench
     [Benchmark]
     public Solution OldHand()
     {
-        var newTiles = new List<Tile>();
+        Tile? newTile = null;
         var game = new Game
         {
             BoardSolution = _exampleValidSet.GetSolution(),
             RackTilesSet = new Set()
         };
-        return game.Solve(true, newTiles);
+        return game.Solve(true, newTile);
     }
 
     public static void TestJoker()
@@ -125,20 +125,127 @@ public class RummiBench
         {
             Tiles =
             [
-                new Tile(1, Tile.Color.Blue),
-                new Tile(2, Tile.Color.Blue),
-                new Tile(4, Tile.Color.Blue),
-                new Tile(2, Tile.Color.Mango),
+                new Tile(4, Tile.Color.Red),
+                new Tile(8, Tile.Color.Black),
+                new Tile(3, Tile.Color.Black),
                 new Tile(3, Tile.Color.Mango),
-                new Tile(4, Tile.Color.Mango),
+                new Tile(7, Tile.Color.Mango),
+                new Tile(8, Tile.Color.Black),
+                new Tile(1, Tile.Color.Blue),
+                new Tile(1, Tile.Color.Black),
+                new Tile(2, Tile.Color.Mango),
+                new Tile(13, Tile.Color.Red),
+                new Tile(13, Tile.Color.Blue),
+                new Tile(11, Tile.Color.Mango),
+                new Tile(6, Tile.Color.Mango),
+                new Tile(10, Tile.Color.Mango),
+                new Tile(9, Tile.Color.Black),
+                new Tile(6, Tile.Color.Blue),
+                new Tile(1, Tile.Color.Blue),
+                new Tile(8, Tile.Color.Red),
+                new Tile(9, Tile.Color.Blue),
+                new Tile(11, Tile.Color.Black),
+                new Tile(true)
             ],
             Jokers = 1
         };
 
+        var boardSet = new Set
+        {
+            Tiles =
+            [
+                new Tile(12, Tile.Color.Blue),
+                new Tile(12, Tile.Color.Red),
+                new Tile(12, Tile.Color.Black),
+
+                new Tile(11, Tile.Color.Blue),
+                new Tile(11, Tile.Color.Mango),
+                new Tile(11, Tile.Color.Black),
+
+                new Tile(6, Tile.Color.Blue),
+                new Tile(6, Tile.Color.Red),
+                new Tile(6, Tile.Color.Mango),
+
+                new Tile(5, Tile.Color.Blue),
+                new Tile(5, Tile.Color.Mango),
+                new Tile(5, Tile.Color.Black),
+            ],
+            Jokers = 0
+        };
+        
         setToTest.Sort();
+        
         setToTest.PrintAllTiles();
         Console.WriteLine();
-        setToTest.GetSolution().PrintSolution();
+
+        var boardSol = boardSet.GetSolution();
+
+        boardSol.PrintSolution();
+
+        var game = new Game()
+        {
+            RackTilesSet = setToTest,
+            BoardSolution = boardSol
+        };
+
+        var sol = game.Solve(false, new Tile(true));
+        sol.PrintSolution();
+    }
+    
+        public static void TestJoker2()
+    {
+        var setToTest = new Set
+        {
+            Tiles =
+            [
+
+                new Tile(11, Tile.Color.Mango),
+                new Tile(10, Tile.Color.Mango),
+                new Tile(true)
+            ],
+            Jokers = 0
+        };
+
+        var boardSet = new Set
+        {
+            Tiles =
+            [
+                new Tile(12, Tile.Color.Blue),
+                new Tile(12, Tile.Color.Red),
+                new Tile(12, Tile.Color.Black),
+
+                new Tile(11, Tile.Color.Blue),
+                new Tile(11, Tile.Color.Mango),
+                new Tile(11, Tile.Color.Black),
+
+                new Tile(6, Tile.Color.Blue),
+                new Tile(6, Tile.Color.Red),
+                new Tile(6, Tile.Color.Mango),
+
+                new Tile(5, Tile.Color.Blue),
+                new Tile(5, Tile.Color.Mango),
+                new Tile(5, Tile.Color.Black),
+            ],
+            Jokers = 0
+        };
+        
+        setToTest.Sort();
+        
+        setToTest.PrintAllTiles();
+        Console.WriteLine();
+
+        var boardSol = boardSet.GetSolution();
+
+        boardSol.PrintSolution();
+
+        var game = new Game()
+        {
+            RackTilesSet = setToTest,
+            BoardSolution = boardSol
+        };
+
+        var sol = game.Solve(false, new Tile(true));
+        sol.PrintSolution();
     }
 
     public static void TestRandomValidSet()
@@ -170,7 +277,7 @@ public class RummiBench
             new(3, Tile.Color.Black),
             new(3, Tile.Color.Black, true),
         ];
-        
+
         foreach (var tiles in Set.GetBestSets(tryCombiSet, 2))
         {
             foreach (var tile in tiles.Tiles)

@@ -132,6 +132,7 @@ public class Set
     {
         Sort();
 
+        if (Jokers > 0) Tiles.RemoveRange(Tiles.Count - Jokers, Jokers);
         var length = Tiles.Count;
         var usedTiles = new bool[length];
 
@@ -230,7 +231,10 @@ public class Set
 
             if (availableJokers <= 0) return runs;
 
-            currentRun.Add(new Tile(currentRun[^1].Value + 1, color, true));
+            if (currentRun[^1].Value != 13) currentRun.Add(new Tile(currentRun[^1].Value + 1, color, true));
+            else if (currentRun[0].Value != 1) currentRun.Insert(0, new Tile(currentRun[0].Value - 1, color, true));
+            else jokersUsed--;
+            
             availableJokers -= 1;
             jokersUsed++;
 
@@ -314,7 +318,15 @@ public class Set
     {
         var combinations = GetCombinations(tiles, n);
         return combinations
-            .Select(combination => new Set { Tiles = combination })
+            .Select(combination =>
+            {
+                var set = new Set
+                {
+                    Tiles = combination,
+                    Jokers = combination.Count(tile => tile.IsJoker)
+                };
+                return set;
+            })
             .OrderByDescending(t => t.GetScore());
     }
 

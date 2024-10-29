@@ -18,17 +18,16 @@ public class Tile : IComparable<Tile>
     {
         if (value is < 1 or > 13)
         {
-            throw new ArgumentOutOfRangeException(nameof(value), "Number must be between 1 and 13.");
+            throw new ArgumentOutOfRangeException(nameof(value), "Number must be between 1 and 13." + value);
         }
 
         Value = value;
         TileColor = color;
         IsJoker = isJoker;
     }
-    
+
     public Tile(bool isJoker)
     {
-
         Value = 0;
         TileColor = Color.Black;
         IsJoker = isJoker;
