@@ -2,22 +2,21 @@ using static System.Console;
 
 namespace RummiSolve;
 
-public class Player
+public class Player(string name)
 {
-    public string Name;
-    private Set _rackTilesSet;
-    private bool isFirst;
-
-    public Player(string name)
-    {
-        Name = name;
-        _rackTilesSet = new Set();
-        isFirst = true;
-    }
+    public readonly string Name = name;
+    private readonly Set _rackTilesSet = new();
+    private bool _isFirst = true;
+    private Tile? _lastDrewTile = null;
 
     public void AddTileToRack(Tile tile)
     {
         _rackTilesSet.AddTile(tile);
+    }
+    
+    public void SetLastDrewTile(Tile tile)
+    {
+        _lastDrewTile = tile;
     }
 
     public void PrintRackTiles()
@@ -31,9 +30,8 @@ public class Player
 
         WriteLine();
     }
-
-
-    public Solution Solve(Solution boardSolution)
+    
+    public Solution Solve(Solution boardSolution, bool boardChange = true)
     {
         var boardSet = boardSolution.GetSet();
         var finalSolution = Solution.GetInvalidSolution();
@@ -44,11 +42,15 @@ public class Player
         {
             var rackSetsToTry = Set.GetBestSets(_rackTilesSet.Tiles, tileCount);
 
+            rackSetsToTry = _isFirst || boardChange
+                ? rackSetsToTry
+                : rackSetsToTry.Where(tab => tab.Tiles.Contains(_lastDrewTile!));
+
             Parallel.ForEach(rackSetsToTry, (currentRackSet, state) =>
             {
                 if (finalRackSet != null) state.Stop();
 
-                if (isFirst && currentRackSet.GetScore() < 30) state.Stop();
+                if (_isFirst && currentRackSet.GetScore() < 30) state.Stop();
 
                 //TODO try currentRackSet.GetSolution();
 
@@ -72,7 +74,7 @@ public class Player
 
         if (finalRackSet == null) return finalSolution;
 
-        isFirst = false;
+        _isFirst = false;
 
         Write("Play : ");
         finalRackSet.PrintAllTiles();

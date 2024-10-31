@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using BenchmarkDotNet.Attributes;
 
 namespace RummiSolve;
@@ -113,8 +114,10 @@ public class RummiBench
         game.AddPlayer("Antoine");
         game.AddPlayer("Matthieu");
         game.AddPlayer("David");
-        
+        var gameStopwatch = Stopwatch.StartNew();
         game.Start();
+        gameStopwatch.Stop();
+        Console.WriteLine($"Game duration: {gameStopwatch.Elapsed.TotalSeconds} seconds");
     }
 
     

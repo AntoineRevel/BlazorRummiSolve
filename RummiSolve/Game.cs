@@ -22,30 +22,42 @@ public class Game
             InitializeRackTilesForPlayer(player);
             player.PrintRackTiles();
         }
+
         WriteLine();
 
         var playerWin = false;
         var turn = 0;
+        var noPlay = 0;
 
         while (!playerWin)
         {
             foreach (var player in _players)
             {
                 WriteLine(turn + " => ___   " + player.Name + "'s turn   ___");
-                var playerSolution = player.Solve(BoardSolution);
-                if (playerSolution.IsValid) BoardSolution = playerSolution;
+                
+                var playerSolution = noPlay < _players.Count
+                    ? player.Solve(BoardSolution)
+                    : player.Solve(BoardSolution, false);
+                
+                if (playerSolution.IsValid)
+                {
+                    BoardSolution = playerSolution;
+                    noPlay = 0;
+                }
                 else
                 {
                     WriteLine(player.Name + " can't play.");
                     var drawTile = DrawTile();
+                    player.SetLastDrewTile(drawTile);
                     Write("Drew tile: ");
                     drawTile.PrintTile();
                     WriteLine();
                     player.AddTileToRack(drawTile);
+                    noPlay++;
                 }
-                
+
                 Print(player);
-                
+
                 if (!player.HasWon()) continue;
                 playerWin = true;
                 break;
