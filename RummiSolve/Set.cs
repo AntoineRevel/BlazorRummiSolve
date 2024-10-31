@@ -150,8 +150,7 @@ public class Set
         var sets = GetRuns(firstUnusedTileIndex, usedTiles, availableJokers)
             .Concat<Set>(GetGroups(firstUnusedTileIndex, usedTiles, availableJokers))
             .OrderBy(set => set.Jokers)
-            .ThenByDescending(set => set.GetScore())
-            .ToList();
+            .ThenByDescending(set => set.GetScore());
 
         foreach (var set in sets)
         {
