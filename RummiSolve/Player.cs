@@ -13,7 +13,7 @@ public class Player(string name)
     {
         _rackTilesSet.AddTile(tile);
     }
-    
+
     public void SetLastDrewTile(Tile tile)
     {
         _lastDrewTile = tile;
@@ -26,11 +26,11 @@ public class Player(string name)
             WriteLine(Name + " tiles : ");
             _rackTilesSet.Tiles.ForEach(t => t.PrintTile());
         }
-        else WriteLine(Name + "Win !!!");
+        else WriteLine(Name + " Win !!!");
 
         WriteLine();
     }
-    
+
     public Solution Solve(Solution boardSolution, bool boardChange = true)
     {
         var boardSet = boardSolution.GetSet();
@@ -50,9 +50,12 @@ public class Player(string name)
             {
                 if (finalRackSet != null) state.Stop();
 
-                if (_isFirst && currentRackSet.GetScore() < 30) state.Stop();
-
-                //TODO try currentRackSet.GetSolution();
+                if (_isFirst)
+                {
+                    if (currentRackSet.GetScore() < 30) return;
+                    var firstSol = currentRackSet.GetSolution();
+                    if (!firstSol.IsValid) return;
+                }
 
                 var solution = boardSet.ConcatNew(currentRackSet).GetSolution();
 
@@ -74,16 +77,17 @@ public class Player(string name)
 
         if (finalRackSet == null) return finalSolution;
 
-        _isFirst = false;
+        
 
-        Write("Play : ");
+        Write(_isFirst ? "Playing for the first time: " : "Play: ");
         finalRackSet.PrintAllTiles();
         WriteLine();
         foreach (var tile in finalRackSet.Tiles)
         {
             _rackTilesSet.Remove(tile);
         }
-
+        
+        _isFirst = false;
         return finalSolution;
     }
 
