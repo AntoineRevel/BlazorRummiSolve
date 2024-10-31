@@ -63,12 +63,10 @@ public class Player(string name)
 
                 lock (locker)
                 {
-                    if (finalRackSet == null)
-                    {
-                        finalRackSet = currentRackSet;
-                        finalSolution = solution;
-                        state.Stop();
-                    }
+                    if (finalRackSet != null) return;
+                    finalRackSet = currentRackSet;
+                    finalSolution = solution;
+                    state.Stop();
                 }
             });
 
