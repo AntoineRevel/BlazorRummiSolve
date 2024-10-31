@@ -8,11 +8,10 @@ public static class Program
     {
         BenchmarkRunner.Run<RummiBench>();
     }
-    
+
 
     public static void TestRand()
     {
         RummiBench.TestRandomValidSet();
     }
-    
 }

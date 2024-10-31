@@ -7,7 +7,7 @@ public class Player(string name)
     public readonly string Name = name;
     private readonly Set _rackTilesSet = new();
     private bool _isFirst = true;
-    private Tile? _lastDrewTile = null;
+    private Tile? _lastDrewTile;
 
     public void AddTileToRack(Tile tile)
     {
@@ -75,7 +75,6 @@ public class Player(string name)
 
         if (finalRackSet == null) return finalSolution;
 
-        
 
         Write(_isFirst ? "Playing for the first time: " : "Play: ");
         finalRackSet.PrintAllTiles();
@@ -84,7 +83,7 @@ public class Player(string name)
         {
             _rackTilesSet.Remove(tile);
         }
-        
+
         _isFirst = false;
         return finalSolution;
     }

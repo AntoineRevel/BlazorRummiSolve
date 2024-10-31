@@ -2,31 +2,11 @@ namespace RummiSolve;
 
 public class Solution
 {
-    private readonly List<Run> _runs;
-    private readonly List<Group> _groups;
-    public bool IsValid;
-    private int _jokers;
-    //todo int totalTiles
+    private readonly List<Run> _runs = [];
+    private readonly List<Group> _groups = [];
+    public bool IsValid = true;
 
     private static readonly Solution InvalidSolution = new() { IsValid = false };
-
-    public Solution()
-    {
-        _runs = [];
-        _groups = [];
-        IsValid = true;
-        _jokers = 0;
-    }
-
-    private Solution(Solution existingSolution)
-    {
-        ArgumentNullException.ThrowIfNull(existingSolution);
-
-        _runs = [..existingSolution._runs];
-        _groups = [..existingSolution._groups];
-        IsValid = existingSolution.IsValid;
-        _jokers = existingSolution._jokers;
-    }
 
     public static Solution GetInvalidSolution()
     {
@@ -58,7 +38,7 @@ public class Solution
             Console.WriteLine("Invalid solution");
             return;
         }
-        
+
         var hasPrintedRun = false;
         var hasPrintedGroup = false;
 
@@ -81,7 +61,7 @@ public class Solution
         }
 
         if (hasPrintedGroup) Console.WriteLine();
-        else if (!hasPrintedRun) Console.WriteLine("No tiles on the board. "); 
+        else if (!hasPrintedRun) Console.WriteLine("No tiles on the board. ");
     }
 
     public bool IsValidSolution()

@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using static System.Console;
 
 namespace RummiSolve;

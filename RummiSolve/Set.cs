@@ -146,13 +146,13 @@ public class Set
         int availableJokers)
     {
         firstUnusedTileIndex = GetNextUnusedTileIndex(usedTiles, firstUnusedTileIndex);
-        
+
         var sets = GetRuns(firstUnusedTileIndex, usedTiles, availableJokers)
             .Concat<Set>(GetGroups(firstUnusedTileIndex, usedTiles, availableJokers))
             .OrderBy(set => set.Jokers)
             .ThenByDescending(set => set.GetScore())
             .ToList();
-        
+
         foreach (var set in sets)
         {
             MarkTilesAsUsed(set, true, usedTiles, ref unusedTileCount, ref availableJokers);
@@ -175,12 +175,13 @@ public class Set
                         solution.AddGroup(group);
                         break;
                 }
+
                 return solution;
             }
 
             MarkTilesAsUsed(set, false, usedTiles, ref unusedTileCount, ref availableJokers);
         }
-        
+
         return Solution.GetInvalidSolution();
     }
 
@@ -188,7 +189,7 @@ public class Set
     {
         return Array.FindIndex(usedTiles, startIndex, used => !used);
     }
-    
+
     private List<Run> GetRuns(int tileIndex, bool[] usedTiles, int availableJokers)
     {
         var runs = new List<Run>();
