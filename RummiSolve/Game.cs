@@ -16,20 +16,22 @@ public class Game
 
     public void Start()
     {
-        InitializeTilePool(1);
+        InitializeTilePool(2);
         foreach (var player in _players)
         {
             InitializeRackTilesForPlayer(player);
             player.PrintRackTiles();
         }
+        WriteLine();
 
         var playerWin = false;
+        var turn = 0;
 
         while (!playerWin)
         {
             foreach (var player in _players)
             {
-                WriteLine("___   " + player.Name + "'s turn   ___");
+                WriteLine(turn + " => ___   " + player.Name + "'s turn   ___");
                 var playerSolution = player.Solve(BoardSolution);
                 if (playerSolution.IsValid) BoardSolution = playerSolution;
                 else
@@ -41,18 +43,24 @@ public class Game
                     WriteLine();
                     player.AddTileToRack(drawTile);
                 }
-
-                player.PrintRackTiles();
-                WriteLine("");
-                BoardSolution.PrintSolution();
-                WriteLine("");
-                if (player.HasWon())
-                {
-                    playerWin = true;
-                    break;
-                }
+                
+                Print(player);
+                
+                if (!player.HasWon()) continue;
+                playerWin = true;
+                break;
             }
+
+            turn++;
         }
+    }
+
+    private void Print(Player player)
+    {
+        player.PrintRackTiles();
+        WriteLine("");
+        BoardSolution.PrintSolution();
+        WriteLine("");
     }
 
     private void InitializeTilePool(int seed)

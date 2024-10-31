@@ -58,7 +58,7 @@ public class Solution
             Console.WriteLine("Invalid solution");
             return;
         }
-
+        
         var hasPrintedRun = false;
         var hasPrintedGroup = false;
 
@@ -81,6 +81,7 @@ public class Solution
         }
 
         if (hasPrintedGroup) Console.WriteLine();
+        else if (!hasPrintedRun) Console.WriteLine("No tiles on the board. "); 
     }
 
     public bool IsValidSolution()
