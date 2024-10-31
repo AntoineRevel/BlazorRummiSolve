@@ -107,18 +107,17 @@ public class RummiBench
         new Tile(8, Tile.Color.Red)
     ];
 
-    [Benchmark]
-    public Solution OldHand()
+    public static void Test2PlayerGame()
     {
-        Tile? newTile = null;
-        var game = new Game
-        {
-            BoardSolution = _exampleValidSet.GetSolution(),
-            RackTilesSet = new Set()
-        };
-        return game.Solve(true, newTile);
+        var game = new Game();
+        game.AddPlayer("Antoine");
+        game.AddPlayer("Matthieu");
+        game.AddPlayer("David");
+        
+        game.Start();
     }
 
+    
     public static void TestGroupJoker()
     {
         var groupSet = new Set()
@@ -209,12 +208,9 @@ public class RummiBench
 
         var game = new Game()
         {
-            RackTilesSet = setToTest,
             BoardSolution = boardSol
         };
-
-        var sol = game.Solve(false, new Tile(true));
-        sol.PrintSolution();
+        
     }
 
     public static void TestJoker2()
@@ -264,12 +260,10 @@ public class RummiBench
 
         var game = new Game()
         {
-            RackTilesSet = setToTest,
             BoardSolution = boardSol
         };
 
-        var sol = game.Solve(false, new Tile(true));
-        sol.PrintSolution();
+
     }
 
     public static void TestRandomValidSet()

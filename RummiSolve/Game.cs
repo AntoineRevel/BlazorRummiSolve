@@ -5,9 +5,55 @@ namespace RummiSolve;
 
 public class Game
 {
-    public Set RackTilesSet { get; set; } = new();
+    private readonly List<Player> _players = [];
     public Solution BoardSolution { get; set; } = new();
     private List<Tile> TilePool { get; set; } = [];
+
+    public void AddPlayer(string playerName)
+    {
+        _players.Add(new Player(playerName));
+    }
+
+    public void Start()
+    {
+        InitializeTilePool(1);
+        foreach (var player in _players)
+        {
+            InitializeRackTilesForPlayer(player);
+            player.PrintRackTiles();
+        }
+
+        var playerWin = false;
+
+        while (!playerWin)
+        {
+            foreach (var player in _players)
+            {
+                WriteLine("___   " + player.Name + "'s turn   ___");
+                var playerSolution = player.Solve(BoardSolution);
+                if (playerSolution.IsValid) BoardSolution = playerSolution;
+                else
+                {
+                    WriteLine(player.Name + " can't play.");
+                    var drawTile = DrawTile();
+                    Write("Drew tile: ");
+                    drawTile.PrintTile();
+                    WriteLine();
+                    player.AddTileToRack(drawTile);
+                }
+
+                player.PrintRackTiles();
+                WriteLine("");
+                BoardSolution.PrintSolution();
+                WriteLine("");
+                if (player.HasWon())
+                {
+                    playerWin = true;
+                    break;
+                }
+            }
+        }
+    }
 
     private void InitializeTilePool(int seed)
     {
@@ -28,11 +74,12 @@ public class Game
         TilePool = TilePool.OrderBy(_ => rng.Next()).ToList();
     }
 
-    private void InitializeRackTiles()
+
+    private void InitializeRackTilesForPlayer(Player player)
     {
         for (var i = 0; i < 14; i++)
         {
-            RackTilesSet.AddTile(TilePool[i]);
+            player.AddTileToRack(DrawTile());
         }
 
         TilePool.RemoveRange(0, 14);
@@ -48,194 +95,5 @@ public class Game
         var drawnTile = TilePool[0];
         TilePool.RemoveAt(0);
         return drawnTile;
-    }
-
-    private Tile DrawAndAddTileToRack(ref int playedTiles)
-    {
-        var newTile = DrawTile();
-        if (newTile.IsJoker) RackTilesSet.Jokers++;
-        RackTilesSet.AddTile(newTile);
-        playedTiles++;
-        Write("Drew tile: ");
-        newTile.PrintTile();
-        WriteLine();
-        return newTile;
-    }
-
-    public void PlaySoloGame()
-    {
-        InitializeTilePool(5);
-        InitializeRackTiles();
-
-        PrintAllTiles();
-        var isFirstMove = true;
-        var playedTiles = 0;
-        var newTile = new Tile(false);
-
-        var totalStopwatch = Stopwatch.StartNew();
-
-        while (RackTilesSet.Tiles.Count > 0)
-        {
-            var turnStopwatch = Stopwatch.StartNew();
-
-            Write(playedTiles + " => ");
-            var rack1 = RackTilesSet.Tiles.Count;
-            var board1 = BoardSolution.Count();
-            var solution = Solve(isFirstMove, newTile);
-            var rack2 = RackTilesSet.Tiles.Count;
-            var board2 = BoardSolution.Count();
-            
-            if (rack1 + board1 != rack2 + board2) Console.WriteLine("Big souci " + rack1 + board1 + " " + rack2 + board2);
-            if (solution.IsValid)
-            {
-                isFirstMove = false;
-                if (RackTilesSet.Tiles.Count > 0 && TilePool.Count > 0)
-                {
-                    Write("Can play but not finish : ");
-                }
-            }
-            else Write("Can't play : ");
-
-            newTile = DrawAndAddTileToRack(ref playedTiles);
-
-            turnStopwatch.Stop();
-            WriteLine($"Time for this turn: {turnStopwatch.ElapsedMilliseconds} ms");
-            WriteLine($"Total time since start: {totalStopwatch.ElapsedMilliseconds} ms");
-            PrintAllTiles();
-        }
-
-        WriteLine("Congratulations, you have played all your tiles!");
-        totalStopwatch.Stop();
-    }
-
-    public void StartConsole()
-    {
-        var isFirst = true;
-        Tile? newTile = null;
-        while (RackTilesSet.Tiles.Count > 0 || isFirst)
-        {
-            AddTileToBoardConsole();
-            var solution = Solve(isFirst, newTile);
-            PrintAllTiles();
-            if (!solution.IsValid)
-            {
-                AddTileToRackConsole();
-            }
-            else isFirst = false;
-        }
-    }
-
-    private void AddTileToRackConsole()
-    {
-        WriteLine("Complete player tiles:");
-        foreach (Tile.Color color in Enum.GetValues(typeof(Tile.Color)))
-        {
-            WriteLine($"Enter tile numbers for {color} (separated by spaces):");
-            var input = ReadLine();
-            if (!string.IsNullOrEmpty(input))
-            {
-                RackTilesSet = new Set(input, color);
-            }
-        }
-    }
-
-    private void AddTileToBoardConsole()
-    {
-        var boardSet = BoardSolution.GetSet();
-        var setToAdd = new Set();
-
-        while (true)
-        {
-            WriteLine("Complete board tiles:");
-            foreach (Tile.Color color in Enum.GetValues(typeof(Tile.Color)))
-            {
-                WriteLine($"Enter tile numbers for {color} (separated by spaces):");
-                var input = ReadLine();
-                if (string.IsNullOrEmpty(input)) continue;
-                var newSet = new Set(input, color);
-                setToAdd.Concat(newSet);
-            }
-            
-            var boardSolution = boardSet.ConcatNew(setToAdd).GetSolution();
-            if (boardSolution.IsValid)
-            {
-                BoardSolution = boardSolution;
-            }
-            else
-            {
-                WriteLine("Invalid board tiles. Please try again.");
-                setToAdd = new Set();
-                continue;
-            }
-
-            break;
-        }
-    }
-
-    private void PrintAllTiles()
-    {
-        WriteLine("Player tiles:");
-        RackTilesSet.Tiles.ForEach(t => t.PrintTile());
-
-        WriteLine();
-
-        WriteLine("Board tiles:");
-        BoardSolution.PrintSolution();
-        WriteLine();
-    }
-
-    public Solution Solve(bool isFirst, Tile? lastTileAdded)
-    {
-        if (!isFirst && lastTileAdded == null) return Solution.GetInvalidSolution();
-
-        var boardSet = BoardSolution.GetSet();
-
-        var finalSolution = Solution.GetInvalidSolution();
-        var locker = new object();
-        Set finalRackSet = null!;
-
-        for (var tileCount = RackTilesSet.Tiles.Count; tileCount > (boardSet.Tiles.Count == 0 ? 3 : 0); tileCount--)
-        {
-            var rackSetsToTry = Set.GetBestSets(RackTilesSet.Tiles, tileCount);
-            rackSetsToTry = !isFirst
-                ? rackSetsToTry.Where(tab => tab.Tiles.Contains(lastTileAdded!))
-                : rackSetsToTry;
-
-            Parallel.ForEach(rackSetsToTry, (currentRackSet, state) =>
-            {
-                if (finalRackSet != null) state.Stop();
-
-                if (isFirst && currentRackSet.GetScore() < 30) state.Stop();
-
-                //TODO try currentRackSet.GetSolution();
-                
-                var solution = boardSet.ConcatNew(currentRackSet).GetSolution();
-
-                if (!solution.IsValid) return;
-
-                lock (locker)
-                {
-                    if (finalRackSet == null)
-                    {
-                        finalRackSet = currentRackSet;
-                        finalSolution = solution;
-                        state.Stop();
-                    }
-                }
-            });
-
-            if (finalRackSet != null) break;
-        }
-
-        if (finalRackSet == null) return finalSolution;
-
-        foreach (var tile in finalRackSet.Tiles)
-        {
-            RackTilesSet.Remove(tile);
-        }
-
-        BoardSolution = finalSolution;
-
-        return finalSolution;
     }
 }

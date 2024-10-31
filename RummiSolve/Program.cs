@@ -9,21 +9,10 @@ public static class Program
         BenchmarkRunner.Run<RummiBench>();
     }
     
-    public static void PlaySoloGame()
-    {
-        var game = new Game();
-        game.PlaySoloGame();
-    }
 
     public static void TestRand()
     {
         RummiBench.TestRandomValidSet();
-    }
-
-    public static void Play()
-    {
-        var game = new Game();
-        game.StartConsole();
     }
     
 }
