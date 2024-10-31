@@ -101,8 +101,6 @@ public class Game
         {
             player.AddTileToRack(DrawTile());
         }
-
-        TilePool.RemoveRange(0, 14);
     }
 
     private Tile DrawTile()

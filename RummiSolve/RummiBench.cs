@@ -114,6 +114,7 @@ public class RummiBench
         game.AddPlayer("Antoine");
         game.AddPlayer("Matthieu");
         game.AddPlayer("David");
+        game.AddPlayer("Maguy");
         var gameStopwatch = Stopwatch.StartNew();
         game.Start();
         gameStopwatch.Stop();
