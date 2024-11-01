@@ -1,15 +1,11 @@
 @using RummiSolve
 
-<div class="tile" style="color:@GetColor(Tile.TileColor)">
-    @if (Tile.IsJoker)
-    {
-        <span>Joker</span>
-    }
-    else
-    {
-        <span>@Tile.Value</span>
-    }
+<div class="tile @(Tile.IsJoker ? "joker" : "")">
+    <div class="tile-number" style="color:@GetColor(Tile.TileColor)">
+        <b>@(Tile.IsJoker ? "J" : Tile.Value.ToString())</b>
+    </div>
 </div>
+
 
 @code {
     [Parameter] public required Tile Tile { get; set; }
@@ -29,15 +25,34 @@
 
 <style>
     .tile {
+        position: relative;
         display: inline-block;
-        width: 1.6em;
-        height: 2.4em;
-        line-height: 2.4em;
+        width: 50px;
+        height: 70px;
+        margin: 1px;
+        background-color: #dcdbdb; /* Fond blanc pour éviter le gris */
+        border: 2px solid #CCCCCC;
+        border-radius: 10px; /* Coins arrondis */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ombre portée */
+    }
+
+    .tile-number {
+        position: absolute;
+        top: 5px;
+        width: 100%;
         text-align: center;
-        border: 0.2em solid;
-        border-color: #DDDDDD #BBBBBB #BBBBBB #DDDDDD;
-        background-color: #E0E0E0;
-        margin: 0.1em;
+        font-size: 24px;
         font-weight: bold;
+    }
+
+    .tile.joker {
+        background-color: #FFD700; /* Fond doré pour le Joker */
+    }
+
+    /* Effet au survol */
+    .tile:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        transition: transform 0.2s, box-shadow 0.2s;
     }
 </style>
