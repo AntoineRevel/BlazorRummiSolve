@@ -1,0 +1,31 @@
+@using RummiSolve
+
+
+<div class="set-container">
+    <div class="tiles">
+        @foreach (var tile in Set.Tiles)
+        {
+            <TileComponent Tile="tile"/>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public required Set Set { get; set; }
+}
+
+<style>
+    .set-container {
+        display: inline-block;
+        white-space: nowrap;
+    }
+
+    .tiles {
+        display: inline-flex;
+    }
+
+    .tiles .tile {
+        margin: 0;
+    }
+
+</style>

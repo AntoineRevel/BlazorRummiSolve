@@ -1,0 +1,71 @@
+@page "/Test"
+@using RummiSolve
+@using BlazorRummiSolve.Components.Shared
+<h1>Test Page</h1>
+
+<h3>Liste des Sets</h3>
+
+<div class="sets-container">
+    @foreach (var set in _sets!)
+    {
+        <SetComponent Set="set"/>
+    }
+</div>
+
+@code {
+    private List<Set>? _sets;
+
+    protected override void OnInitialized()
+    {
+        _sets = [];
+
+        // Exemple d'un run
+        var runSet = new Set();
+        runSet.AddTile(new Tile(1, Tile.Color.Red));
+        runSet.AddTile(new Tile(1, Tile.Color.Red));
+        runSet.AddTile(new Tile(1, Tile.Color.Red));
+        runSet.AddTile(new Tile(1, Tile.Color.Red));
+        runSet.AddTile(new Tile(5, Tile.Color.Red));
+        runSet.AddTile(new Tile(6, Tile.Color.Red));
+        runSet.AddTile(new Tile(7, Tile.Color.Red));
+        runSet.AddTile(new Tile(7, Tile.Color.Red));
+        runSet.AddTile(new Tile(7, Tile.Color.Red));
+        runSet.AddTile(new Tile(7, Tile.Color.Red));
+        runSet.AddTile(new Tile(7, Tile.Color.Red));
+        runSet.AddTile(new Tile(7, Tile.Color.Red));
+        runSet.AddTile(new Tile(7, Tile.Color.Red));
+        _sets.Add(runSet);
+        _sets.Add(runSet);
+
+
+// Exemple d'un groupe
+        var groupSet = new Set();
+        groupSet.AddTile(new Tile(9, Tile.Color.Red, false));
+        groupSet.AddTile(new Tile(9, Tile.Color.Blue, false));
+        groupSet.AddTile(new Tile(9, Tile.Color.Black, false));
+        _sets.Add(groupSet);
+        _sets.Add(groupSet);
+        _sets.Add(groupSet);
+        _sets.Add(groupSet);
+        _sets.Add(runSet);
+        _sets.Add(groupSet);
+        _sets.Add(groupSet);
+        _sets.Add(groupSet);
+    }
+
+}
+
+
+<style>
+    .sets-container {
+        display: flex;
+        flex-wrap: wrap; /* Permet aux sets de passer à la ligne */
+        align-items: flex-start;
+    }
+
+    .sets-container > * {
+        flex: 0 0 auto; /* Empêche les sets de s'étirer */
+        margin-right: 10px; /* Espacement entre les sets */
+        margin-bottom: 10px; /* Espacement vertical entre les lignes de sets */
+    }
+</style>
