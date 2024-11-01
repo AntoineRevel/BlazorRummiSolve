@@ -2,23 +2,16 @@ namespace RummiSolve;
 
 public class Set
 {
-    public List<Tile> Tiles; //TODO check if List is the best
+    public List<Tile> Tiles = []; //TODO check if List is the best
     private bool _isSorted;
-    public int Jokers; //TODO private
+    private int _jokers; 
 
-    public Set()
-    {
-        Jokers = 0;
-        Tiles = [];
-        _isSorted = false;
-    }
-    
     public void AddTile(Tile tile)
     {
         ArgumentNullException.ThrowIfNull(tile);
 
         Tiles.Add(tile);
-        if (tile.IsJoker) Jokers++;
+        if (tile.IsJoker) _jokers++;
         _isSorted = false;
     }
 
@@ -27,7 +20,7 @@ public class Set
         ArgumentNullException.ThrowIfNull(set);
 
         Tiles.AddRange(set.Tiles);
-        Jokers += set.Jokers;
+        _jokers += set._jokers;
         _isSorted = false;
     }
 
@@ -39,11 +32,11 @@ public class Set
         {
             Tiles = [..Tiles],
             _isSorted = _isSorted,
-            Jokers = Jokers
+            _jokers = _jokers
         };
 
         newSet.Tiles.AddRange(set.Tiles);
-        newSet.Jokers += set.Jokers;
+        newSet._jokers += set._jokers;
         newSet._isSorted = false;
 
         return newSet;
@@ -57,7 +50,7 @@ public class Set
         var removed = Tiles.Remove(tile);
 
         if (!removed) return removed;
-        if (tile.IsJoker) Jokers--;
+        if (tile.IsJoker) _jokers--;
 
         return removed;
     }
@@ -70,7 +63,7 @@ public class Set
         }
 
         if (!_isSorted) return;
-        for (var i = 0; i < Jokers; i++)
+        for (var i = 0; i < _jokers; i++)
         {
             Tile.PrintJoker();
         }
@@ -92,13 +85,13 @@ public class Set
     {
         Sort();
 
-        if (Jokers > 0) Tiles.RemoveRange(Tiles.Count - Jokers, Jokers);
+        if (_jokers > 0) Tiles.RemoveRange(Tiles.Count - _jokers, _jokers);
         var length = Tiles.Count;
         var usedTiles = new bool[length];
 
-        if (length + Jokers <= 2) return length == 0 ? new Solution() : Solution.GetInvalidSolution();
+        if (length + _jokers <= 2) return length == 0 ? new Solution() : Solution.GetInvalidSolution();
 
-        var solution = FindSolution(new Solution(), usedTiles, length, 0, Jokers);
+        var solution = FindSolution(new Solution(), usedTiles, length, 0, _jokers);
         return solution;
     }
 
@@ -109,7 +102,7 @@ public class Set
 
         var sets = GetRuns(firstUnusedTileIndex, usedTiles, availableJokers)
             .Concat<Set>(GetGroups(firstUnusedTileIndex, usedTiles, availableJokers))
-            .OrderBy(set => set.Jokers)
+            .OrderBy(set => set._jokers)
             .ThenByDescending(set => set.GetScore());
 
         foreach (var set in sets)
@@ -178,7 +171,7 @@ public class Set
                     runs.Add(new Run
                     {
                         Tiles = [..currentRun],
-                        Jokers = jokersUsed
+                        _jokers = jokersUsed
                     });
             }
 
@@ -196,7 +189,7 @@ public class Set
                 runs.Add(new Run
                 {
                     Tiles = [..currentRun],
-                    Jokers = jokersUsed
+                    _jokers = jokersUsed
                 });
             }
         }
@@ -243,7 +236,7 @@ public class Set
                         [
                             firstTile, sameNumberTiles[0], new Tile(firstTile.Value, Tile.Color.Black, true)
                         ],
-                        Jokers = 1
+                        _jokers = 1
                     }
                 ],
                 2 =>
@@ -255,7 +248,7 @@ public class Set
                         [
                             firstTile, sameNumberTiles[0], new Tile(firstTile.Value, Tile.Color.Black, true)
                         ],
-                        Jokers = 1
+                        _jokers = 1
                     },
                     new Group
                     {
@@ -263,7 +256,7 @@ public class Set
                         [
                             firstTile, sameNumberTiles[1], new Tile(firstTile.Value, Tile.Color.Black, true)
                         ],
-                        Jokers = 1
+                        _jokers = 1
                     },
                     new Group
                     {
@@ -271,7 +264,7 @@ public class Set
                         [
                             firstTile, ..sameNumberTiles, new Tile(firstTile.Value, Tile.Color.Black, true)
                         ],
-                        Jokers = 1
+                        _jokers = 1
                     },
                 ],
                 3 =>
@@ -287,7 +280,7 @@ public class Set
                             firstTile, sameNumberTiles[0], sameNumberTiles[1],
                             new Tile(firstTile.Value, Tile.Color.Black, true)
                         ],
-                        Jokers = 1
+                        _jokers = 1
                     },
                     new Group
                     {
@@ -296,7 +289,7 @@ public class Set
                             firstTile, sameNumberTiles[1], sameNumberTiles[2],
                             new Tile(firstTile.Value, Tile.Color.Black, true)
                         ],
-                        Jokers = 1
+                        _jokers = 1
                     },
                     new Group
                     {
@@ -305,7 +298,7 @@ public class Set
                             firstTile, sameNumberTiles[0], sameNumberTiles[2],
                             new Tile(firstTile.Value, Tile.Color.Black, true)
                         ],
-                        Jokers = 1
+                        _jokers = 1
                     },
                     new Group
                     {
@@ -313,7 +306,7 @@ public class Set
                         [
                             firstTile, sameNumberTiles[0], new Tile(firstTile.Value, Tile.Color.Black, true)
                         ],
-                        Jokers = 1
+                        _jokers = 1
                     },
                     new Group
                     {
@@ -321,7 +314,7 @@ public class Set
                         [
                             firstTile, sameNumberTiles[1], new Tile(firstTile.Value, Tile.Color.Black, true)
                         ],
-                        Jokers = 1
+                        _jokers = 1
                     },
                     new Group
                     {
@@ -329,7 +322,7 @@ public class Set
                         [
                             firstTile, sameNumberTiles[2], new Tile(firstTile.Value, Tile.Color.Black, true)
                         ],
-                        Jokers = 1
+                        _jokers = 1
                     },
                 ],
                 _ => []
@@ -382,7 +375,7 @@ public class Set
                 var set = new Set
                 {
                     Tiles = combination,
-                    Jokers = combination.Count(tile => tile.IsJoker)
+                    _jokers = combination.Count(tile => tile.IsJoker)
                 };
                 return set;
             })

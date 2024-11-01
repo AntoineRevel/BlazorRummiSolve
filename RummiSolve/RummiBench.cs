@@ -108,7 +108,7 @@ public class RummiBench
         new Tile(8, Tile.Color.Red)
     ];
 
-    public static void Test2PlayerGame()
+    public static void TestMultiPlayerGame()
     {
         var game = new Game();
         game.AddPlayer("Antoine");
@@ -138,7 +138,6 @@ public class RummiBench
                 new Tile(4, Tile.Color.Blue),
                 
             ],
-            Jokers = 2
         };
         
         groupSet.PrintAllTiles();
@@ -175,7 +174,6 @@ public class RummiBench
                 new Tile(11, Tile.Color.Black),
                 new Tile(true)
             ],
-            Jokers = 1
         };
 
         var boardSet = new Set
@@ -198,7 +196,6 @@ public class RummiBench
                 new Tile(5, Tile.Color.Mango),
                 new Tile(5, Tile.Color.Black),
             ],
-            Jokers = 0
         };
 
         setToTest.Sort();
@@ -227,7 +224,6 @@ public class RummiBench
                 new Tile(10, Tile.Color.Mango),
                 new Tile(true)
             ],
-            Jokers = 0
         };
 
         var boardSet = new Set
@@ -250,7 +246,6 @@ public class RummiBench
                 new Tile(5, Tile.Color.Mango),
                 new Tile(5, Tile.Color.Black),
             ],
-            Jokers = 0
         };
 
         setToTest.Sort();
