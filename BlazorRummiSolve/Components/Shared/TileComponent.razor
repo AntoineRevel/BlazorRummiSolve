@@ -1,0 +1,43 @@
+@using RummiSolve
+
+<div class="tile" style="color:@GetColor(Tile.TileColor)">
+    @if (Tile.IsJoker)
+    {
+        <span>Joker</span>
+    }
+    else
+    {
+        <span>@Tile.Value</span>
+    }
+</div>
+
+@code {
+    [Parameter] public required Tile Tile { get; set; }
+
+    private string GetColor(Tile.Color color)
+    {
+        return color switch
+        {
+            Tile.Color.Blue => "blue",
+            Tile.Color.Red => "red",
+            Tile.Color.Mango => "orange",
+            Tile.Color.Black => "black",
+            _ => "gray",
+        };
+    }
+}
+
+<style>
+    .tile {
+        display: inline-block;
+        width: 1.6em;
+        height: 2.4em;
+        line-height: 2.4em;
+        text-align: center;
+        border: 0.2em solid;
+        border-color: #DDDDDD #BBBBBB #BBBBBB #DDDDDD;
+        background-color: #E0E0E0;
+        margin: 0.1em;
+        font-weight: bold;
+    }
+</style>
