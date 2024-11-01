@@ -15,7 +15,7 @@ public class Game
 
     public void Start()
     {
-        InitializeTilePool(46);
+        InitializeTilePool(1);
         foreach (var player in _players)
         {
             InitializeRackTilesForPlayer(player);
