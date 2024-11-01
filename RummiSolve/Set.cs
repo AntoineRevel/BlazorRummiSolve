@@ -12,35 +12,7 @@ public class Set
         Tiles = [];
         _isSorted = false;
     }
-
-    public Set(string input, Tile.Color color)
-    {
-        Jokers = 0;
-        _isSorted = false;
-
-        Tiles = [];
-        var numbers = input.Split(' ');
-
-        foreach (var numberStr in numbers)
-        {
-            if (int.TryParse(numberStr, out var number) && number is >= 1 and <= 13)
-            {
-                var tile = new Tile(number, color);
-                Tiles.Add(tile);
-            }
-            else if (numberStr.Equals("J", StringComparison.OrdinalIgnoreCase))
-            {
-                var jokerTile = new Tile(0, Tile.Color.Black, true);
-                Jokers++;
-                Tiles.Add(jokerTile);
-            }
-            else
-            {
-                Console.WriteLine($"Invalid number or character: {numberStr}. Skipping.");
-            }
-        }
-    }
-
+    
     public void AddTile(Tile tile)
     {
         ArgumentNullException.ThrowIfNull(tile);
@@ -50,25 +22,13 @@ public class Set
         _isSorted = false;
     }
 
-    public void AddTiles(IEnumerable<Tile> tiles)
-    {
-        ArgumentNullException.ThrowIfNull(tiles);
-
-        foreach (var tile in tiles)
-        {
-            AddTile(tile);
-        }
-    }
-
-    public Set Concat(Set set)
+    public void Concat(Set set)
     {
         ArgumentNullException.ThrowIfNull(set);
 
         Tiles.AddRange(set.Tiles);
         Jokers += set.Jokers;
         _isSorted = false;
-
-        return this;
     }
 
     public Set ConcatNew(Set set)
