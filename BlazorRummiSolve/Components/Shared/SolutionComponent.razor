@@ -1,0 +1,32 @@
+@using RummiSolve
+
+<div class="solution-container">
+    @foreach (var set in Solution.Runs)
+    {
+        <SetComponent Set="set"/>
+    }
+</div>
+<div class="solution-container">
+    @foreach (var set in Solution.Groups)
+    {
+        <SetComponent Set="set"/>
+    }
+</div>
+
+@code {
+    [Parameter] public required Solution Solution { get; set; }
+}
+
+<style>
+    .sets-container {
+        display: flex;
+        flex-wrap: wrap; /* Permet aux sets de passer à la ligne */
+        align-items: flex-start;
+    }
+
+    .sets-container > * {
+        flex: 0 0 auto; /* Empêche les sets de s'étirer */
+        margin-right: 10px; /* Espacement entre les sets */
+        margin-bottom: 10px; /* Espacement vertical entre les lignes de sets */
+    }
+</style>
