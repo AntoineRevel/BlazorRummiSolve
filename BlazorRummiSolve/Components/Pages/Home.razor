@@ -1,7 +1,26 @@
 ﻿@page "/"
+@inject NavigationManager Navigation
 
-<PageTitle>Home</PageTitle>
+<h1>Bienvenue sur le Rummikub Solver</h1>
+<p>
+    Ce site vous aide à résoudre vos jeux de Rummikub. Cliquez sur "Jouer" pour commencer.
+</p>
 
-<h1>Hello, world!</h1>
+<button class="btn btn-primary" @onclick="Test">Jouer</button>
 
-Welcome to your new app.
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+<p role="status">Current count: @currentCount</p>
+
+@code {
+
+    private void Test()=> Navigation.NavigateTo("counter");
+    
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+
+}

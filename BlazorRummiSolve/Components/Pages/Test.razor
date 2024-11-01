@@ -4,8 +4,16 @@
 <h1>Test Page</h1>
 
 <h3>Solution</h3>
-
-<SolutionComponent Solution="_solution" />
+@if (_solution == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <SolutionComponent Solution="_solution"/>
+}
 
 @code {
     private Solution? _solution;
@@ -24,5 +32,3 @@
     }
 
 }
-
-

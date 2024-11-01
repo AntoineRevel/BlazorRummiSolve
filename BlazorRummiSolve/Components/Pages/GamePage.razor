@@ -1,0 +1,27 @@
+@page "/GamePage"
+@using RummiSolve
+<h3>GamePage</h3>
+
+<h1>Rummikub Game</h1>
+
+<button @onclick="NavigateHome">Accueil</button>
+
+<SolutionComponent Solution="currentSolution"/>
+
+@code {
+    private Solution currentSolution;
+
+    [Inject] private NavigationManager NavigationManager { get; set; }
+
+    protected override void OnInitialized()
+    {
+        currentSolution = new Solution();
+        // Initialisez votre jeu
+    }
+
+    private void NavigateHome()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+
+}
