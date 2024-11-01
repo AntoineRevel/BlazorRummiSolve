@@ -2,8 +2,8 @@ namespace RummiSolve;
 
 public class Solution
 {
-    private readonly List<Run> _runs = [];
-    private readonly List<Group> _groups = [];
+    public readonly List<Run> Runs = [];
+    public readonly List<Group> Groups = [];
     public bool IsValid = true;
 
     private static readonly Solution InvalidSolution = new() { IsValid = false };
@@ -15,20 +15,20 @@ public class Solution
 
     public void AddSolution(Solution solution)
     {
-        _groups.AddRange(solution._groups);
+        Groups.AddRange(solution.Groups);
 
-        _runs.AddRange(solution._runs);
+        Runs.AddRange(solution.Runs);
     }
 
     public void AddRun(Run run)
     {
-        _runs.Add(run);
+        Runs.Add(run);
     }
 
 
     public void AddGroup(Group group)
     {
-        _groups.Add(group);
+        Groups.Add(group);
     }
 
     public void PrintSolution()
@@ -42,7 +42,7 @@ public class Solution
         var hasPrintedRun = false;
         var hasPrintedGroup = false;
 
-        foreach (var run in _runs)
+        foreach (var run in Runs)
         {
             if (hasPrintedRun) Console.Write("| ");
 
@@ -52,7 +52,7 @@ public class Solution
 
         if (hasPrintedRun) Console.WriteLine();
 
-        foreach (var group in _groups)
+        foreach (var group in Groups)
         {
             if (hasPrintedGroup) Console.Write("| ");
 
@@ -66,19 +66,19 @@ public class Solution
 
     public bool IsValidSolution()
     {
-        return _runs.All(run => run.IsValidRun()) && _groups.All(group => group.IsValidGroup());
+        return Runs.All(run => run.IsValidRun()) && Groups.All(group => group.IsValidGroup());
     }
 
     public Set GetSet()
     {
         var result = new Set();
 
-        foreach (var run in _runs)
+        foreach (var run in Runs)
         {
             result.Concat(run);
         }
 
-        foreach (var group in _groups)
+        foreach (var group in Groups)
         {
             result.Concat(group);
         }
@@ -86,5 +86,5 @@ public class Solution
         return result;
     }
 
-    public int Count() => _groups.Sum(g => g.Tiles.Count) + _runs.Sum(s => s.Tiles.Count); //TODO temporaire
+    public int Count() => Groups.Sum(g => g.Tiles.Count) + Runs.Sum(s => s.Tiles.Count); //TODO temporaire
 }
