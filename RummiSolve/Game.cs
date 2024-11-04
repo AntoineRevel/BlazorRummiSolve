@@ -4,19 +4,81 @@ namespace RummiSolve;
 
 public class Game
 {
-    private readonly List<Player> _players = [];
+    public readonly List<Player> Players = [];
     public Solution BoardSolution { get; set; } = new();
     private List<Tile> TilePool { get; set; } = [];
+    
+    public int CurrentPlayerIndex { get; private set; } = 0;
+    public bool IsGameOver { get; private set; } = false;
+    public Player? Winner { get; private set; }
+
+    public int Turn;
+    
+    private int _noPlay;
+    
 
     public void AddPlayer(string playerName)
     {
-        _players.Add(new Player(playerName));
+        Players.Add(new Player(playerName));
     }
+    
+    public void InitializeGame()
+    {
+        InitializeTilePool(1);
+        foreach (var player in Players)
+        {
+            InitializeRackTilesForPlayer(player);
+            player.PrintRackTiles();
+        }
+    }
+
+    public void PlayCurrentPlayerTurn()
+    {
+        if (IsGameOver) return;
+
+        var player = Players[CurrentPlayerIndex];
+        WriteLine(Turn + " => ___   " + player.Name + "'s turn   ___");
+                
+        var playerSolution = _noPlay < Players.Count
+            ? player.Solve(BoardSolution)
+            : player.Solve(BoardSolution, false);
+                
+        if (playerSolution.IsValid)
+        {
+            BoardSolution = playerSolution;
+            _noPlay = 0;
+        }
+        else
+        {
+            WriteLine(player.Name + " can't play.");
+            var drawTile = DrawTile();
+            player.SetLastDrewTile(drawTile);
+            Write("Drew tile: ");
+            drawTile.PrintTile();
+            WriteLine();
+            player.AddTileToRack(drawTile);
+            _noPlay++;
+        }
+
+        Print(player);
+
+        if (player.HasWon())
+        {
+            IsGameOver = true;
+            Winner = player;
+            return;
+        }
+
+        // Passer au joueur suivant
+        CurrentPlayerIndex = (CurrentPlayerIndex + 1) % Players.Count;
+    }
+    
+    
 
     public void Start()
     {
         InitializeTilePool(1);
-        foreach (var player in _players)
+        foreach (var player in Players)
         {
             InitializeRackTilesForPlayer(player);
             player.PrintRackTiles();
@@ -30,11 +92,11 @@ public class Game
 
         while (!playerWin)
         {
-            foreach (var player in _players)
+            foreach (var player in Players)
             {
                 WriteLine(turn + " => ___   " + player.Name + "'s turn   ___");
                 
-                var playerSolution = noPlay < _players.Count
+                var playerSolution = noPlay < Players.Count
                     ? player.Solve(BoardSolution)
                     : player.Solve(BoardSolution, false);
                 
