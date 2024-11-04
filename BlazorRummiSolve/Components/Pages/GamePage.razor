@@ -1,27 +1,104 @@
-@page "/GamePage"
+@page "/game"
 @using RummiSolve
+@using BlazorRummiSolve.Components.Shared
+@rendermode InteractiveServer
 <h3>GamePage</h3>
 
-<h1>Rummikub Game</h1>
 
-<button @onclick="NavigateHome">Accueil</button>
+<div class="game-container">
+    <h1>Rummikub Game</h1>
 
-<SolutionComponent Solution="currentSolution"/>
+    
+
+    @if (IsGameOver)
+    {
+        <h2>@Winner.Name a gagné la partie !</h2>
+    }
+
+    <div class="game-content">
+        <!-- Section de la solution -->
+        <div class="solution-section">
+            <h2>Solution Actuelle</h2>
+            <SolutionComponent Solution="_currentGame.BoardSolution"/>
+        </div>
+
+        <button @onclick="PlayTurn" disabled="@IsGameOver">Jouer un Tour</button>
+
+        <!-- Section des joueurs -->
+        <div class="players-section">
+            <PlayersContainerComponent CurrentPlayer="_currentPlayer" OtherPlayers="_otherPlayers"/>
+        </div>
+    </div>
+</div>
 
 @code {
-    private Solution currentSolution;
 
-    [Inject] private NavigationManager NavigationManager { get; set; }
+    private readonly Game _currentGame = new();
+    private Player? _currentPlayer;
+    private List<Player> _otherPlayers;
+
+    private bool IsGameOver => _currentGame.IsGameOver;
+    private Player Winner => _currentGame.Winner!;
 
     protected override void OnInitialized()
     {
-        currentSolution = new Solution();
-        // Initialisez votre jeu
+        _currentGame.AddPlayer("Antoine");
+        _currentGame.AddPlayer("Matthieu");
+        _currentGame.AddPlayer("David");
+
+        _currentGame.InitializeGame();
+
+        UpdatePlayers();
     }
 
-    private void NavigateHome()
+    private void PlayTurn()
     {
-        NavigationManager.NavigateTo("/");
+        _currentGame.PlayCurrentPlayerTurn();
+        UpdatePlayers();
     }
+
+    private void UpdatePlayers()
+    {
+        _currentPlayer = _currentGame.Players[_currentGame.CurrentPlayerIndex];
+        _otherPlayers = _currentGame.Players.Where(p => p != _currentPlayer).ToList();
+    }
+
 
 }
+
+<style>
+    .game-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .game-content {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .solution-section {
+        border: 2px solid #ccc;
+        padding: 20px;
+        border-radius: 10px;
+        background-color: #f9f9f9;
+    }
+
+    .players-section {
+        /* Styles pour la section des joueurs */
+    }
+
+    button {
+        margin-right: 10px;
+        padding: 10px 20px;
+        font-size: 1em;
+        cursor: pointer;
+    }
+
+    h2 {
+        text-align: center;
+        color: green;
+    }
+</style>

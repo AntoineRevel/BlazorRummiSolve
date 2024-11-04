@@ -1,0 +1,27 @@
+@using RummiSolve
+
+<div class="player-container">
+    <h2>@Player.Name</h2>
+    <SetComponent Set="Player.RackTilesSet" />
+</div>
+
+@code {
+    [Parameter]
+    public required Player Player { get; set; }
+}
+
+<style>
+    .player-container {
+        background: linear-gradient(to right, #ece9e6, #ffffff);
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .player-container h2 {
+        text-align: center;
+        margin-bottom: 15px;
+        font-size: 1.5em;
+    }
+</style>

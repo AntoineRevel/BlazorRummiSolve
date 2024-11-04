@@ -4,31 +4,28 @@
 <h1>Test Page</h1>
 
 <h3>Solution</h3>
-@if (_solution == null)
-{
-    <p>
-        <em>Loading...</em>
-    </p>
-}
-else
-{
-    <SolutionComponent Solution="_solution"/>
-}
+
+<SolutionComponent Solution="_game?.BoardSolution"/>
+
+<PlayersContainerComponent CurrentPlayer="_game.Players[0]" OtherPlayers="_game.Players" />
+
 
 @code {
-    private Solution? _solution;
+    
+    private Game? _game;
 
     protected override void OnInitialized()
     {
-        var game = new Game();
-        game.AddPlayer("Antoine");
-        game.AddPlayer("Matthieu");
-        game.AddPlayer("David");
-        game.AddPlayer("Maguy");
+        _game = new Game();
+        
+        _game.AddPlayer("Antoine");
+        _game.AddPlayer("Matthieu");
+        _game.AddPlayer("David");
 
-        game.Start();
 
-        _solution = game.BoardSolution;
+        _game.Start();
+        
     }
+
 
 }

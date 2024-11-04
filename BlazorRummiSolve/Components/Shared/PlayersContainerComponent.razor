@@ -1,0 +1,60 @@
+@using RummiSolve
+<h3>PlayersContainerComponent</h3>
+
+<div class="players-container">
+
+    <div class="current-player">
+        <PlayerComponent Player="CurrentPlayer"/>
+    </div>
+    
+    <hr/>
+
+
+    <div class="other-players">
+        @foreach (var player in OtherPlayers)
+        {
+            <PlayerComponent Player="player"/>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public required Player CurrentPlayer { get; set; }
+
+    [Parameter] public required List<Player> OtherPlayers { get; set; }
+}
+
+<style>
+    .players-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .current-player {
+        margin-bottom: 30px;
+    }
+
+    .current-player > .player-container {
+        /* Styles spécifiques pour le joueur en cours */
+        border: 2px solid #FFD700; /* Bordure dorée */
+        background: linear-gradient(to right, #fff8dc, #fffacd); /* Dégradé plus clair */
+    }
+
+    .other-players {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .other-players > * {
+        flex: 1 1 300px;
+        margin: 10px;
+    }
+
+    hr {
+        border: none;
+        border-top: 2px solid #ccc;
+        margin: 20px 0;
+    }
+</style>
