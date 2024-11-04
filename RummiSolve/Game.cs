@@ -166,11 +166,8 @@ public class Game
 
     private Tile DrawTile()
     {
-        if (TilePool.Count == 0)
-        {
-            throw new InvalidOperationException("No tiles left in the pool.");
-        }
-
+        if (TilePool is []) throw new InvalidOperationException("No tiles left in the pool.");
+        
         var drawnTile = TilePool[0];
         TilePool.RemoveAt(0);
         return drawnTile;

@@ -197,7 +197,7 @@ public class Set
 
     private Group[] GetGroups(int firstTileIndex, bool[] usedTiles, int availableJokers)
     {
-        if (Tiles.Count == 0) return [];
+        if (Tiles is []) return [];
 
         var firstTile = Tiles[firstTileIndex];
         var number = firstTile.Value;
