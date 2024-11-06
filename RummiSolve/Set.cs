@@ -52,14 +52,14 @@ public class Set : ISet
         if (tile.IsJoker) Jokers--;
     }
 
-    
+
     public void PrintAllTiles()
     {
         foreach (var tile in Tiles)
         {
             tile.PrintTile();
         }
-        
+
         for (var i = 0; i < Jokers; i++)
         {
             Tile.PrintJoker();
@@ -138,7 +138,7 @@ public class Set : ISet
         return Array.FindIndex(usedTiles, startIndex, used => !used);
     }
 
-    private List<Run> GetRuns(int tileIndex, bool[] usedTiles, int availableJokers)
+    public List<Run> GetRuns(int tileIndex, bool[] usedTiles, int availableJokers)
     {
         var runs = new List<Run>();
         var firstTile = Tiles[tileIndex];
@@ -185,6 +185,64 @@ public class Set : ISet
                 runs.Add(new Run
                 {
                     Tiles = [..currentRun],
+                    Jokers = jokersUsed
+                });
+            }
+        }
+    }
+
+    public List<Run> GetRunsSpan(int tileIndex, bool[] usedTiles, int availableJokers)
+    {
+        var runs = new List<Run>();
+        var color = Tiles[tileIndex].Color;
+        Span<Tile> currentRunSpan = stackalloc Tile[usedTiles.Length - tileIndex];
+        currentRunSpan[0] = Tiles[tileIndex];
+        var spanIndex = 0;
+        var jokersUsed = 0;
+        tileIndex += 1;
+
+        while (true)
+        {
+            for (; tileIndex < Tiles.Count; tileIndex++)
+            {
+                if (Tiles[tileIndex].Color != color)
+                {
+                    break;
+                }
+
+                if (usedTiles[tileIndex] || Tiles[tileIndex].Value == currentRunSpan[spanIndex].Value) continue;
+
+                if (Tiles[tileIndex].Value != currentRunSpan[spanIndex].Value + 1) break;
+
+                spanIndex++;
+                currentRunSpan[spanIndex] = Tiles[tileIndex];
+
+                if (spanIndex >= 2)
+                    runs.Add(new Run
+                    {
+                        Tiles = currentRunSpan[..(spanIndex + 1)].ToArray(),
+                        Jokers = jokersUsed
+                    });
+            }
+
+            if (availableJokers <= 0) return runs;
+
+            if (currentRunSpan[spanIndex].Value != 13)
+            {
+                spanIndex++;
+                currentRunSpan[spanIndex] = new Tile(currentRunSpan[spanIndex - 1].Value + 1, color, true);
+            }
+            //else if (currentRunSpan[spanIndex].Value != 1) currentRun.Insert(0, new Tile(currentRun[0].Value - 1, color, true));
+            else jokersUsed--; //TODO insert 2 Run 123J 4...
+
+            availableJokers -= 1;
+            jokersUsed++;
+
+            if (spanIndex >= 2)
+            {
+                runs.Add(new Run
+                {
+                    Tiles = currentRunSpan[..(spanIndex + 1)].ToArray(),
                     Jokers = jokersUsed
                 });
             }
@@ -327,7 +385,8 @@ public class Set : ISet
         };
     }
 
-    private void MarkTilesAsUsed(ValidSet set, bool isUsed, bool[] usedTiles, ref int unusedTile, ref int availableJokers)
+    private void MarkTilesAsUsed(ValidSet set, bool isUsed, bool[] usedTiles, ref int unusedTile,
+        ref int availableJokers)
     {
         foreach (var tile in set.Tiles)
         {
@@ -403,6 +462,4 @@ public class Set : ISet
     {
         return string.Join("-", sortedTiles);
     }
-
-    
 }

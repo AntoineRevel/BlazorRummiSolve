@@ -3,9 +3,56 @@ using BenchmarkDotNet.Attributes;
 
 namespace RummiSolve;
 
+[MemoryDiagnoser]
 public class RummiBench
 {
-    
+    private static readonly Set Set = new()
+    {
+        Tiles =
+        [
+            new Tile(1, TileColor.Black),
+            new Tile(2, TileColor.Black),
+            new Tile(2, TileColor.Black),
+            new Tile(3, TileColor.Black),
+            new Tile(4, TileColor.Black),
+            new Tile(5, TileColor.Black),
+            new Tile(6, TileColor.Black),
+            new Tile(7, TileColor.Black),
+            new Tile(8, TileColor.Black),
+            new Tile(9, TileColor.Black),
+            new Tile(10, TileColor.Mango),
+        ]
+    };
+
+    private static readonly bool[] TabBool = [false, false, false, false, false, false, false, false, true, false];
+
+    [Benchmark]
+    public void NoSpan()
+    {
+        Set.GetRuns(0, TabBool, 1);
+    }
+
+    [Benchmark]
+    public void WithSpan()
+    {
+        Set.GetRunsSpan(0, TabBool, 1);
+    }
+
+    public static void TestRunSpan()
+    {
+        var result = Set.GetRunsSpan(0, TabBool, 1);
+        foreach (var run in result)
+        {
+            foreach (var tile in run.Tiles)
+            {
+                tile.PrintTile();
+            }
+
+            Console.WriteLine();
+            Console.WriteLine(run.Jokers);
+        }
+    }
+
     public static void TestMultiPlayerGame()
     {
         var game = new Game();
@@ -19,7 +66,6 @@ public class RummiBench
         Console.WriteLine($"Game duration: {gameStopwatch.Elapsed.TotalSeconds} seconds");
     }
 
-    
     public static void TestGroupJoker()
     {
         var groupSet = new Set()
@@ -30,14 +76,14 @@ public class RummiBench
                 new Tile(1, TileColor.Black),
                 new Tile(true),
                 new Tile(true),
-                
+
+
                 new Tile(2, TileColor.Blue),
                 new Tile(3, TileColor.Blue),
                 new Tile(4, TileColor.Blue),
-                
             ],
         };
-        
+
         groupSet.PrintAllTiles();
 
         Console.WriteLine();
@@ -50,74 +96,6 @@ public class RummiBench
         {
             Tiles =
             [
-                new Tile(4, TileColor.Red),
-                new Tile(8, TileColor.Black),
-                new Tile(3, TileColor.Black),
-                new Tile(3, TileColor.Mango),
-                new Tile(7, TileColor.Mango),
-                new Tile(8, TileColor.Black),
-                new Tile(1, TileColor.Blue),
-                new Tile(1, TileColor.Black),
-                new Tile(2, TileColor.Mango),
-                new Tile(13, TileColor.Red),
-                new Tile(13, TileColor.Blue),
-                new Tile(11, TileColor.Mango),
-                new Tile(6, TileColor.Mango),
-                new Tile(10, TileColor.Mango),
-                new Tile(9, TileColor.Black),
-                new Tile(6, TileColor.Blue),
-                new Tile(1, TileColor.Blue),
-                new Tile(8, TileColor.Red),
-                new Tile(9, TileColor.Blue),
-                new Tile(11, TileColor.Black),
-                new Tile(true)
-            ],
-        };
-
-        var boardSet = new Set
-        {
-            Tiles =
-            [
-                new Tile(12, TileColor.Blue),
-                new Tile(12, TileColor.Red),
-                new Tile(12, TileColor.Black),
-
-                new Tile(11, TileColor.Blue),
-                new Tile(11, TileColor.Mango),
-                new Tile(11, TileColor.Black),
-
-                new Tile(6, TileColor.Blue),
-                new Tile(6, TileColor.Red),
-                new Tile(6, TileColor.Mango),
-
-                new Tile(5, TileColor.Blue),
-                new Tile(5, TileColor.Mango),
-                new Tile(5, TileColor.Black),
-            ],
-        };
-
-        setToTest.Sort();
-
-        setToTest.PrintAllTiles();
-        Console.WriteLine();
-
-        var boardSol = boardSet.GetSolution();
-
-        boardSol.PrintSolution();
-
-        var game = new Game()
-        {
-            BoardSolution = boardSol
-        };
-        
-    }
-
-    public static void TestJoker2()
-    {
-        var setToTest = new Set
-        {
-            Tiles =
-            [
                 new Tile(11, TileColor.Mango),
                 new Tile(10, TileColor.Mango),
                 new Tile(true)
@@ -159,8 +137,6 @@ public class RummiBench
         {
             BoardSolution = boardSol
         };
-
-
     }
 
     public static void TestRandomValidSet()
