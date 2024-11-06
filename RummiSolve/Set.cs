@@ -4,7 +4,7 @@ public class Set
 {
     public List<Tile> Tiles = []; //TODO check if List is the best
     private bool _isSorted;
-    private int _jokers; 
+    private int _jokers;
 
     public void AddTile(Tile tile)
     {
@@ -43,16 +43,13 @@ public class Set
     }
 
 
-    public bool Remove(Tile tile)
+    public void Remove(Tile tile)
     {
         ArgumentNullException.ThrowIfNull(tile);
 
-        var removed = Tiles.Remove(tile);
+        Tiles.Remove(tile);
 
-        if (!removed) return removed;
         if (tile.IsJoker) _jokers--;
-
-        return removed;
     }
 
     public void PrintAllTiles()
