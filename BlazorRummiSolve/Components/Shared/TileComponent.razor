@@ -1,7 +1,7 @@
 @using RummiSolve
 
 <div class="tile @(Tile.IsJoker ? "joker" : "")">
-    <div class="tile-number" style="color:@GetColor(Tile.TileColor)">
+    <div class="tile-number" style="color:@GetColor(Tile.Color)">
         <b>@(Tile.IsJoker ? "J" : Tile.Value.ToString())</b>
     </div>
 </div>
@@ -10,14 +10,14 @@
 @code {
     [Parameter] public required Tile Tile { get; set; }
 
-    private string GetColor(Tile.Color color)
+    private string GetColor(TileColor color)
     {
         return color switch
         {
-            Tile.Color.Blue => "blue",
-            Tile.Color.Red => "red",
-            Tile.Color.Mango => "orange",
-            Tile.Color.Black => "black",
+            TileColor.Blue => "blue",
+            TileColor.Red => "red",
+            TileColor.Mango => "orange",
+            TileColor.Black => "black",
             _ => "gray",
         };
     }
