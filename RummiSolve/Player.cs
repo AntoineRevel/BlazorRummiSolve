@@ -5,13 +5,13 @@ namespace RummiSolve;
 public class Player(string name)
 {
     public readonly string Name = name;
-    private readonly Set _rackTilesSet = new();
+    public readonly Set RackTilesSet = new();
     private bool _isFirst = true;
     private Tile _lastDrewTile;
 
     public void AddTileToRack(Tile tile)
     {
-        _rackTilesSet.AddTile(tile);
+        RackTilesSet.AddTile(tile);
     }
 
     public void SetLastDrewTile(Tile tile)
@@ -21,10 +21,10 @@ public class Player(string name)
 
     public void PrintRackTiles()
     {
-        if (_rackTilesSet.Tiles.Count != 0)
+        if (RackTilesSet.Tiles.Count != 0)
         {
             WriteLine(Name + " tiles : ");
-            _rackTilesSet.Tiles.ForEach(t => t.PrintTile());
+            RackTilesSet.Tiles.ForEach(t => t.PrintTile());
         }
         else WriteLine(Name + " Win !!!");
 
@@ -40,9 +40,9 @@ public class Player(string name)
         var locker = new object();
         Set finalRackSet = null!;
 
-        for (var tileCount = _rackTilesSet.Tiles.Count; tileCount > 0; tileCount--)
+        for (var tileCount = RackTilesSet.Tiles.Count; tileCount > 0; tileCount--)
         {
-            var rackSetsToTry = Set.GetBestSets(_rackTilesSet.Tiles, tileCount);
+            var rackSetsToTry = Set.GetBestSets(RackTilesSet.Tiles, tileCount);
 
             rackSetsToTry = boardChange
                 ? rackSetsToTry
@@ -77,7 +77,7 @@ public class Player(string name)
 
         foreach (var tile in finalRackSet.Tiles)
         {
-            _rackTilesSet.Remove(tile);
+            RackTilesSet.Remove(tile);
         }
 
         return finalSolution;
@@ -87,9 +87,9 @@ public class Player(string name)
     {
         var finalSolution = Solution.GetInvalidSolution();
 
-        for (var tileCount = _rackTilesSet.Tiles.Count; tileCount > 3; tileCount--)
+        for (var tileCount = RackTilesSet.Tiles.Count; tileCount > 3; tileCount--)
         {
-            var rackSetsToTry = Set.GetBestSets(_rackTilesSet.Tiles, tileCount);
+            var rackSetsToTry = Set.GetBestSets(RackTilesSet.Tiles, tileCount);
 
             rackSetsToTry = _lastDrewTile.IsNull
                 ? rackSetsToTry
@@ -120,7 +120,7 @@ public class Player(string name)
 
         foreach (var tile in finalRackSet.Tiles)
         {
-            _rackTilesSet.Remove(tile);
+            RackTilesSet.Remove(tile);
         }
 
         _isFirst = false;
@@ -129,6 +129,6 @@ public class Player(string name)
 
     public bool HasWon()
     {
-        return _rackTilesSet.Tiles.Count == 0;
+        return RackTilesSet.Tiles.Count == 0;
     }
 }
