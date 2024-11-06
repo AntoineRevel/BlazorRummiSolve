@@ -9,17 +9,17 @@ public class RummiBench
     {
         Tiles =
         [
-            new Tile(11, Tile.Color.Blue),
-            new Tile(13, Tile.Color.Black),
-            new Tile(10, Tile.Color.Blue),
-            new Tile(9, Tile.Color.Blue),
-            new Tile(6, Tile.Color.Blue),
-            new Tile(12, Tile.Color.Blue),
-            new Tile(8, Tile.Color.Blue),
-            new Tile(5, Tile.Color.Blue),
-            new Tile(13, Tile.Color.Mango),
-            new Tile(7, Tile.Color.Blue),
-            new Tile(13, Tile.Color.Blue),
+            new Tile(11, TileColor.Blue),
+            new Tile(13, TileColor.Black),
+            new Tile(10, TileColor.Blue),
+            new Tile(9, TileColor.Blue),
+            new Tile(6, TileColor.Blue),
+            new Tile(12, TileColor.Blue),
+            new Tile(8, TileColor.Blue),
+            new Tile(5, TileColor.Blue),
+            new Tile(13, TileColor.Mango),
+            new Tile(7, TileColor.Blue),
+            new Tile(13, TileColor.Blue),
         ]
     };
 
@@ -27,85 +27,85 @@ public class RummiBench
     {
         Tiles =
         [
-            new Tile(1, Tile.Color.Blue),
-            new Tile(2, Tile.Color.Blue),
-            new Tile(3, Tile.Color.Blue),
+            new Tile(1, TileColor.Blue),
+            new Tile(2, TileColor.Blue),
+            new Tile(3, TileColor.Blue),
 
-            new Tile(7, Tile.Color.Red),
-            new Tile(8, Tile.Color.Red),
-            new Tile(9, Tile.Color.Red),
+            new Tile(7, TileColor.Red),
+            new Tile(8, TileColor.Red),
+            new Tile(9, TileColor.Red),
 
-            new Tile(1, Tile.Color.Blue),
-            new Tile(2, Tile.Color.Blue),
-            new Tile(3, Tile.Color.Blue),
+            new Tile(1, TileColor.Blue),
+            new Tile(2, TileColor.Blue),
+            new Tile(3, TileColor.Blue),
 
-            new Tile(7, Tile.Color.Red),
-            new Tile(8, Tile.Color.Red),
-            new Tile(9, Tile.Color.Red),
+            new Tile(7, TileColor.Red),
+            new Tile(8, TileColor.Red),
+            new Tile(9, TileColor.Red),
 
-            new Tile(5, Tile.Color.Blue),
-            new Tile(5, Tile.Color.Red),
-            new Tile(5, Tile.Color.Black),
+            new Tile(5, TileColor.Blue),
+            new Tile(5, TileColor.Red),
+            new Tile(5, TileColor.Black),
 
-            new Tile(10, Tile.Color.Mango),
-            new Tile(11, Tile.Color.Mango),
-            new Tile(12, Tile.Color.Mango),
+            new Tile(10, TileColor.Mango),
+            new Tile(11, TileColor.Mango),
+            new Tile(12, TileColor.Mango),
 
-            new Tile(7, Tile.Color.Red),
-            new Tile(7, Tile.Color.Blue),
-            new Tile(7, Tile.Color.Black),
+            new Tile(7, TileColor.Red),
+            new Tile(7, TileColor.Blue),
+            new Tile(7, TileColor.Black),
 
-            new Tile(4, Tile.Color.Black),
-            new Tile(5, Tile.Color.Black),
-            new Tile(6, Tile.Color.Black),
+            new Tile(4, TileColor.Black),
+            new Tile(5, TileColor.Black),
+            new Tile(6, TileColor.Black),
 
-            new Tile(3, Tile.Color.Mango),
-            new Tile(3, Tile.Color.Red),
-            new Tile(3, Tile.Color.Black),
+            new Tile(3, TileColor.Mango),
+            new Tile(3, TileColor.Red),
+            new Tile(3, TileColor.Black),
 
-            new Tile(2, Tile.Color.Mango),
-            new Tile(3, Tile.Color.Mango),
-            new Tile(4, Tile.Color.Mango),
+            new Tile(2, TileColor.Mango),
+            new Tile(3, TileColor.Mango),
+            new Tile(4, TileColor.Mango),
 
-            new Tile(9, Tile.Color.Black),
-            new Tile(9, Tile.Color.Mango),
-            new Tile(9, Tile.Color.Red),
+            new Tile(9, TileColor.Black),
+            new Tile(9, TileColor.Mango),
+            new Tile(9, TileColor.Red),
 
-            new Tile(11, Tile.Color.Red),
-            new Tile(12, Tile.Color.Red),
-            new Tile(13, Tile.Color.Red),
+            new Tile(11, TileColor.Red),
+            new Tile(12, TileColor.Red),
+            new Tile(13, TileColor.Red),
 
-            new Tile(6, Tile.Color.Blue),
-            new Tile(6, Tile.Color.Mango),
-            new Tile(6, Tile.Color.Black),
+            new Tile(6, TileColor.Blue),
+            new Tile(6, TileColor.Mango),
+            new Tile(6, TileColor.Black),
 
-            new Tile(11, Tile.Color.Black),
-            new Tile(12, Tile.Color.Black),
-            new Tile(13, Tile.Color.Black),
+            new Tile(11, TileColor.Black),
+            new Tile(12, TileColor.Black),
+            new Tile(13, TileColor.Black),
         ]
     };
 
     private readonly List<Tile> _exampleRackTiles =
     [
-        new Tile(4, Tile.Color.Blue),
-        new Tile(5, Tile.Color.Blue),
+        new Tile(4, TileColor.Blue),
+        new Tile(5, TileColor.Blue),
 
-        new Tile(6, Tile.Color.Red),
+        new Tile(6, TileColor.Red),
 
-        new Tile(1, Tile.Color.Blue),
-        new Tile(12, Tile.Color.Mango),
+        new Tile(1, TileColor.Blue),
+        new Tile(12, TileColor.Mango),
 
-        new Tile(4, Tile.Color.Black),
-        new Tile(5, Tile.Color.Black),
-        new Tile(6, Tile.Color.Black),
-        new Tile(3, Tile.Color.Black),
+        new Tile(4, TileColor.Black),
+        new Tile(5, TileColor.Black),
+        new Tile(6, TileColor.Black),
+        new Tile(3, TileColor.Black),
 
-        new Tile(2, Tile.Color.Mango),
-        new Tile(3, Tile.Color.Mango),
-        new Tile(4, Tile.Color.Mango),
+        new Tile(2, TileColor.Mango),
+        new Tile(3, TileColor.Mango),
+        new Tile(4, TileColor.Mango),
 
-        new Tile(8, Tile.Color.Mango),
-        new Tile(8, Tile.Color.Red)
+        new Tile(8, TileColor.Mango),
+        new Tile(8, TileColor.Red)
     ];
 
     public static void TestMultiPlayerGame()
@@ -128,14 +128,14 @@ public class RummiBench
         {
             Tiles =
             [
-                new Tile(1, Tile.Color.Blue),
-                new Tile(1, Tile.Color.Black),
+                new Tile(1, TileColor.Blue),
+                new Tile(1, TileColor.Black),
                 new Tile(true),
                 new Tile(true),
                 
-                new Tile(2, Tile.Color.Blue),
-                new Tile(3, Tile.Color.Blue),
-                new Tile(4, Tile.Color.Blue),
+                new Tile(2, TileColor.Blue),
+                new Tile(3, TileColor.Blue),
+                new Tile(4, TileColor.Blue),
                 
             ],
         };
@@ -152,26 +152,26 @@ public class RummiBench
         {
             Tiles =
             [
-                new Tile(4, Tile.Color.Red),
-                new Tile(8, Tile.Color.Black),
-                new Tile(3, Tile.Color.Black),
-                new Tile(3, Tile.Color.Mango),
-                new Tile(7, Tile.Color.Mango),
-                new Tile(8, Tile.Color.Black),
-                new Tile(1, Tile.Color.Blue),
-                new Tile(1, Tile.Color.Black),
-                new Tile(2, Tile.Color.Mango),
-                new Tile(13, Tile.Color.Red),
-                new Tile(13, Tile.Color.Blue),
-                new Tile(11, Tile.Color.Mango),
-                new Tile(6, Tile.Color.Mango),
-                new Tile(10, Tile.Color.Mango),
-                new Tile(9, Tile.Color.Black),
-                new Tile(6, Tile.Color.Blue),
-                new Tile(1, Tile.Color.Blue),
-                new Tile(8, Tile.Color.Red),
-                new Tile(9, Tile.Color.Blue),
-                new Tile(11, Tile.Color.Black),
+                new Tile(4, TileColor.Red),
+                new Tile(8, TileColor.Black),
+                new Tile(3, TileColor.Black),
+                new Tile(3, TileColor.Mango),
+                new Tile(7, TileColor.Mango),
+                new Tile(8, TileColor.Black),
+                new Tile(1, TileColor.Blue),
+                new Tile(1, TileColor.Black),
+                new Tile(2, TileColor.Mango),
+                new Tile(13, TileColor.Red),
+                new Tile(13, TileColor.Blue),
+                new Tile(11, TileColor.Mango),
+                new Tile(6, TileColor.Mango),
+                new Tile(10, TileColor.Mango),
+                new Tile(9, TileColor.Black),
+                new Tile(6, TileColor.Blue),
+                new Tile(1, TileColor.Blue),
+                new Tile(8, TileColor.Red),
+                new Tile(9, TileColor.Blue),
+                new Tile(11, TileColor.Black),
                 new Tile(true)
             ],
         };
@@ -180,21 +180,21 @@ public class RummiBench
         {
             Tiles =
             [
-                new Tile(12, Tile.Color.Blue),
-                new Tile(12, Tile.Color.Red),
-                new Tile(12, Tile.Color.Black),
+                new Tile(12, TileColor.Blue),
+                new Tile(12, TileColor.Red),
+                new Tile(12, TileColor.Black),
 
-                new Tile(11, Tile.Color.Blue),
-                new Tile(11, Tile.Color.Mango),
-                new Tile(11, Tile.Color.Black),
+                new Tile(11, TileColor.Blue),
+                new Tile(11, TileColor.Mango),
+                new Tile(11, TileColor.Black),
 
-                new Tile(6, Tile.Color.Blue),
-                new Tile(6, Tile.Color.Red),
-                new Tile(6, Tile.Color.Mango),
+                new Tile(6, TileColor.Blue),
+                new Tile(6, TileColor.Red),
+                new Tile(6, TileColor.Mango),
 
-                new Tile(5, Tile.Color.Blue),
-                new Tile(5, Tile.Color.Mango),
-                new Tile(5, Tile.Color.Black),
+                new Tile(5, TileColor.Blue),
+                new Tile(5, TileColor.Mango),
+                new Tile(5, TileColor.Black),
             ],
         };
 
@@ -220,8 +220,8 @@ public class RummiBench
         {
             Tiles =
             [
-                new Tile(11, Tile.Color.Mango),
-                new Tile(10, Tile.Color.Mango),
+                new Tile(11, TileColor.Mango),
+                new Tile(10, TileColor.Mango),
                 new Tile(true)
             ],
         };
@@ -230,21 +230,21 @@ public class RummiBench
         {
             Tiles =
             [
-                new Tile(12, Tile.Color.Blue),
-                new Tile(12, Tile.Color.Red),
-                new Tile(12, Tile.Color.Black),
+                new Tile(12, TileColor.Blue),
+                new Tile(12, TileColor.Red),
+                new Tile(12, TileColor.Black),
 
-                new Tile(11, Tile.Color.Blue),
-                new Tile(11, Tile.Color.Mango),
-                new Tile(11, Tile.Color.Black),
+                new Tile(11, TileColor.Blue),
+                new Tile(11, TileColor.Mango),
+                new Tile(11, TileColor.Black),
 
-                new Tile(6, Tile.Color.Blue),
-                new Tile(6, Tile.Color.Red),
-                new Tile(6, Tile.Color.Mango),
+                new Tile(6, TileColor.Blue),
+                new Tile(6, TileColor.Red),
+                new Tile(6, TileColor.Mango),
 
-                new Tile(5, Tile.Color.Blue),
-                new Tile(5, Tile.Color.Mango),
-                new Tile(5, Tile.Color.Black),
+                new Tile(5, TileColor.Blue),
+                new Tile(5, TileColor.Mango),
+                new Tile(5, TileColor.Black),
             ],
         };
 
@@ -288,11 +288,11 @@ public class RummiBench
     {
         List<Tile> tryCombiSet =
         [
-            new(1, Tile.Color.Black),
-            new(1, Tile.Color.Black),
-            new(2, Tile.Color.Black),
-            new(3, Tile.Color.Black),
-            new(3, Tile.Color.Black, true),
+            new(1, TileColor.Black),
+            new(1, TileColor.Black),
+            new(2, TileColor.Black),
+            new(3, TileColor.Black),
+            new(3, TileColor.Black, true),
         ];
 
         foreach (var tiles in Set.GetBestSets(tryCombiSet, 2))
@@ -318,7 +318,7 @@ public class RummiBench
         // Générer les runs
         for (var i = 0; i < numberOfRuns; i++)
         {
-            var color = (Tile.Color)random.Next(0, 4); // Couleur aléatoire
+            var color = (TileColor)random.Next(0, 4); // Couleur aléatoire
             var startNumber = random.Next(1, 13); // Un run peut commencer entre 1 et 13
             var maxRunLength = 14 - startNumber; // Calculer la longueur maximale du run possible
 
@@ -341,8 +341,8 @@ public class RummiBench
             var number = random.Next(1, 14); // Numéro aléatoire entre 1 et 13
             var groupSize = random.Next(3, 5); // Taille aléatoire entre 3 et 4
 
-            var availableColors = new List<Tile.Color>
-                { Tile.Color.Blue, Tile.Color.Red, Tile.Color.Mango, Tile.Color.Black };
+            var availableColors = new List<TileColor>
+                { TileColor.Blue, TileColor.Red, TileColor.Mango, TileColor.Black };
             var group = new List<Tile>();
             for (var j = 0; j < groupSize; j++)
             {

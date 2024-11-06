@@ -146,7 +146,7 @@ public class Set
     {
         var runs = new List<Run>();
         var firstTile = Tiles[tileIndex];
-        var color = firstTile.TileColor;
+        var color = firstTile.Color;
         var currentRun = new List<Tile> { firstTile };
         var jokersUsed = 0;
         var i = tileIndex + 1;
@@ -155,7 +155,7 @@ public class Set
         {
             for (; i < Tiles.Count; i++)
             {
-                if (Tiles[i].TileColor != color)
+                if (Tiles[i].Color != color)
                 {
                     i = Tiles.Count;
                     break;
@@ -201,10 +201,10 @@ public class Set
 
         var firstTile = Tiles[firstTileIndex];
         var number = firstTile.Value;
-        var color = firstTile.TileColor;
+        var color = firstTile.Color;
 
         var sameNumberTiles = Tiles
-            .Where((tile, index) => !usedTiles[index] && tile.Value == number && tile.TileColor != color)
+            .Where((tile, index) => !usedTiles[index] && tile.Value == number && tile.Color != color)
             .Distinct()
             .ToArray();
 
@@ -234,7 +234,7 @@ public class Set
                     {
                         Tiles =
                         [
-                            firstTile, sameNumberTiles[0], new Tile(firstTile.Value, Tile.Color.Black, true)
+                            firstTile, sameNumberTiles[0], new Tile(firstTile.Value, TileColor.Black, true)
                         ],
                         _jokers = 1
                     }
@@ -246,7 +246,7 @@ public class Set
                     {
                         Tiles =
                         [
-                            firstTile, sameNumberTiles[0], new Tile(firstTile.Value, Tile.Color.Black, true)
+                            firstTile, sameNumberTiles[0], new Tile(firstTile.Value, TileColor.Black, true)
                         ],
                         _jokers = 1
                     },
@@ -254,7 +254,7 @@ public class Set
                     {
                         Tiles =
                         [
-                            firstTile, sameNumberTiles[1], new Tile(firstTile.Value, Tile.Color.Black, true)
+                            firstTile, sameNumberTiles[1], new Tile(firstTile.Value, TileColor.Black, true)
                         ],
                         _jokers = 1
                     },
@@ -262,7 +262,7 @@ public class Set
                     {
                         Tiles =
                         [
-                            firstTile, ..sameNumberTiles, new Tile(firstTile.Value, Tile.Color.Black, true)
+                            firstTile, ..sameNumberTiles, new Tile(firstTile.Value, TileColor.Black, true)
                         ],
                         _jokers = 1
                     },
@@ -278,7 +278,7 @@ public class Set
                         Tiles =
                         [
                             firstTile, sameNumberTiles[0], sameNumberTiles[1],
-                            new Tile(firstTile.Value, Tile.Color.Black, true)
+                            new Tile(firstTile.Value, TileColor.Black, true)
                         ],
                         _jokers = 1
                     },
@@ -287,7 +287,7 @@ public class Set
                         Tiles =
                         [
                             firstTile, sameNumberTiles[1], sameNumberTiles[2],
-                            new Tile(firstTile.Value, Tile.Color.Black, true)
+                            new Tile(firstTile.Value, TileColor.Black, true)
                         ],
                         _jokers = 1
                     },
@@ -296,7 +296,7 @@ public class Set
                         Tiles =
                         [
                             firstTile, sameNumberTiles[0], sameNumberTiles[2],
-                            new Tile(firstTile.Value, Tile.Color.Black, true)
+                            new Tile(firstTile.Value, TileColor.Black, true)
                         ],
                         _jokers = 1
                     },
@@ -304,7 +304,7 @@ public class Set
                     {
                         Tiles =
                         [
-                            firstTile, sameNumberTiles[0], new Tile(firstTile.Value, Tile.Color.Black, true)
+                            firstTile, sameNumberTiles[0], new Tile(firstTile.Value, TileColor.Black, true)
                         ],
                         _jokers = 1
                     },
@@ -312,7 +312,7 @@ public class Set
                     {
                         Tiles =
                         [
-                            firstTile, sameNumberTiles[1], new Tile(firstTile.Value, Tile.Color.Black, true)
+                            firstTile, sameNumberTiles[1], new Tile(firstTile.Value, TileColor.Black, true)
                         ],
                         _jokers = 1
                     },
@@ -320,7 +320,7 @@ public class Set
                     {
                         Tiles =
                         [
-                            firstTile, sameNumberTiles[2], new Tile(firstTile.Value, Tile.Color.Black, true)
+                            firstTile, sameNumberTiles[2], new Tile(firstTile.Value, TileColor.Black, true)
                         ],
                         _jokers = 1
                     },

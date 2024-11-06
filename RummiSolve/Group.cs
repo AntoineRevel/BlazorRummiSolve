@@ -10,8 +10,8 @@ public class Group : Set
         }
 
         var number = Tiles[0].Value;
-        var colors = new HashSet<Tile.Color>();
+        var colors = new HashSet<TileColor>();
 
-        return Tiles.All(tile => tile.Value == number && colors.Add(tile.TileColor));
+        return Tiles.All(tile => tile.Value == number && colors.Add(tile.Color));
     }
 }

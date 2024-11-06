@@ -11,7 +11,7 @@ public class Run : Set
 
         for (var i = 1; i < Tiles.Count; i++)
         {
-            if (Tiles[i].TileColor != Tiles[0].TileColor || Tiles[i].Value != Tiles[i - 1].Value + 1)
+            if (Tiles[i].Color != Tiles[0].Color || Tiles[i].Value != Tiles[i - 1].Value + 1)
             {
                 return false;
             }

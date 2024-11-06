@@ -138,7 +138,7 @@ public class Game
 
     private void InitializeTilePool(int seed)
     {
-        foreach (Tile.Color color in Enum.GetValues(typeof(Tile.Color)))
+        foreach (TileColor color in Enum.GetValues(typeof(TileColor)))
         {
             for (var i = 1; i <= 13; i++)
             {
