@@ -7,7 +7,7 @@ public class Player(string name)
     public readonly string Name = name;
     public readonly Set RackTilesSet = new();
     private bool _isFirst = true;
-    private Tile? _lastDrewTile;
+    private Tile _lastDrewTile;
 
     public void AddTileToRack(Tile tile)
     {
@@ -91,9 +91,9 @@ public class Player(string name)
         {
             var rackSetsToTry = Set.GetBestSets(RackTilesSet.Tiles, tileCount);
 
-            rackSetsToTry = _lastDrewTile == null
+            rackSetsToTry = _lastDrewTile.IsNull
                 ? rackSetsToTry
-                : rackSetsToTry.Where(tab => tab.Tiles.Contains(_lastDrewTile!));
+                : rackSetsToTry.Where(tab => tab.Tiles.Contains(_lastDrewTile));
 
             Parallel.ForEach(rackSetsToTry, (currentRackSet, state) =>
             {

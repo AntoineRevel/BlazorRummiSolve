@@ -1,38 +1,43 @@
 namespace RummiSolve;
 
-public class Tile : IComparable<Tile>
+public readonly struct Tile : IComparable<Tile>, IEquatable<Tile>
 {
-    public int Value { get; }
-    public TileColor Color { get; }
-    public bool IsJoker { get; }
+    private readonly byte _data;
     
-    public Tile(int value, TileColor tileColor, bool isJoker = false)
+    public Tile(int value, TileColor color, bool isJoker = false)
     {
-        if (value is < 1 or > 13)
-        {
-            throw new ArgumentOutOfRangeException(nameof(value), "Number must be between 1 and 13." + value);
-        }
+        if (value is < 0 or > 15)
+            throw new ArgumentOutOfRangeException(nameof(value), "La valeur doit être entre 0 et 15.");
 
-        Value = value;
-        Color = tileColor;
-        IsJoker = isJoker;
+        if (!Enum.IsDefined(typeof(TileColor), color))
+            throw new ArgumentOutOfRangeException(nameof(color), "Couleur invalide.");
+
+        _data = (byte)(
+            ((isJoker ? 1 : 0) << 6) |   // Bit 6 pour IsJoker
+            ((int)color << 4) |          // Bits 4-5 pour la couleur
+            (value & 0x0F)               // Bits 0-3 pour la valeur
+        );
     }
-
-    public Tile(bool isJoker)
+    public Tile(bool isJoker = false)
     {
-        Value = 0;
-        Color = TileColor.Black;
-        IsJoker = isJoker;
+        _data = (byte)(isJoker ? 64 : 0);
     }
+    
+    public int Value => _data & 0x0F; // Bits 0-3
 
+    public TileColor Color => (TileColor)((_data >> 4) & 0x03); // Bits 4-5
 
+    public bool IsJoker => ((_data >> 6) & 0x01) == 1; // Bit 6
+
+    public bool IsNull => _data == 0;
+    public int CompareTo(Tile other)
+    {
+        return _data.CompareTo(other._data);
+    }
+    
     public void PrintTile()
     {
-        if (IsJoker)
-        {
-            Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.Write("J ");
-        }
+        if (IsJoker) PrintJoker();
         else
         {
             Console.ForegroundColor = Color switch
@@ -49,13 +54,13 @@ public class Tile : IComparable<Tile>
 
         Console.ResetColor();
     }
-
+    
     public static void PrintJoker()
     {
         Console.ForegroundColor = ConsoleColor.Magenta;
         Console.Write("J ");
     }
-
+    
     public override string ToString()
     {
         if (IsJoker)
@@ -67,43 +72,29 @@ public class Tile : IComparable<Tile>
         return $"{Value}:{colorCode}";
     }
 
-    public int CompareTo(Tile? other)
+    public bool Equals(Tile other)
     {
-        if (other == null) return 1;
-
-        switch (IsJoker)
-        {
-            case true when other.IsJoker: return 0;
-            case true: return 1;
-        }
-
-        if (other.IsJoker) return -1;
-
-        var colorComparison = Color.CompareTo(other.Color);
-        return colorComparison != 0 ? colorComparison : Value.CompareTo(other.Value);
+        if (IsJoker && other.IsJoker) return true;
+        return _data == other._data;
     }
 
     public override bool Equals(object? obj)
     {
-        if (obj == null || GetType() != obj.GetType()) return false;
-
-        var other = (Tile)obj;
-
-        if (IsJoker && other.IsJoker) return true;
-
-        if (IsJoker || other.IsJoker) return false;
-
-        return Value == other.Value && Color == other.Color;
+        return obj is Tile other && Equals(other);
     }
 
     public override int GetHashCode()
     {
-        if (IsJoker) return 0;
-
-        var hash = 17;
-        hash = hash * 31 + Value.GetHashCode();
-        hash = hash * 31 + Color.GetHashCode();
-        return hash;
+        return _data.GetHashCode();
     }
-    
+
+    public static bool operator ==(Tile left, Tile right)
+    {
+        return left.Equals(right);
+    }
+
+    public static bool operator !=(Tile left, Tile right)
+    {
+        return !(left == right);
+    }
 }
