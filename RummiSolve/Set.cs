@@ -1,26 +1,26 @@
 namespace RummiSolve;
 
-public class Set
+public class Set : ISet
 {
     public List<Tile> Tiles = []; //TODO check if List is the best
     private bool _isSorted;
-    private int _jokers;
+    public int Jokers { get; private set; }
 
     public void AddTile(Tile tile)
     {
         ArgumentNullException.ThrowIfNull(tile);
 
         Tiles.Add(tile);
-        if (tile.IsJoker) _jokers++;
+        if (tile.IsJoker) Jokers++;
         _isSorted = false;
     }
 
-    public void Concat(Set set)
+    public void Concat(ValidSet set)
     {
         ArgumentNullException.ThrowIfNull(set);
 
         Tiles.AddRange(set.Tiles);
-        _jokers += set._jokers;
+        Jokers += set.Jokers;
         _isSorted = false;
     }
 
@@ -32,11 +32,11 @@ public class Set
         {
             Tiles = [..Tiles],
             _isSorted = _isSorted,
-            _jokers = _jokers
+            Jokers = Jokers
         };
 
         newSet.Tiles.AddRange(set.Tiles);
-        newSet._jokers += set._jokers;
+        newSet.Jokers += set.Jokers;
         newSet._isSorted = false;
 
         return newSet;
@@ -49,18 +49,18 @@ public class Set
 
         Tiles.Remove(tile);
 
-        if (tile.IsJoker) _jokers--;
+        if (tile.IsJoker) Jokers--;
     }
 
+    
     public void PrintAllTiles()
     {
         foreach (var tile in Tiles)
         {
             tile.PrintTile();
         }
-
-        if (!_isSorted) return;
-        for (var i = 0; i < _jokers; i++)
+        
+        for (var i = 0; i < Jokers; i++)
         {
             Tile.PrintJoker();
         }
@@ -82,13 +82,13 @@ public class Set
     {
         Sort();
 
-        if (_jokers > 0) Tiles.RemoveRange(Tiles.Count - _jokers, _jokers);
+        if (Jokers > 0) Tiles.RemoveRange(Tiles.Count - Jokers, Jokers);
         var length = Tiles.Count;
         var usedTiles = new bool[length];
 
-        if (length + _jokers <= 2) return length == 0 ? new Solution() : Solution.GetInvalidSolution();
+        if (length + Jokers <= 2) return length == 0 ? new Solution() : Solution.GetInvalidSolution();
 
-        var solution = FindSolution(new Solution(), usedTiles, length, 0, _jokers);
+        var solution = FindSolution(new Solution(), usedTiles, length, 0, Jokers);
         return solution;
     }
 
@@ -98,9 +98,8 @@ public class Set
         firstUnusedTileIndex = GetNextUnusedTileIndex(usedTiles, firstUnusedTileIndex);
 
         var sets = GetRuns(firstUnusedTileIndex, usedTiles, availableJokers)
-            .Concat<Set>(GetGroups(firstUnusedTileIndex, usedTiles, availableJokers))
-            .OrderBy(set => set._jokers)
-            .ThenByDescending(set => set.GetScore());
+            .Concat<ValidSet>(GetGroups(firstUnusedTileIndex, usedTiles, availableJokers))
+            .OrderBy(set => set.Jokers);
 
         foreach (var set in sets)
         {
@@ -168,7 +167,7 @@ public class Set
                     runs.Add(new Run
                     {
                         Tiles = [..currentRun],
-                        _jokers = jokersUsed
+                        Jokers = jokersUsed
                     });
             }
 
@@ -186,7 +185,7 @@ public class Set
                 runs.Add(new Run
                 {
                     Tiles = [..currentRun],
-                    _jokers = jokersUsed
+                    Jokers = jokersUsed
                 });
             }
         }
@@ -233,7 +232,7 @@ public class Set
                         [
                             firstTile, sameNumberTiles[0], new Tile(firstTile.Value, TileColor.Black, true)
                         ],
-                        _jokers = 1
+                        Jokers = 1
                     }
                 ],
                 2 =>
@@ -245,7 +244,7 @@ public class Set
                         [
                             firstTile, sameNumberTiles[0], new Tile(firstTile.Value, TileColor.Black, true)
                         ],
-                        _jokers = 1
+                        Jokers = 1
                     },
                     new Group
                     {
@@ -253,7 +252,7 @@ public class Set
                         [
                             firstTile, sameNumberTiles[1], new Tile(firstTile.Value, TileColor.Black, true)
                         ],
-                        _jokers = 1
+                        Jokers = 1
                     },
                     new Group
                     {
@@ -261,7 +260,7 @@ public class Set
                         [
                             firstTile, ..sameNumberTiles, new Tile(firstTile.Value, TileColor.Black, true)
                         ],
-                        _jokers = 1
+                        Jokers = 1
                     },
                 ],
                 3 =>
@@ -277,7 +276,7 @@ public class Set
                             firstTile, sameNumberTiles[0], sameNumberTiles[1],
                             new Tile(firstTile.Value, TileColor.Black, true)
                         ],
-                        _jokers = 1
+                        Jokers = 1
                     },
                     new Group
                     {
@@ -286,7 +285,7 @@ public class Set
                             firstTile, sameNumberTiles[1], sameNumberTiles[2],
                             new Tile(firstTile.Value, TileColor.Black, true)
                         ],
-                        _jokers = 1
+                        Jokers = 1
                     },
                     new Group
                     {
@@ -295,7 +294,7 @@ public class Set
                             firstTile, sameNumberTiles[0], sameNumberTiles[2],
                             new Tile(firstTile.Value, TileColor.Black, true)
                         ],
-                        _jokers = 1
+                        Jokers = 1
                     },
                     new Group
                     {
@@ -303,7 +302,7 @@ public class Set
                         [
                             firstTile, sameNumberTiles[0], new Tile(firstTile.Value, TileColor.Black, true)
                         ],
-                        _jokers = 1
+                        Jokers = 1
                     },
                     new Group
                     {
@@ -311,7 +310,7 @@ public class Set
                         [
                             firstTile, sameNumberTiles[1], new Tile(firstTile.Value, TileColor.Black, true)
                         ],
-                        _jokers = 1
+                        Jokers = 1
                     },
                     new Group
                     {
@@ -319,7 +318,7 @@ public class Set
                         [
                             firstTile, sameNumberTiles[2], new Tile(firstTile.Value, TileColor.Black, true)
                         ],
-                        _jokers = 1
+                        Jokers = 1
                     },
                 ],
                 _ => []
@@ -328,7 +327,7 @@ public class Set
         };
     }
 
-    private void MarkTilesAsUsed(Set set, bool isUsed, bool[] usedTiles, ref int unusedTile, ref int availableJokers)
+    private void MarkTilesAsUsed(ValidSet set, bool isUsed, bool[] usedTiles, ref int unusedTile, ref int availableJokers)
     {
         foreach (var tile in set.Tiles)
         {
@@ -372,7 +371,7 @@ public class Set
                 var set = new Set
                 {
                     Tiles = combination,
-                    _jokers = combination.Count(tile => tile.IsJoker)
+                    Jokers = combination.Count(tile => tile.IsJoker)
                 };
                 return set;
             })
@@ -404,4 +403,6 @@ public class Set
     {
         return string.Join("-", sortedTiles);
     }
+
+    
 }

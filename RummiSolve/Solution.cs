@@ -46,7 +46,7 @@ public class Solution
         {
             if (hasPrintedRun) Console.Write("| ");
 
-            run.PrintAllTiles();
+            foreach (var runTile in run.Tiles) runTile.PrintTile();
             hasPrintedRun = true;
         }
 
@@ -56,7 +56,8 @@ public class Solution
         {
             if (hasPrintedGroup) Console.Write("| ");
 
-            group.PrintAllTiles();
+            foreach (var groupTile in group.Tiles) groupTile.PrintTile();
+            
             hasPrintedGroup = true;
         }
 
@@ -86,5 +87,5 @@ public class Solution
         return result;
     }
 
-    public int Count() => Groups.Sum(g => g.Tiles.Count) + Runs.Sum(s => s.Tiles.Count); //TODO temporaire
+    public int Count() => Groups.Sum(g => g.Tiles.Length) + Runs.Sum(s => s.Tiles.Length); //TODO temporaire
 }

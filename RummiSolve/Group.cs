@@ -1,10 +1,10 @@
 namespace RummiSolve;
 
-public class Group : Set
+public class Group : ValidSet
 {
     public bool IsValidGroup()
     {
-        if (Tiles.Count is < 3 or > 4)
+        if (Tiles.Length is < 3 or > 4)
         {
             return false;
         }
