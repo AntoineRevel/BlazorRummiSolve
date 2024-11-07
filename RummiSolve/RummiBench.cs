@@ -192,13 +192,13 @@ public class RummiBench
         List<Tile> tryCombiSet =
         [
             new(1, TileColor.Black),
-            new(1, TileColor.Black),
-            new(2, TileColor.Black),
-            new(3, TileColor.Black),
-            new(3, TileColor.Black, true),
+            new(2, TileColor.Red),
+            new(3, TileColor.Blue),
+            new(4, TileColor.Mango)
+
         ];
 
-        foreach (var tiles in Set.GetBestSets(tryCombiSet, 2))
+        foreach (var tiles in Set.GetBestSets(tryCombiSet, 3))
         {
             foreach (var tile in tiles.Tiles)
             {

@@ -143,9 +143,8 @@ public class Set : ISet
 
     public IEnumerable<Run> GetRuns(int tileIndex, bool[] usedTiles, int availableJokers)
     {
-        var firstTile = Tiles[tileIndex];
-        var color = firstTile.Color;
-        var currentRun = new List<Tile> { firstTile };
+        var color = Tiles[tileIndex].Color;
+        var currentRun = new List<Tile> { Tiles[tileIndex] };
         var jokersUsed = 0;
         var i = tileIndex + 1;
 
@@ -381,17 +380,20 @@ public class Set : ISet
         if (length == 0) yield return [];
         else
         {
-            HashSet<string> seenCombinations = [];
+            var seenCombinations = new HashSet<List<Tile>>(new TileListComparer());
             for (var i = 0; i < list.Count; i++)
             {
                 var element = list[i];
                 var remainingList = list.Skip(i + 1).ToList();
                 foreach (var combination in GetCombinations(remainingList, length - 1))
                 {
-                    combination.Insert(0, element);
-                    combination.Sort();
-                    var combinationKey = GetKey(combination);
-                    if (seenCombinations.Add(combinationKey)) yield return combination;
+                    var newCombination = new List<Tile> { element };
+                    newCombination.AddRange(combination);
+                    newCombination.Sort();
+                    if (seenCombinations.Add(newCombination))
+                    {
+                        yield return newCombination;
+                    }
                 }
             }
         }
@@ -413,8 +415,5 @@ public class Set : ISet
         }
     }
 
-    private static string GetKey(IEnumerable<Tile> sortedTiles)
-    {
-        return string.Join("-", sortedTiles);
-    }
+
 }
