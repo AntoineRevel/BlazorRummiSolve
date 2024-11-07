@@ -55,15 +55,7 @@ public class Set : ISet
 
     public void PrintAllTiles()
     {
-        foreach (var tile in Tiles)
-        {
-            tile.PrintTile();
-        }
-
-        for (var i = 0; i < Jokers; i++)
-        {
-            Tile.PrintJoker();
-        }
+        foreach (var tile in Tiles) tile.PrintTile();
     }
 
     public void Sort()
@@ -97,10 +89,21 @@ public class Set : ISet
     {
         firstUnusedTileIndex = GetNextUnusedTileIndex(usedTiles, firstUnusedTileIndex);
 
-        var sets = GetRuns(firstUnusedTileIndex, usedTiles, availableJokers)
-            .Concat<ValidSet>(GetGroups(firstUnusedTileIndex, usedTiles, availableJokers))
-            .OrderBy(set => set.Jokers);
+        var solRun = TrySet(GetRuns(firstUnusedTileIndex, usedTiles, availableJokers),
+            solution, usedTiles, unusedTileCount, firstUnusedTileIndex, availableJokers);
 
+        if (solRun.IsValid) return solRun;
+
+        var solGroup = TrySet(GetGroups(firstUnusedTileIndex, usedTiles, availableJokers),
+            solution, usedTiles, unusedTileCount, firstUnusedTileIndex, availableJokers);
+
+        return solGroup.IsValid ? solGroup : Solution.GetInvalidSolution();
+    }
+
+    private Solution TrySet<TS>(IEnumerable<TS> sets, Solution solution, bool[] usedTiles, int unusedTileCount,
+        int firstUnusedTileIndex, int availableJokers)
+        where TS : ValidSet
+    {
         foreach (var set in sets)
         {
             MarkTilesAsUsed(set, true, usedTiles, ref unusedTileCount, ref availableJokers);
@@ -108,7 +111,7 @@ public class Set : ISet
             var newSolution = unusedTileCount switch
             {
                 0 when availableJokers == 0 => solution,
-                0 => Solution.GetInvalidSolution(),
+                < 2 => Solution.GetInvalidSolution(),
                 _ => FindSolution(solution, usedTiles, unusedTileCount, firstUnusedTileIndex, availableJokers)
             };
 
@@ -138,9 +141,8 @@ public class Set : ISet
         return Array.FindIndex(usedTiles, startIndex, used => !used);
     }
 
-    public List<Run> GetRuns(int tileIndex, bool[] usedTiles, int availableJokers)
+    public IEnumerable<Run> GetRuns(int tileIndex, bool[] usedTiles, int availableJokers)
     {
-        var runs = new List<Run>();
         var firstTile = Tiles[tileIndex];
         var color = firstTile.Color;
         var currentRun = new List<Tile> { firstTile };
@@ -164,14 +166,14 @@ public class Set : ISet
                 currentRun.Add(Tiles[i]);
 
                 if (currentRun.Count >= 3)
-                    runs.Add(new Run
+                    yield return new Run
                     {
                         Tiles = [..currentRun],
                         Jokers = jokersUsed
-                    });
+                    };
             }
 
-            if (availableJokers <= 0) return runs;
+            if (availableJokers <= 0) yield break;
 
             if (currentRun[^1].Value != 13) currentRun.Add(new Tile(currentRun[^1].Value + 1, color, true));
             else if (currentRun[0].Value != 1) currentRun.Insert(0, new Tile(currentRun[0].Value - 1, color, true));
@@ -182,11 +184,11 @@ public class Set : ISet
 
             if (currentRun.Count >= 3)
             {
-                runs.Add(new Run
+                yield return new Run
                 {
                     Tiles = [..currentRun],
                     Jokers = jokersUsed
-                });
+                };
             }
         }
     }
@@ -249,140 +251,77 @@ public class Set : ISet
         }
     }
 
-    private Group[] GetGroups(int firstTileIndex, bool[] usedTiles, int availableJokers)
+    public IEnumerable<Group> GetGroups(int firstTileIndex, bool[] usedTiles, int availableJokers)
     {
-        if (Tiles is []) return [];
-
         var firstTile = Tiles[firstTileIndex];
         var number = firstTile.Value;
         var color = firstTile.Color;
 
         var sameNumberTiles = Tiles
-            .Where((tile, index) => !usedTiles[index] && tile.Value == number && tile.Color != color)
+            .Select((tile, index) => new { Tile = tile, Index = index })
+            .Where(t => !usedTiles[t.Index] && t.Tile.Value == number && t.Tile.Color != color)
+            .Select(t => t.Tile)
             .Distinct()
-            .ToArray();
+            .ToList();
 
-        var size = sameNumberTiles.Length;
+        var size = sameNumberTiles.Count;
 
-        return availableJokers switch
+        if (availableJokers == 0)
         {
-            0 => size switch
+            if (size < 2) yield break;
+
+            var groupTiles = new List<Tile> { firstTile };
+            groupTiles.AddRange(sameNumberTiles);
+
+            yield return new Group { Tiles = groupTiles.ToArray() };
+
+            if (groupTiles.Count != 4) yield break;
+
+            for (var i = 0; i < sameNumberTiles.Count; i++)
             {
-                < 2 => [],
-                2 => [new Group { Tiles = [firstTile, ..sameNumberTiles] }],
-                3 =>
-                [
-                    new Group { Tiles = [firstTile, ..sameNumberTiles] },
-                    new Group { Tiles = [firstTile, sameNumberTiles[0], sameNumberTiles[1]] },
-                    new Group { Tiles = [firstTile, sameNumberTiles[1], sameNumberTiles[2]] },
-                    new Group { Tiles = [firstTile, sameNumberTiles[0], sameNumberTiles[2]] }
-                ],
-                _ => []
-            },
-            > 0 => size switch
-            {
-                0 => [],
-                1 =>
-                [
-                    new Group
+                for (var j = i + 1; j < sameNumberTiles.Count; j++)
+                {
+                    yield return new Group
                     {
-                        Tiles =
-                        [
-                            firstTile, sameNumberTiles[0], new Tile(firstTile.Value, TileColor.Black, true)
-                        ],
-                        Jokers = 1
+                        Tiles = [firstTile, sameNumberTiles[i], sameNumberTiles[j]]
+                    };
+                }
+            }
+        }
+        else
+        {
+            for (var jokersUsed = 0; jokersUsed <= availableJokers; jokersUsed++)
+            {
+                for (var tilesUsed = 2; tilesUsed <= size + 1; tilesUsed++)
+                {
+                    if (tilesUsed + jokersUsed < 3 || tilesUsed + jokersUsed > 4)
+                        continue;
+
+                    var combinations = GetCombinationsGroup(sameNumberTiles, tilesUsed - 1);
+
+                    foreach (var combo in combinations)
+                    {
+                        var totalTiles = tilesUsed + jokersUsed;
+                        var groupTiles = new Tile[totalTiles];
+
+                        groupTiles[0] = firstTile;
+
+                        Array.Copy(combo.ToArray(), 0, groupTiles, 1, tilesUsed - 1);
+
+                        for (var k = 0; k < jokersUsed; k++)
+                        {
+                            groupTiles[tilesUsed + k] = new Tile(firstTile.Value, TileColor.Black, true);
+                        }
+
+                        yield return new Group
+                        {
+                            Tiles = groupTiles,
+                            Jokers = jokersUsed
+                        };
                     }
-                ],
-                2 =>
-                [
-                    new Group { Tiles = [firstTile, ..sameNumberTiles] },
-                    new Group
-                    {
-                        Tiles =
-                        [
-                            firstTile, sameNumberTiles[0], new Tile(firstTile.Value, TileColor.Black, true)
-                        ],
-                        Jokers = 1
-                    },
-                    new Group
-                    {
-                        Tiles =
-                        [
-                            firstTile, sameNumberTiles[1], new Tile(firstTile.Value, TileColor.Black, true)
-                        ],
-                        Jokers = 1
-                    },
-                    new Group
-                    {
-                        Tiles =
-                        [
-                            firstTile, ..sameNumberTiles, new Tile(firstTile.Value, TileColor.Black, true)
-                        ],
-                        Jokers = 1
-                    },
-                ],
-                3 =>
-                [
-                    new Group { Tiles = [firstTile, ..sameNumberTiles] },
-                    new Group { Tiles = [firstTile, sameNumberTiles[0], sameNumberTiles[1]] },
-                    new Group { Tiles = [firstTile, sameNumberTiles[1], sameNumberTiles[2]] },
-                    new Group { Tiles = [firstTile, sameNumberTiles[0], sameNumberTiles[2]] },
-                    new Group
-                    {
-                        Tiles =
-                        [
-                            firstTile, sameNumberTiles[0], sameNumberTiles[1],
-                            new Tile(firstTile.Value, TileColor.Black, true)
-                        ],
-                        Jokers = 1
-                    },
-                    new Group
-                    {
-                        Tiles =
-                        [
-                            firstTile, sameNumberTiles[1], sameNumberTiles[2],
-                            new Tile(firstTile.Value, TileColor.Black, true)
-                        ],
-                        Jokers = 1
-                    },
-                    new Group
-                    {
-                        Tiles =
-                        [
-                            firstTile, sameNumberTiles[0], sameNumberTiles[2],
-                            new Tile(firstTile.Value, TileColor.Black, true)
-                        ],
-                        Jokers = 1
-                    },
-                    new Group
-                    {
-                        Tiles =
-                        [
-                            firstTile, sameNumberTiles[0], new Tile(firstTile.Value, TileColor.Black, true)
-                        ],
-                        Jokers = 1
-                    },
-                    new Group
-                    {
-                        Tiles =
-                        [
-                            firstTile, sameNumberTiles[1], new Tile(firstTile.Value, TileColor.Black, true)
-                        ],
-                        Jokers = 1
-                    },
-                    new Group
-                    {
-                        Tiles =
-                        [
-                            firstTile, sameNumberTiles[2], new Tile(firstTile.Value, TileColor.Black, true)
-                        ],
-                        Jokers = 1
-                    },
-                ],
-                _ => []
-            },
-            _ => []
-        };
+                }
+            }
+        }
     }
 
     private void MarkTilesAsUsed(ValidSet set, bool isUsed, bool[] usedTiles, ref int unusedTile,
@@ -453,6 +392,22 @@ public class Set : ISet
                     combination.Sort();
                     var combinationKey = GetKey(combination);
                     if (seenCombinations.Add(combinationKey)) yield return combination;
+                }
+            }
+        }
+    }
+
+    private static IEnumerable<IEnumerable<Tile>> GetCombinationsGroup(List<Tile> tiles, int length)
+    {
+        if (length == 0) yield return new List<Tile>();
+        else
+        {
+            for (var i = 0; i < tiles.Count; i++)
+            {
+                var remaining = tiles.Skip(i + 1).ToList();
+                foreach (var combination in GetCombinations(remaining, length - 1))
+                {
+                    yield return new List<Tile> { tiles[i] }.Concat(combination);
                 }
             }
         }

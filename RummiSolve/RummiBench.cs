@@ -23,8 +23,20 @@ public class RummiBench
             new Tile(10, TileColor.Mango),
         ]
     };
+    
+    private static readonly Set SetGroup = new()
+    {
+        Tiles =
+        [
+            new Tile(1, TileColor.Black),
+            new Tile(1, TileColor.Mango),
+            new Tile(1, TileColor.Red),
+            new Tile(1, TileColor.Red),
+            new Tile(1, TileColor.Blue),
+        ]
+    };
 
-    private static readonly bool[] TabBool = [false, false, false, false, false, false, false, false, true, false];
+    private static readonly bool[] TabBool = [false, false, false,false,false];
 
     [Benchmark]
     public void NoSpan()
@@ -40,7 +52,24 @@ public class RummiBench
 
     public static void TestRunSpan()
     {
-        var result = Set.GetRunsSpan(0, TabBool, 1);
+        var result = Set.GetRuns(0, TabBool, 1);
+        foreach (var run in result)
+        {
+            foreach (var tile in run.Tiles)
+            {
+                tile.PrintTile();
+            }
+
+            Console.WriteLine();
+            Console.WriteLine(run.Jokers);
+        }
+    }
+
+  
+    
+    public static void TestYieldGroup()
+    {
+        var result = SetGroup.GetGroups(0, TabBool, 2);
         foreach (var run in result)
         {
             foreach (var tile in run.Tiles)
@@ -186,8 +215,8 @@ public class RummiBench
         var tiles = new List<Tile>();
 
         // Décider aléatoirement du nombre de runs et de groupes à générer
-        var numberOfRuns = random.Next(1, 2); // 1 à 2 runs
-        var numberOfGroups = random.Next(1, 2); // 1 à 2 groupes
+        var numberOfRuns = random.Next(3, 7); // 1 à 2 runs
+        var numberOfGroups = random.Next(3, 7); // 1 à 2 groupes
 
         // Générer les runs
         for (var i = 0; i < numberOfRuns; i++)
