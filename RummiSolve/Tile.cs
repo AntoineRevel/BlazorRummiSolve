@@ -21,7 +21,7 @@ public readonly struct Tile : IComparable<Tile>, IEquatable<Tile>
 
     public Tile(bool isJoker = false)
     {
-        _data = (byte)(isJoker ? 1 << 6 : 0);
+        if (isJoker) _data = (byte)(isJoker ? 1 << 6 : 0);
     }
 
     public int Value => _data & 0x0F; // Bits 0-3
@@ -62,7 +62,7 @@ public readonly struct Tile : IComparable<Tile>, IEquatable<Tile>
         Console.ForegroundColor = ConsoleColor.Magenta;
         Console.Write("J ");
     }
-    
+
     public bool Equals(Tile other)
     {
         if (IsJoker && other.IsJoker) return true;
