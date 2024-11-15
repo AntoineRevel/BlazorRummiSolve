@@ -37,12 +37,6 @@ public class RummiBench
     };
 
     private static readonly bool[] TabBool = [false, false, false,false,false];
-
-    [Benchmark]
-    public void NoSpan()
-    {
-        Set.GetRuns(0, TabBool, 1);
-    }
     
     public static void TestRunSpan()
     {
@@ -156,7 +150,7 @@ public class RummiBench
 
         boardSol.PrintSolution();
 
-        var game = new Game()
+        var unused = new Game()
         {
             BoardSolution = boardSol
         };

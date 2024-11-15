@@ -8,8 +8,8 @@ public class Game
     public Solution BoardSolution { get; set; } = new();
     private List<Tile> TilePool { get; set; } = [];
     
-    public int CurrentPlayerIndex { get; private set; } = 0;
-    public bool IsGameOver { get; private set; } = false;
+    public int CurrentPlayerIndex { get; private set; }
+    public bool IsGameOver { get; private set; }
     public Player? Winner { get; private set; }
 
     public int Turn;

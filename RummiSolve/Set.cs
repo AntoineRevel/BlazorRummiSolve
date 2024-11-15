@@ -8,8 +8,6 @@ public class Set : ISet
 
     public void AddTile(Tile tile)
     {
-        ArgumentNullException.ThrowIfNull(tile);
-
         Tiles.Add(tile);
         if (tile.IsJoker) Jokers++;
         _isSorted = false;
@@ -45,8 +43,6 @@ public class Set : ISet
 
     public void Remove(Tile tile)
     {
-        ArgumentNullException.ThrowIfNull(tile);
-
         Tiles.Remove(tile);
 
         if (tile.IsJoker) Jokers--;

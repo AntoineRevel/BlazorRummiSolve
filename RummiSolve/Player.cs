@@ -46,7 +46,7 @@ public class Player(string name)
 
             rackSetsToTry = boardChange
                 ? rackSetsToTry
-                : rackSetsToTry.Where(tab => tab.Tiles.Contains(_lastDrewTile!));
+                : rackSetsToTry.Where(tab => tab.Tiles.Contains(_lastDrewTile));
 
             Parallel.ForEach(rackSetsToTry, (currentRackSet, state) =>
             {
