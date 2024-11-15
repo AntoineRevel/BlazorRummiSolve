@@ -37,7 +37,7 @@ public class Player(string name)
 
         var boardSet = boardSolution.GetSet();
         var finalSolution = Solution.GetInvalidSolution();
-        var locker = new object();
+        var locker = new Lock();
         Set finalRackSet = null!;
 
         for (var tileCount = RackTilesSet.Tiles.Count; tileCount > 0; tileCount--)
