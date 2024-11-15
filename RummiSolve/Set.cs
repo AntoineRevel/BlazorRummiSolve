@@ -192,64 +192,6 @@ public class Set : ISet
         }
     }
 
-    public List<Run> GetRunsSpan(int tileIndex, bool[] usedTiles, int availableJokers)
-    {
-        var runs = new List<Run>();
-        var color = Tiles[tileIndex].Color;
-        Span<Tile> currentRunSpan = stackalloc Tile[usedTiles.Length - tileIndex];
-        currentRunSpan[0] = Tiles[tileIndex];
-        var spanIndex = 0;
-        var jokersUsed = 0;
-        tileIndex += 1;
-
-        while (true)
-        {
-            for (; tileIndex < Tiles.Count; tileIndex++)
-            {
-                if (Tiles[tileIndex].Color != color)
-                {
-                    break;
-                }
-
-                if (usedTiles[tileIndex] || Tiles[tileIndex].Value == currentRunSpan[spanIndex].Value) continue;
-
-                if (Tiles[tileIndex].Value != currentRunSpan[spanIndex].Value + 1) break;
-
-                spanIndex++;
-                currentRunSpan[spanIndex] = Tiles[tileIndex];
-
-                if (spanIndex >= 2)
-                    runs.Add(new Run
-                    {
-                        Tiles = currentRunSpan[..(spanIndex + 1)].ToArray(),
-                        Jokers = jokersUsed
-                    });
-            }
-
-            if (availableJokers <= 0) return runs;
-
-            if (currentRunSpan[spanIndex].Value != 13)
-            {
-                spanIndex++;
-                currentRunSpan[spanIndex] = new Tile(currentRunSpan[spanIndex - 1].Value + 1, color, true);
-            }
-            //else if (currentRunSpan[spanIndex].Value != 1) currentRun.Insert(0, new Tile(currentRun[0].Value - 1, color, true));
-            else jokersUsed--; //TODO insert 2 Run 123J 4...
-
-            availableJokers -= 1;
-            jokersUsed++;
-
-            if (spanIndex >= 2)
-            {
-                runs.Add(new Run
-                {
-                    Tiles = currentRunSpan[..(spanIndex + 1)].ToArray(),
-                    Jokers = jokersUsed
-                });
-            }
-        }
-    }
-
     public IEnumerable<Group> GetGroups(int firstTileIndex, bool[] usedTiles, int availableJokers)
     {
         var firstTile = Tiles[firstTileIndex];
@@ -293,25 +235,23 @@ public class Set : ISet
             {
                 for (var tilesUsed = 2; tilesUsed <= size + 1; tilesUsed++)
                 {
-                    if (tilesUsed + jokersUsed < 3 || tilesUsed + jokersUsed > 4)
-                        continue;
+                    var totalTiles = tilesUsed + jokersUsed;
+                    if (totalTiles is < 3 or > 4) continue;
 
                     var combinations = GetCombinations(sameNumberTiles, tilesUsed - 1);
 
                     foreach (var combo in combinations)
                     {
-                        var totalTiles = tilesUsed + jokersUsed;
                         var groupTiles = new Tile[totalTiles];
-
                         groupTiles[0] = firstTile;
 
-                        Array.Copy(combo.ToArray(), 0, groupTiles, 1, tilesUsed - 1);
+                        combo.CopyTo(0, groupTiles, 1, tilesUsed - 1);
 
                         for (var k = 0; k < jokersUsed; k++)
                         {
                             groupTiles[tilesUsed + k] = new Tile(firstTile.Value, TileColor.Black, true);
                         }
-
+                        
                         yield return new Group
                         {
                             Tiles = groupTiles,
@@ -361,7 +301,7 @@ public class Set : ISet
 
     public static IEnumerable<Set> GetBestSets(List<Tile> tiles, int n)
     {
-        var combinations = GetUniqueCombinations(tiles, n);
+        var combinations = GetCombinations(tiles, n);
         return combinations
             .Select(combination =>
             {
@@ -375,35 +315,19 @@ public class Set : ISet
             .OrderByDescending(t => t.GetScore());
     }
 
-    private static IEnumerable<List<Tile>> GetUniqueCombinations(List<Tile> list, int length)
+    private static IEnumerable<List<Tile>> GetCombinations(List<Tile> list, int length)
     {
         if (length == 0) yield return [];
 
-        var seenCombinations = new HashSet<List<Tile>>(new TileListComparer());
         for (var i = 0; i < list.Count; i++)
         {
             var element = list[i];
-            foreach (var combination in GetUniqueCombinations(list.Skip(i + 1).ToList(), length - 1))
+            foreach (var combination in GetCombinations(list.Skip(i + 1).ToList(), length - 1))
             {
                 combination.Add(element);
-                if (seenCombinations.Add(combination)) yield return combination;
+                yield return combination;
             }
         }
     }
-
-    private static IEnumerable<IEnumerable<Tile>> GetCombinations(List<Tile> tiles, int length)
-    {
-        if (length == 0) yield return new List<Tile>();
-        else
-        {
-            for (var i = 0; i < tiles.Count; i++)
-            {
-                var remaining = tiles.Skip(i + 1).ToList();
-                foreach (var combination in GetUniqueCombinations(remaining, length - 1))
-                {
-                    yield return new List<Tile> { tiles[i] }.Concat(combination);
-                }
-            }
-        }
-    }
+    
 }

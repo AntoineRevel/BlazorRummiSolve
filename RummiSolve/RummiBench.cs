@@ -43,13 +43,7 @@ public class RummiBench
     {
         Set.GetRuns(0, TabBool, 1);
     }
-
-    [Benchmark]
-    public void WithSpan()
-    {
-        Set.GetRunsSpan(0, TabBool, 1);
-    }
-
+    
     public static void TestRunSpan()
     {
         var result = Set.GetRuns(0, TabBool, 1);
