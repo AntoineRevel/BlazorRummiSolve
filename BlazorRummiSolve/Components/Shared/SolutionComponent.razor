@@ -3,13 +3,13 @@
 <div class="solution-container">
     @foreach (var set in Solution.Runs)
     {
-        <SetComponent Set="set"/>
+        <ValidSetComponent ValidSet="set"/>
     }
 </div>
 <div class="solution-container">
     @foreach (var set in Solution.Groups)
     {
-        <SetComponent Set="set"/>
+        <ValidSetComponent ValidSet="set"/>
     }
 </div>
 
