@@ -2,9 +2,9 @@ namespace RummiSolve;
 
 public class Set : ISet
 {
-    public List<Tile> Tiles = []; //TODO check if List is the best
+    public List<Tile> Tiles = [];
     private bool _isSorted;
-    public int Jokers { get; private set; }
+    private int Jokers { get; set; }
 
     public void AddTile(Tile tile)
     {
@@ -29,14 +29,11 @@ public class Set : ISet
         var newSet = new Set
         {
             Tiles = [..Tiles],
-            _isSorted = _isSorted,
             Jokers = Jokers
         };
 
         newSet.Tiles.AddRange(set.Tiles);
         newSet.Jokers += set.Jokers;
-        newSet._isSorted = false;
-
         return newSet;
     }
 
@@ -245,7 +242,7 @@ public class Set : ISet
 
                         for (var k = 0; k < jokersUsed; k++)
                         {
-                            groupTiles[tilesUsed + k] = new Tile(firstTile.Value, TileColor.Black, true);
+                            groupTiles[tilesUsed + k] = new Tile(true);
                         }
                         
                         yield return new Group
