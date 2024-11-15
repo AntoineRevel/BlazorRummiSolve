@@ -2,7 +2,7 @@
 
 
 <div class="valid-set-container">
-    <div class="tiles">
+    <div class="valid-tiles">
         @foreach (var tile in ValidSet.Tiles)
         {
             <TileComponent Tile="tile"/>
@@ -22,12 +22,9 @@
         border-radius: 5px;
     }
 
-    .tiles {
+    .valid-tiles {
         display: inline-flex;
     }
-
-    .tiles .tile {
-        margin: 0;
-    }
+    
 
 </style>
