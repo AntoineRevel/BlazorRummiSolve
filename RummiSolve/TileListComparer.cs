@@ -3,11 +3,11 @@ namespace RummiSolve;
 public class TileListComparer : IEqualityComparer<List<Tile>>
 {
     public bool Equals(List<Tile>? x, List<Tile>? y)
-    {
-        if (x == null && y == null) return true;
-        if (x == null || y == null || x.Count != y.Count) return false;
-        return !x.Where((t, i) => !t.Equals(y[i])).Any();
-    }
+         {
+             if (x == null && y == null) return true;
+             if (x == null || y == null || x.Count != y.Count) return false;
+             return x.SequenceEqual(y);
+         }
 
     public int GetHashCode(List<Tile> obj)
     {

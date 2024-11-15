@@ -296,7 +296,7 @@ public class Set : ISet
                     if (tilesUsed + jokersUsed < 3 || tilesUsed + jokersUsed > 4)
                         continue;
 
-                    var combinations = GetCombinationsGroup(sameNumberTiles, tilesUsed - 1);
+                    var combinations = GetCombinations(sameNumberTiles, tilesUsed - 1);
 
                     foreach (var combo in combinations)
                     {
@@ -361,7 +361,7 @@ public class Set : ISet
 
     public static IEnumerable<Set> GetBestSets(List<Tile> tiles, int n)
     {
-        var combinations = GetCombinations(tiles, n);
+        var combinations = GetUniqueCombinations(tiles, n);
         return combinations
             .Select(combination =>
             {
@@ -375,31 +375,23 @@ public class Set : ISet
             .OrderByDescending(t => t.GetScore());
     }
 
-    private static IEnumerable<List<Tile>> GetCombinations(List<Tile> list, int length)
+    private static IEnumerable<List<Tile>> GetUniqueCombinations(List<Tile> list, int length)
     {
         if (length == 0) yield return [];
-        else
+
+        var seenCombinations = new HashSet<List<Tile>>(new TileListComparer());
+        for (var i = 0; i < list.Count; i++)
         {
-            var seenCombinations = new HashSet<List<Tile>>(new TileListComparer());
-            for (var i = 0; i < list.Count; i++)
+            var element = list[i];
+            foreach (var combination in GetUniqueCombinations(list.Skip(i + 1).ToList(), length - 1))
             {
-                var element = list[i];
-                var remainingList = list.Skip(i + 1).ToList();
-                foreach (var combination in GetCombinations(remainingList, length - 1))
-                {
-                    var newCombination = new List<Tile> { element };
-                    newCombination.AddRange(combination);
-                    newCombination.Sort();
-                    if (seenCombinations.Add(newCombination))
-                    {
-                        yield return newCombination;
-                    }
-                }
+                combination.Add(element);
+                if (seenCombinations.Add(combination)) yield return combination;
             }
         }
     }
 
-    private static IEnumerable<IEnumerable<Tile>> GetCombinationsGroup(List<Tile> tiles, int length)
+    private static IEnumerable<IEnumerable<Tile>> GetCombinations(List<Tile> tiles, int length)
     {
         if (length == 0) yield return new List<Tile>();
         else
@@ -407,13 +399,11 @@ public class Set : ISet
             for (var i = 0; i < tiles.Count; i++)
             {
                 var remaining = tiles.Skip(i + 1).ToList();
-                foreach (var combination in GetCombinations(remaining, length - 1))
+                foreach (var combination in GetUniqueCombinations(remaining, length - 1))
                 {
                     yield return new List<Tile> { tiles[i] }.Concat(combination);
                 }
             }
         }
     }
-
-
 }
