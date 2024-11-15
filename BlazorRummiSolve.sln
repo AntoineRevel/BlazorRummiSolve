@@ -1,6 +1,6 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorRummiSolve", "BlazorRummiSolve\BlazorRummiSolve.csproj", "{52ABE199-FEF9-49A3-A0E8-F2EE6FEA91EE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorRummiSolve", "BlazorRummiSolve\BlazorRummiSolve.csproj", "{52ABE199-FEF9-49A3-A0E8-F2EE6FEA91EE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RummiSolve", "..\..\RummiSolve\RummiSolve\RummiSolve\RummiSolve.csproj", "{4833CA51-2C80-466A-98D7-4F8392DA362F}"
 EndProject
