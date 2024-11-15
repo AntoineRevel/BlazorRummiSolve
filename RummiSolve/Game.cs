@@ -71,6 +71,8 @@ public class Game
 
         // Passer au joueur suivant
         CurrentPlayerIndex = (CurrentPlayerIndex + 1) % Players.Count;
+        if (CurrentPlayerIndex == 0) Turn++;
+        
     }
     
     
@@ -87,14 +89,13 @@ public class Game
         WriteLine();
 
         var playerWin = false;
-        var turn = 0;
         var noPlay = 0;
 
         while (!playerWin)
         {
             foreach (var player in Players)
             {
-                WriteLine(turn + " => ___   " + player.Name + "'s turn   ___");
+                WriteLine(Turn + " => ___   " + player.Name + "'s turn   ___");
                 
                 var playerSolution = noPlay < Players.Count
                     ? player.Solve(BoardSolution)
@@ -124,7 +125,7 @@ public class Game
                 break;
             }
 
-            turn++;
+            Turn++;
         }
     }
 
@@ -138,7 +139,7 @@ public class Game
 
     private void InitializeTilePool(int seed)
     {
-        foreach (TileColor color in Enum.GetValues(typeof(TileColor)))
+        foreach (TileColor color in Enum.GetValues<TileColor>())
         {
             for (var i = 1; i <= 13; i++)
             {

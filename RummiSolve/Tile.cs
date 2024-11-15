@@ -9,7 +9,7 @@ public readonly struct Tile : IComparable<Tile>, IEquatable<Tile>
         if (value is < 0 or > 15)
             throw new ArgumentOutOfRangeException(nameof(value), "La valeur doit être entre 0 et 15.");
 
-        if (!Enum.IsDefined(typeof(TileColor), color))
+        if (!Enum.IsDefined(color))
             throw new ArgumentOutOfRangeException(nameof(color), "Couleur invalide.");
 
         _data = (byte)(

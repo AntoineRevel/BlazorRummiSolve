@@ -64,12 +64,7 @@ public class Solution
         if (hasPrintedGroup) Console.WriteLine();
         else if (!hasPrintedRun) Console.WriteLine("No tiles on the board. ");
     }
-
-    public bool IsValidSolution()
-    {
-        return Runs.All(run => run.IsValidRun()) && Groups.All(group => group.IsValidGroup());
-    }
-
+    
     public Set GetSet()
     {
         var result = new Set();
@@ -86,6 +81,4 @@ public class Solution
 
         return result;
     }
-
-    public int Count() => Groups.Sum(g => g.Tiles.Length) + Runs.Sum(s => s.Tiles.Length); //TODO temporaire
 }
