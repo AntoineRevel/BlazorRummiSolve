@@ -4,6 +4,8 @@ namespace RummiSolve;
 
 public class Game
 {
+    public Guid Id { get; private set; } = Guid.NewGuid(); 
+    
     public readonly List<Player> Players = [];
     public Solution BoardSolution { get; set; } = new();
     private List<Tile> TilePool { get; set; } = [];
