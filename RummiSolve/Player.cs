@@ -26,7 +26,10 @@ public class Player(string name)
             WriteLine(Name + " tiles : ");
             RackTilesSet.Tiles.ForEach(t => t.PrintTile());
         }
-        else WriteLine(Name + " Win !!!");
+        else
+        {
+            WriteLine(Name + " Win !!!");
+        }
 
         WriteLine();
     }
@@ -75,10 +78,7 @@ public class Player(string name)
         finalRackSet.PrintAllTiles();
         WriteLine();
 
-        foreach (var tile in finalRackSet.Tiles)
-        {
-            RackTilesSet.Remove(tile);
-        }
+        foreach (var tile in finalRackSet.Tiles) RackTilesSet.Remove(tile);
 
         return finalSolution;
     }
@@ -118,10 +118,7 @@ public class Player(string name)
         finalRackSet.PrintAllTiles();
         WriteLine();
 
-        foreach (var tile in finalRackSet.Tiles)
-        {
-            RackTilesSet.Remove(tile);
-        }
+        foreach (var tile in finalRackSet.Tiles) RackTilesSet.Remove(tile);
 
         _isFirst = false;
         return boardSolution;

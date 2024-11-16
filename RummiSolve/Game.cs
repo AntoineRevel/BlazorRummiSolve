@@ -4,26 +4,25 @@ namespace RummiSolve;
 
 public class Game
 {
-    public Guid Id { get; private set; } = Guid.NewGuid(); 
-    
     public readonly List<Player> Players = [];
+
+    private int _noPlay;
+
+    public int Turn;
+    public Guid Id { get; private set; } = Guid.NewGuid();
     public Solution BoardSolution { get; set; } = new();
     private List<Tile> TilePool { get; set; } = [];
-    
+
     public int CurrentPlayerIndex { get; private set; }
     public bool IsGameOver { get; private set; }
     public Player? Winner { get; private set; }
 
-    public int Turn;
-    
-    private int _noPlay;
-    
 
     public void AddPlayer(string playerName)
     {
         Players.Add(new Player(playerName));
     }
-    
+
     public void InitializeGame()
     {
         InitializeTilePool(2);
@@ -40,11 +39,11 @@ public class Game
 
         var player = Players[CurrentPlayerIndex];
         WriteLine(Turn + " => ___   " + player.Name + "'s turn   ___");
-                
+
         var playerSolution = _noPlay < Players.Count
             ? player.Solve(BoardSolution)
             : player.Solve(BoardSolution, false);
-                
+
         if (playerSolution.IsValid)
         {
             BoardSolution = playerSolution;
@@ -74,10 +73,8 @@ public class Game
         // Passer au joueur suivant
         CurrentPlayerIndex = (CurrentPlayerIndex + 1) % Players.Count;
         if (CurrentPlayerIndex == 0) Turn++;
-        
     }
-    
-    
+
 
     public void Start()
     {
@@ -98,11 +95,11 @@ public class Game
             foreach (var player in Players)
             {
                 WriteLine(Turn + " => ___   " + player.Name + "'s turn   ___");
-                
+
                 var playerSolution = noPlay < Players.Count
                     ? player.Solve(BoardSolution)
                     : player.Solve(BoardSolution, false);
-                
+
                 if (playerSolution.IsValid)
                 {
                     BoardSolution = playerSolution;
@@ -141,14 +138,12 @@ public class Game
 
     private void InitializeTilePool(int seed)
     {
-        foreach (TileColor color in Enum.GetValues<TileColor>())
-        {
+        foreach (var color in Enum.GetValues<TileColor>())
             for (var i = 1; i <= 13; i++)
             {
                 TilePool.Add(new Tile(i, color));
                 TilePool.Add(new Tile(i, color));
             }
-        }
 
         TilePool.Add(new Tile(true));
         TilePool.Add(new Tile(true));
@@ -161,16 +156,13 @@ public class Game
 
     private void InitializeRackTilesForPlayer(Player player)
     {
-        for (var i = 0; i < 14; i++)
-        {
-            player.AddTileToRack(DrawTile());
-        }
+        for (var i = 0; i < 14; i++) player.AddTileToRack(DrawTile());
     }
 
     private Tile DrawTile()
     {
         if (TilePool is []) throw new InvalidOperationException("No tiles left in the pool.");
-        
+
         var drawnTile = TilePool[0];
         TilePool.RemoveAt(0);
         return drawnTile;

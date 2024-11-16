@@ -2,8 +2,8 @@ namespace RummiSolve;
 
 public class Set : ISet
 {
-    public List<Tile> Tiles = [];
     private bool _isSorted;
+    public List<Tile> Tiles = [];
     private int Jokers { get; set; }
 
     public void AddTile(Tile tile)
@@ -175,13 +175,11 @@ public class Set : ISet
             jokersUsed++;
 
             if (currentRun.Count >= 3)
-            {
                 yield return new Run
                 {
                     Tiles = [..currentRun],
                     Jokers = jokersUsed
                 };
-            }
         }
     }
 
@@ -212,45 +210,36 @@ public class Set : ISet
             if (groupTiles.Count != 4) yield break;
 
             for (var i = 0; i < sameNumberTiles.Count; i++)
-            {
-                for (var j = i + 1; j < sameNumberTiles.Count; j++)
+            for (var j = i + 1; j < sameNumberTiles.Count; j++)
+                yield return new Group
                 {
-                    yield return new Group
-                    {
-                        Tiles = [firstTile, sameNumberTiles[i], sameNumberTiles[j]]
-                    };
-                }
-            }
+                    Tiles = [firstTile, sameNumberTiles[i], sameNumberTiles[j]]
+                };
         }
         else
         {
             for (var jokersUsed = 0; jokersUsed <= availableJokers; jokersUsed++)
+            for (var tilesUsed = 2; tilesUsed <= size + 1; tilesUsed++)
             {
-                for (var tilesUsed = 2; tilesUsed <= size + 1; tilesUsed++)
+                var totalTiles = tilesUsed + jokersUsed;
+                if (totalTiles is < 3 or > 4) continue;
+
+                var combinations = GetCombinations(sameNumberTiles, tilesUsed - 1);
+
+                foreach (var combo in combinations)
                 {
-                    var totalTiles = tilesUsed + jokersUsed;
-                    if (totalTiles is < 3 or > 4) continue;
+                    var groupTiles = new Tile[totalTiles];
+                    groupTiles[0] = firstTile;
 
-                    var combinations = GetCombinations(sameNumberTiles, tilesUsed - 1);
+                    combo.CopyTo(0, groupTiles, 1, tilesUsed - 1);
 
-                    foreach (var combo in combinations)
+                    for (var k = 0; k < jokersUsed; k++) groupTiles[tilesUsed + k] = new Tile(true);
+
+                    yield return new Group
                     {
-                        var groupTiles = new Tile[totalTiles];
-                        groupTiles[0] = firstTile;
-
-                        combo.CopyTo(0, groupTiles, 1, tilesUsed - 1);
-
-                        for (var k = 0; k < jokersUsed; k++)
-                        {
-                            groupTiles[tilesUsed + k] = new Tile(true);
-                        }
-                        
-                        yield return new Group
-                        {
-                            Tiles = groupTiles,
-                            Jokers = jokersUsed
-                        };
-                    }
+                        Tiles = groupTiles,
+                        Jokers = jokersUsed
+                    };
                 }
             }
         }
@@ -322,5 +311,4 @@ public class Set : ISet
             }
         }
     }
-    
 }

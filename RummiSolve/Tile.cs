@@ -39,7 +39,10 @@ public readonly struct Tile : IComparable<Tile>, IEquatable<Tile>
 
     public void PrintTile()
     {
-        if (IsJoker) PrintJoker();
+        if (IsJoker)
+        {
+            PrintJoker();
+        }
         else
         {
             Console.ForegroundColor = Color switch

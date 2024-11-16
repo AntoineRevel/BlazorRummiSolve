@@ -20,10 +20,10 @@ public class RummiBench
             new Tile(7, TileColor.Black),
             new Tile(8, TileColor.Black),
             new Tile(9, TileColor.Black),
-            new Tile(10, TileColor.Mango),
+            new Tile(10, TileColor.Mango)
         ]
     };
-    
+
     private static readonly Set SetGroup = new()
     {
         Tiles =
@@ -32,38 +32,31 @@ public class RummiBench
             new Tile(1, TileColor.Mango),
             new Tile(1, TileColor.Red),
             new Tile(1, TileColor.Red),
-            new Tile(1, TileColor.Blue),
+            new Tile(1, TileColor.Blue)
         ]
     };
 
-    private static readonly bool[] TabBool = [false, false, false,false,false];
-    
+    private static readonly bool[] TabBool = [false, false, false, false, false];
+
     public static void TestRunSpan()
     {
         var result = Set.GetRuns(0, TabBool, 1);
         foreach (var run in result)
         {
-            foreach (var tile in run.Tiles)
-            {
-                tile.PrintTile();
-            }
+            foreach (var tile in run.Tiles) tile.PrintTile();
 
             Console.WriteLine();
             Console.WriteLine(run.Jokers);
         }
     }
 
-  
-    
+
     public static void TestYieldGroup()
     {
         var result = SetGroup.GetGroups(0, TabBool, 2);
         foreach (var run in result)
         {
-            foreach (var tile in run.Tiles)
-            {
-                tile.PrintTile();
-            }
+            foreach (var tile in run.Tiles) tile.PrintTile();
 
             Console.WriteLine();
             Console.WriteLine(run.Jokers);
@@ -85,7 +78,7 @@ public class RummiBench
 
     public static void TestGroupJoker()
     {
-        var groupSet = new Set()
+        var groupSet = new Set
         {
             Tiles =
             [
@@ -97,8 +90,8 @@ public class RummiBench
 
                 new Tile(2, TileColor.Blue),
                 new Tile(3, TileColor.Blue),
-                new Tile(4, TileColor.Blue),
-            ],
+                new Tile(4, TileColor.Blue)
+            ]
         };
 
         groupSet.PrintAllTiles();
@@ -116,7 +109,7 @@ public class RummiBench
                 new Tile(11, TileColor.Mango),
                 new Tile(10, TileColor.Mango),
                 new Tile(true)
-            ],
+            ]
         };
 
         var boardSet = new Set
@@ -137,8 +130,8 @@ public class RummiBench
 
                 new Tile(5, TileColor.Blue),
                 new Tile(5, TileColor.Mango),
-                new Tile(5, TileColor.Black),
-            ],
+                new Tile(5, TileColor.Black)
+            ]
         };
 
         setToTest.Sort();
@@ -150,7 +143,7 @@ public class RummiBench
 
         boardSol.PrintSolution();
 
-        var unused = new Game()
+        var unused = new Game
         {
             BoardSolution = boardSol
         };
@@ -183,15 +176,11 @@ public class RummiBench
             new(2, TileColor.Red),
             new(3, TileColor.Blue),
             new(4, TileColor.Mango)
-
         ];
 
         foreach (var tiles in Set.GetBestSets(tryCombiSet, 3))
         {
-            foreach (var tile in tiles.Tiles)
-            {
-                tile.PrintTile();
-            }
+            foreach (var tile in tiles.Tiles) tile.PrintTile();
 
             Console.WriteLine();
         }
@@ -218,10 +207,7 @@ public class RummiBench
                 random.Next(3, maxRunLength + 1); // Longueur aléatoire entre 3 et la longueur maximale possible
 
             var run = new List<Tile>();
-            for (var j = 0; j < runLength; j++)
-            {
-                run.Add(new Tile(startNumber + j, color));
-            }
+            for (var j = 0; j < runLength; j++) run.Add(new Tile(startNumber + j, color));
 
             tiles.AddRange(run);
         }

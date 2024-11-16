@@ -2,11 +2,10 @@ namespace RummiSolve;
 
 public class Solution
 {
-    public readonly List<Run> Runs = [];
-    public readonly List<Group> Groups = [];
-    public bool IsValid = true;
-
     private static readonly Solution InvalidSolution = new() { IsValid = false };
+    public readonly List<Group> Groups = [];
+    public readonly List<Run> Runs = [];
+    public bool IsValid = true;
 
     public static Solution GetInvalidSolution()
     {
@@ -57,27 +56,21 @@ public class Solution
             if (hasPrintedGroup) Console.Write("| ");
 
             foreach (var groupTile in group.Tiles) groupTile.PrintTile();
-            
+
             hasPrintedGroup = true;
         }
 
         if (hasPrintedGroup) Console.WriteLine();
         else if (!hasPrintedRun) Console.WriteLine("No tiles on the board. ");
     }
-    
+
     public Set GetSet()
     {
         var result = new Set();
 
-        foreach (var run in Runs)
-        {
-            result.Concat(run);
-        }
+        foreach (var run in Runs) result.Concat(run);
 
-        foreach (var group in Groups)
-        {
-            result.Concat(group);
-        }
+        foreach (var group in Groups) result.Concat(group);
 
         return result;
     }
