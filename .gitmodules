@@ -1,0 +1,3 @@
+[submodule "RummiSolve"]
+	path = RummiSolve
+	url = https://github.com/AntoineRevel/RummiSolve.git
