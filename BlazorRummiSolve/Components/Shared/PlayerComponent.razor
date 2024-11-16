@@ -1,13 +1,11 @@
 @using RummiSolve
-
 <div class="player-container">
     <h2>@Player.Name</h2>
-    <SetComponent Set="Player.RackTilesSet" />
+    <SetComponent Set="Player.RackTilesSet"/>
 </div>
 
 @code {
-    [Parameter]
-    public required Player Player { get; set; }
+    [Parameter] public required Player Player { get; set; }
 }
 
 <style>
