@@ -1,9 +1,8 @@
 @page "/game"
-@using RummiSolve
 @using BlazorRummiSolve.Components.Shared
 @rendermode InteractiveServer
 
-<h3>GamePage</h3>
+<h3>GamePage : @Id</h3>
 
 <div class="game-container">
     <h1>Rummikub Game</h1>
@@ -25,7 +24,7 @@
             <SolutionComponent Solution="_currentGame.BoardSolution"/>
         </div>
 
-        <button @onclick="PlayTurn" disabled="@IsGameOver">Jouer un Tour</button>
+        <button @onclick="PlayTurnAsync"  disabled="@(IsLoading || IsGameOver)">Jouer un Tour</button>
 
         <!-- Section des joueurs -->
         <div class="players-section">
@@ -33,41 +32,6 @@
         </div>
     </div>
 </div>
-
-@code {
-
-    private readonly Game _currentGame = new();
-    private Player? _currentPlayer;
-    private List<Player>? _otherPlayers;
-
-    private bool IsGameOver => _currentGame.IsGameOver;
-    private Player Winner => _currentGame.Winner!;
-    private int TurnNumber => _currentGame.Turn; // Ajout de la propriété pour accéder au numéro de tour
-
-    protected override void OnInitialized()
-    {
-        _currentGame.AddPlayer("Antoine");
-        _currentGame.AddPlayer("Matthieu");
-        _currentGame.AddPlayer("David");
-        _currentGame.AddPlayer("Maguy");
-
-        _currentGame.InitializeGame();
-
-        UpdatePlayers();
-    }
-
-    private void PlayTurn()
-    {
-        _currentGame.PlayCurrentPlayerTurn();
-        UpdatePlayers();
-    }
-
-    private void UpdatePlayers()
-    {
-        _currentPlayer = _currentGame.Players[_currentGame.CurrentPlayerIndex];
-        _otherPlayers = _currentGame.Players.Where(p => p != _currentPlayer).ToList();
-    }
-}
 
 <style>
     .game-container {
