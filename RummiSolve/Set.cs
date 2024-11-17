@@ -91,7 +91,7 @@ public class Set : ISet
     private Solution FindSolution(Solution solution, bool[] usedTiles, int unusedTileCount, int firstUnusedTileIndex,
         int availableJokers)
     {
-        firstUnusedTileIndex = GetNextUnusedTileIndex(usedTiles, firstUnusedTileIndex);
+        firstUnusedTileIndex = Array.FindIndex(usedTiles, firstUnusedTileIndex, used => !used);
 
         var solRun = TrySet(GetRuns(firstUnusedTileIndex, usedTiles, availableJokers),
             solution, usedTiles, unusedTileCount, firstUnusedTileIndex, availableJokers);
@@ -139,11 +139,7 @@ public class Set : ISet
 
         return Solution.GetInvalidSolution();
     }
-
-    private static int GetNextUnusedTileIndex(bool[] usedTiles, int startIndex)
-    {
-        return Array.FindIndex(usedTiles, startIndex, used => !used);
-    }
+    
 
     private IEnumerable<Run> GetRuns(int tileIndex, bool[] usedTiles, int availableJokers)
     {
