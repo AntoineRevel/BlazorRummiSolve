@@ -7,10 +7,10 @@ public class Player(string name)
     public readonly string Name = name;
     public Set RackTilesSet = new();
     private bool _played;
-    public bool Won { get;  private set; }
+    public bool Won { get; private set; }
     private Tile _lastDrewTile;
 
-    
+
     public void AddTileToRack(Tile tile)
     {
         RackTilesSet.AddTile(tile);
@@ -39,13 +39,20 @@ public class Player(string name)
     public Solution Solve(Solution boardSolution, bool boardChange = true)
     {
         if (!_played) return SolveFirst(boardSolution);
-
         var boardSet = boardSolution.GetSet();
+
+        var firstRackSolution = boardSet.ConcatNew(new Set(RackTilesSet.Tiles)).GetSolution();
+        if (firstRackSolution.IsValid)
+        {
+            Won = true;
+            return firstRackSolution;
+        }
+
         var finalSolution = Solution.GetInvalidSolution();
         var locker = new Lock();
         Set finalRackSet = null!;
 
-        for (var tileCount = RackTilesSet.Tiles.Count-1; tileCount > 0; tileCount--)
+        for (var tileCount = RackTilesSet.Tiles.Count - 1; tileCount > 0; tileCount--)
         {
             var rackSetsToTry = Set.GetBestSets(RackTilesSet.Tiles, tileCount);
 
@@ -93,10 +100,10 @@ public class Player(string name)
             Won = true;
             return boardSolution.AddSolution(firstRackSolution);
         }
-        
+
         var finalSolution = Solution.GetInvalidSolution();
-        
-        for (var tileCount = RackTilesSet.Tiles.Count-1; tileCount > 3; tileCount--)
+
+        for (var tileCount = RackTilesSet.Tiles.Count - 1; tileCount > 3; tileCount--)
         {
             var rackSetsToTry = Set.GetBestSets(RackTilesSet.Tiles, tileCount);
 
@@ -132,5 +139,4 @@ public class Player(string name)
         _played = true;
         return boardSolution;
     }
-    
 }

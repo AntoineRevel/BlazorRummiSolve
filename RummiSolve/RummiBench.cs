@@ -46,7 +46,7 @@ public class RummiBench
         };
 
         var player2 = new Player("Theo");
-        
+
         game.AddPlayer(player1);
         game.AddPlayer(player2);
 
@@ -54,7 +54,6 @@ public class RummiBench
         {
             game.PlayCurrentPlayerTurn();
         }
-
     }
 
 
@@ -68,6 +67,20 @@ public class RummiBench
             Console.WriteLine();
             Console.WriteLine(run.Jokers);
         }
+    }
+
+    [Benchmark]
+    public void TestMultiPlayerGameNoStatic()
+    {
+        var game = new Game();
+        game.AddPlayer("Antoine");
+        game.AddPlayer("Matthieu");
+        game.AddPlayer("David");
+        game.AddPlayer("Maguy");
+        var gameStopwatch = Stopwatch.StartNew();
+        game.Start();
+        gameStopwatch.Stop();
+        Console.WriteLine($"Game duration: {gameStopwatch.Elapsed.TotalSeconds} seconds");
     }
 
     public static void TestMultiPlayerGame()
