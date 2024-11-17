@@ -12,11 +12,12 @@ public class Solution
         return InvalidSolution;
     }
 
-    public void AddSolution(Solution solution)
+    public Solution AddSolution(Solution solution)
     {
         Groups.AddRange(solution.Groups);
 
         Runs.AddRange(solution.Runs);
+        return this;
     }
 
     public void AddRun(Run run)

@@ -12,7 +12,6 @@ public class RummiBench
         [
             new Tile(1, TileColor.Black),
             new Tile(2, TileColor.Black),
-            new Tile(2, TileColor.Black),
             new Tile(3, TileColor.Black),
             new Tile(4, TileColor.Black),
             new Tile(5, TileColor.Black),
@@ -20,7 +19,6 @@ public class RummiBench
             new Tile(7, TileColor.Black),
             new Tile(8, TileColor.Black),
             new Tile(9, TileColor.Black),
-            new Tile(10, TileColor.Mango)
         ]
     };
 
@@ -38,16 +36,25 @@ public class RummiBench
 
     private static readonly bool[] TabBool = [false, false, false, false, false];
 
-    public static void TestRunSpan()
-    {
-        var result = Set.GetRuns(0, TabBool, 1);
-        foreach (var run in result)
-        {
-            foreach (var tile in run.Tiles) tile.PrintTile();
 
-            Console.WriteLine();
-            Console.WriteLine(run.Jokers);
+    public static void TestFirstValidPlay()
+    {
+        var game = new Game();
+        var player1 = new Player("Antoine")
+        {
+            RackTilesSet = Set
+        };
+
+        var player2 = new Player("Theo");
+        
+        game.AddPlayer(player1);
+        game.AddPlayer(player2);
+
+        while (!game.IsGameOver)
+        {
+            game.PlayCurrentPlayerTurn();
         }
+
     }
 
 

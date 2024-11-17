@@ -16,11 +16,15 @@ public class Game
     public int CurrentPlayerIndex { get; private set; }
     public bool IsGameOver { get; private set; }
     public Player? Winner { get; private set; }
-
-
+    
     public void AddPlayer(string playerName)
     {
         Players.Add(new Player(playerName));
+    }
+    
+    public void AddPlayer(Player player)
+    {
+        Players.Add(player);
     }
 
     public void InitializeGame()
@@ -63,7 +67,7 @@ public class Game
 
         Print(player);
 
-        if (player.HasWon())
+        if (player.Won)
         {
             IsGameOver = true;
             Winner = player;
@@ -119,7 +123,7 @@ public class Game
 
                 Print(player);
 
-                if (!player.HasWon()) continue;
+                if (!player.Won) continue;
                 playerWin = true;
                 break;
             }

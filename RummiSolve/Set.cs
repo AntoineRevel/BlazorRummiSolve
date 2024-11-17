@@ -3,13 +3,24 @@ namespace RummiSolve;
 public class Set : ISet
 {
     private bool _isSorted;
-    public List<Tile> Tiles = [];
-    private int Jokers { get; set; }
+    public List<Tile> Tiles;
+    private int _jokers;
+
+    public Set()
+    {
+        Tiles = [];
+    }
+
+    public Set(List<Tile> tiles)
+    {
+        Tiles = [..tiles];
+        _jokers = Tiles.Count(tile => tile.IsJoker);
+    }
 
     public void AddTile(Tile tile)
     {
         Tiles.Add(tile);
-        if (tile.IsJoker) Jokers++;
+        if (tile.IsJoker) _jokers++;
         _isSorted = false;
     }
 
@@ -18,7 +29,7 @@ public class Set : ISet
         ArgumentNullException.ThrowIfNull(set);
 
         Tiles.AddRange(set.Tiles);
-        Jokers += set.Jokers;
+        _jokers += set.Jokers;
         _isSorted = false;
     }
 
@@ -29,11 +40,11 @@ public class Set : ISet
         var newSet = new Set
         {
             Tiles = [..Tiles],
-            Jokers = Jokers
+            _jokers = _jokers
         };
 
         newSet.Tiles.AddRange(set.Tiles);
-        newSet.Jokers += set.Jokers;
+        newSet._jokers += set._jokers;
         return newSet;
     }
 
@@ -42,7 +53,7 @@ public class Set : ISet
     {
         Tiles.Remove(tile);
 
-        if (tile.IsJoker) Jokers--;
+        if (tile.IsJoker) _jokers--;
     }
 
 
@@ -67,13 +78,13 @@ public class Set : ISet
     {
         Sort();
 
-        if (Jokers > 0) Tiles.RemoveRange(Tiles.Count - Jokers, Jokers);
+        if (_jokers > 0) Tiles.RemoveRange(Tiles.Count - _jokers, _jokers);
         var length = Tiles.Count;
         var usedTiles = new bool[length];
 
-        if (length + Jokers <= 2) return length == 0 ? new Solution() : Solution.GetInvalidSolution();
+        if (length + _jokers <= 2) return length == 0 ? new Solution() : Solution.GetInvalidSolution();
 
-        var solution = FindSolution(new Solution(), usedTiles, length, 0, Jokers);
+        var solution = FindSolution(new Solution(), usedTiles, length, 0, _jokers);
         return solution;
     }
 
@@ -134,7 +145,7 @@ public class Set : ISet
         return Array.FindIndex(usedTiles, startIndex, used => !used);
     }
 
-    public IEnumerable<Run> GetRuns(int tileIndex, bool[] usedTiles, int availableJokers)
+    private IEnumerable<Run> GetRuns(int tileIndex, bool[] usedTiles, int availableJokers)
     {
         var color = Tiles[tileIndex].Color;
         var currentRun = new List<Tile> { Tiles[tileIndex] };
@@ -285,15 +296,8 @@ public class Set : ISet
     {
         var combinations = GetCombinations(tiles, n);
         return combinations
-            .Select(combination =>
-            {
-                var set = new Set
-                {
-                    Tiles = combination,
-                    Jokers = combination.Count(tile => tile.IsJoker)
-                };
-                return set;
-            })
+            .Select(combination => new Set(combination)
+            )
             .OrderByDescending(t => t.GetScore());
     }
 
