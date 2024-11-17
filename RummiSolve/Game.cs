@@ -9,6 +9,7 @@ public class Game
     private int _noPlay;
 
     public int Turn;
+
     public Guid Id { get; private set; } = Guid.NewGuid();
     public Solution BoardSolution { get; set; } = new();
     private List<Tile> TilePool { get; set; } = [];
@@ -16,20 +17,32 @@ public class Game
     public int CurrentPlayerIndex { get; private set; }
     public bool IsGameOver { get; private set; }
     public Player? Winner { get; private set; }
-    
+
     public void AddPlayer(string playerName)
     {
         Players.Add(new Player(playerName));
     }
-    
+
     public void AddPlayer(Player player)
     {
         Players.Add(player);
     }
 
+    public void Start()
+    {
+        InitializeGame();
+
+        WriteLine();
+
+        while (!IsGameOver)
+        {
+            PlayCurrentPlayerTurn();
+        }
+    }
+
     public void InitializeGame()
     {
-        InitializeTilePool(2);
+        InitializeTilePool(1);
         foreach (var player in Players)
         {
             InitializeRackTilesForPlayer(player);
@@ -74,62 +87,10 @@ public class Game
             return;
         }
 
+
         // Passer au joueur suivant
         CurrentPlayerIndex = (CurrentPlayerIndex + 1) % Players.Count;
         if (CurrentPlayerIndex == 0) Turn++;
-    }
-
-
-    public void Start()
-    {
-        InitializeTilePool(1);
-        foreach (var player in Players)
-        {
-            InitializeRackTilesForPlayer(player);
-            player.PrintRackTiles();
-        }
-
-        WriteLine();
-
-        var playerWin = false;
-        var noPlay = 0;
-
-        while (!playerWin)
-        {
-            foreach (var player in Players)
-            {
-                WriteLine(Turn + " => ___   " + player.Name + "'s turn   ___");
-
-                var playerSolution = noPlay < Players.Count
-                    ? player.Solve(BoardSolution)
-                    : player.Solve(BoardSolution, false);
-
-                if (playerSolution.IsValid)
-                {
-                    BoardSolution = playerSolution;
-                    noPlay = 0;
-                }
-                else
-                {
-                    WriteLine(player.Name + " can't play.");
-                    var drawTile = DrawTile();
-                    player.SetLastDrewTile(drawTile);
-                    Write("Drew tile: ");
-                    drawTile.PrintTile();
-                    WriteLine();
-                    player.AddTileToRack(drawTile);
-                    noPlay++;
-                }
-
-                Print(player);
-
-                if (!player.Won) continue;
-                playerWin = true;
-                break;
-            }
-
-            Turn++;
-        }
     }
 
     private void Print(Player player)
@@ -139,6 +100,7 @@ public class Game
         BoardSolution.PrintSolution();
         WriteLine("");
     }
+
 
     private void InitializeTilePool(int seed)
     {

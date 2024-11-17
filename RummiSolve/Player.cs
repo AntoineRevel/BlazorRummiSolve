@@ -23,7 +23,7 @@ public class Player(string name)
 
     public void PrintRackTiles()
     {
-        if (RackTilesSet.Tiles.Count != 0)
+        if (!Won)
         {
             WriteLine(Name + " tiles : ");
             RackTilesSet.Tiles.ForEach(t => t.PrintTile());
