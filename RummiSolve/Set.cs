@@ -197,9 +197,7 @@ public class Set : ISet
         var color = firstTile.Color;
 
         var sameNumberTiles = Tiles
-            .Select((tile, index) => new { Tile = tile, Index = index })
-            .Where(t => !usedTiles[t.Index] && t.Tile.Value == number && t.Tile.Color != color)
-            .Select(t => t.Tile)
+            .Where((tile,index) => !usedTiles[index] && tile.Value == number && tile.Color != color)
             .Distinct()
             .ToList();
 
