@@ -6,6 +6,7 @@ public static class Program
 {
     private static void Main()
     {
-        BenchmarkRunner.Run<RummiBench>();
+        Console.WriteLine("Test");
+        //BenchmarkRunner.Run<RummiBench>();
     }
 }
