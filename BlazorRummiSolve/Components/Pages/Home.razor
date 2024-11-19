@@ -1,6 +1,6 @@
 ﻿@page "/"
 @inject NavigationManager Navigation
-
+@rendermode InteractiveServer
 <h1>Bienvenue sur le Rummikub Solver</h1>
 <p>
     Ce site vous aide à résoudre vos jeux de Rummikub. Cliquez sur "Jouer" pour commencer.
@@ -16,7 +16,7 @@
 
     private void Test()
     {
-        Navigation.NavigateTo("counter");
+        Navigation.NavigateTo("game");
     }
 
     private int _currentCount;
