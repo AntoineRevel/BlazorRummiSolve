@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorRummiSolve", "BlazorRummiSolve\BlazorRummiSolve.csproj", "{52ABE199-FEF9-49A3-A0E8-F2EE6FEA91EE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RummiSolve", "RummiSolve\RummiSolve\RummiSolve.csproj", "{BF2E6601-A17C-4B16-A486-9F483EF8822C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{52ABE199-FEF9-49A3-A0E8-F2EE6FEA91EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{52ABE199-FEF9-49A3-A0E8-F2EE6FEA91EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{52ABE199-FEF9-49A3-A0E8-F2EE6FEA91EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF2E6601-A17C-4B16-A486-9F483EF8822C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF2E6601-A17C-4B16-A486-9F483EF8822C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF2E6601-A17C-4B16-A486-9F483EF8822C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF2E6601-A17C-4B16-A486-9F483EF8822C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
