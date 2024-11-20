@@ -1,20 +1,26 @@
 ﻿@page "/"
 @inject NavigationManager Navigation
 @rendermode InteractiveServer
-<h1>Bienvenue sur le Rummikub Solver</h1>
+<h1>Welcome to the Rummikub Solver</h1>
 <p>
-    Ce site vous aide à résoudre vos jeux de Rummikub. Cliquez sur "Jouer" pour commencer.
+    This site helps you solve your Rummikub games. Click "Play" to start.
 </p>
 
-<button class="btn btn-primary" @onclick="Test">Jouer</button>
+<button class="btn btn-primary" @onclick="NavigateToGame">Play</button>
 
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
 
 <p role="status">Current count: @_currentCount</p>
 
+<p>
+    This project is open source, and your feedback is highly appreciated! Feel free to check out the code on 
+    <a href="https://github.com/AntoineRevel/BlazorRummiSolve" target="_blank">GitHub</a>. 
+    If you have any suggestions or improvements, please open an issue or submit a pull request.
+</p>
+
 @code {
 
-    private void Test()
+    private void NavigateToGame()
     {
         Navigation.NavigateTo("game");
     }
