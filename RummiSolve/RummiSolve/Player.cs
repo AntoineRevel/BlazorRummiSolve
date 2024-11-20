@@ -45,6 +45,7 @@ public class Player(string name)
         if (firstRackSolution.IsValid)
         {
             Won = true;
+            RackTilesSet.Tiles.Clear();
             return firstRackSolution;
         }
 
