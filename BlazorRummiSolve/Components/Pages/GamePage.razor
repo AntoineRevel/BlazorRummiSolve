@@ -2,75 +2,176 @@
 @using BlazorRummiSolve.Components.Shared
 @rendermode InteractiveServer
 
-<h3>GamePage : @Id</h3>
-
 <div class="game-container">
-    <h1>Rummikub Game</h1>
+    <header>
+        <h1>Rummikub Game</h1>
+        <h3>Game ID: @Id</h3>
+    </header>
 
     @if (IsGameOver)
     {
-        <h2>@Winner.Name a gagné la partie !</h2>
+        <div class="game-over">
+            <h2>🎉 @Winner.Name has won the game! 🎉</h2>
+        </div>
     }
 
-    <div class="game-content">
-        <!-- Affichage du tour actuel -->
+    <section class="game-content">
+        <!-- Current Turn Section -->
         <div class="turn-section">
-            <h2>Tour actuel : @TurnNumber</h2>
+            <h2>Current Turn: <span>@TurnNumber</span></h2>
         </div>
 
-        <!-- Section de la solution -->
+        <!-- Solution Section -->
         <div class="solution-section">
-            <h2>Solution Actuelle</h2>
-            <SolutionComponent Solution="_currentGame.BoardSolution"/>
+            <h2>Current Solution</h2>
+            <SolutionComponent Solution="_currentGame.BoardSolution" />
         </div>
 
-        <button @onclick="PlayTurnAsync" disabled="@(IsLoading || IsGameOver)">Jouer un Tour</button>
+        <!-- Action Buttons -->
+        <div class="actions">
+            <button @onclick="PlayTurnAsync" disabled="@(IsLoading || IsGameOver)" class="btn-primary">
+                Play Turn
+            </button>
+            <button @onclick="ResetGameAsync" class="btn-secondary">
+                Reset Game
+            </button>
+        </div>
 
-        <!-- Section des joueurs -->
+        <!-- Players Section -->
         <div class="players-section">
-            <PlayersContainerComponent CurrentPlayer="_currentPlayer" OtherPlayers="_otherPlayers"/>
+            <h2>Players</h2>
+            <PlayersContainerComponent CurrentPlayer="_currentPlayer" OtherPlayers="_otherPlayers" />
         </div>
-    </div>
+    </section>
 </div>
 
 <style>
+    /* General Container */
     .game-container {
-        max-width: 1200px;
-        margin: 0 auto;
+        max-width: 1300px;
+        margin: 20px auto;
         padding: 20px;
+        font-family: Arial, sans-serif;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
 
-    .game-content {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
+    /* Header */
+    header {
+        text-align: center;
+        margin-bottom: 30px;
     }
 
+    header h1 {
+        font-size: 2.5rem;
+        color: #3a3a3a;
+        margin: 0;
+    }
+
+    header h3 {
+        color: #777;
+        font-size: 1rem;
+    }
+
+    /* Game Over Section */
+    .game-over {
+        text-align: center;
+        background: #f1f8e9;
+        border: 2px solid #8bc34a;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+
+    .game-over h2 {
+        color: #4caf50;
+        font-size: 1.5rem;
+    }
+
+    /* Turn Section */
     .turn-section {
         text-align: center;
         margin-bottom: 20px;
     }
 
+    .turn-section h2 {
+        font-size: 1.5rem;
+        color: #3f51b5;
+    }
+
+    .turn-section span {
+        font-weight: bold;
+        color: #ff5722;
+    }
+
+    /* Solution Section */
     .solution-section {
-        border: 2px solid #ccc;
         padding: 20px;
+        border: 2px solid #e0e0e0;
         border-radius: 10px;
-        background-color: #f9f9f9;
-    }
-
-    .players-section {
-        /* Styles pour la section des joueurs */
-    }
-
-    button {
-        margin-right: 10px;
-        padding: 10px 20px;
-        font-size: 1em;
-        cursor: pointer;
-    }
-
-    h2 {
+        background-color: #f7f7f7;
         text-align: center;
-        color: green;
+    }
+
+    .solution-section h2 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        color: #607d8b;
+    }
+
+    /* Actions */
+    .actions {
+        text-align: center;
+        margin: 20px 0;
+    }
+
+    .btn-primary {
+        padding: 10px 20px;
+        font-size: 1rem;
+        background-color: #2196f3;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-right: 10px;
+        transition: background-color 0.3s;
+    }
+
+    .btn-primary:hover {
+        background-color: #1976d2;
+    }
+
+    .btn-secondary {
+        padding: 10px 20px;
+        font-size: 1rem;
+        background-color: #f44336;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .btn-secondary:hover {
+        background-color: #d32f2f;
+    }
+
+    /* Players Section */
+    .players-section {
+        margin-top: 20px;
+    }
+
+    .players-section h2 {
+        font-size: 1.5rem;
+        color: #3e2723;
     }
 </style>
+
+@code {
+    private async Task ResetGameAsync()
+    {
+        // Logic to reset the game
+        Console.WriteLine("Game reset!");
+    }
+}
