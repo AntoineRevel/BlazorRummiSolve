@@ -4,7 +4,7 @@ namespace BlazorRummiSolve.Components.Pages;
 
 public partial class GamePage
 {
-    private readonly Game _currentGame = new();
+    private Game _currentGame = new();
     private Player? _currentPlayer;
     private List<Player>? _otherPlayers;
     private bool IsGameOver => _currentGame.IsGameOver;
@@ -42,5 +42,12 @@ public partial class GamePage
     {
         _currentPlayer = _currentGame.Players[_currentGame.CurrentPlayerIndex];
         _otherPlayers = _currentGame.Players.Where(p => p != _currentPlayer).ToList();
+    }
+    
+    private Task ResetGameAsync()
+    {
+        _currentGame = new Game();
+        OnInitialized();
+        return Task.CompletedTask;
     }
 }
