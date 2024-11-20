@@ -57,6 +57,7 @@ public class Game
         var player = Players[CurrentPlayerIndex];
         WriteLine(Turn + " => ___   " + player.Name + "'s turn   ___");
 
+        BoardSolution.ResetNewTiles();
         var playerSolution = _noPlay < Players.Count
             ? player.Solve(BoardSolution)
             : player.Solve(BoardSolution, false);
