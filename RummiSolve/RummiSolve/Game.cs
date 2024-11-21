@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using static System.Console;
 
 namespace RummiSolve;
@@ -38,8 +39,11 @@ public class Game(Guid id)
     {
         while (!IsGameOver)
         {
+            var gameStopwatch = Stopwatch.StartNew();
             PlayCurrentPlayerTurn();
             ShowSolution();
+            gameStopwatch.Stop();
+            WriteLine($"Turn : {gameStopwatch.Elapsed.TotalSeconds} seconds");
         }
     }
 
