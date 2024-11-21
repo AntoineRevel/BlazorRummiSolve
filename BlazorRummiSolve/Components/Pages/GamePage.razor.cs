@@ -21,7 +21,7 @@ public partial class GamePage
         NextPlayer
     }
 
-    private ActionState _currentState = ActionState.ShowHint;
+    private ActionState _currentState;
 
     private async Task HandleActionAsync()
     {
@@ -67,6 +67,7 @@ public partial class GamePage
 
         _currentGame.InitializeGame();
 
+        _currentState = ActionState.ShowHint;
         UpdatePlayers();
         await FindSolution();
     }
@@ -91,10 +92,9 @@ public partial class GamePage
         _otherPlayers = _currentGame.Players.Where(p => p != _currentPlayer).ToList();
     }
     
-    private Task ResetGameAsync()
+    private async Task ResetGameAsync()
     {
         _currentGame = new Game();
-        OnInitialized();
-        return Task.CompletedTask;
+        await OnInitializedAsync();
     }
 }
