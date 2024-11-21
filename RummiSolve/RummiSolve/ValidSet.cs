@@ -2,15 +2,6 @@ namespace RummiSolve;
 
 public abstract class ValidSet : ISet
 {
-    public required Tile[] Tiles { get; set; }
+    public required Tile[] Tiles { get; init; }
     public int Jokers { get; init; }
-    
-    public void ResetNewTiles()
-    {
-        Tiles = Tiles.Select(tile =>
-        {
-            tile.IsNew = false;
-            return tile;
-        }).ToArray();
-    }
 }

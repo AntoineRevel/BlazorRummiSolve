@@ -1,11 +1,10 @@
 namespace RummiSolve;
 
-public struct Tile : IComparable<Tile>, IEquatable<Tile>
+public readonly struct Tile : IComparable<Tile>, IEquatable<Tile>
 {
     private readonly byte _data;
-    public bool IsNew { get; set; }
 
-    public Tile(int value, TileColor color, bool isJoker = false, bool isNew = false)
+    public Tile(int value, TileColor color, bool isJoker = false)
     {
         if (value is < 0 or > 15)
             throw new ArgumentOutOfRangeException(nameof(value), "La valeur doit être entre 0 et 15.");
@@ -20,10 +19,9 @@ public struct Tile : IComparable<Tile>, IEquatable<Tile>
         );
     }
 
-    public Tile(bool isJoker = false, bool isNew = false)
+    public Tile(bool isJoker = false)
     {
         if (isJoker) _data = (byte)(isJoker ? 1 << 6 : 0);
-        IsNew = isNew;
     }
 
     public int Value => _data & 0x0F; // Bits 0-3

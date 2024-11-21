@@ -139,7 +139,7 @@ public class Set : ISet
 
         return Solution.GetInvalidSolution();
     }
-
+    
 
     private IEnumerable<Run> GetRuns(int tileIndex, bool[] usedTiles, int availableJokers)
     {
@@ -175,8 +175,7 @@ public class Set : ISet
             if (availableJokers <= 0) yield break;
 
             if (currentRun[^1].Value != 13) currentRun.Add(new Tile(currentRun[^1].Value + 1, color, true));
-            else if (currentRun[0].Value != 1)
-                currentRun.Insert(0, new Tile(currentRun[0].Value - 1, color, true, true));
+            else if (currentRun[0].Value != 1) currentRun.Insert(0, new Tile(currentRun[0].Value - 1, color, true));
             else jokersUsed--; //TODO insert 2 Run 123J 4...
 
             availableJokers -= 1;
@@ -198,7 +197,7 @@ public class Set : ISet
         var color = firstTile.Color;
 
         var sameNumberTiles = Tiles
-            .Where((tile, index) => !usedTiles[index] && tile.Value == number && tile.Color != color)
+            .Where((tile,index) => !usedTiles[index] && tile.Value == number && tile.Color != color)
             .Distinct()
             .ToList();
 
@@ -239,7 +238,7 @@ public class Set : ISet
 
                     combo.CopyTo(0, groupTiles, 1, tilesUsed - 1);
 
-                    for (var k = 0; k < jokersUsed; k++) groupTiles[tilesUsed + k] = new Tile(true, true);
+                    for (var k = 0; k < jokersUsed; k++) groupTiles[tilesUsed + k] = new Tile(true);
 
                     yield return new Group
                     {
@@ -289,12 +288,6 @@ public class Set : ISet
 
     public static IEnumerable<Set> GetBestSets(List<Tile> tiles, int n)
     {
-        tiles = tiles.Select(tile =>
-        {
-            tile.IsNew = true;
-            return tile;
-        }).ToList();
-
         var combinations = GetCombinations(tiles, n);
         return combinations
             .Select(combination => new Set(combination)
@@ -316,5 +309,4 @@ public class Set : ISet
             }
         }
     }
-    
 }

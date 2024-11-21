@@ -75,12 +75,4 @@ public class Solution
 
         return result;
     }
-
-    public void ResetNewTiles()
-    {
-        foreach (var run in Runs) run.ResetNewTiles();
-
-        foreach (var group in Groups) group.ResetNewTiles();
-    }
-    
 }

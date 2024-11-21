@@ -1,9 +1,10 @@
 @using RummiSolve
-<div class="tile @(Tile.IsJoker ? "joker" : "") @(Tile.IsNew ? "new-tile" : "")">
+<div class="tile @(Tile.IsJoker ? "joker" : "")">
     <div class="tile-number" style="color:@GetColor(Tile.Color)">
         <b>@(Tile.IsJoker ? "J" : Tile.Value.ToString())</b>
     </div>
 </div>
+
 
 @code {
     [Parameter] public required Tile Tile { get; set; }
@@ -19,6 +20,7 @@
             _ => "gray"
         };
     }
+
 }
 
 <style>
@@ -31,7 +33,6 @@
         border: 2px solid #CCCCCC;
         border-radius: 10px; /* Coins arrondis */
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ombre portée */
-        transition: border-color 0.3s, transform 0.2s, box-shadow 0.2s;
     }
 
     .tile-number {
@@ -47,13 +48,10 @@
         background-color: #FFD700; /* Fond doré pour le Joker */
     }
 
-    .tile.new-tile {
-        border-color: red; /* Contour rouge pour les nouvelles tuiles */
-    }
-
     /* Effet au survol */
     .tile:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        transition: transform 0.2s, box-shadow 0.2s;
     }
 </style>
