@@ -23,21 +23,24 @@
 
         <!-- Solution Section -->
         <div class="solution-section">
-            <SolutionComponent Solution="_currentGame.BoardSolution" />
+            <SolutionComponent Solution="_currentGame.BoardSolution"/>
         </div>
         
         <div class="actions">
-            <button @onclick="HandleActionAsync" disabled="@(IsLoading || IsGameOver)" class="btn-primary">
-                @GetButtonLabel()
-            </button>
+            @if (!IsGameOver)
+            {
+                <button @onclick="HandleActionAsync" disabled="@(IsLoading)" class="btn-primary">
+                    @GetButtonLabel()
+                </button>
+            }
             <button @onclick="ResetGameAsync" class="btn-secondary">
                 Reset Game
             </button>
         </div>
-        
+
         <div class="players-section">
             <h2>Players</h2>
-            <PlayersContainerComponent CurrentPlayer="_currentPlayer" OtherPlayers="_otherPlayers" />
+            <PlayersContainerComponent CurrentPlayer="_currentPlayer" OtherPlayers="_otherPlayers"/>
         </div>
     </section>
 </div>
