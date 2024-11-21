@@ -37,6 +37,20 @@ public partial class GamePage
             IsLoading = false;
         }
     }
+    
+    private async Task ShowSolution()
+    {
+        IsLoading = true;
+        try
+        {
+            await Task.Run(() => _currentGame.ShowSolution());
+            UpdatePlayers();
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
 
     private void UpdatePlayers()
     {

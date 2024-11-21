@@ -3,10 +3,10 @@ namespace RummiSolve;
 public class Solution
 {
     private static readonly Solution InvalidSolution = new() { IsValid = false };
-    public readonly List<Group> Groups = [];
-    public readonly List<Run> Runs = [];
+    public List<Group> Groups = [];
+    public List<Run> Runs = [];
     public bool IsValid = true;
-
+    
     public static Solution GetInvalidSolution()
     {
         return InvalidSolution;

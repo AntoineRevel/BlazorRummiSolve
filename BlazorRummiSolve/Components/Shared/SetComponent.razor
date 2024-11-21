@@ -1,15 +1,37 @@
 @using RummiSolve
 <div class="set-container">
     <div class="tiles">
+        @{
+            List<Tile>? tilesToHighlight = null; //TODO ne pas faire de copie
+            var hasHighlights = HighlightTiles.Any();
+            if (hasHighlights)
+            {
+                tilesToHighlight = [..HighlightTiles];
+            }
+        }
+
         @foreach (var tile in Set.Tiles)
         {
-            <TileComponent Tile="tile"/>
+            var shouldHighlight = false;
+
+            if (hasHighlights)
+            {
+                var matchingTile = tilesToHighlight!.FirstOrDefault(t => t.Equals(tile));
+                if (!matchingTile.IsNull)
+                {
+                    shouldHighlight = true;
+                    tilesToHighlight!.Remove(matchingTile);
+                }
+            }
+
+            <TileComponent Tile="tile" ShouldHighlight="@shouldHighlight" />
         }
     </div>
 </div>
 
 @code {
     [Parameter] public required Set Set { get; set; }
+    [Parameter] public List<Tile> HighlightTiles { get; set; } = [];
 }
 
 <style>
@@ -27,5 +49,4 @@
     .tiles .tile {
         margin: 2px;
     }
-
 </style>

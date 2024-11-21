@@ -12,6 +12,8 @@ public class Game
 
     public Guid Id { get; private set; } = Guid.NewGuid();
     public Solution BoardSolution { get; set; } = new();
+
+    private Solution NextPlayerSolution { get; set; } = new();
     private List<Tile> TilePool { get; set; } = [];
 
     public int CurrentPlayerIndex { get; private set; }
@@ -57,13 +59,23 @@ public class Game
         var player = Players[CurrentPlayerIndex];
         WriteLine(Turn + " => ___   " + player.Name + "'s turn   ___");
 
-        var playerSolution = _noPlay < Players.Count
+        NextPlayerSolution = _noPlay < Players.Count
             ? player.Solve(BoardSolution)
             : player.Solve(BoardSolution, false);
+    }
 
-        if (playerSolution.IsValid)
+    public void ShowSolution()
+    {
+        var player = Players[CurrentPlayerIndex];
+        if (NextPlayerSolution.IsValid)
         {
-            BoardSolution = playerSolution;
+            player.RemoveTilePlayed();
+            BoardSolution = new Solution
+            {
+                Groups = [..NextPlayerSolution.Groups],
+                Runs = [..NextPlayerSolution.Runs],
+                IsValid = true
+            };
             _noPlay = 0;
         }
         else

@@ -6,6 +6,7 @@ public class Player(string name)
 {
     public readonly string Name = name;
     public Set RackTilesSet = new();
+    public List<Tile> TilesToPlay = [];
     private bool _played;
     public bool Won { get; private set; }
     private Tile _lastDrewTile;
@@ -83,14 +84,19 @@ public class Player(string name)
 
         if (finalRackSet == null) return finalSolution;
 
+        TilesToPlay = finalRackSet.Tiles;
 
         Write("Play: ");
         finalRackSet.PrintAllTiles();
         WriteLine();
 
-        foreach (var tile in finalRackSet.Tiles) RackTilesSet.Remove(tile);
-
         return finalSolution;
+    }
+
+    public void RemoveTilePlayed()
+    {
+        foreach (var tile in TilesToPlay) RackTilesSet.Remove(tile);
+        TilesToPlay.Clear();
     }
 
     private Solution SolveFirst(Solution boardSolution)
@@ -126,18 +132,15 @@ public class Player(string name)
 
         if (!finalSolution.IsValid) return finalSolution;
 
-        boardSolution.AddSolution(finalSolution);
-
-        var finalRackSet = finalSolution.GetSet();
+        TilesToPlay = finalSolution.GetSet().Tiles;
+        finalSolution.AddSolution(boardSolution);
+        
 
         Write("Playing for the first time: ");
-
-        finalRackSet.PrintAllTiles();
+        foreach (var tile in TilesToPlay) tile.PrintTile();
         WriteLine();
-
-        foreach (var tile in finalRackSet.Tiles) RackTilesSet.Remove(tile);
-
+        
         _played = true;
-        return boardSolution;
+        return finalSolution;
     }
 }

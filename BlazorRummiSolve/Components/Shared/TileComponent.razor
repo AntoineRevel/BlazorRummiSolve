@@ -1,5 +1,5 @@
 @using RummiSolve
-<div class="tile @(Tile.IsJoker ? "joker" : "")">
+<div class="tile @(Tile.IsJoker ? "joker" : "") @(ShouldHighlight ? "highlight" : "")">
     <div class="tile-number" style="color:@GetColor(Tile.Color)">
         <b>@(Tile.IsJoker ? "J" : Tile.Value.ToString())</b>
     </div>
@@ -8,6 +8,7 @@
 
 @code {
     [Parameter] public required Tile Tile { get; set; }
+    [Parameter] public bool ShouldHighlight { get; set; }
 
     private string GetColor(TileColor color)
     {
@@ -46,6 +47,10 @@
 
     .tile.joker {
         background-color: #FFD700; /* Fond doré pour le Joker */
+    }
+
+    .tile.highlight {
+        border-color: red;
     }
 
     /* Effet au survol */
