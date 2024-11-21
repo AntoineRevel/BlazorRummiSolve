@@ -2,7 +2,7 @@ using static System.Console;
 
 namespace RummiSolve;
 
-public class Game
+public class Game(Guid id)
 {
     public readonly List<Player> Players = [];
 
@@ -10,7 +10,7 @@ public class Game
 
     public int Turn;
 
-    public Guid Id { get; private set; } = Guid.NewGuid();
+    public Guid Id { get; } = id;
     public Solution BoardSolution { get; set; } = new();
 
     private Solution NextPlayerSolution { get; set; } = new();
@@ -19,6 +19,10 @@ public class Game
     public int CurrentPlayerIndex { get; private set; }
     public bool IsGameOver { get; private set; }
     public Player? Winner { get; private set; }
+
+    public Game() : this(Guid.NewGuid())
+    {
+    }
 
     public void AddPlayer(string playerName)
     {
@@ -44,7 +48,8 @@ public class Game
 
     public void InitializeGame()
     {
-        var seed = Guid.NewGuid().GetHashCode();
+        var guidBytes = Id.ToByteArray();
+        var seed = BitConverter.ToInt32(guidBytes, 0);
         InitializeTilePool(seed);
         foreach (var player in Players)
         {
