@@ -12,8 +12,8 @@ public partial class GamePage
     private int TurnNumber => _currentGame.Turn;
     private Guid Id => _currentGame.Id;
     private bool IsLoading { get; set; }
-    private bool _showHint { get; set; }
-    
+    private bool ShowHint { get; set; }
+
     private enum ActionState
     {
         ShowHint,
@@ -28,13 +28,13 @@ public partial class GamePage
         switch (_currentState)
         {
             case ActionState.ShowHint:
-                _showHint = true;
+                ShowHint = true;
                 _currentState = ActionState.ShowSolution;
                 break;
 
             case ActionState.ShowSolution:
-                _showHint = false;
-                 _currentGame.ShowSolution();
+                ShowHint = false;
+                _currentGame.ShowSolution();
                 _currentState = ActionState.NextPlayer;
                 break;
 
@@ -91,7 +91,7 @@ public partial class GamePage
         _currentPlayer = _currentGame.Players[_currentGame.CurrentPlayerIndex];
         _otherPlayers = _currentGame.Players.Where(p => p != _currentPlayer).ToList();
     }
-    
+
     private async Task ResetGameAsync()
     {
         _currentGame = new Game();

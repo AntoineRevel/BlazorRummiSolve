@@ -44,7 +44,8 @@ public class Game
 
     public void InitializeGame()
     {
-        InitializeTilePool(5);
+        var seed = Guid.NewGuid().GetHashCode();
+        InitializeTilePool(seed);
         foreach (var player in Players)
         {
             InitializeRackTilesForPlayer(player);
