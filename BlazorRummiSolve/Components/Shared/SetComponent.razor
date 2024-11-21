@@ -3,8 +3,7 @@
     <div class="tiles">
         @{
             List<Tile>? tilesToHighlight = null; //TODO ne pas faire de copie
-            var hasHighlights = HighlightTiles.Any();
-            if (hasHighlights)
+            if (ShowHint)
             {
                 tilesToHighlight = [..HighlightTiles];
             }
@@ -14,7 +13,7 @@
         {
             var shouldHighlight = false;
 
-            if (hasHighlights)
+            if (ShowHint)
             {
                 var matchingTile = tilesToHighlight!.FirstOrDefault(t => t.Equals(tile));
                 if (!matchingTile.IsNull)
@@ -32,6 +31,7 @@
 @code {
     [Parameter] public required Set Set { get; set; }
     [Parameter] public List<Tile> HighlightTiles { get; set; } = [];
+    [Parameter] public bool ShowHint { get; set; }
 }
 
 <style>

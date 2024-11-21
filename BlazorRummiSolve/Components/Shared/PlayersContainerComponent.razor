@@ -2,7 +2,7 @@
 <div class="players-container">
 
     <div class="current-player">
-        <PlayerComponent Player="CurrentPlayer"/>
+        <PlayerComponent Player="CurrentPlayer" ShowHint="ShowHint"/>
     </div>
 
     <hr/>
@@ -20,6 +20,8 @@
     [Parameter] public required Player CurrentPlayer { get; set; }
 
     [Parameter] public required List<Player> OtherPlayers { get; set; }
+    
+    [Parameter] public bool ShowHint { get; set; }
 }
 
 <style>
