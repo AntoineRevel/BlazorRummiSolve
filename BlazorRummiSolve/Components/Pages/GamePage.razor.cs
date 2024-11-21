@@ -28,7 +28,6 @@ public partial class GamePage
         switch (_currentState)
         {
             case ActionState.ShowHint:
-                await ShowHintAsync();
                 _currentState = ActionState.ShowSolution;
                 break;
 
@@ -39,6 +38,7 @@ public partial class GamePage
 
             case ActionState.NextPlayer:
                 UpdatePlayers();
+                await ShowHintAsync();
                 _currentState = ActionState.ShowHint;
                 break;
             default:
@@ -57,7 +57,7 @@ public partial class GamePage
         };
     }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         _currentGame.AddPlayer("Antoine");
         _currentGame.AddPlayer("Matthieu");
@@ -66,6 +66,7 @@ public partial class GamePage
         _currentGame.InitializeGame();
 
         UpdatePlayers();
+        await ShowHintAsync();
     }
 
     private async Task ShowHintAsync()

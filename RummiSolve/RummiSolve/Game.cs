@@ -56,7 +56,7 @@ public class Game
     {
         if (IsGameOver) return;
 
-        var player = Players[CurrentPlayerIndex];
+        var player = Players[CurrentPlayerIndex]; //TODO amélioré
         WriteLine(Turn + " => ___   " + player.Name + "'s turn   ___");
 
         NextPlayerSolution = _noPlay < Players.Count
