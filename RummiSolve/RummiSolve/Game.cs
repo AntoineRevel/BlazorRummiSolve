@@ -36,13 +36,10 @@ public class Game(Guid id)
 
     public void Start()
     {
-        InitializeGame();
-
-        WriteLine();
-
         while (!IsGameOver)
         {
             PlayCurrentPlayerTurn();
+            ShowSolution();
         }
     }
 
