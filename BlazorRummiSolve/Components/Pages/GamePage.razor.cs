@@ -51,7 +51,7 @@ public partial class GamePage
         return _currentState switch
         {
             ActionState.ShowHint => $"Show Hint for {_currentPlayer?.Name}'s turn",
-            ActionState.ShowSolution => $"Show Solution for {_currentPlayer?.Name}'s turn",
+            ActionState.ShowSolution => $"Play {_currentPlayer?.Name}'s turn",
             ActionState.NextPlayer => "Next Player",
             _ => "Action"
         };
@@ -61,6 +61,7 @@ public partial class GamePage
     {
         _currentGame.AddPlayer("Antoine");
         _currentGame.AddPlayer("Matthieu");
+        _currentGame.AddPlayer("Maguy");
 
         _currentGame.InitializeGame();
 

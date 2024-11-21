@@ -46,7 +46,7 @@ public class Player(string name)
         if (firstRackSolution.IsValid)
         {
             Won = true;
-            RackTilesSet.Tiles.Clear();
+            TilesToPlay = [..RackTilesSet.Tiles];
             return firstRackSolution;
         }
 
@@ -105,6 +105,7 @@ public class Player(string name)
         if (firstRackSolution.IsValid)
         {
             Won = true;
+            TilesToPlay = [..RackTilesSet.Tiles];
             return boardSolution.AddSolution(firstRackSolution);
         }
 
