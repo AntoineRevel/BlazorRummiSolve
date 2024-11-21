@@ -13,6 +13,49 @@ public partial class GamePage
     private Guid Id => _currentGame.Id;
 
     private bool IsLoading { get; set; }
+    
+    private enum ActionState
+    {
+        ShowHint,
+        ShowSolution,
+        NextPlayer
+    }
+
+    private ActionState _currentState = ActionState.ShowHint;
+
+    private async Task HandleActionAsync()
+    {
+        switch (_currentState)
+        {
+            case ActionState.ShowHint:
+                await ShowHintAsync();
+                _currentState = ActionState.ShowSolution;
+                break;
+
+            case ActionState.ShowSolution:
+                 _currentGame.ShowSolution();
+                _currentState = ActionState.NextPlayer;
+                break;
+
+            case ActionState.NextPlayer:
+                UpdatePlayers();
+                _currentState = ActionState.ShowHint;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    private string GetButtonLabel()
+    {
+        return _currentState switch
+        {
+            ActionState.ShowHint => $"Show Hint for {_currentPlayer?.Name}'s turn",
+            ActionState.ShowSolution => $"Show Solution for {_currentPlayer?.Name}'s turn",
+            ActionState.NextPlayer => "Next Player",
+            _ => "Action"
+        };
+    }
 
     protected override void OnInitialized()
     {
@@ -24,26 +67,12 @@ public partial class GamePage
         UpdatePlayers();
     }
 
-    private async Task PlayTurnAsync()
+    private async Task ShowHintAsync()
     {
         IsLoading = true;
         try
         {
             await Task.Run(() => _currentGame.PlayCurrentPlayerTurn());
-            UpdatePlayers();
-        }
-        finally
-        {
-            IsLoading = false;
-        }
-    }
-    
-    private async Task ShowSolution()
-    {
-        IsLoading = true;
-        try
-        {
-            await Task.Run(() => _currentGame.ShowSolution());
             UpdatePlayers();
         }
         finally

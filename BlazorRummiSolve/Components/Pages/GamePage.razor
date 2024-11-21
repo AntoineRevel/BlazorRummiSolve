@@ -27,11 +27,8 @@
         </div>
         
         <div class="actions">
-            <button @onclick="PlayTurnAsync" disabled="@(IsLoading || IsGameOver)" class="btn-primary">
-                Play @_currentPlayer?.Name's turn
-            </button>
-            <button @onclick="ShowSolution" disabled="@(IsLoading || IsGameOver)" class="btn-primary">
-                ShowSolution @_currentPlayer?.Name's turn
+            <button @onclick="HandleActionAsync" disabled="@(IsLoading || IsGameOver)" class="btn-primary">
+                @GetButtonLabel()
             </button>
             <button @onclick="ResetGameAsync" class="btn-secondary">
                 Reset Game
