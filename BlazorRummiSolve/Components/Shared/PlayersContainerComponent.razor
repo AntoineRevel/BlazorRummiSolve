@@ -1,17 +1,15 @@
 @using RummiSolve
 <div class="players-container">
-
     <div class="current-player">
-        <PlayerComponent Player="CurrentPlayer" ShowHint="ShowHint"/>
+        <PlayerComponent Player="CurrentPlayer" ShowHint="ShowHint" />
     </div>
 
-    <hr/>
-
+    <hr />
 
     <div class="other-players">
         @foreach (var player in OtherPlayers)
         {
-            <PlayerComponent Player="player"/>
+            <PlayerComponent Player="player" />
         }
     </div>
 </div>
@@ -20,7 +18,7 @@
     [Parameter] public required Player CurrentPlayer { get; set; }
 
     [Parameter] public required List<Player> OtherPlayers { get; set; }
-    
+
     [Parameter] public bool ShowHint { get; set; }
 }
 
@@ -36,15 +34,23 @@
     }
 
     .current-player > .player-container {
-        /* Styles spécifiques pour le joueur en cours */
-        border: 2px solid #FFD700; /* Bordure dorée */
-        background: linear-gradient(to right, #fff8dc, #fffacd); /* Dégradé plus clair */
+        /* Specific styles for the current player */
+        border: 2px solid #4CAF50; /* Subtle green border */
+        background: linear-gradient(to right, #f9f9f9, #e8f5e9); /* Light gray to pale green */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
     }
 
     .other-players {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
+    }
+
+    .other-players > .player-container {
+        border: 1px solid #ccc; /* Neutral gray border */
+        background: #f5f5f5; /* Light gray background */
+        border-radius: 10px; /* Subtle rounding */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Minimal shadow for depth */
     }
 
     .other-players > * {
@@ -54,7 +60,7 @@
 
     hr {
         border: none;
-        border-top: 2px solid #ccc;
+        border-top: 2px solid #ddd; /* Lighter gray line for subtle separation */
         margin: 20px 0;
     }
 </style>

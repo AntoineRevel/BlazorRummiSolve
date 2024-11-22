@@ -1,7 +1,10 @@
 @using RummiSolve
 <div class="player-container">
-    <h2>@Player.Name</h2>
-    <SetComponent Set="Player.RackTilesSet" ShowHint="ShowHint" HighlightTiles="Player.TilesToPlay"/>
+    <div class="header">
+        <h2>@Player.Name</h2>
+        <span class="tile-count">@Player.RackTilesSet.Tiles.Count</span>
+    </div>
+    <SetComponent Set="Player.RackTilesSet" ShowHint="ShowHint" HighlightTiles="Player.TilesToPlay" />
 </div>
 
 @code {
@@ -11,16 +14,32 @@
 
 <style>
     .player-container {
-        background: linear-gradient(to right, #ece9e6, #ffffff);
+        background: linear-gradient(to right, #fff7e6, #fffde6);
         padding: 20px;
         border-radius: 10px;
         margin-bottom: 20px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
-    .player-container h2 {
-        text-align: center;
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         margin-bottom: 15px;
+    }
+
+    .header h2 {
         font-size: 1.5em;
+        color: #333;
+        margin: 0;
+    }
+
+    .header .tile-count {
+        font-size: 1.2em;
+        color: #292929;
+        background-color: #f8f8f8;
+        padding: 5px 10px;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 </style>
