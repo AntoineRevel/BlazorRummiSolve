@@ -32,7 +32,7 @@
                 </button>
             </div>
             <div class="main-actions">
-                @if (_currentState != ActionState.ShowHint)
+                @if (_currentState != ActionState.ShowHint && !IsLoading)
                 {
                     <button @onclick="HandleActionBack" class="btn-secondary">
                         Back

@@ -76,13 +76,16 @@ public class Game(Guid id)
         }
     }
 
+    public void NextTurn()
+    {
+        CurrentPlayerIndex = (CurrentPlayerIndex + 1) % Players.Count;
+        if (CurrentPlayerIndex == 0) Turn++;
+    }
+
 
     public void PlayCurrentPlayerTurn()
     {
         if (IsGameOver) return;
-
-        CurrentPlayerIndex = (CurrentPlayerIndex + 1) % Players.Count;
-        if (CurrentPlayerIndex == 0) Turn++;
 
         var player = Players[CurrentPlayerIndex]; //TODO amélioré
         WriteLine(Turn + " => ___   " + player.Name + "'s turn   ___");

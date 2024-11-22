@@ -97,8 +97,10 @@ public partial class GamePage
         IsLoading = true;
         try
         {
-            await Task.Run(() => _currentGame.PlayCurrentPlayerTurn());
+            _currentGame.NextTurn();
             UpdatePlayers();
+            await Task.Run(() => _currentGame.PlayCurrentPlayerTurn());
+            
         }
         finally
         {
