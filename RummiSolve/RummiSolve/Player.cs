@@ -2,19 +2,28 @@ using static System.Console;
 
 namespace RummiSolve;
 
-public class Player(string name)
+public class Player
 {
-    public readonly string Name = name;
-    public Set RackTilesSet = new();
+    public readonly string Name;
+    private Set _lastRackTilesSet=new();
+    private readonly Set _rackTilesSet = new();
+    public  Set RackTileToShow;
     public List<Tile> TilesToPlay = [];
     private bool _played;
     public bool Won { get; private set; }
     private Tile _lastDrewTile;
 
+    public Player(string name, List<Tile> tiles)
+    {
+        Name = name;
+        _rackTilesSet = new Set(tiles); //TODO pas de copie de la liste
+        _lastRackTilesSet = new Set(tiles);
+        RackTileToShow = _rackTilesSet;
+    }
 
     public void AddTileToRack(Tile tile)
     {
-        RackTilesSet.AddTile(tile);
+        _rackTilesSet.AddTile(tile);
     }
 
     public void SetLastDrewTile(Tile tile)
@@ -27,7 +36,7 @@ public class Player(string name)
         if (!Won)
         {
             WriteLine(Name + " tiles : ");
-            RackTilesSet.Tiles.ForEach(t => t.PrintTile());
+            _rackTilesSet.Tiles.ForEach(t => t.PrintTile());
         }
         else
         {
@@ -42,11 +51,11 @@ public class Player(string name)
         if (!_played) return SolveFirst(boardSolution);
         var boardSet = boardSolution.GetSet();
 
-        var firstRackSolution = boardSet.ConcatNew(new Set(RackTilesSet.Tiles)).GetSolution();
+        var firstRackSolution = boardSet.ConcatNew(new Set(_rackTilesSet.Tiles)).GetSolution();
         if (firstRackSolution.IsValid)
         {
             Won = true;
-            TilesToPlay = [..RackTilesSet.Tiles];
+            TilesToPlay = [.._rackTilesSet.Tiles];
             return firstRackSolution;
         }
 
@@ -54,9 +63,9 @@ public class Player(string name)
         var locker = new Lock();
         Set finalRackSet = null!;
 
-        for (var tileCount = RackTilesSet.Tiles.Count - 1; tileCount > 0; tileCount--)
+        for (var tileCount = _rackTilesSet.Tiles.Count - 1; tileCount > 0; tileCount--)
         {
-            var rackSetsToTry = Set.GetBestSets(RackTilesSet.Tiles, tileCount);
+            var rackSetsToTry = Set.GetBestSets(_rackTilesSet.Tiles, tileCount);
 
             rackSetsToTry = boardChange
                 ? rackSetsToTry
@@ -95,25 +104,37 @@ public class Player(string name)
 
     public void RemoveTilePlayed()
     {
-        foreach (var tile in TilesToPlay) RackTilesSet.Remove(tile);
+        _lastRackTilesSet = new Set(_rackTilesSet);
+        foreach (var tile in TilesToPlay) _rackTilesSet.Remove(tile);
         TilesToPlay.Clear();
+        
+    }
+
+    public void ShowRemovedTile()
+    {
+        RackTileToShow = _rackTilesSet;
+    }
+    
+    public void BackRemovedTile()
+    {
+        RackTileToShow = _lastRackTilesSet;
     }
 
     private Solution SolveFirst(Solution boardSolution)
     {
-        var firstRackSolution = new Set(RackTilesSet.Tiles).GetSolution();
+        var firstRackSolution = new Set(_rackTilesSet.Tiles).GetSolution();
         if (firstRackSolution.IsValid)
         {
             Won = true;
-            TilesToPlay = [..RackTilesSet.Tiles];
+            TilesToPlay = [.._rackTilesSet.Tiles];
             return boardSolution.AddSolution(firstRackSolution);
         }
 
         var finalSolution = Solution.GetInvalidSolution();
 
-        for (var tileCount = RackTilesSet.Tiles.Count - 1; tileCount > 3; tileCount--)
+        for (var tileCount = _rackTilesSet.Tiles.Count - 1; tileCount > 3; tileCount--)
         {
-            var rackSetsToTry = Set.GetBestSets(RackTilesSet.Tiles, tileCount);
+            var rackSetsToTry = Set.GetBestSets(_rackTilesSet.Tiles, tileCount);
 
             rackSetsToTry = _lastDrewTile.IsNull
                 ? rackSetsToTry
@@ -135,12 +156,12 @@ public class Player(string name)
 
         TilesToPlay = finalSolution.GetSet().Tiles;
         finalSolution.AddSolution(boardSolution);
-        
+
 
         Write("Playing for the first time: ");
         foreach (var tile in TilesToPlay) tile.PrintTile();
         WriteLine();
-        
+
         _played = true;
         return finalSolution;
     }

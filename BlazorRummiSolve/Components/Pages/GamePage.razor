@@ -20,25 +20,32 @@
         <div class="turn-section">
             <h2>Current Turn: <span>@TurnNumber</span></h2>
         </div>
-
-        <!-- Solution Section -->
+        
         <div class="solution-section">
-            <SolutionComponent Solution="_currentGame.BoardSolution"/>
+            <SolutionComponent Solution="_currentGame.SolutionToShow"/>
         </div>
         
         <div class="actions">
-            <button @onclick="ResetGameAsync" class="btn-secondary">
-                Reset Game
-            </button>
-            @if (!IsGameOver)
-            {
-                <button @onclick="HandleActionAsync" disabled="@(IsLoading)" class="btn-primary">
-                    @GetButtonLabel()
+            <div class="reset-container">
+                <button @onclick="ResetGameAsync" class="btn-secondary">
+                    Reset Game
                 </button>
-            }
-
+            </div>
+            <div class="main-actions">
+                @if (_currentState != ActionState.ShowHint)
+                {
+                    <button @onclick="HandleActionBack" class="btn-secondary">
+                        Back
+                    </button>
+                }
+                @if (!IsGameOver)
+                {
+                    <button @onclick="HandleActionAsync" disabled="@(IsLoading)" class="btn-primary">
+                        @GetButtonLabel()
+                    </button>
+                }
+            </div>
         </div>
-
         <div class="players-section">
             <h2>Players</h2>
             <PlayersContainerComponent CurrentPlayer="_currentPlayer" OtherPlayers="_otherPlayers" ShowHint="ShowHint"/>
@@ -138,11 +145,11 @@
         cursor: pointer;
         margin-right: 10px;
         transition: background-color 0.3s;
-        min-width: 250px; /* Ajoutez cette propriété pour une largeur minimale */
         text-align: center; /* Aligne le texte au centre */
     }
-    
-    .btn-primary{
+
+    .btn-primary {
+        min-width: 250px;
         background-color: #2196f3;
     }
 
@@ -162,5 +169,28 @@
     .players-section h2 {
         font-size: 1.5rem;
         color: #3e2723;
+    }
+
+    /* Actions */
+    .actions {
+        display: flex;
+        justify-content: space-between; /* Sépare Reset Game des autres boutons */
+        align-items: center; /* Aligne verticalement les boutons */
+        margin: 20px 0;
+    }
+
+    /* Reset Button */
+    .reset-container {
+        flex-shrink: 0; /* Empêche la réduction de la taille */
+    }
+
+    .reset-container .btn-secondary {
+        margin-right: 0; /* Supprime les marges supplémentaires */
+    }
+
+    /* Main Actions */
+    .main-actions {
+        display: flex;
+        gap: 10px; /* Ajoute un espace entre Back et le bouton principal */
     }
 </style>

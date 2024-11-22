@@ -11,28 +11,57 @@ public class Game(Guid id)
 
     public int Turn;
 
-    public Guid Id { get; } = id;
-    public Solution BoardSolution { get; set; } = new();
-
+    public Guid Id= id;
+    private Solution BoardSolution { get; set; } = new();
     private Solution NextPlayerSolution { get; set; } = new();
-    private List<Tile> TilePool { get; set; } = [];
+    public Solution? SolutionToShow = new();
+
+    private Queue<Tile>? _tilePool;
 
     public int CurrentPlayerIndex { get; private set; }
     public bool IsGameOver { get; private set; }
     public Player? Winner { get; private set; }
 
+
     public Game() : this(Guid.NewGuid())
     {
     }
 
-    public void AddPlayer(string playerName)
+    public void InitializeGame(List<string> playerNames)
     {
-        Players.Add(new Player(playerName));
+        var guidBytes = Id.ToByteArray();
+        var seed = BitConverter.ToInt32(guidBytes, 0);
+        var tiles = new List<Tile>();
+        foreach (var color in Enum.GetValues<TileColor>())
+        {
+            for (var i = 1; i <= 13; i++)
+            {
+                tiles.Add(new Tile(i, color));
+                tiles.Add(new Tile(i, color));
+            }
+        }
+
+        tiles.Add(new Tile(true));
+        tiles.Add(new Tile(true));
+
+        var rng = new Random(seed);
+
+        var shuffledTiles = tiles.OrderBy(_ => rng.Next()).ToList(); //TODO One iteration ?
+
+
+        Players.AddRange(playerNames.Select((name, index) =>
+        {
+            var playerTiles = shuffledTiles.Skip(index * 14).Take(14).ToList();
+            return new Player(name, playerTiles);
+        }));
+        
+        
+        _tilePool = new Queue<Tile>(shuffledTiles.Skip(playerNames.Count * 14));
     }
 
-    public void AddPlayer(Player player)
+    private Tile DrawTile()
     {
-        Players.Add(player);
+        return _tilePool!.Dequeue(); //TODO no !
     }
 
     public void Start()
@@ -47,42 +76,26 @@ public class Game(Guid id)
         }
     }
 
-    public void InitializeGame()
-    {
-        var guidBytes = Id.ToByteArray();
-        var seed = BitConverter.ToInt32(guidBytes, 0);
-        InitializeTilePool(seed);
-        foreach (var player in Players)
-        {
-            InitializeRackTilesForPlayer(player);
-            player.PrintRackTiles();
-        }
-    }
 
     public void PlayCurrentPlayerTurn()
     {
         if (IsGameOver) return;
 
+        CurrentPlayerIndex = (CurrentPlayerIndex + 1) % Players.Count;
+        if (CurrentPlayerIndex == 0) Turn++;
+
         var player = Players[CurrentPlayerIndex]; //TODO amélioré
         WriteLine(Turn + " => ___   " + player.Name + "'s turn   ___");
+
+
+        if (NextPlayerSolution.IsValid) BoardSolution = NextPlayerSolution;
 
         NextPlayerSolution = _noPlay < Players.Count
             ? player.Solve(BoardSolution)
             : player.Solve(BoardSolution, false);
-    }
-
-    public void ShowSolution()
-    {
-        var player = Players[CurrentPlayerIndex];
         if (NextPlayerSolution.IsValid)
         {
             player.RemoveTilePlayed();
-            BoardSolution = new Solution
-            {
-                Groups = [..NextPlayerSolution.Groups],
-                Runs = [..NextPlayerSolution.Runs],
-                IsValid = true
-            };
             _noPlay = 0;
         }
         else
@@ -96,20 +109,28 @@ public class Game(Guid id)
             player.AddTileToRack(drawTile);
             _noPlay++;
         }
+    }
+
+    public void ShowSolution()
+    {
+        var player = Players[CurrentPlayerIndex];
+        if (NextPlayerSolution.IsValid)
+        {
+            SolutionToShow = NextPlayerSolution;
+        }
+
+        player.ShowRemovedTile();
 
         Print(player);
 
-        if (player.Won)
-        {
-            IsGameOver = true;
-            Winner = player;
-            return;
-        }
+        if (!player.Won) return;
+        IsGameOver = true;
+        Winner = player;
+    }
 
-
-        // Passer au joueur suivant
-        CurrentPlayerIndex = (CurrentPlayerIndex + 1) % Players.Count;
-        if (CurrentPlayerIndex == 0) Turn++;
+    public void BackSolution()
+    {
+        SolutionToShow = BoardSolution;
     }
 
     private void Print(Player player)
@@ -118,38 +139,5 @@ public class Game(Guid id)
         WriteLine("");
         BoardSolution.PrintSolution();
         WriteLine("");
-    }
-
-
-    private void InitializeTilePool(int seed)
-    {
-        foreach (var color in Enum.GetValues<TileColor>())
-            for (var i = 1; i <= 13; i++)
-            {
-                TilePool.Add(new Tile(i, color));
-                TilePool.Add(new Tile(i, color));
-            }
-
-        TilePool.Add(new Tile(true));
-        TilePool.Add(new Tile(true));
-
-        var rng = new Random(seed);
-
-        TilePool = TilePool.OrderBy(_ => rng.Next()).ToList();
-    }
-
-
-    private void InitializeRackTilesForPlayer(Player player)
-    {
-        for (var i = 0; i < 14; i++) player.AddTileToRack(DrawTile());
-    }
-
-    private Tile DrawTile()
-    {
-        if (TilePool is []) throw new InvalidOperationException("No tiles left in the pool.");
-
-        var drawnTile = TilePool[0];
-        TilePool.RemoveAt(0);
-        return drawnTile;
     }
 }

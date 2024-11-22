@@ -47,6 +47,28 @@ public partial class GamePage
                 throw new ArgumentOutOfRangeException();
         }
     }
+    
+    private void HandleActionBack()
+    {
+        switch (_currentState)
+        {
+            
+            case ActionState.ShowSolution:
+                ShowHint = false;
+                _currentState = ActionState.ShowHint;
+                break;
+
+            case ActionState.NextPlayer:
+                _currentGame.BackSolution();
+                ShowHint = true;
+                
+                _currentState = ActionState.ShowSolution;
+                break;
+            case ActionState.ShowHint:
+                break;
+            
+        }
+    }
 
     private string GetButtonLabel()
     {
@@ -61,11 +83,9 @@ public partial class GamePage
 
     protected override async Task OnInitializedAsync()
     {
-        _currentGame.AddPlayer("Antoine");
-        _currentGame.AddPlayer("Matthieu");
-        _currentGame.AddPlayer("Maguy");
+        var listNames = new List<string> { "Antoine", "Matthieu", "Maguy" };
 
-        _currentGame.InitializeGame();
+        _currentGame.InitializeGame(listNames);
 
         _currentState = ActionState.ShowHint;
         UpdatePlayers();

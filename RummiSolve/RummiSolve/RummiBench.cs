@@ -37,26 +37,6 @@ public class RummiBench
     private static readonly bool[] TabBool = [false, false, false, false, false];
 
 
-    public static void TestFirstValidPlay()
-    {
-        var game = new Game();
-        var player1 = new Player("Antoine")
-        {
-            RackTilesSet = Set
-        };
-
-        var player2 = new Player("Theo");
-
-        game.AddPlayer(player1);
-        game.AddPlayer(player2);
-
-        while (!game.IsGameOver)
-        {
-            game.PlayCurrentPlayerTurn();
-        }
-    }
-
-
     public static void TestYieldGroup()
     {
         var result = SetGroup.GetGroups(0, TabBool, 2);
@@ -73,10 +53,7 @@ public class RummiBench
     public void TestMultiPlayerGameNoStatic()
     {
         var game = new Game();
-        game.AddPlayer("Antoine");
-        game.AddPlayer("Matthieu");
-        game.AddPlayer("David");
-        game.AddPlayer("Maguy");
+        var listNames = new List<string> { "Antoine", "Matthieu", "Maguy" };
         var gameStopwatch = Stopwatch.StartNew();
         game.Start();
         gameStopwatch.Stop();
@@ -85,12 +62,10 @@ public class RummiBench
 
     public static void TestMultiPlayerGame()
     {
-        Game game = new(Guid.Parse("e0674c5b-e556-4ce7-8f10-22a0f7bc8509"));
-        game.AddPlayer("Antoine");
-        game.AddPlayer("Matthieu");
-        game.AddPlayer("Maguy");
+        Game game = new(Guid.Parse("05e29f55-234b-4131-ad20-0a77c1d260b4"));
 
-        game.InitializeGame();
+        var listNames = new List<string> { "Antoine", "Matthieu", "Maguy" };
+        game.InitializeGame(listNames);
         var gameStopwatch = Stopwatch.StartNew();
         game.Start();
         gameStopwatch.Stop();
@@ -163,11 +138,6 @@ public class RummiBench
         var boardSol = boardSet.GetSolution();
 
         boardSol.PrintSolution();
-
-        var unused = new Game
-        {
-            BoardSolution = boardSol
-        };
     }
 
     public static void TestRandomValidSet()
