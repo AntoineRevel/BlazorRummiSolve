@@ -1,17 +1,19 @@
 @using RummiSolve
 <div class="players-container">
     <div class="current-player">
-        <PlayerComponent Player="CurrentPlayer" ShowHint="ShowHint" />
+        <PlayerComponent Player="CurrentPlayer" ShowHint="ShowHint"/>
     </div>
 
-    <hr />
+    <hr/>
 
-    <div class="other-players">
-        @foreach (var player in OtherPlayers)
-        {
-            <PlayerComponent Player="player" />
-        }
-    </div>
+
+    @foreach (var player in OtherPlayers)
+    {
+        <div class="other-players">
+            <PlayerComponent Player="player"/>
+        </div>
+    }
+
 </div>
 
 @code {

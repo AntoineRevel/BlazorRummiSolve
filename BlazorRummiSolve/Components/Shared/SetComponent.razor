@@ -2,7 +2,7 @@
 <div class="set-container">
     <div class="tiles">
         @{
-            List<Tile>? tilesToHighlight = null; //TODO ne pas faire de copie
+            List<Tile>? tilesToHighlight = null; // TODO Avoid creating copies
             if (ShowHint)
             {
                 tilesToHighlight = [..HighlightTiles];
@@ -37,16 +37,19 @@
 <style>
     .set-container {
         display: inline-block;
-        white-space: nowrap;
+        white-space: normal; /* Allow wrapping */
         padding: 5px;
         border-radius: 5px;
     }
 
     .tiles {
-        display: inline-flex;
+        display: flex; /* Use flexbox for layout */
+        flex-wrap: wrap; /* Allow tiles to wrap to the next line */
+        gap: 3px; /* Add consistent spacing between tiles */
     }
-
+    
     .tiles .tile {
         margin: 2px;
+        flex: 0 0 auto; /* Prevent tiles from stretching */
     }
 </style>
