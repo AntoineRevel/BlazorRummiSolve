@@ -93,6 +93,9 @@ public class Game(Guid id)
         NextPlayerSolution = _noPlay < Players.Count
             ? player.Solve(BoardSolution)
             : player.Solve(BoardSolution, false);
+        
+        player.SaveRack();
+        
         if (NextPlayerSolution.IsValid)
         {
             player.RemoveTilePlayed();

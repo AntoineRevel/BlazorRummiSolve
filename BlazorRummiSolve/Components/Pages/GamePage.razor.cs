@@ -39,7 +39,6 @@ public partial class GamePage
                 break;
 
             case ActionState.NextPlayer:
-                UpdatePlayers();
                 await FindSolution();
                 _currentState = ActionState.ShowHint;
                 break;
@@ -60,6 +59,7 @@ public partial class GamePage
 
             case ActionState.NextPlayer:
                 _currentGame.BackSolution();
+                _currentPlayer.ShowLastTile();
                 ShowHint = true;
                 
                 _currentState = ActionState.ShowSolution;

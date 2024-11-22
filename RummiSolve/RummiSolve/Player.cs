@@ -5,8 +5,8 @@ namespace RummiSolve;
 public class Player
 {
     public readonly string Name;
-    private Set _lastRackTilesSet=new();
-    private readonly Set _rackTilesSet = new();
+    private Set _lastRackTilesSet;
+    private readonly Set _rackTilesSet;
     public  Set RackTileToShow;
     public List<Tile> TilesToPlay = [];
     private bool _played;
@@ -18,7 +18,7 @@ public class Player
         Name = name;
         _rackTilesSet = new Set(tiles); //TODO pas de copie de la liste
         _lastRackTilesSet = new Set(tiles);
-        RackTileToShow = _rackTilesSet;
+        RackTileToShow = _lastRackTilesSet;
     }
 
     public void AddTileToRack(Tile tile)
@@ -48,6 +48,7 @@ public class Player
 
     public Solution Solve(Solution boardSolution, bool boardChange = true)
     {
+        TilesToPlay.Clear();
         if (!_played) return SolveFirst(boardSolution);
         var boardSet = boardSolution.GetSet();
 
@@ -102,12 +103,14 @@ public class Player
         return finalSolution;
     }
 
-    public void RemoveTilePlayed()
+    public void SaveRack()
     {
         _lastRackTilesSet = new Set(_rackTilesSet);
+        RackTileToShow = _lastRackTilesSet;
+    }
+    public void RemoveTilePlayed()
+    {
         foreach (var tile in TilesToPlay) _rackTilesSet.Remove(tile);
-        TilesToPlay.Clear();
-        
     }
 
     public void ShowRemovedTile()
@@ -115,7 +118,7 @@ public class Player
         RackTileToShow = _rackTilesSet;
     }
     
-    public void BackRemovedTile()
+    public void ShowLastTile()
     {
         RackTileToShow = _lastRackTilesSet;
     }
