@@ -46,7 +46,7 @@ public class Game(Guid id)
 
         var rng = new Random(seed);
 
-        var shuffledTiles = tiles.OrderBy(_ => rng.Next()).ToList(); //TODO One iteration ?
+        var shuffledTiles = tiles.OrderBy(_ => rng.Next()).ToList(); //TODO One iteration ? RST-108
 
 
         Players.AddRange(playerNames.Select((name, index) =>
