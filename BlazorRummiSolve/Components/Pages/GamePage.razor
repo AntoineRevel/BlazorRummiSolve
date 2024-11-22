@@ -27,15 +27,16 @@
         </div>
         
         <div class="actions">
+            <button @onclick="ResetGameAsync" class="btn-secondary">
+                Reset Game
+            </button>
             @if (!IsGameOver)
             {
                 <button @onclick="HandleActionAsync" disabled="@(IsLoading)" class="btn-primary">
                     @GetButtonLabel()
                 </button>
             }
-            <button @onclick="ResetGameAsync" class="btn-secondary">
-                Reset Game
-            </button>
+
         </div>
 
         <div class="players-section">
@@ -123,35 +124,30 @@
 
     /* Actions */
     .actions {
-        text-align: center;
+        display: flex;
+        justify-content: space-between;
         margin: 20px 0;
     }
 
-    .btn-primary {
+    .btn-primary, .btn-secondary {
         padding: 10px 20px;
         font-size: 1rem;
-        background-color: #2196f3;
         color: white;
         border: none;
         border-radius: 5px;
         cursor: pointer;
         margin-right: 10px;
         transition: background-color 0.3s;
+        min-width: 250px; /* Ajoutez cette propriété pour une largeur minimale */
+        text-align: center; /* Aligne le texte au centre */
+    }
+    
+    .btn-primary{
+        background-color: #2196f3;
     }
 
     .btn-primary:hover {
         background-color: #1976d2;
-    }
-
-    .btn-secondary {
-        padding: 10px 20px;
-        font-size: 1rem;
-        background-color: #f44336;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s;
     }
 
     .btn-secondary:hover {

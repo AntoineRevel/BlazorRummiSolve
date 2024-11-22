@@ -4,7 +4,7 @@ namespace BlazorRummiSolve.Components.Pages;
 
 public partial class GamePage
 {
-    private Game _currentGame = new(Guid.Parse("e0674c5b-e556-4ce7-8f10-22a0f7bc8509"));
+    private Game _currentGame = new();
     private Player? _currentPlayer;
     private List<Player>? _otherPlayers;
     private bool IsGameOver => _currentGame.IsGameOver;
