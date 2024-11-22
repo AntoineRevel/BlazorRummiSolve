@@ -38,7 +38,7 @@
                         Back
                     </button>
                 }
-                @if (!IsGameOver)
+                @if (!IsGameOver || _currentState != ActionState.NextPlayer)
                 {
                     <button @onclick="HandleActionAsync" disabled="@(IsLoading)" class="btn-primary">
                         @GetButtonLabel()
