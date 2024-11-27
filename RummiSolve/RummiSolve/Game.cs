@@ -69,8 +69,9 @@ public class Game(Guid id)
         while (!IsGameOver)
         {
             var gameStopwatch = Stopwatch.StartNew();
-            PlayCurrentPlayerTurn();
-            ShowSolution();
+            var player = Players[CurrentPlayerIndex];
+            PlayCurrentPlayerTurn(player);
+            ShowSolution(player);
             gameStopwatch.Stop();
             WriteLine($"Turn : {gameStopwatch.Elapsed.TotalSeconds} seconds");
         }
@@ -83,55 +84,53 @@ public class Game(Guid id)
     }
 
 
-    public void PlayCurrentPlayerTurn()
+    public void PlayCurrentPlayerTurn(Player currentPlayer)
     {
         if (IsGameOver) return;
-
-        var player = Players[CurrentPlayerIndex]; //TODO amélioré
-        WriteLine(Turn + " => ___   " + player.Name + "'s turn   ___");
+        
+        WriteLine(Turn + " => ___   " + currentPlayer.Name + "'s turn   ___");
 
 
         if (NextPlayerSolution.IsValid) BoardSolution = NextPlayerSolution;
 
         NextPlayerSolution = _noPlay < Players.Count
-            ? player.Solve(BoardSolution)
-            : player.Solve(BoardSolution, false);
+            ? currentPlayer.Solve(BoardSolution)
+            : currentPlayer.Solve(BoardSolution, false);
         
-        player.SaveRack();
+        currentPlayer.SaveRack();
         
         if (NextPlayerSolution.IsValid)
         {
-            player.RemoveTilePlayed();
+            currentPlayer.RemoveTilePlayed();
             _noPlay = 0;
         }
         else
         {
-            WriteLine(player.Name + " can't play.");
+            WriteLine(currentPlayer.Name + " can't play.");
             var drawTile = DrawTile();
-            player.SetLastDrewTile(drawTile);
+            currentPlayer.SetLastDrewTile(drawTile);
             Write("Drew tile: ");
             drawTile.PrintTile();
             WriteLine();
-            player.AddTileToRack(drawTile);
+            currentPlayer.AddTileToRack(drawTile);
             _noPlay++;
         }
     }
 
-    public void ShowSolution()
+    public void ShowSolution(Player currentPlayer)
     {
-        var player = Players[CurrentPlayerIndex];
         if (NextPlayerSolution.IsValid)
         {
             SolutionToShow = NextPlayerSolution;
         }
 
-        player.ShowRemovedTile();
+        currentPlayer.ShowRemovedTile();
 
-        Print(player);
+        Print(currentPlayer);
 
-        if (!player.Won) return;
+        if (!currentPlayer.Won) return;
         IsGameOver = true;
-        Winner = player;
+        Winner = currentPlayer;
     }
 
     public void BackSolution()

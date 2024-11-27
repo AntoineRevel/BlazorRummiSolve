@@ -5,7 +5,7 @@ namespace BlazorRummiSolve.Components.Pages;
 public partial class GamePage
 {
     private Game _currentGame = new();
-    private Player? _currentPlayer;
+    private Player _currentPlayer = null!;
     private List<Player>? _otherPlayers;
     private bool IsGameOver => _currentGame.IsGameOver;
     private Player Winner => _currentGame.Winner!;
@@ -34,11 +34,13 @@ public partial class GamePage
 
             case ActionState.ShowSolution:
                 ShowHint = false;
-                _currentGame.ShowSolution();
+                _currentGame.ShowSolution(_currentPlayer);
                 _currentState = ActionState.NextPlayer;
                 break;
 
             case ActionState.NextPlayer:
+                _currentGame.NextTurn();
+                UpdatePlayers();
                 await FindSolution();
                 _currentState = ActionState.ShowHint;
                 break;
@@ -88,7 +90,6 @@ public partial class GamePage
         var listNames = new List<string> { "Antoine", "Matthieu", "Maguy" };
 
         _currentGame.InitializeGame(listNames);
-
         _currentState = ActionState.ShowHint;
         UpdatePlayers();
         await FindSolution();
@@ -99,9 +100,7 @@ public partial class GamePage
         IsLoading = true;
         try
         {
-            _currentGame.NextTurn();
-            UpdatePlayers();
-            await Task.Run(() => _currentGame.PlayCurrentPlayerTurn());
+            await Task.Run(() => _currentGame.PlayCurrentPlayerTurn(_currentPlayer));
             
         }
         finally
