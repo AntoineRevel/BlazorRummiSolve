@@ -28,6 +28,7 @@ public class Game(Guid id)
 
     public void InitializeGame(List<string> playerNames)
     {
+        Console.WriteLine("GameId : "+ Id);
         var guidBytes = Id.ToByteArray();
         var seed = BitConverter.ToInt32(guidBytes, 0);
         var tiles = new List<Tile>();
@@ -66,6 +67,7 @@ public class Game(Guid id)
             var player = Players[CurrentPlayerIndex];
             PlayCurrentPlayerTurn(player);
             ShowSolution(player);
+            NextTurn();
             gameStopwatch.Stop();
             WriteLine($"Turn : {gameStopwatch.Elapsed.TotalSeconds} seconds");
         }
