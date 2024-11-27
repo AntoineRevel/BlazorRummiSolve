@@ -2,7 +2,7 @@
 <div class="player-container">
     <div class="header">
         <h2>@Player.Name</h2>
-        <span class="tile-count">@Player.RackTileToShow.Tiles.Count</span>
+        <span class="tile-count @(Player.PlayedToShow ? "played" : "not-played")">@Player.RackTileToShow.Tiles.Count</span>
     </div>
     <SetComponent Set="Player.RackTileToShow" ShowHint="ShowHint" HighlightTiles="Player.TilesToPlay" />
 </div>
@@ -41,5 +41,22 @@
         padding: 5px 10px;
         border-radius: 5px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .tile-count {
+        font-size: 1.2em;
+        padding: 5px 10px;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .tile-count.played {
+        background-color: #f8f8f8; /* Plan actuel */
+        color: #292929;
+    }
+
+    .tile-count.not-played {
+        background-color: rgba(255, 19, 248, 0.58); 
+        color: #000000; 
     }
 </style>

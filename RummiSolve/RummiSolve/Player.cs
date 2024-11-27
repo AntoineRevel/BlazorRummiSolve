@@ -10,6 +10,7 @@ public class Player
     public  Set RackTileToShow;
     public List<Tile> TilesToPlay = [];
     private bool _played;
+    public bool PlayedToShow;
     public bool Won { get; private set; }
     private Tile _lastDrewTile;
 
@@ -19,6 +20,7 @@ public class Player
         _rackTilesSet = new Set(tiles); //TODO pas de copie de la liste
         _lastRackTilesSet = new Set(tiles);
         RackTileToShow = _lastRackTilesSet;
+        PlayedToShow = false;
     }
 
     public void AddTileToRack(Tile tile)
@@ -116,6 +118,7 @@ public class Player
     public void ShowRemovedTile()
     {
         RackTileToShow = _rackTilesSet;
+        PlayedToShow = _played;
     }
     
     public void ShowLastTile()
