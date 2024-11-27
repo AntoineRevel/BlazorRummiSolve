@@ -78,8 +78,8 @@ public partial class GamePage
     {
         return _currentState switch
         {
-            ActionState.ShowHint => $"Show hint for {_currentPlayer?.Name}'s turn",
-            ActionState.ShowSolution => $"Play {_currentPlayer?.Name}'s turn",
+            ActionState.ShowHint => $"Show hint for {_currentPlayer.Name}'s turn",
+            ActionState.ShowSolution => $"Play {_currentPlayer.Name}'s turn",
             ActionState.NextPlayer => "Next Player",
             _ => "Action"
         };
