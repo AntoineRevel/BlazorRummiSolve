@@ -14,10 +14,9 @@ public class Game(Guid id)
     public Guid Id= id;
     private Solution BoardSolution { get; set; } = new();
     private Solution NextPlayerSolution { get; set; } = new();
-    public Solution? SolutionToShow = new();
+    public Solution SolutionToShow = new();
 
-    private Queue<Tile>? _tilePool;
-
+    private Queue<Tile> _tilePool = null!;
     public int CurrentPlayerIndex { get; private set; }
     public bool IsGameOver { get; private set; }
     public Player? Winner { get; private set; }
@@ -59,11 +58,6 @@ public class Game(Guid id)
         _tilePool = new Queue<Tile>(shuffledTiles.Skip(playerNames.Count * 14));
     }
 
-    private Tile DrawTile()
-    {
-        return _tilePool!.Dequeue(); //TODO no !
-    }
-
     public void Start()
     {
         while (!IsGameOver)
@@ -90,7 +84,6 @@ public class Game(Guid id)
         
         WriteLine(Turn + " => ___   " + currentPlayer.Name + "'s turn   ___");
 
-
         if (NextPlayerSolution.IsValid) BoardSolution = NextPlayerSolution;
 
         NextPlayerSolution = _noPlay < Players.Count
@@ -107,7 +100,7 @@ public class Game(Guid id)
         else
         {
             WriteLine(currentPlayer.Name + " can't play.");
-            var drawTile = DrawTile();
+            var drawTile = _tilePool.Dequeue();
             currentPlayer.SetLastDrewTile(drawTile);
             Write("Drew tile: ");
             drawTile.PrintTile();
