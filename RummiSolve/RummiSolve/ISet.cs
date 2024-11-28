@@ -1,3 +1,6 @@
 namespace RummiSolve;
 
-public interface ISet;
+public interface ISet
+{
+    int GetScore();
+}
