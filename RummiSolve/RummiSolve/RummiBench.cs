@@ -6,47 +6,22 @@ namespace RummiSolve;
 [MemoryDiagnoser]
 public class RummiBench
 {
-    private static readonly Set Set = new()
-    {
-        Tiles =
-        [
-            new Tile(1, TileColor.Black),
-            new Tile(2, TileColor.Black),
-            new Tile(3, TileColor.Black),
-            new Tile(4, TileColor.Black),
-            new Tile(5, TileColor.Black),
-            new Tile(6, TileColor.Black),
-            new Tile(7, TileColor.Black),
-            new Tile(8, TileColor.Black),
-            new Tile(9, TileColor.Black),
-        ]
-    };
-
-    private static readonly Set SetGroup = new()
-    {
-        Tiles =
-        [
-            new Tile(1, TileColor.Black),
-            new Tile(1, TileColor.Mango),
-            new Tile(1, TileColor.Red),
-            new Tile(1, TileColor.Red),
-            new Tile(1, TileColor.Blue)
-        ]
-    };
+    private static readonly Set Set = new([
+        new Tile(9),
+        new Tile(10),
+        new Tile(11),
+        new Tile(10,TileColor.Black),
+        new Tile(10,TileColor.Red),
+        
+    ]);
 
     private static readonly bool[] TabBool = [false, false, false, false, false];
 
 
-    public static void TestYieldGroup()
+    public static void TestFirstSol()
     {
-        var result = SetGroup.GetGroups(0, TabBool, 2);
-        foreach (var run in result)
-        {
-            foreach (var tile in run.Tiles) tile.PrintTile();
-
-            Console.WriteLine();
-            Console.WriteLine(run.Jokers);
-        }
+        var solution = Set.GetFirstSolution();
+        solution.PrintSolution();
     }
 
     [Benchmark]
@@ -62,7 +37,8 @@ public class RummiBench
 
     public static void TestMultiPlayerGame()
     {
-        Game game = new(Guid.Parse("f0fadb43-5d70-4274-8830-f76c0685bcf8"));//Guid.Parse("f0fadb43-5d70-4274-8830-f76c0685bcf8")
+        Game game = new(
+            Guid.Parse("05e29f55-234b-4131-ad20-0a77c1d260b4")); //Guid.Parse("ea8d0991-d57b-4d45-8ac2-bb528d88627f")
 
         var listNames = new List<string> { "Antoine", "Matthieu", "Maguy" };
         game.InitializeGame(listNames);
@@ -129,9 +105,9 @@ public class RummiBench
                 new Tile(5, TileColor.Black)
             ]
         };
+        
 
-        setToTest.Sort();
-
+        
         setToTest.PrintAllTiles();
         Console.WriteLine();
 

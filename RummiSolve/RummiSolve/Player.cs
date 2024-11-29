@@ -128,36 +128,7 @@ public class Player
 
     private Solution SolveFirst(Solution boardSolution)
     {
-        var firstRackSolution = new Set(_rackTilesSet.Tiles).GetSolution();
-        if (firstRackSolution.IsValid)
-        {
-            Won = true;
-            TilesToPlay = [.._rackTilesSet.Tiles];
-            return boardSolution.AddSolution(firstRackSolution);
-        }
-
-        var finalSolution = Solution.GetInvalidSolution();
-
-        for (var tileCount = _rackTilesSet.Tiles.Count - 1; tileCount > 3; tileCount--)
-        {
-            var rackSetsToTry = Set.GetBestSets(_rackTilesSet.Tiles, tileCount);
-
-            rackSetsToTry = _lastDrewTile.IsNull
-                ? rackSetsToTry
-                : rackSetsToTry.Where(tab => tab.Tiles.Contains(_lastDrewTile));
-
-            Parallel.ForEach(rackSetsToTry, (currentRackSet, state) =>
-            {
-                if (currentRackSet.GetScore() < 30) state.Break();
-                var firstSol = currentRackSet.GetSolution();
-                if (!firstSol.IsValid) return;
-                state.Break();
-                finalSolution = firstSol;
-            });
-
-            if (finalSolution.IsValid) break;
-        }
-
+        var finalSolution = new Set(_rackTilesSet.Tiles).GetFirstSolution(); //TONO nocopy Tiles et joker readonly
         if (!finalSolution.IsValid) return finalSolution;
 
         TilesToPlay = finalSolution.GetSet().Tiles;
