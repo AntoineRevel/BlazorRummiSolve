@@ -17,7 +17,7 @@ public class Player
     public Player(string name, List<Tile> tiles)
     {
         Name = name;
-        _rackTilesSet = new Set(tiles); //TODO pas de copie de la liste
+        _rackTilesSet = new Set(tiles); //pas de copie de la liste TODO
         _lastRackTilesSet = new Set(tiles);
         RackTileToShow = _lastRackTilesSet;
         PlayedToShow = false;

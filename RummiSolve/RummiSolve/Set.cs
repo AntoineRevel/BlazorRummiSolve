@@ -4,7 +4,7 @@ public class Set : ISet
 {
     private bool _isSorted;
     public List<Tile> Tiles;
-    private int _jokers; //TODO Joker to => ?
+    private int _jokers; //Joker to => ? TODO
 
     public Set()
     {
@@ -68,7 +68,7 @@ public class Set : ISet
         foreach (var tile in Tiles) tile.PrintTile();
     }
 
-    public void Sort()
+    private void Sort()
     {
         if (_isSorted) return;
         Tiles.Sort();
@@ -204,20 +204,20 @@ public class Set : ISet
         {
             MarkTilesAsUsed(set, true, usedTiles, ref unusedTileCount, ref availableJokers);
 
-            var newSolution = solution;
+            //var newSolution = solution;
             switch (unusedTileCount)
             {
                 case 0 when availableJokers == 0:
                     solution.IsValid = true;
                     break;
                 case > 2:
-                    newSolution = FindSolution(solution, usedTiles, unusedTileCount, firstUnusedTileIndex,
+                    solution = FindSolution(solution, usedTiles, unusedTileCount, firstUnusedTileIndex,
                         availableJokers);
                     break;
             }
 
 
-            if (newSolution.IsValid)
+            if (solution.IsValid)
             {
                 switch (set)
                 {
@@ -274,7 +274,7 @@ public class Set : ISet
 
             if (currentRun[^1].Value != 13) currentRun.Add(new Tile(currentRun[^1].Value + 1, color, true));
             else if (currentRun[0].Value != 1) currentRun.Insert(0, new Tile(currentRun[0].Value - 1, color, true));
-            else jokersUsed--; //TODO insert 2 Run 123J 4...
+            else jokersUsed--; //insert 2 Run 123J 4...TODO
 
             availableJokers -= 1;
             jokersUsed++;

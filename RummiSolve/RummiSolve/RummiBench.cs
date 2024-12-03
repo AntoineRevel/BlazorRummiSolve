@@ -7,12 +7,20 @@ namespace RummiSolve;
 public class RummiBench
 {
     private static readonly Set Set = new([
-        new Tile(9),
-        new Tile(10),
-        new Tile(11),
-        new Tile(10,TileColor.Black),
-        new Tile(10,TileColor.Red),
-        
+        new Tile((byte)8),
+        new Tile((byte)10),
+        new Tile((byte)11),
+        new Tile((byte)12),
+        new Tile((byte)13),
+        new Tile((byte)20),
+        new Tile((byte)21),
+        new Tile((byte)22),
+        new Tile((byte)29),
+        new Tile((byte)44),
+        new Tile((byte)45),
+        new Tile((byte)60),
+        new Tile((byte)61),
+        new Tile(true)
     ]);
 
     private static readonly bool[] TabBool = [false, false, false, false, false];
@@ -20,7 +28,7 @@ public class RummiBench
 
     public static void TestFirstSol()
     {
-        var solution = Set.GetFirstSolution();
+        var solution = Set.GetSolution();
         solution.PrintSolution();
     }
 

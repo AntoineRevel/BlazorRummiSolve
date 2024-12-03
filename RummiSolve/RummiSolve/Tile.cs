@@ -24,6 +24,11 @@ public readonly struct Tile : IComparable<Tile>, IEquatable<Tile>
         if (isJoker) _data = (byte)(isJoker ? 1 << 6 : 0);
     }
 
+    public Tile(byte b)
+    {
+        _data = b;
+    }
+
     public int Value => _data & 0x0F; // Bits 0-3
 
     public TileColor Color => (TileColor)((_data >> 4) & 0x03); // Bits 4-5

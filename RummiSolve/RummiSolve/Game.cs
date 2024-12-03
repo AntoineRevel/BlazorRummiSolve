@@ -28,7 +28,7 @@ public class Game(Guid id)
 
     public void InitializeGame(List<string> playerNames)
     {
-        Console.WriteLine("GameId : "+ Id);
+        WriteLine("GameId : "+ Id);
         var guidBytes = Id.ToByteArray();
         var seed = BitConverter.ToInt32(guidBytes, 0);
         var tiles = new List<Tile>();
@@ -46,7 +46,7 @@ public class Game(Guid id)
 
         var rng = new Random(seed);
 
-        var shuffledTiles = tiles.OrderBy(_ => rng.Next()).ToList(); //TODO One iteration ? RST-108
+        var shuffledTiles = tiles.OrderBy(_ => rng.Next()).ToList(); // One iteration ? RST-108 TODO
 
 
         Players.AddRange(playerNames.Select((name, index) =>
