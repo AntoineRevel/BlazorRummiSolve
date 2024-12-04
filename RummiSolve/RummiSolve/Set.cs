@@ -204,20 +204,19 @@ public class Set : ISet
         {
             MarkTilesAsUsed(set, true, usedTiles, ref unusedTileCount, ref availableJokers);
 
-            //var newSolution = solution;
+            var newSolution = solution;
             switch (unusedTileCount)
             {
                 case 0 when availableJokers == 0:
                     solution.IsValid = true;
                     break;
                 case > 2:
-                    solution = FindSolution(solution, usedTiles, unusedTileCount, firstUnusedTileIndex,
+                    newSolution = FindSolution(solution, usedTiles, unusedTileCount, firstUnusedTileIndex,
                         availableJokers);
                     break;
             }
-
-
-            if (solution.IsValid)
+            
+            if (newSolution.IsValid)
             {
                 switch (set)
                 {

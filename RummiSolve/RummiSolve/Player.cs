@@ -73,7 +73,7 @@ public class Player
             rackSetsToTry = boardChange
                 ? rackSetsToTry
                 : rackSetsToTry.Where(tab => tab.Tiles.Contains(_lastDrewTile));
-
+            
             Parallel.ForEach(rackSetsToTry, (currentRackSet, state) =>
             {
                 if (finalRackSet != null) state.Stop();
@@ -90,16 +90,7 @@ public class Player
                     state.Stop();
                 }
             });
-
-            // foreach (var currentRackSet in rackSetsToTry)
-            // {
-            //     var solution = boardSet.ConcatNew(currentRackSet).GetSolution();
-            //     if (!solution.IsValid) continue;
-            //     finalRackSet = currentRackSet;
-            //     finalSolution = solution;
-            //     break;
-            // }
-
+            
             if (finalRackSet != null) break;
         }
 
