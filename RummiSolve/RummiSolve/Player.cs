@@ -7,9 +7,9 @@ public class Player
     public readonly string Name;
     private Set _lastRackTilesSet;
     private readonly Set _rackTilesSet;
-    public  Set RackTileToShow;
+    public Set RackTileToShow;
     public List<Tile> TilesToPlay = [];
-    private bool _played;
+    public bool _played;
     public bool PlayedToShow;
     public bool Won { get; private set; }
     private Tile _lastDrewTile;
@@ -77,11 +77,11 @@ public class Player
             Parallel.ForEach(rackSetsToTry, (currentRackSet, state) =>
             {
                 if (finalRackSet != null) state.Stop();
-
+            
                 var solution = boardSet.ConcatNew(currentRackSet).GetSolution();
-
+            
                 if (!solution.IsValid) return;
-
+            
                 lock (locker)
                 {
                     if (finalRackSet != null) return;
@@ -90,6 +90,15 @@ public class Player
                     state.Stop();
                 }
             });
+
+            // foreach (var currentRackSet in rackSetsToTry)
+            // {
+            //     var solution = boardSet.ConcatNew(currentRackSet).GetSolution();
+            //     if (!solution.IsValid) continue;
+            //     finalRackSet = currentRackSet;
+            //     finalSolution = solution;
+            //     break;
+            // }
 
             if (finalRackSet != null) break;
         }
@@ -110,6 +119,7 @@ public class Player
         _lastRackTilesSet = new Set(_rackTilesSet);
         RackTileToShow = _lastRackTilesSet;
     }
+
     public void RemoveTilePlayed()
     {
         foreach (var tile in TilesToPlay) _rackTilesSet.Remove(tile);
@@ -120,7 +130,7 @@ public class Player
         RackTileToShow = _rackTilesSet;
         PlayedToShow = _played;
     }
-    
+
     public void ShowLastTile()
     {
         RackTileToShow = _lastRackTilesSet;
