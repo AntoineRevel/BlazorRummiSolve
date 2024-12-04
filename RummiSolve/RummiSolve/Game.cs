@@ -9,37 +9,36 @@ public class Game(Guid id)
 
     private int _noPlay;
 
-    public int Turn;
+    private Queue<Tile> _tilePool = null!;
 
-    public Guid Id= id;
-    private Solution BoardSolution { get; set; } = new();
-    private Solution NextPlayerSolution { get; set; } = new();
+    public Guid Id = id;
     public Solution SolutionToShow = new();
 
-    private Queue<Tile> _tilePool = null!;
-    public int CurrentPlayerIndex { get; private set; }
-    public bool IsGameOver { get; private set; }
-    public Player? Winner { get; private set; }
+    public int Turn;
 
 
     public Game() : this(Guid.NewGuid())
     {
     }
 
+    private Solution BoardSolution { get; set; } = new();
+    private Solution NextPlayerSolution { get; set; } = new();
+    public int CurrentPlayerIndex { get; private set; }
+    public bool IsGameOver { get; private set; }
+    public Player? Winner { get; private set; }
+
     public void InitializeGame(List<string> playerNames)
     {
-        WriteLine("GameId : "+ Id);
+        WriteLine("GameId : " + Id);
         var guidBytes = Id.ToByteArray();
         var seed = BitConverter.ToInt32(guidBytes, 0);
         var tiles = new List<Tile>();
         foreach (var color in Enum.GetValues<TileColor>())
-        {
             for (var i = 1; i <= 13; i++)
             {
                 tiles.Add(new Tile(i, color));
                 tiles.Add(new Tile(i, color));
             }
-        }
 
         tiles.Add(new Tile(true));
         tiles.Add(new Tile(true));
@@ -54,8 +53,8 @@ public class Game(Guid id)
             var playerTiles = shuffledTiles.Skip(index * 14).Take(14).ToList();
             return new Player(name, playerTiles);
         }));
-        
-        
+
+
         _tilePool = new Queue<Tile>(shuffledTiles.Skip(playerNames.Count * 14));
     }
 
@@ -83,7 +82,7 @@ public class Game(Guid id)
     public void PlayCurrentPlayerTurn(Player currentPlayer)
     {
         if (IsGameOver) return;
-        
+
         WriteLine(Turn + " => ___   " + currentPlayer.Name + "'s turn   ___");
 
         if (NextPlayerSolution.IsValid) BoardSolution = NextPlayerSolution;
@@ -91,9 +90,9 @@ public class Game(Guid id)
         NextPlayerSolution = _noPlay < Players.Count
             ? currentPlayer.Solve(BoardSolution)
             : currentPlayer.Solve(BoardSolution, false);
-        
+
         currentPlayer.SaveRack();
-        
+
         if (NextPlayerSolution.IsValid)
         {
             currentPlayer.RemoveTilePlayed();
@@ -114,10 +113,7 @@ public class Game(Guid id)
 
     public void ShowSolution(Player currentPlayer)
     {
-        if (NextPlayerSolution.IsValid)
-        {
-            SolutionToShow = NextPlayerSolution;
-        }
+        if (NextPlayerSolution.IsValid) SolutionToShow = NextPlayerSolution;
 
         currentPlayer.ShowRemovedTile();
 

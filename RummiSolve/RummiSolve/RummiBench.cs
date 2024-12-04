@@ -12,7 +12,7 @@ public class RummiBench
         new Tile((byte)58),
         new Tile((byte)22),
         new Tile((byte)11),
-        
+
         new Tile((byte)8),
         new Tile((byte)10),
         new Tile((byte)12),
@@ -30,46 +30,45 @@ public class RummiBench
     public static void TestVarRecu()
     {
         var setB = new Set([
-            new Tile(8, TileColor.Blue),
+            new Tile(8),
             new Tile(9, TileColor.Blue, true),
-            new Tile(10, TileColor.Blue),
+            new Tile(10),
 
-            new Tile(12, TileColor.Blue),
+            new Tile(12),
             new Tile(12, TileColor.Mango),
             new Tile(12, TileColor.Black),
 
-            new Tile(13, TileColor.Blue),
+            new Tile(13),
             new Tile(13, TileColor.Red),
-            new Tile(13, TileColor.Black),
+            new Tile(13, TileColor.Black)
         ]);
 
         var solB = setB.GetSolution();
         solB.PrintSolution();
-        
+
         var player = new Player("Maguy", [
-            new Tile(11, TileColor.Blue),
+            new Tile(11),
             new Tile(4, TileColor.Black),
             new Tile(6, TileColor.Red),
             new Tile(4, TileColor.Red),
-            new Tile(5, TileColor.Blue),
+            new Tile(5),
             new Tile(10, TileColor.Black),
             new Tile(6, TileColor.Black),
             new Tile(13, TileColor.Mango),
             new Tile(9, TileColor.Black),
             new Tile(5, TileColor.Red),
-            new Tile(6, TileColor.Mango),
+            new Tile(6, TileColor.Mango)
         ]);
-        
+
         player.PrintRackTiles();
 
         player._played = true;
         var newSol = player.Solve(solB);
-        
+
         newSol.PrintSolution();
-        
     }
-    
-    
+
+
     public static void TestFirstSol()
     {
         var solution = Set.GetSolution();
@@ -106,15 +105,15 @@ public class RummiBench
         {
             Tiles =
             [
-                new Tile(1, TileColor.Blue),
+                new Tile(1),
                 new Tile(1, TileColor.Black),
                 new Tile(true),
                 new Tile(true),
 
 
-                new Tile(2, TileColor.Blue),
-                new Tile(3, TileColor.Blue),
-                new Tile(4, TileColor.Blue)
+                new Tile(2),
+                new Tile(3),
+                new Tile(4)
             ]
         };
 
@@ -140,26 +139,25 @@ public class RummiBench
         {
             Tiles =
             [
-                new Tile(12, TileColor.Blue),
+                new Tile(12),
                 new Tile(12, TileColor.Red),
                 new Tile(12, TileColor.Black),
 
-                new Tile(11, TileColor.Blue),
+                new Tile(11),
                 new Tile(11, TileColor.Mango),
                 new Tile(11, TileColor.Black),
 
-                new Tile(6, TileColor.Blue),
+                new Tile(6),
                 new Tile(6, TileColor.Red),
                 new Tile(6, TileColor.Mango),
 
-                new Tile(5, TileColor.Blue),
+                new Tile(5),
                 new Tile(5, TileColor.Mango),
                 new Tile(5, TileColor.Black)
             ]
         };
-        
 
-        
+
         setToTest.PrintAllTiles();
         Console.WriteLine();
 
@@ -193,7 +191,7 @@ public class RummiBench
         [
             new(1, TileColor.Black),
             new(2, TileColor.Red),
-            new(3, TileColor.Blue),
+            new(3),
             new(4, TileColor.Mango)
         ];
 

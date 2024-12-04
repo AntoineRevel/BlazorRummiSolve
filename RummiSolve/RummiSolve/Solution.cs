@@ -6,7 +6,7 @@ public class Solution
     public readonly List<Group> Groups = [];
     public readonly List<Run> Runs = [];
     public bool IsValid;
-    
+
     public static Solution GetInvalidSolution()
     {
         return InvalidSolution;

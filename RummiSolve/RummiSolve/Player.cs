@@ -4,15 +4,14 @@ namespace RummiSolve;
 
 public class Player
 {
-    public readonly string Name;
-    private Set _lastRackTilesSet;
     private readonly Set _rackTilesSet;
-    public Set RackTileToShow;
-    public List<Tile> TilesToPlay = [];
+    public readonly string Name;
+    private Tile _lastDrewTile;
+    private Set _lastRackTilesSet;
     public bool _played;
     public bool PlayedToShow;
-    public bool Won { get; private set; }
-    private Tile _lastDrewTile;
+    public Set RackTileToShow;
+    public List<Tile> TilesToPlay = [];
 
     public Player(string name, List<Tile> tiles)
     {
@@ -22,6 +21,8 @@ public class Player
         RackTileToShow = _lastRackTilesSet;
         PlayedToShow = false;
     }
+
+    public bool Won { get; private set; }
 
     public void AddTileToRack(Tile tile)
     {
@@ -73,15 +74,15 @@ public class Player
             rackSetsToTry = boardChange
                 ? rackSetsToTry
                 : rackSetsToTry.Where(tab => tab.Tiles.Contains(_lastDrewTile));
-            
+
             Parallel.ForEach(rackSetsToTry, (currentRackSet, state) =>
             {
                 if (finalRackSet != null) state.Stop();
-            
+
                 var solution = boardSet.ConcatNew(currentRackSet).GetSolution();
-            
+
                 if (!solution.IsValid) return;
-            
+
                 lock (locker)
                 {
                     if (finalRackSet != null) return;
@@ -90,7 +91,7 @@ public class Player
                     state.Stop();
                 }
             });
-            
+
             if (finalRackSet != null) break;
         }
 
@@ -102,6 +103,22 @@ public class Player
         finalRackSet.PrintAllTiles();
         WriteLine();
 
+        return finalSolution;
+    }
+
+    private Solution SolveFirst(Solution boardSolution)
+    {
+        var finalSolution = new Set(_rackTilesSet.Tiles).GetFirstSolution(); //TONO nocopy Tiles et joker readonly
+        if (!finalSolution.IsValid) return finalSolution;
+
+        TilesToPlay = finalSolution.GetSet().Tiles;
+        finalSolution.AddSolution(boardSolution);
+
+        Write("Playing for the first time: ");
+        foreach (var tile in TilesToPlay) tile.PrintTile();
+        WriteLine();
+
+        _played = true;
         return finalSolution;
     }
 
@@ -125,22 +142,5 @@ public class Player
     public void ShowLastTile()
     {
         RackTileToShow = _lastRackTilesSet;
-    }
-
-    private Solution SolveFirst(Solution boardSolution)
-    {
-        var finalSolution = new Set(_rackTilesSet.Tiles).GetFirstSolution(); //TONO nocopy Tiles et joker readonly
-        if (!finalSolution.IsValid) return finalSolution;
-
-        TilesToPlay = finalSolution.GetSet().Tiles;
-        finalSolution.AddSolution(boardSolution);
-
-
-        Write("Playing for the first time: ");
-        foreach (var tile in TilesToPlay) tile.PrintTile();
-        WriteLine();
-
-        _played = true;
-        return finalSolution;
     }
 }

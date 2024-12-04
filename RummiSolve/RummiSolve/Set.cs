@@ -3,8 +3,8 @@ namespace RummiSolve;
 public class Set : ISet
 {
     private bool _isSorted;
-    public List<Tile> Tiles;
     private int _jokers; //Joker to => ? TODO
+    public List<Tile> Tiles;
 
     public Set()
     {
@@ -21,6 +21,11 @@ public class Set : ISet
     {
         Tiles = [..set.Tiles];
         _jokers = set._jokers;
+    }
+
+    public int GetScore()
+    {
+        return Tiles.Sum(t => t.Value);
     }
 
     public void AddTile(Tile tile)
@@ -73,11 +78,6 @@ public class Set : ISet
         if (_isSorted) return;
         Tiles.Sort();
         _isSorted = true;
-    }
-
-    public int GetScore()
-    {
-        return Tiles.Sum(t => t.Value);
     }
 
     public Solution GetSolution()
@@ -148,14 +148,10 @@ public class Set : ISet
             var newSolutionScore = solutionScore + set.GetScore();
 
             if (newSolutionScore >= 30)
-            {
                 solution.IsValid = true;
-            }
             else
-            {
                 solution = FindFirstSolution(solution, usedTiles, newSolutionScore, firstUnusedTileIndex,
                     availableJokers);
-            }
 
             if (solution.IsValid)
             {
@@ -215,7 +211,7 @@ public class Set : ISet
                         availableJokers);
                     break;
             }
-            
+
             if (newSolution.IsValid)
             {
                 switch (set)

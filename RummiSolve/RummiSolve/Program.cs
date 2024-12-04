@@ -1,6 +1,4 @@
-﻿using BenchmarkDotNet.Running;
-
-namespace RummiSolve;
+﻿namespace RummiSolve;
 
 public static class Program
 {
@@ -11,7 +9,7 @@ public static class Program
         var tilesToHighlight = new List<Tile>();
 
         var matchingTile = tilesToHighlight.FirstOrDefault(t => t.Equals(new Tile(3, TileColor.Red)));
-        
+
         matchingTile.PrintTile();
     }
 }
