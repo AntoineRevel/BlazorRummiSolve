@@ -3,8 +3,8 @@ namespace RummiSolve;
 public class Set : ISet
 {
     private bool _isSorted;
+    private int _jokers; //Joker to => ? TODO
     public List<Tile> Tiles;
-    private int _jokers; //TODO Joker to => ?
 
     public Set()
     {
@@ -21,6 +21,11 @@ public class Set : ISet
     {
         Tiles = [..set.Tiles];
         _jokers = set._jokers;
+    }
+
+    public int GetScore()
+    {
+        return Tiles.Sum(t => t.Value);
     }
 
     public void AddTile(Tile tile)
@@ -68,16 +73,11 @@ public class Set : ISet
         foreach (var tile in Tiles) tile.PrintTile();
     }
 
-    public void Sort()
+    private void Sort()
     {
         if (_isSorted) return;
         Tiles.Sort();
         _isSorted = true;
-    }
-
-    public int GetScore()
-    {
-        return Tiles.Sum(t => t.Value);
     }
 
     public Solution GetSolution()
@@ -91,8 +91,90 @@ public class Set : ISet
         if (length + _jokers <= 2) return length == 0 ? new Solution() : Solution.GetInvalidSolution();
 
         var solution = FindSolution(new Solution(), usedTiles, length, 0, _jokers);
+
+        return solution.IsValid ? solution : Solution.GetInvalidSolution();
+    }
+
+    public Solution GetFirstSolution()
+    {
+        Sort();
+
+        if (_jokers > 0) Tiles.RemoveRange(Tiles.Count - _jokers, _jokers);
+        var length = Tiles.Count;
+
+        if (length + _jokers <= 2) return length == 0 ? new Solution { IsValid = true } : Solution.GetInvalidSolution();
+
+        var usedTiles = new bool[length];
+
+        return FindFirstSolution(new Solution(), usedTiles, 0, 0, _jokers);
+    }
+
+    private Solution FindFirstSolution(Solution solution, bool[] usedTiles, int solutionScore, int startIndex,
+        int availableJokers)
+    {
+        while (startIndex < usedTiles.Length - 2)
+        {
+            startIndex = Array.FindIndex(usedTiles, startIndex, used => !used);
+
+            if (startIndex == -1) return solution;
+
+            var solRun = TryFirstSet(GetRuns(startIndex, usedTiles, availableJokers), solution, usedTiles,
+                solutionScore, startIndex,
+                availableJokers);
+
+            if (solRun.IsValid) return solRun;
+
+            var solGroup = TryFirstSet(GetGroups(startIndex, usedTiles, availableJokers), solution, usedTiles,
+                solutionScore,
+                startIndex, availableJokers);
+
+            if (solGroup.IsValid) return solGroup;
+
+            startIndex++;
+        }
+
         return solution;
     }
+
+    private Solution TryFirstSet<TS>(IEnumerable<TS> sets, Solution solution, bool[] usedTiles, int solutionScore,
+        int firstUnusedTileIndex, int availableJokers)
+        where TS : ValidSet
+    {
+        var toDeleteMark = 0;
+        foreach (var set in sets)
+        {
+            MarkTilesAsUsed(set, true, usedTiles, ref toDeleteMark, ref availableJokers);
+
+            var newSolutionScore = solutionScore + set.GetScore();
+
+            if (newSolutionScore >= 30)
+                solution.IsValid = true;
+            else
+                solution = FindFirstSolution(solution, usedTiles, newSolutionScore, firstUnusedTileIndex,
+                    availableJokers);
+
+            if (solution.IsValid)
+            {
+                switch (set)
+                {
+                    case Run run:
+                        solution.AddRun(run);
+                        break;
+                    case Group group:
+                        solution.AddGroup(group);
+                        break;
+                }
+
+                return solution;
+            }
+
+
+            MarkTilesAsUsed(set, false, usedTiles, ref toDeleteMark, ref availableJokers);
+        }
+
+        return solution;
+    }
+
 
     private Solution FindSolution(Solution solution, bool[] usedTiles, int unusedTileCount, int firstUnusedTileIndex,
         int availableJokers)
@@ -118,12 +200,17 @@ public class Set : ISet
         {
             MarkTilesAsUsed(set, true, usedTiles, ref unusedTileCount, ref availableJokers);
 
-            var newSolution = unusedTileCount switch
+            var newSolution = solution;
+            switch (unusedTileCount)
             {
-                0 when availableJokers == 0 => solution,
-                < 2 => Solution.GetInvalidSolution(),
-                _ => FindSolution(solution, usedTiles, unusedTileCount, firstUnusedTileIndex, availableJokers)
-            };
+                case 0 when availableJokers == 0:
+                    solution.IsValid = true;
+                    break;
+                case > 2:
+                    newSolution = FindSolution(solution, usedTiles, unusedTileCount, firstUnusedTileIndex,
+                        availableJokers);
+                    break;
+            }
 
             if (newSolution.IsValid)
             {
@@ -143,9 +230,9 @@ public class Set : ISet
             MarkTilesAsUsed(set, false, usedTiles, ref unusedTileCount, ref availableJokers);
         }
 
-        return Solution.GetInvalidSolution();
+        return solution;
     }
-    
+
 
     private IEnumerable<Run> GetRuns(int tileIndex, bool[] usedTiles, int availableJokers)
     {
@@ -182,7 +269,7 @@ public class Set : ISet
 
             if (currentRun[^1].Value != 13) currentRun.Add(new Tile(currentRun[^1].Value + 1, color, true));
             else if (currentRun[0].Value != 1) currentRun.Insert(0, new Tile(currentRun[0].Value - 1, color, true));
-            else jokersUsed--; //TODO insert 2 Run 123J 4...
+            else jokersUsed--; //insert 2 Run 123J 4...TODO
 
             availableJokers -= 1;
             jokersUsed++;
@@ -196,14 +283,14 @@ public class Set : ISet
         }
     }
 
-    public IEnumerable<Group> GetGroups(int firstTileIndex, bool[] usedTiles, int availableJokers)
+    private IEnumerable<Group> GetGroups(int firstTileIndex, bool[] usedTiles, int availableJokers)
     {
         var firstTile = Tiles[firstTileIndex];
         var number = firstTile.Value;
         var color = firstTile.Color;
 
         var sameNumberTiles = Tiles
-            .Where((tile,index) => !usedTiles[index] && tile.Value == number && tile.Color != color)
+            .Where((tile, index) => !usedTiles[index] && tile.Value == number && tile.Color != color)
             .Distinct()
             .ToList();
 
@@ -244,7 +331,8 @@ public class Set : ISet
 
                     combo.CopyTo(0, groupTiles, 1, tilesUsed - 1);
 
-                    for (var k = 0; k < jokersUsed; k++) groupTiles[tilesUsed + k] = new Tile(true);
+                    for (var k = 0; k < jokersUsed; k++)
+                        groupTiles[tilesUsed + k] = new Tile(number, isJoker: true);
 
                     yield return new Group
                     {

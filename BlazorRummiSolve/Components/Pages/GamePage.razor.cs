@@ -4,8 +4,10 @@ namespace BlazorRummiSolve.Components.Pages;
 
 public partial class GamePage
 {
-    private Game _currentGame = new();
+    private Game _currentGame = new(Guid.Parse("27e82465-012f-4885-852d-70be4f3b0638"));
     private Player _currentPlayer = null!;
+
+    private ActionState _currentState;
     private List<Player>? _otherPlayers;
     private bool IsGameOver => _currentGame.IsGameOver;
     private Player Winner => _currentGame.Winner!;
@@ -13,15 +15,6 @@ public partial class GamePage
     private Guid Id => _currentGame.Id;
     private bool IsLoading { get; set; }
     private bool ShowHint { get; set; }
-
-    private enum ActionState
-    {
-        ShowHint,
-        ShowSolution,
-        NextPlayer
-    }
-
-    private ActionState _currentState;
 
     private async Task HandleActionAsync()
     {
@@ -48,12 +41,11 @@ public partial class GamePage
                 throw new ArgumentOutOfRangeException();
         }
     }
-    
+
     private void HandleActionBack()
     {
         switch (_currentState)
         {
-            
             case ActionState.ShowSolution:
                 ShowHint = false;
                 _currentState = ActionState.ShowHint;
@@ -63,7 +55,7 @@ public partial class GamePage
                 _currentGame.BackSolution();
                 _currentPlayer.ShowLastTile();
                 ShowHint = true;
-                
+
                 _currentState = ActionState.ShowSolution;
                 break;
             case ActionState.ShowHint:
@@ -101,7 +93,6 @@ public partial class GamePage
         try
         {
             await Task.Run(() => _currentGame.PlayCurrentPlayerTurn(_currentPlayer));
-            
         }
         finally
         {
@@ -119,5 +110,12 @@ public partial class GamePage
     {
         _currentGame = new Game();
         await OnInitializedAsync();
+    }
+
+    private enum ActionState
+    {
+        ShowHint,
+        ShowSolution,
+        NextPlayer
     }
 }
