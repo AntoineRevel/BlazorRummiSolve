@@ -6,6 +6,7 @@ public class Set : ISet
     private int _jokers; //Joker to => ? TODO
     public List<Tile> Tiles;
     private bool[] _usedTiles = [];
+
     public Set()
     {
         Tiles = [];
@@ -175,7 +176,7 @@ public class Set : ISet
 
         return solution;
     }
-    
+
     private Solution FindSolution(Solution solution, int unusedTileCount, int firstUnusedTileIndex,
         int availableJokers)
     {
