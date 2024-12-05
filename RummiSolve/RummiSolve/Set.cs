@@ -238,7 +238,6 @@ public class Set : ISet
     {
         var color = Tiles[tileIndex].Color;
         var currentRun = new List<Tile> { Tiles[tileIndex] };
-        var currentRunIndices = new List<int> { tileIndex };
         var jokersUsed = 0;
         var i = tileIndex + 1;
 
@@ -257,7 +256,6 @@ public class Set : ISet
                 if (Tiles[i].Value != currentRun[^1].Value + 1) break;
 
                 currentRun.Add(Tiles[i]);
-                currentRunIndices.Add(i);
 
                 if (currentRun.Count >= 3)
                     yield return new Run
