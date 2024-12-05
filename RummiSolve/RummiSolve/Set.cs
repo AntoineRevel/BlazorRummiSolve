@@ -116,8 +116,6 @@ public class Set : ISet
         {
             startIndex = Array.FindIndex(_usedTiles, startIndex, used => !used);
 
-            if (startIndex == -1) return solution;
-
             var solRun = TryFirstSet(GetRuns(startIndex), solution,
                 solutionScore, startIndex);
 
