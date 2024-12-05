@@ -145,7 +145,7 @@ public class Set : ISet
         var toDeleteMark = 0;
         var usedTilesCopy = _usedTiles.ToArray();
         var availableJokersCopy = availableJokers;
-        
+
         foreach (var set in sets)
         {
             MarkTilesAsUsed(set, true, ref toDeleteMark, ref availableJokers);
@@ -186,7 +186,7 @@ public class Set : ISet
         firstUnusedTileIndex = Array.FindIndex(_usedTiles, firstUnusedTileIndex, used => !used);
 
         if (firstUnusedTileIndex == -1) return solution;
-        
+
         var solRun = TrySet(GetRuns(firstUnusedTileIndex, availableJokers),
             solution, unusedTileCount, firstUnusedTileIndex, availableJokers);
 
@@ -202,7 +202,6 @@ public class Set : ISet
         int firstUnusedTileIndex, int availableJokers)
         where TS : ValidSet
     {
-        var unusedTileCountCopy = unusedTileCount;
         var usedTilesCopy = _usedTiles.ToArray();
         var availableJokersCopy = availableJokers;
         foreach (var set in sets)
@@ -236,10 +235,9 @@ public class Set : ISet
                 return solution;
             }
 
-            //MarkTilesAsUsed(set, false, ref unusedTileCount, ref availableJokers);
             _usedTiles = usedTilesCopy.ToArray();
             availableJokers = availableJokersCopy;
-            unusedTileCount = unusedTileCountCopy;
+            unusedTileCount += set.Tiles.Length - set.Jokers;
         }
 
         return solution;
