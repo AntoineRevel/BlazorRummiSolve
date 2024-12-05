@@ -88,7 +88,7 @@ public class RummiBench
 
     public static void TestMultiPlayerGame()
     {
-        Game game = new(); //Guid.Parse("7f287098-c931-4f0e-ade4-706edc69b109")
+        Game game = new(Guid.Parse("9e1bf68d-78eb-436d-8ed9-c148e98a991b")); //Guid.Parse("9e1bf68d-78eb-436d-8ed9-c148e98a991b")
         var listNames = new List<string> { "Antoine", "Matthieu", "Maguy" };
         game.InitializeGame(listNames);
         var gameStopwatch = Stopwatch.StartNew();
@@ -248,4 +248,5 @@ public class RummiBench
 
         return new Set { Tiles = tiles };
     }
+    
 }
