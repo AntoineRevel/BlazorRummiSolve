@@ -85,13 +85,13 @@ public class Set : ISet
     {
         Sort();
 
-        if (_jokers > 0) Tiles.RemoveRange(Tiles.Count - _jokers, _jokers);
+        if (_jokers > 0) Tiles.RemoveRange(Tiles.Count - _jokers, _jokers); //remove remove todo
         var length = Tiles.Count;
         _usedTiles = new bool[length];
 
         if (length + _jokers <= 2) return length == 0 ? new Solution() : Solution.GetInvalidSolution();
 
-        var solution = FindSolution(new Solution(), length, 0);
+        var solution = FindSolution(new Solution(), length + _jokers, 0);
 
         return solution.IsValid ? solution : Solution.GetInvalidSolution();
     }
@@ -138,13 +138,12 @@ public class Set : ISet
         int firstUnusedTileIndex)
         where TS : ValidSet
     {
-        var toDeleteMark = 0;
         var usedTilesCopy = _usedTiles.ToArray();
         var availableJokersCopy = _jokers;
 
         foreach (var set in sets)
         {
-            MarkTilesAsUsed(set, true, ref toDeleteMark);
+            MarkTilesAsUsed(set, true);
 
             var newSolutionScore = solutionScore + set.GetScore();
 
@@ -199,12 +198,13 @@ public class Set : ISet
         var availableJokersCopy = _jokers;
         foreach (var set in sets)
         {
-            MarkTilesAsUsed(set, true, ref unusedTileCount);
+            unusedTileCount -= set.Tiles.Length;
+            MarkTilesAsUsed(set, true);
 
             var newSolution = solution;
             switch (unusedTileCount)
             {
-                case 0 when _jokers == 0:
+                case 0:
                     solution.IsValid = true;
                     break;
                 case > 2:
@@ -229,7 +229,7 @@ public class Set : ISet
 
             _usedTiles = usedTilesCopy.ToArray();
             _jokers = availableJokersCopy;
-            unusedTileCount += set.Tiles.Length - set.Jokers;
+            unusedTileCount += set.Tiles.Length;
         }
 
         return solution;
@@ -348,7 +348,7 @@ public class Set : ISet
         }
     }
 
-    private void MarkTilesAsUsed(ValidSet set, bool isUsed, ref int unusedTile)
+    private void MarkTilesAsUsed(ValidSet set, bool isUsed)
     {
         foreach (var tile in set.Tiles)
         {
@@ -363,7 +363,6 @@ public class Set : ISet
                 if (_usedTiles[i] == isUsed || !Tiles[i].Equals(tile)) continue;
 
                 _usedTiles[i] = isUsed;
-                unusedTile += isUsed ? -1 : 1;
                 break;
             }
         }
