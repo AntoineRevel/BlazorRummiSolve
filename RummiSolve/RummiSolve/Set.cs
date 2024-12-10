@@ -143,8 +143,6 @@ public class Set : ISet
 
         foreach (var set in sets)
         {
-            MarkTilesAsUsed(set, true);
-
             var newSolutionScore = solutionScore + set.GetScore();
 
             if (newSolutionScore >= 30)
@@ -178,15 +176,11 @@ public class Set : ISet
     {
         firstUnusedTileIndex = Array.FindIndex(_usedTiles, firstUnusedTileIndex, used => !used);
 
-        if (firstUnusedTileIndex == -1) return solution;
-
-        var solRun = TrySet(GetRuns(firstUnusedTileIndex),
-            solution, unusedTileCount, firstUnusedTileIndex);
+        var solRun = TrySet(GetRuns(firstUnusedTileIndex), solution, unusedTileCount, firstUnusedTileIndex);
 
         if (solRun.IsValid) return solRun;
 
-        var solGroup = TrySet(GetGroups(firstUnusedTileIndex),
-            solution, unusedTileCount, firstUnusedTileIndex);
+        var solGroup = TrySet(GetGroups(firstUnusedTileIndex), solution, unusedTileCount, firstUnusedTileIndex);
 
         return solGroup.IsValid ? solGroup : Solution.GetInvalidSolution();
     }
@@ -194,12 +188,12 @@ public class Set : ISet
     private Solution TrySet<TS>(IEnumerable<TS> sets, Solution solution, int unusedTileCount, int firstUnusedTileIndex)
         where TS : ValidSet
     {
+        _usedTiles[firstUnusedTileIndex] = true;
         var usedTilesCopy = _usedTiles.ToArray();
         var availableJokersCopy = _jokers;
         foreach (var set in sets)
         {
             unusedTileCount -= set.Tiles.Length;
-            MarkTilesAsUsed(set, true);
 
             var newSolution = solution;
             switch (unusedTileCount)
@@ -232,6 +226,8 @@ public class Set : ISet
             unusedTileCount += set.Tiles.Length;
         }
 
+        _usedTiles[firstUnusedTileIndex] = false;
+
         return solution;
     }
 
@@ -239,9 +235,9 @@ public class Set : ISet
     private IEnumerable<Run> GetRuns(int tileIndex)
     {
         var availableJokers = _jokers;
+        var usedTilesCopy = _usedTiles.ToArray();
         var color = Tiles[tileIndex].Color;
         var currentRun = new List<Tile> { Tiles[tileIndex] };
-        var jokersUsed = 0;
         var i = tileIndex + 1;
 
         while (true)
@@ -259,53 +255,64 @@ public class Set : ISet
                 if (Tiles[i].Value != currentRun[^1].Value + 1) break;
 
                 currentRun.Add(Tiles[i]);
+                usedTilesCopy[i] = true;
 
-                if (currentRun.Count >= 3)
-                    yield return new Run
-                    {
-                        Tiles = [..currentRun],
-                        Jokers = jokersUsed
-                    };
+                if (currentRun.Count < 3) continue;
+                _usedTiles = usedTilesCopy;
+                var jokersUsed = _jokers - availableJokers;
+                _jokers = availableJokers;
+                yield return new Run
+                {
+                    Tiles = [..currentRun],
+                    Jokers = jokersUsed
+                };
             }
 
             if (availableJokers <= 0) yield break;
 
             if (currentRun[^1].Value != 13) currentRun.Add(new Tile(currentRun[^1].Value + 1, color, true));
             else if (currentRun[0].Value != 1) currentRun.Insert(0, new Tile(currentRun[0].Value - 1, color, true));
-            else jokersUsed--; //insert 2 Run 123J 4...TODO
 
-            availableJokers -= 1;
-            jokersUsed++;
+            availableJokers--;
 
-            if (currentRun.Count >= 3)
-                yield return new Run
-                {
-                    Tiles = [..currentRun],
-                    Jokers = jokersUsed
-                };
+            if (currentRun.Count < 3) continue;
+
+            _usedTiles = usedTilesCopy;
+            var jokersUsedJ = _jokers - availableJokers;
+            _jokers = availableJokers;
+            yield return new Run
+            {
+                Tiles = [..currentRun],
+                Jokers = jokersUsedJ
+            };
         }
     }
 
     private IEnumerable<Group> GetGroups(int firstTileIndex)
     {
-        var availableJokers = _jokers;
         var firstTile = Tiles[firstTileIndex];
         var number = firstTile.Value;
         var color = firstTile.Color;
 
         var sameNumberTiles = Tiles
-            .Where((tile, index) => !_usedTiles[index] && tile.Value == number && tile.Color != color)
-            .Distinct()
+            .Select((tile, index) => new { Tile = tile, Index = index })
+            .Where(tuple => !_usedTiles[tuple.Index] && tuple.Tile.Value == number && tuple.Tile.Color != color)
+            .DistinctBy(tuple => tuple.Tile.Color)
             .ToList();
 
         var size = sameNumberTiles.Count;
 
-        if (availableJokers == 0)
+        if (_jokers == 0)
         {
             if (size < 2) yield break;
 
             var groupTiles = new List<Tile> { firstTile };
-            groupTiles.AddRange(sameNumberTiles);
+            foreach (var index in sameNumberTiles.Select(t => t.Index))
+            {
+                _usedTiles[index] = true;
+            }
+
+            groupTiles.AddRange(sameNumberTiles.Select(t => t.Tile));
 
             yield return new Group { Tiles = groupTiles.ToArray() };
 
@@ -313,14 +320,19 @@ public class Set : ISet
 
             for (var i = 0; i < sameNumberTiles.Count; i++)
             for (var j = i + 1; j < sameNumberTiles.Count; j++)
+            {
+                _usedTiles[sameNumberTiles[i].Index] = true;
+                _usedTiles[sameNumberTiles[j].Index] = true;
+
                 yield return new Group
                 {
-                    Tiles = [firstTile, sameNumberTiles[i], sameNumberTiles[j]]
+                    Tiles = [firstTile, sameNumberTiles[i].Tile, sameNumberTiles[j].Tile]
                 };
+            }
         }
         else
         {
-            for (var jokersUsed = 0; jokersUsed <= availableJokers; jokersUsed++)
+            for (var jokersUsed = 0; jokersUsed <= _jokers; jokersUsed++)
             for (var tilesUsed = 2; tilesUsed <= size + 1; tilesUsed++)
             {
                 var totalTiles = tilesUsed + jokersUsed;
@@ -328,16 +340,21 @@ public class Set : ISet
 
                 var combinations = GetCombinations(sameNumberTiles, tilesUsed - 1);
 
-                foreach (var combo in combinations)
+                foreach (var comboTuple in combinations)
                 {
                     var groupTiles = new Tile[totalTiles];
                     groupTiles[0] = firstTile;
 
-                    combo.CopyTo(0, groupTiles, 1, tilesUsed - 1);
+                    for (var i = 0; i < tilesUsed - 1; i++)
+                    {
+                        groupTiles[i + 1] = comboTuple[i].Tile;
+                        _usedTiles[comboTuple[i].Index] = true;
+                    }
 
-                    for (var k = 0; k < jokersUsed; k++)
-                        groupTiles[tilesUsed + k] = new Tile(number, isJoker: true);
+                    for (var k = 0; k < jokersUsed; k++) groupTiles[tilesUsed + k] = new Tile(number, isJoker: true);
 
+                    _jokers -= jokersUsed;
+                    
                     yield return new Group
                     {
                         Tiles = groupTiles,
@@ -385,13 +402,14 @@ public class Set : ISet
     public static IEnumerable<Set> GetBestSets(List<Tile> tiles, int n)
     {
         var combinations = GetCombinations(tiles, n);
+
         return combinations
             .Select(combination => new Set(combination)
             )
             .OrderByDescending(t => t.GetScore());
     }
 
-    private static IEnumerable<List<Tile>> GetCombinations(List<Tile> list, int length)
+    private static IEnumerable<List<T>> GetCombinations<T>(List<T> list, int length)
     {
         if (length == 0) yield return [];
 

@@ -88,7 +88,8 @@ public class RummiBench
 
     public static void TestMultiPlayerGame()
     {
-        Game game = new(Guid.Parse("9e1bf68d-78eb-436d-8ed9-c148e98a991b")); //Guid.Parse("9e1bf68d-78eb-436d-8ed9-c148e98a991b")
+        Game game = new(
+            Guid.Parse("9e1bf68d-78eb-436d-8ed9-c148e98a991b")); //Guid.Parse("9e1bf68d-78eb-436d-8ed9-c148e98a991b")
         var listNames = new List<string> { "Antoine", "Matthieu", "Maguy" };
         game.InitializeGame(listNames);
         var gameStopwatch = Stopwatch.StartNew();
@@ -248,5 +249,70 @@ public class RummiBench
 
         return new Set { Tiles = tiles };
     }
+
+    public static void TestSupMark()
+    {
+        var set = new Set([
+            
+            new Tile(1),
+            new Tile(1),
+            new Tile(1,TileColor.Red),
+            new Tile(1,TileColor.Black),
+            new Tile(1,TileColor.Mango),
+            new Tile(1,TileColor.Mango),
+            new Tile(2,TileColor.Mango),
+            new Tile(3,TileColor.Mango),
+            new Tile(true)
+        ]);
+
+        var sol = set.GetSolution();
+
+        sol.PrintSolution();
+    }
     
+    public static void TestSupMark2()
+    {
+        var set = new Set([
+            
+            //new Tile(7,TileColor.Red),
+            
+            // new Tile(5),
+            // new Tile(6),
+            // new Tile(7),
+            //
+            // new Tile(10,TileColor.Black),
+            // new Tile(11,TileColor.Black),
+            // new Tile(12,TileColor.Black),
+            
+            // new Tile(9,TileColor.Mango),
+            // new Tile(10,TileColor.Mango),
+            // new Tile(11,TileColor.Mango),
+            // new Tile(12,TileColor.Mango),
+            
+            // new Tile(3,TileColor.Mango),
+            // new Tile(4,TileColor.Mango),
+            // new Tile(5,TileColor.Mango),
+            
+            new Tile(10,TileColor.Red),
+            new Tile(11,TileColor.Red),
+            new Tile(true),
+            
+            new Tile(8),
+            new Tile(9),
+            new Tile(10),
+            new Tile(11),
+            
+            new Tile(8),
+            new Tile(8,TileColor.Red),
+            new Tile(8,TileColor.Mango),
+            
+            // new Tile(13),
+            // new Tile(13,TileColor.Mango),
+            // new Tile(13,TileColor.Red)
+        ]);
+
+        var sol = set.GetSolution();
+
+        sol.PrintSolution();
+    }
 }
