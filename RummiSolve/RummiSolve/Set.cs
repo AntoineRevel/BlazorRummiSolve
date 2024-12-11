@@ -199,7 +199,7 @@ public class Set : ISet
         _usedTiles[firstUnusedTileIndex] = true;
         foreach (var setTuple in setTuples)
         {
-            unusedTileCount -= setTuple.Set.Tiles.Length; //comprent les Jokers
+            unusedTileCount -= setTuple.Set.Tiles.Length; // include Jokers
 
             var newSolution = solution;
             switch (unusedTileCount)
@@ -231,39 +231,18 @@ public class Set : ISet
             {
                 _usedTiles[index] = false;
             }
-            
+
             for (var i = 0; i < setTuple.Set.Jokers; i++)
             {
                 _jokers++;
             }
-            
+
             unusedTileCount += setTuple.Set.Tiles.Length;
         }
 
         _usedTiles[firstUnusedTileIndex] = false;
 
         return solution;
-    }
-
-    private void MarkTilesAsUnUsed(ValidSet set, int firstUnusedTileIndex)
-    {
-        foreach (var tile in set.Tiles)
-        {
-            if (tile.IsJoker)
-            {
-                _jokers++;
-                continue;
-            }
-
-            for (var i = 0; i < Tiles.Count; i++)
-            {
-                if (i == firstUnusedTileIndex) continue;
-                if (!_usedTiles[i] || !Tiles[i].Equals(tile)) continue;
-
-                _usedTiles[i] = false;
-                break;
-            }
-        }
     }
 
     private IEnumerable<(Run Run, int[] Index)> GetRuns(int tileIndex)
@@ -273,7 +252,6 @@ public class Set : ISet
         var currentRun = new List<Tile> { Tiles[tileIndex] };
         var indexUse = new List<int>();
         var i = tileIndex + 1;
-
 
         while (true)
         {
@@ -408,7 +386,7 @@ public class Set : ISet
                     for (var k = 0; k < jokersUsed; k++) groupTiles[tilesUsed + k] = new Tile(number, isJoker: true);
 
                     _jokers -= jokersUsed;
-                    
+
                     yield return (new Group
                     {
                         Tiles = groupTiles,
