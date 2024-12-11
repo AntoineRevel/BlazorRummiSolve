@@ -112,7 +112,7 @@ public class Set : ISet
 
     private Solution FindFirstSolution(Solution solution, int solutionScore, int startIndex)
     {
-        while (startIndex < _usedTiles.Length - 2)
+        while (startIndex < _usedTiles.Length - 1)
         {
             startIndex = Array.FindIndex(_usedTiles, startIndex, used => !used);
 
@@ -132,15 +132,15 @@ public class Set : ISet
         return solution;
     }
 
-    private Solution TryFirstSet<TS>(IEnumerable<TS> sets, Solution solution,
+    private Solution TryFirstSet<TS>(IEnumerable<(TS Set, int[] Index)> setTuples, Solution solution,
         int solutionScore,
         int firstUnusedTileIndex)
         where TS : ValidSet
     {
         _usedTiles[firstUnusedTileIndex] = true;
-        foreach (var set in sets)
+        foreach (var setTuple in setTuples)
         {
-            var newSolutionScore = solutionScore + set.GetScore();
+            var newSolutionScore = solutionScore + setTuple.Set.GetScore();
 
             if (newSolutionScore >= 30)
                 solution.IsValid = true;
@@ -149,7 +149,7 @@ public class Set : ISet
 
             if (solution.IsValid)
             {
-                switch (set)
+                switch (setTuple.Set)
                 {
                     case Run run:
                         solution.AddRun(run);
@@ -162,7 +162,15 @@ public class Set : ISet
                 return solution;
             }
 
-            MarkTilesAsUnUsed(set, firstUnusedTileIndex);
+            foreach (var index in setTuple.Index)
+            {
+                _usedTiles[index] = false;
+            }
+
+            for (var i = 0; i < setTuple.Set.Jokers; i++)
+            {
+                _jokers++;
+            }
         }
 
         _usedTiles[firstUnusedTileIndex] = false;
@@ -184,13 +192,14 @@ public class Set : ISet
         return solGroup.IsValid ? solGroup : Solution.GetInvalidSolution();
     }
 
-    private Solution TrySet<TS>(IEnumerable<TS> sets, Solution solution, int unusedTileCount, int firstUnusedTileIndex)
+    private Solution TrySet<TS>(IEnumerable<(TS Set, int[] Index)> setTuples, Solution solution, int unusedTileCount,
+        int firstUnusedTileIndex)
         where TS : ValidSet
     {
         _usedTiles[firstUnusedTileIndex] = true;
-        foreach (var set in sets)
+        foreach (var setTuple in setTuples)
         {
-            unusedTileCount -= set.Tiles.Length;
+            unusedTileCount -= setTuple.Set.Tiles.Length; //comprent les Jokers
 
             var newSolution = solution;
             switch (unusedTileCount)
@@ -205,7 +214,7 @@ public class Set : ISet
 
             if (newSolution.IsValid)
             {
-                switch (set)
+                switch (setTuple.Set)
                 {
                     case Run run:
                         solution.AddRun(run);
@@ -218,8 +227,17 @@ public class Set : ISet
                 return solution;
             }
 
-            MarkTilesAsUnUsed(set, firstUnusedTileIndex);
-            unusedTileCount += set.Tiles.Length;
+            foreach (var index in setTuple.Index)
+            {
+                _usedTiles[index] = false;
+            }
+            
+            for (var i = 0; i < setTuple.Set.Jokers; i++)
+            {
+                _jokers++;
+            }
+            
+            unusedTileCount += setTuple.Set.Tiles.Length;
         }
 
         _usedTiles[firstUnusedTileIndex] = false;
@@ -248,12 +266,14 @@ public class Set : ISet
         }
     }
 
-    private IEnumerable<Run> GetRuns(int tileIndex)
+    private IEnumerable<(Run Run, int[] Index)> GetRuns(int tileIndex)
     {
         var availableJokers = _jokers;
         var color = Tiles[tileIndex].Color;
-        var currentRun = new List<(Tile Tile, int Index)> { (Tiles[tileIndex], tileIndex) };
+        var currentRun = new List<Tile> { Tiles[tileIndex] };
+        var indexUse = new List<int>();
         var i = tileIndex + 1;
+
 
         while (true)
         {
@@ -265,15 +285,18 @@ public class Set : ISet
                     break;
                 }
 
-                if (_usedTiles[i] || Tiles[i].Value == currentRun[^1].Tile.Value) continue;
+                if (_usedTiles[i] || Tiles[i].Value == currentRun[^1].Value) continue;
 
-                if (Tiles[i].Value != currentRun[^1].Tile.Value + 1) break;
+                if (Tiles[i].Value != currentRun[^1].Value + 1) break;
 
-                currentRun.Add((Tiles[i], i));
+                currentRun.Add(Tiles[i]);
+                indexUse.Add(i);
 
                 if (currentRun.Count < 3) continue;
 
-                foreach (var index in currentRun.Select(t => t.Index))
+                var indexArray = indexUse.ToArray();
+
+                foreach (var index in indexArray)
                 {
                     _usedTiles[index] = true;
                 }
@@ -281,41 +304,41 @@ public class Set : ISet
                 var jokersUsed = _jokers - availableJokers;
                 _jokers = availableJokers;
 
-                yield return new Run
+                yield return (new Run
                 {
-                    Tiles = [..currentRun.Select(t => t.Tile)],
+                    Tiles = [..currentRun],
                     Jokers = jokersUsed
-                };
+                }, indexArray);
             }
 
             if (availableJokers <= 0) yield break;
 
-            if (currentRun[^1].Tile.Value != 13)
-                currentRun.Add((new Tile(currentRun[^1].Tile.Value + 1, color, true), tileIndex));
+            if (currentRun[^1].Value != 13) currentRun.Add(new Tile(currentRun[^1].Value + 1, color, true));
 
-            else if (currentRun[0].Tile.Value != 1)
-                currentRun.Insert(0, (new Tile(currentRun[0].Tile.Value - 1, color, true), tileIndex));
+            else if (currentRun[0].Value != 1) currentRun.Insert(0, new Tile(currentRun[0].Value - 1, color, true));
 
             availableJokers--;
 
             if (currentRun.Count < 3) continue;
 
-            foreach (var index in currentRun.Select(t => t.Index))
+            var indexArrayJ = indexUse.ToArray();
+
+            foreach (var index in indexArrayJ)
             {
                 _usedTiles[index] = true;
             }
 
             var jokersUsedJ = _jokers - availableJokers;
             _jokers = availableJokers;
-            yield return new Run
+            yield return (new Run
             {
-                Tiles = [..currentRun.Select(t => t.Tile)],
+                Tiles = [..currentRun],
                 Jokers = jokersUsedJ
-            };
+            }, indexArrayJ);
         }
     }
 
-    private IEnumerable<Group> GetGroups(int firstTileIndex)
+    private IEnumerable<(Group Group, int[] Index)> GetGroups(int firstTileIndex)
     {
         var firstTile = Tiles[firstTileIndex];
         var number = firstTile.Value;
@@ -334,14 +357,16 @@ public class Set : ISet
             if (size < 2) yield break;
 
             var groupTiles = new List<Tile> { firstTile };
-            foreach (var index in sameNumberTiles.Select(t => t.Index))
+            var indexArray = sameNumberTiles.Select(t => t.Index).ToArray();
+
+            foreach (var index in indexArray)
             {
                 _usedTiles[index] = true;
             }
 
             groupTiles.AddRange(sameNumberTiles.Select(t => t.Tile));
 
-            yield return new Group { Tiles = groupTiles.ToArray() };
+            yield return (new Group { Tiles = groupTiles.ToArray() }, indexArray);
 
             if (groupTiles.Count != 4) yield break;
 
@@ -351,10 +376,10 @@ public class Set : ISet
                 _usedTiles[sameNumberTiles[i].Index] = true;
                 _usedTiles[sameNumberTiles[j].Index] = true;
 
-                yield return new Group
+                yield return (new Group
                 {
                     Tiles = [firstTile, sameNumberTiles[i].Tile, sameNumberTiles[j].Tile]
-                };
+                }, [sameNumberTiles[i].Index, sameNumberTiles[j].Index]);
             }
         }
         else
@@ -371,22 +396,24 @@ public class Set : ISet
                 {
                     var groupTiles = new Tile[totalTiles];
                     groupTiles[0] = firstTile;
+                    var indexArrayJ = new int[tilesUsed - 1];
 
                     for (var i = 0; i < tilesUsed - 1; i++)
                     {
                         groupTiles[i + 1] = comboTuple[i].Tile;
                         _usedTiles[comboTuple[i].Index] = true;
+                        indexArrayJ[i] = comboTuple[i].Index;
                     }
 
                     for (var k = 0; k < jokersUsed; k++) groupTiles[tilesUsed + k] = new Tile(number, isJoker: true);
 
                     _jokers -= jokersUsed;
-
-                    yield return new Group
+                    
+                    yield return (new Group
                     {
                         Tiles = groupTiles,
                         Jokers = jokersUsed
-                    };
+                    }, indexArrayJ);
                 }
             }
         }

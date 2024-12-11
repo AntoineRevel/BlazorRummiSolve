@@ -277,12 +277,6 @@ public class RummiBench
     {
         var set = new Set([
             
-            new Tile(7,TileColor.Red),
-            
-            new Tile(5),
-            new Tile(6),
-            new Tile(7),
-            
             new Tile(10,TileColor.Black),
             new Tile(11,TileColor.Black),
             new Tile(12,TileColor.Black),
@@ -292,10 +286,6 @@ public class RummiBench
             new Tile(11,TileColor.Mango),
             new Tile(12,TileColor.Mango),
             
-            new Tile(3,TileColor.Mango),
-            new Tile(4,TileColor.Mango),
-            new Tile(5,TileColor.Mango),
-            
             new Tile(10,TileColor.Red),
             new Tile(11,TileColor.Red),
             new Tile(true),
@@ -304,10 +294,6 @@ public class RummiBench
             new Tile(9),
             new Tile(10),
             new Tile(11),
-            
-            new Tile(8),
-            new Tile(8,TileColor.Red),
-            new Tile(8,TileColor.Mango),
             
             new Tile(13),
             new Tile(13,TileColor.Mango),
@@ -365,16 +351,15 @@ public class RummiBench
             new Tile(1,TileColor.Black),
             new Tile(2,TileColor.Black),
             new Tile(3,TileColor.Black),
-            
+
             new Tile(7,TileColor.Red),
             new Tile(8,TileColor.Red),
             new Tile(9,TileColor.Red),
-            
+
             new Tile(6,TileColor.Red),
             new Tile(6,TileColor.Mango),
             new Tile(6,TileColor.Black),
             
-
             
         ]);
         
@@ -382,6 +367,26 @@ public class RummiBench
         Console.WriteLine(set.Tiles.Count);
         var gameStopwatch = Stopwatch.StartNew();
         var sol = set.GetSolution();
+        gameStopwatch.Stop();
+        
+        sol.PrintSolution();
+        Console.WriteLine(sol.GetSet().Tiles.Count);
+        Console.WriteLine($"Game duration: {gameStopwatch.Elapsed.TotalSeconds} seconds");
+    }
+    
+    public static void TestSupMark5()
+    {
+        var set = new Set([
+            
+            new Tile(11,TileColor.Red),
+            new Tile(true),
+            new Tile(13,TileColor.Red)
+        ]);
+        
+
+        Console.WriteLine(set.Tiles.Count);
+        var gameStopwatch = Stopwatch.StartNew();
+        var sol = set.GetFirstSolution();
         gameStopwatch.Stop();
         
         sol.PrintSolution();
