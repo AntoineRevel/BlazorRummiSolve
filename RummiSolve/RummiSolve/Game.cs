@@ -133,7 +133,7 @@ public class Game(Guid id)
     {
         player.PrintRackTiles();
         WriteLine("");
-        BoardSolution.PrintSolution();
+        SolutionToShow.PrintSolution();
         WriteLine("");
     }
 }

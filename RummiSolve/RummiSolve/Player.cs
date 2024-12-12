@@ -78,11 +78,11 @@ public class Player
             Parallel.ForEach(rackSetsToTry, (currentRackSet, state) =>
             {
                 if (finalRackSet != null) state.Stop();
-
+            
                 var solution = boardSet.ConcatNew(currentRackSet).GetSolution();
-
+            
                 if (!solution.IsValid) return;
-
+            
                 lock (locker)
                 {
                     if (finalRackSet != null) return;
@@ -91,6 +91,15 @@ public class Player
                     state.Stop();
                 }
             });
+            
+            // foreach (var currentRackSet in rackSetsToTry)
+            // {
+            //     var solution = boardSet.ConcatNew(currentRackSet).GetSolution();
+            //     if (!solution.IsValid) continue;
+            //     finalRackSet = currentRackSet;
+            //     finalSolution = solution;
+            //     break;
+            // }
 
             if (finalRackSet != null) break;
         }

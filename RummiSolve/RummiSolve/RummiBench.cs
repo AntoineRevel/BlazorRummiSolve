@@ -75,7 +75,7 @@ public class RummiBench
         solution.PrintSolution();
     }
 
-    [Benchmark]
+
     public void TestMultiPlayerGameNoStatic()
     {
         var game = new Game();
@@ -88,8 +88,8 @@ public class RummiBench
 
     public static void TestMultiPlayerGame()
     {
-        Game game = new(
-            Guid.Parse("05e29f55-234b-4131-ad20-0a77c1d260b4")); //Guid.Parse("ea8d0991-d57b-4d45-8ac2-bb528d88627f")
+        Game game = new(Guid.Parse("d67b3157-f0c1-42cd-8b8b-a3b8c2435304"));
+        //Guid.Parse("9e1bf68d-78eb-436d-8ed9-c148e98a991b")
 
         var listNames = new List<string> { "Antoine", "Matthieu", "Maguy" };
         game.InitializeGame(listNames);
@@ -249,5 +249,188 @@ public class RummiBench
         }
 
         return new Set { Tiles = tiles };
+    }
+
+    public static void TestSupMark()
+    {
+        var set = new Set([
+            new Tile(1),
+            new Tile(1, TileColor.Black),
+            new Tile(1, TileColor.Mango),
+
+            new Tile(1),
+            new Tile(1, TileColor.Red),
+            new Tile(1, TileColor.Mango),
+
+            new Tile(2, TileColor.Mango),
+            new Tile(3, TileColor.Mango),
+            new Tile(true)
+        ]);
+
+        var sol = set.GetSolution();
+
+        sol.PrintSolution();
+    }
+
+    public static void TestSupMark2()
+    {
+        var set = new Set([
+            new Tile(10, TileColor.Black),
+            new Tile(11, TileColor.Black),
+            new Tile(12, TileColor.Black),
+
+            new Tile(9, TileColor.Mango),
+            new Tile(10, TileColor.Mango),
+            new Tile(11, TileColor.Mango),
+            new Tile(12, TileColor.Mango),
+
+            new Tile(10, TileColor.Red),
+            new Tile(11, TileColor.Red),
+            new Tile(true),
+
+            new Tile(8),
+            new Tile(9),
+            new Tile(10),
+            new Tile(11),
+
+            new Tile(13),
+            new Tile(13, TileColor.Mango),
+            new Tile(13, TileColor.Red)
+        ]);
+
+
+        Console.WriteLine(set.Tiles.Count);
+        var gameStopwatch = Stopwatch.StartNew();
+        var sol = set.GetSolution();
+        gameStopwatch.Stop();
+
+        sol.PrintSolution();
+        Console.WriteLine(sol.GetSet().Tiles.Count);
+        Console.WriteLine($"Game duration: {gameStopwatch.Elapsed.TotalSeconds} seconds");
+    }
+
+
+    public static void TestSupMark3()
+    {
+        var set = new Set([
+            new Tile(11),
+            new Tile(11, TileColor.Red),
+            new Tile(11, TileColor.Black),
+
+
+            new Tile(11, TileColor.Mango),
+            new Tile(12, TileColor.Mango), //lui
+            new Tile(true),
+        ]);
+
+
+        Console.WriteLine(set.Tiles.Count);
+        var gameStopwatch = Stopwatch.StartNew();
+        var sol = set.GetSolution();
+        gameStopwatch.Stop();
+
+        sol.PrintSolution();
+        Console.WriteLine(sol.GetSet().Tiles.Count);
+        Console.WriteLine($"Game duration: {gameStopwatch.Elapsed.TotalSeconds} seconds");
+    }
+
+
+    public static void TestSupMark4()
+    {
+        var set = new Set([
+            new Tile(7),
+            new Tile(7, TileColor.Mango),
+            new Tile(7, TileColor.Black),
+            new Tile(7, TileColor.Red),
+
+            new Tile(1, TileColor.Black),
+            new Tile(2, TileColor.Black),
+            new Tile(3, TileColor.Black),
+
+            new Tile(7, TileColor.Red),
+            new Tile(8, TileColor.Red),
+            new Tile(9, TileColor.Red),
+
+            new Tile(6, TileColor.Red),
+            new Tile(6, TileColor.Mango),
+            new Tile(6, TileColor.Black),
+        ]);
+
+
+        Console.WriteLine(set.Tiles.Count);
+        var gameStopwatch = Stopwatch.StartNew();
+        var sol = set.GetSolution();
+        gameStopwatch.Stop();
+
+        sol.PrintSolution();
+        Console.WriteLine(sol.GetSet().Tiles.Count);
+        Console.WriteLine($"Game duration: {gameStopwatch.Elapsed.TotalSeconds} seconds");
+    }
+
+    public static void TestSupMark5()
+    {
+        var set = new Set([
+            new Tile(1),
+            new Tile(2),
+            new Tile(3),
+            new Tile(true),
+        ]);
+
+
+        Console.WriteLine(set.Tiles.Count);
+        var gameStopwatch = Stopwatch.StartNew();
+        var sol = set.GetSolution();
+        gameStopwatch.Stop();
+
+        sol.PrintSolution();
+        Console.WriteLine(sol.GetSet().Tiles.Count);
+        Console.WriteLine($"Game duration: {gameStopwatch.Elapsed.TotalSeconds} seconds");
+    }
+
+    public static void TestSupMark6()
+    {
+        var set = new Set([
+            new Tile(1, TileColor.Black),
+            new Tile(2, TileColor.Black),
+            new Tile(3, TileColor.Black),
+
+            new Tile(2),
+            new Tile(true),
+            new Tile(4),
+
+            new Tile(7, TileColor.Red),
+            new Tile(7, TileColor.Mango),
+            new Tile(7, TileColor.Black),
+
+            new Tile(3, TileColor.Red),
+            new Tile(3, TileColor.Mango),
+            new Tile(3, TileColor.Black),
+
+            new Tile(6),
+            new Tile(6, TileColor.Red),
+            new Tile(6, TileColor.Black),
+
+            new Tile(5),
+            new Tile(5, TileColor.Mango),
+            new Tile(5, TileColor.Black),
+
+            new Tile(8, TileColor.Black),
+            new Tile(5, TileColor.Red),
+            new Tile(13, TileColor.Red),
+            new Tile(12, TileColor.Red),
+            new Tile(6, TileColor.Mango),
+            new Tile(9, TileColor.Black),
+            new Tile(2, TileColor.Mango),
+        ]);
+
+
+        Console.WriteLine(set.Tiles.Count);
+        var gameStopwatch = Stopwatch.StartNew();
+        var sol = set.GetSolution();
+        gameStopwatch.Stop();
+
+        sol.PrintSolution();
+        Console.WriteLine(sol.GetSet().Tiles.Count);
+        Console.WriteLine($"Game duration: {gameStopwatch.Elapsed.TotalSeconds} seconds");
     }
 }
