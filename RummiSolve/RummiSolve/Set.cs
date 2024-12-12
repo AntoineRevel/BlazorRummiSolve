@@ -118,11 +118,15 @@ public class Set : ISet
         {
             startIndex = Array.FindIndex(_usedTiles, startIndex, used => !used);
 
-            var solRun = TryFirstSet(GetRuns(startIndex), solution, solutionScore, startIndex);
+            if (startIndex == -1) return solution;
+            
+            var solRun = TryFirstSet(GetRuns(startIndex), solution, solutionScore, startIndex,
+                (sol, run) => sol.AddRun(run));
 
             if (solRun.IsValid) return solRun;
 
-            var solGroup = TryFirstSet(GetGroups(startIndex), solution, solutionScore, startIndex);
+            var solGroup = TryFirstSet(GetGroups(startIndex), solution, solutionScore, startIndex,
+                (sol, group) => sol.AddGroup(group));
 
             if (solGroup.IsValid) return solGroup;
 
@@ -132,7 +136,8 @@ public class Set : ISet
         return solution;
     }
 
-    private Solution TryFirstSet<TS>(IEnumerable<TS> sets, Solution solution, int solutionScore, int firstUnusedIndex)
+    private Solution TryFirstSet<TS>(IEnumerable<TS> sets, Solution solution, int solutionScore, int firstUnusedIndex,
+        Action<Solution, TS> addSetToSolution)
         where TS : ValidSet
     {
         _usedTiles[firstUnusedIndex] = true;
@@ -148,16 +153,7 @@ public class Set : ISet
 
             if (solution.IsValid)
             {
-                switch (set)
-                {
-                    case Run run:
-                        solution.AddRun(run);
-                        break;
-                    case Group group:
-                        solution.AddGroup(group);
-                        break;
-                }
-
+                addSetToSolution(solution, set);
                 return solution;
             }
 
@@ -190,16 +186,19 @@ public class Set : ISet
     {
         firstUnusedIndex = Array.FindIndex(_usedTiles, firstUnusedIndex, used => !used);
 
-        var solRun = TrySet(GetRuns(firstUnusedIndex), solution, firstUnusedIndex);
+        var solRun = TrySet(GetRuns(firstUnusedIndex), solution, firstUnusedIndex,
+            (sol, run) => sol.AddRun(run));
 
         if (solRun.IsValid) return solRun;
 
-        var solGroup = TrySet(GetGroups(firstUnusedIndex), solution, firstUnusedIndex);
+        var solGroup = TrySet(GetGroups(firstUnusedIndex), solution, firstUnusedIndex,
+            (sol, group) => sol.AddGroup(group));
 
         return solGroup.IsValid ? solGroup : Solution.GetInvalidSolution();
     }
 
-    private Solution TrySet<TS>(IEnumerable<TS> sets, Solution solution, int firstUnusedTileIndex)
+    private Solution TrySet<TS>(IEnumerable<TS> sets, Solution solution, int firstUnusedTileIndex,
+        Action<Solution, TS> addSetToSolution)
         where TS : ValidSet
     {
         _usedTiles[firstUnusedTileIndex] = true;
@@ -208,7 +207,7 @@ public class Set : ISet
             MarkTilesAsUsed(set, true);
 
             var newSolution = solution;
-            switch (_usedTiles.Count(b => !b))
+            switch (_usedTiles.Count(b => !b) + _jokers)
             {
                 case 0:
                     solution.IsValid = true;
@@ -220,16 +219,7 @@ public class Set : ISet
 
             if (newSolution.IsValid)
             {
-                switch (set)
-                {
-                    case Run run:
-                        solution.AddRun(run);
-                        break;
-                    case Group group:
-                        solution.AddGroup(group);
-                        break;
-                }
-
+                addSetToSolution(solution, set);
                 return solution;
             }
 
@@ -298,7 +288,7 @@ public class Set : ISet
     private IEnumerable<Group> GetGroups(int firstTileIndex)
     {
         var sameNumberTiles = Tiles
-            .Where((tile, index) => !_usedTiles[index] && 
+            .Where((tile, index) => !_usedTiles[index] &&
                                     tile.Value == Tiles[firstTileIndex].Value &&
                                     tile.Color != Tiles[firstTileIndex].Color)
             .Distinct()
