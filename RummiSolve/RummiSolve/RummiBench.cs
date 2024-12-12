@@ -88,7 +88,7 @@ public class RummiBench
 
     public static void TestMultiPlayerGame()
     {
-        Game game = new(Guid.Parse("9e1bf68d-78eb-436d-8ed9-c148e98a991b")); 
+        Game game = new(Guid.Parse("0737b44c-7b35-41a8-abbd-53e6a389c609")); 
         //Guid.Parse("9e1bf68d-78eb-436d-8ed9-c148e98a991b")
         
         var listNames = new List<string> { "Antoine", "Matthieu", "Maguy" };
@@ -387,6 +387,54 @@ public class RummiBench
         Console.WriteLine(set.Tiles.Count);
         var gameStopwatch = Stopwatch.StartNew();
         var sol = set.GetFirstSolution();
+        gameStopwatch.Stop();
+        
+        sol.PrintSolution();
+        Console.WriteLine(sol.GetSet().Tiles.Count);
+        Console.WriteLine($"Game duration: {gameStopwatch.Elapsed.TotalSeconds} seconds");
+    }
+    
+    public static void TestSupMark6()
+    {
+        var set = new Set([
+            
+            new Tile(1,TileColor.Black),
+            new Tile(2,TileColor.Black),
+            new Tile(3,TileColor.Black),
+            
+            new Tile(2),
+            new Tile(true),
+            new Tile(4),
+            
+            new Tile(7,TileColor.Red),
+            new Tile(7,TileColor.Mango),
+            new Tile(7,TileColor.Black),
+            
+            new Tile(3,TileColor.Red),
+            new Tile(3,TileColor.Mango),
+            new Tile(3,TileColor.Black),
+            
+            new Tile(6),
+            new Tile(6,TileColor.Red),
+            new Tile(6,TileColor.Black),
+            
+            new Tile(5),
+            new Tile(5,TileColor.Mango),
+            new Tile(5,TileColor.Black),
+            
+            new Tile(8,TileColor.Black),
+            new Tile(5,TileColor.Red),
+            new Tile(13,TileColor.Red),
+            new Tile(12,TileColor.Red),
+            new Tile(6,TileColor.Mango),
+            new Tile(9,TileColor.Black),
+            new Tile(2,TileColor.Mango),
+        ]);
+        
+
+        Console.WriteLine(set.Tiles.Count);
+        var gameStopwatch = Stopwatch.StartNew();
+        var sol = set.GetSolution();
         gameStopwatch.Stop();
         
         sol.PrintSolution();
