@@ -141,7 +141,7 @@ public class Set : ISet
         _usedTiles[firstUnusedIndex] = true;
         foreach (var set in sets)
         {
-            MarkTilesAsUsed(set, true);
+            MarkTilesAsUsed(set, true, firstUnusedIndex);
 
             var newSolutionScore = solutionScore + set.GetScore();
 
@@ -155,7 +155,7 @@ public class Set : ISet
                 return solution;
             }
 
-            MarkTilesAsUsed(set, false);
+            MarkTilesAsUsed(set, false, firstUnusedIndex);
         }
 
         _usedTiles[firstUnusedIndex] = false;
@@ -163,11 +163,11 @@ public class Set : ISet
         return solution;
     }
 
-    private void MarkTilesAsUsed(ValidSet set, bool isUsed)
+    private void MarkTilesAsUsed(ValidSet set, bool isUsed, int firstUnusedIndex)
     {
         foreach (var tile in set.Tiles[0].IsJoker ? set.Tiles.Skip(2) : set.Tiles.Skip(1))
         {
-            for (var i = 0; i < Tiles.Count; i++)
+            for (var i = firstUnusedIndex+1; i < Tiles.Count; i++)
             {
                 if (_usedTiles[i] == isUsed || !Tiles[i].Equals(tile)) continue;
 
@@ -202,7 +202,7 @@ public class Set : ISet
         _usedTiles[firstUnusedTileIndex] = true;
         foreach (var set in sets)
         {
-            MarkTilesAsUsed(set, true);
+            MarkTilesAsUsed(set, true, firstUnusedTileIndex);
 
             var newSolution = solution;
             switch (_usedTiles.Count(b => !b) + _jokers)
@@ -221,7 +221,7 @@ public class Set : ISet
                 return solution;
             }
 
-            MarkTilesAsUsed(set, false);
+            MarkTilesAsUsed(set, false, firstUnusedTileIndex);
         }
 
         _usedTiles[firstUnusedTileIndex] = false;

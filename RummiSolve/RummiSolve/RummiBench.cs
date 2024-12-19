@@ -19,8 +19,8 @@ public class RummiBench
 
     public static void TestMultiPlayerGame()
     {
-        Game game = new(Guid.Parse("93ce558e-6da6-4d27-8c50-691d469e7f86"));
-        //Guid.Parse("4e8b9e81-216b-4de6-8984-bcd7b7bbd3ac")
+        Game game = new(Guid.Parse("1f0a8141-2f10-4b05-bf82-f3725c713eff"));
+        //Guid.Parse("f194c3b0-8088-452c-b180-66614ba2f6d7")
 
         var listNames = new List<string> { "Antoine", "Matthieu", "Maguy" };
         game.InitializeGame(listNames);
