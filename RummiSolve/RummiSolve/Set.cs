@@ -167,7 +167,7 @@ public class Set : ISet
     {
         foreach (var tile in set.Tiles[0].IsJoker ? set.Tiles.Skip(2) : set.Tiles.Skip(1))
         {
-            for (var i = firstUnusedIndex+1; i < Tiles.Count; i++)
+            for (var i = firstUnusedIndex + 1; i < Tiles.Count; i++)
             {
                 if (_usedTiles[i] == isUsed || !Tiles[i].Equals(tile)) continue;
 
