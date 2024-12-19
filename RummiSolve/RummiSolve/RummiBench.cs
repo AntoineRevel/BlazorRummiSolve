@@ -34,22 +34,13 @@ public class RummiBench
     public static void TestSupMark2()
     {
         var set = new Set([
-            new Tile(5, TileColor.Black),
-            new Tile(6, TileColor.Black),
-            new Tile(true), // Joker
-            new Tile(8, TileColor.Black),
-            new Tile(9, TileColor.Black),
-            
-            new Tile(11, TileColor.Mango),
-            new Tile(12, TileColor.Mango),
-            new Tile(13, TileColor.Mango),
-            
-            new Tile(9, TileColor.Mango),
-            new Tile(10, TileColor.Mango),
-            new Tile(11, TileColor.Mango),
-            new Tile(12, TileColor.Mango),
-            
-            new Tile(8,TileColor.Mango),
+            new Tile(true),
+
+            new Tile(11),
+            new Tile(12),
+            new Tile(12),
+            new Tile(13),
+            new Tile(13),
             
         ]);
 

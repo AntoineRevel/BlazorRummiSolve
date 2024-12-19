@@ -359,6 +359,39 @@ public class SetTests
 
         Assert.Equal(set.Tiles.Count + 1, solution.GetSet().Tiles.Count);
     }
+    
+    [Fact]
+    public void GetSolution_ReturnsValidGroupAndRunJoker4()
+    {
+        // Arrange
+        var set = new Set([
+            new Tile(5, TileColor.Black),
+            new Tile(6, TileColor.Black),
+            new Tile(true), // Joker
+            new Tile(8, TileColor.Black),
+            new Tile(9, TileColor.Black),
+            
+            new Tile(11, TileColor.Mango),
+            new Tile(12, TileColor.Mango),
+            new Tile(13, TileColor.Mango),
+            
+            new Tile(9, TileColor.Mango),
+            new Tile(10, TileColor.Mango),
+            new Tile(11, TileColor.Mango),
+            new Tile(12, TileColor.Mango),
+            
+            new Tile(8,TileColor.Mango),
+            
+        ]);
+
+        // Act
+        var solution = set.GetSolution();
+
+        // Assert
+        Assert.True(solution.IsValid);
+
+        Assert.Equal(set.Tiles.Count + 1, solution.GetSet().Tiles.Count);
+    }
 
     [Theory]
     [InlineData(2)]
