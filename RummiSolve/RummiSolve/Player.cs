@@ -116,7 +116,7 @@ public class Player
         Write("Play: ");
         finalRackSet.PrintAllTiles();
         WriteLine();
-        if (newBoard != boardCount) throw new Exception();
+        if (newBoard != boardCount) throw new Exception(); //delete todo
         return finalSolution;
     }
 
