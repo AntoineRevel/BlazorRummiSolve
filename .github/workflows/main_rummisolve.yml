@@ -21,6 +21,9 @@ jobs:
           
       - name: Build with dotnet
         run: dotnet build --configuration Release
+        
+      - name: Test with the dotnet CLI
+        run: dotnet test
 
       - name: dotnet publish
         run: dotnet publish BlazorRummiSolve/BlazorRummiSolve.csproj -c Release -o ./publish
