@@ -80,7 +80,7 @@ public class SetTests
         var solution = set.GetSolution();
 
         // Assert
-        Assert.True(solution.IsValid);
+        Assert.False(solution.IsValid);
     }
     
     [Fact]
