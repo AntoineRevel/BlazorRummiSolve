@@ -19,8 +19,8 @@ public class RummiBench
 
     public static void TestMultiPlayerGame()
     {
-        Game game = new(Guid.Parse("d67b3157-f0c1-42cd-8b8b-a3b8c2435304"));
-        //Guid.Parse("9e1bf68d-78eb-436d-8ed9-c148e98a991b")
+        Game game = new(Guid.Parse("93ce558e-6da6-4d27-8c50-691d469e7f86"));
+        //Guid.Parse("4e8b9e81-216b-4de6-8984-bcd7b7bbd3ac")
 
         var listNames = new List<string> { "Antoine", "Matthieu", "Maguy" };
         game.InitializeGame(listNames);
@@ -30,6 +30,39 @@ public class RummiBench
         Console.WriteLine($"Game duration: {gameStopwatch.Elapsed.TotalSeconds} seconds");
     }
     
+    
+    public static void TestSupMark2()
+    {
+        var set = new Set([
+            new Tile(5, TileColor.Black),
+            new Tile(6, TileColor.Black),
+            new Tile(true), // Joker
+            new Tile(8, TileColor.Black),
+            new Tile(9, TileColor.Black),
+            
+            new Tile(11, TileColor.Mango),
+            new Tile(12, TileColor.Mango),
+            new Tile(13, TileColor.Mango),
+            
+            new Tile(9, TileColor.Mango),
+            new Tile(10, TileColor.Mango),
+            new Tile(11, TileColor.Mango),
+            new Tile(12, TileColor.Mango),
+            
+            new Tile(8,TileColor.Mango),
+            
+        ]);
+
+
+        Console.WriteLine(set.Tiles.Count);
+        var gameStopwatch = Stopwatch.StartNew();
+        var sol = set.GetSolution();
+        gameStopwatch.Stop();
+
+        sol.PrintSolution();
+        Console.WriteLine(sol.GetSet().Tiles.Count);
+        Console.WriteLine($"Game duration: {gameStopwatch.Elapsed.TotalSeconds} seconds");
+    }
     
     
 }

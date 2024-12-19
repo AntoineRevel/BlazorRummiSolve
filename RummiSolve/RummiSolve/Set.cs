@@ -117,7 +117,7 @@ public class Set : ISet
             startIndex = Array.FindIndex(_usedTiles, startIndex, used => !used);
 
             if (startIndex == -1) return solution;
-            
+
             var solRun = TryFirstSet(GetRuns(startIndex), solution, solutionScore, startIndex,
                 (sol, run) => sol.AddRun(run));
 
@@ -165,7 +165,7 @@ public class Set : ISet
 
     private void MarkTilesAsUsed(ValidSet set, bool isUsed)
     {
-        foreach (var tile in set.Tiles.Skip(1))
+        foreach (var tile in set.Tiles[0].IsJoker ? set.Tiles.Skip(2) : set.Tiles.Skip(1))
         {
             for (var i = 0; i < Tiles.Count; i++)
             {

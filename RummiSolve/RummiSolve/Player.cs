@@ -55,6 +55,8 @@ public class Player
         if (!_played) return SolveFirst(boardSolution);
         var boardSet = boardSolution.GetSet();
 
+        var countOldBoard = boardSet.Tiles.Count;
+
         var firstRackSolution = boardSet.ConcatNew(new Set(_rackTilesSet.Tiles)).GetSolution();
         if (firstRackSolution.IsValid)
         {
@@ -78,11 +80,11 @@ public class Player
             Parallel.ForEach(rackSetsToTry, (currentRackSet, state) =>
             {
                 if (finalRackSet != null) state.Stop();
-            
+
                 var solution = boardSet.ConcatNew(currentRackSet).GetSolution();
-            
+
                 if (!solution.IsValid) return;
-            
+
                 lock (locker)
                 {
                     if (finalRackSet != null) return;
@@ -91,7 +93,7 @@ public class Player
                     state.Stop();
                 }
             });
-            
+
             // foreach (var currentRackSet in rackSetsToTry)
             // {
             //     var solution = boardSet.ConcatNew(currentRackSet).GetSolution();
@@ -106,12 +108,15 @@ public class Player
 
         if (finalRackSet == null) return finalSolution;
 
-        TilesToPlay = finalRackSet.Tiles;
+        var newBoard = countOldBoard + finalRackSet.Tiles.Count;
+        var boardCount = finalSolution.GetSet().Tiles.Count;
 
+        WriteLine(newBoard + " vs get : " + boardCount);
+        TilesToPlay = finalRackSet.Tiles;
         Write("Play: ");
         finalRackSet.PrintAllTiles();
         WriteLine();
-
+        if (newBoard != boardCount) throw new Exception();
         return finalSolution;
     }
 
