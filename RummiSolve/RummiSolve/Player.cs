@@ -122,7 +122,7 @@ public class Player
 
     private Solution SolveFirst(Solution boardSolution)
     {
-        var finalSolution = new Set(_rackTilesSet.Tiles).GetFirstSolution(); //TONO nocopy Tiles et joker readonly
+        var finalSolution = new Set(_rackTilesSet.Tiles).GetFirstSolution(); // nocopy Tiles et joker readonly Todo
         if (!finalSolution.IsValid) return finalSolution;
 
         TilesToPlay = finalSolution.GetSet().Tiles;
