@@ -1,6 +1,6 @@
 namespace RummiSolve;
 
-internal class SolverSet
+public class SolverSet
 {
     private readonly Tile[] _tiles;
     private readonly bool[] _usedTiles;
@@ -23,8 +23,80 @@ internal class SolverSet
     {
         return 0;
     }
+
     
-    
+    public Solution GetSolution()
+    {
+        if (_tiles.Length + _jokers <= 2) return _tiles.Length == 0 ? new Solution() : Solution.GetInvalidSolution();
+
+        var solution = FindSolution(new Solution(), 0);
+
+        return solution.IsValid ? solution : Solution.GetInvalidSolution();
+    }
+    private Solution FindSolution(Solution solution, int firstUnusedIndex)
+    {
+        firstUnusedIndex = Array.FindIndex(_usedTiles, firstUnusedIndex, used => !used);
+
+        var solRun = TrySet(GetRuns(firstUnusedIndex), solution, firstUnusedIndex,
+            (sol, run) => sol.AddRun(run));
+
+        if (solRun.IsValid) return solRun;
+
+        var solGroup = TrySet(GetGroups(firstUnusedIndex), solution, firstUnusedIndex,
+            (sol, group) => sol.AddGroup(group));
+
+        return solGroup.IsValid ? solGroup : Solution.GetInvalidSolution();
+    }
+
+    private Solution TrySet<TS>(IEnumerable<TS> sets, Solution solution, int firstUnusedTileIndex,
+        Action<Solution, TS> addSetToSolution)
+        where TS : ValidSet
+    {
+        _usedTiles[firstUnusedTileIndex] = true;
+        foreach (var set in sets)
+        {
+            MarkTilesAsUsed(set, true, firstUnusedTileIndex);
+
+            var newSolution = solution;
+            switch (_usedTiles.Count(b => !b) + _jokers)
+            {
+                case 0:
+                    solution.IsValid = true;
+                    break;
+                case > 2:
+                    newSolution = FindSolution(solution, firstUnusedTileIndex);
+                    break;
+            }
+
+            if (newSolution.IsValid)
+            {
+                addSetToSolution(solution, set);
+                return solution;
+            }
+
+            MarkTilesAsUsed(set, false, firstUnusedTileIndex);
+        }
+
+        _usedTiles[firstUnusedTileIndex] = false;
+
+        return solution;
+    }
+
+    private void MarkTilesAsUsed(ValidSet set, bool isUsed, int firstUnusedIndex)
+    {
+        foreach (var tile in set.Tiles[0].IsJoker ? set.Tiles.Skip(2) : set.Tiles.Skip(1))
+        {
+            for (var i = firstUnusedIndex + 1; i < _tiles.Length; i++)
+            {
+                if (_usedTiles[i] == isUsed || !_tiles[i].Equals(tile)) continue;
+
+                _usedTiles[i] = isUsed;
+                break;
+            }
+        }
+
+        _jokers += isUsed ? -set.Jokers : set.Jokers;
+    }
 
     private IEnumerable<Run> GetRuns(int tileIndex)
     {

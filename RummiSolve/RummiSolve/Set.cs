@@ -2,8 +2,7 @@ namespace RummiSolve;
 
 public class Set : ISet
 {
-    private bool _isSorted;
-    private int _jokers;
+    public int Jokers;
     public List<Tile> Tiles;
     private bool[] _usedTiles = [];
 
@@ -15,13 +14,13 @@ public class Set : ISet
     public Set(List<Tile> tiles)
     {
         Tiles = [..tiles];
-        _jokers = Tiles.Count(tile => tile.IsJoker);
+        Jokers = Tiles.Count(tile => tile.IsJoker);
     }
 
     public Set(Set set)
     {
         Tiles = [..set.Tiles];
-        _jokers = set._jokers;
+        Jokers = set.Jokers;
     }
 
     public int GetScore()
@@ -32,8 +31,7 @@ public class Set : ISet
     public void AddTile(Tile tile)
     {
         Tiles.Add(tile);
-        if (tile.IsJoker) _jokers++;
-        _isSorted = false;
+        if (tile.IsJoker) Jokers++;
     }
 
     public void Concat(ValidSet set)
@@ -41,8 +39,7 @@ public class Set : ISet
         ArgumentNullException.ThrowIfNull(set);
 
         Tiles.AddRange(set.Tiles);
-        _jokers += set.Jokers;
-        _isSorted = false;
+        Jokers += set.Jokers;
     }
 
     public Set ConcatNew(Set set)
@@ -52,11 +49,11 @@ public class Set : ISet
         var newSet = new Set
         {
             Tiles = [..Tiles],
-            _jokers = _jokers
+            Jokers = Jokers
         };
 
         newSet.Tiles.AddRange(set.Tiles);
-        newSet._jokers += set._jokers;
+        newSet.Jokers += set.Jokers;
         return newSet;
     }
 
@@ -65,7 +62,7 @@ public class Set : ISet
     {
         Tiles.Remove(tile);
 
-        if (tile.IsJoker) _jokers--;
+        if (tile.IsJoker) Jokers--;
     }
 
 
@@ -73,23 +70,22 @@ public class Set : ISet
     {
         foreach (var tile in Tiles) tile.PrintTile();
     }
+    
 
-    private void Sort()
+    public Solution GetSolution(Set playerSet)
     {
-        if (_isSorted) return;
-        Tiles.Sort();
-        _isSorted = true;
+        return Solution.GetInvalidSolution();
     }
 
     public Solution GetSolution()
     {
-        Sort();
+        Tiles.Sort();
 
-        if (_jokers > 0) Tiles.RemoveRange(Tiles.Count - _jokers, _jokers); //remove remove todo
+        if (Jokers > 0) Tiles.RemoveRange(Tiles.Count - Jokers, Jokers); //remove remove todo
         var length = Tiles.Count;
         _usedTiles = new bool[length];
 
-        if (length + _jokers <= 2) return length == 0 ? new Solution() : Solution.GetInvalidSolution();
+        if (length + Jokers <= 2) return length == 0 ? new Solution() : Solution.GetInvalidSolution();
 
         var solution = FindSolution(new Solution(), 0);
 
@@ -98,12 +94,12 @@ public class Set : ISet
 
     public Solution GetFirstSolution()
     {
-        Sort();
+        Tiles.Sort();
 
-        if (_jokers > 0) Tiles.RemoveRange(Tiles.Count - _jokers, _jokers);
+        if (Jokers > 0) Tiles.RemoveRange(Tiles.Count - Jokers, Jokers);
         var length = Tiles.Count;
 
-        if (length + _jokers <= 2) return length == 0 ? new Solution { IsValid = true } : Solution.GetInvalidSolution();
+        if (length + Jokers <= 2) return length == 0 ? new Solution { IsValid = true } : Solution.GetInvalidSolution();
 
         _usedTiles = new bool[length];
 
@@ -176,7 +172,7 @@ public class Set : ISet
             }
         }
 
-        _jokers += isUsed ? -set.Jokers : set.Jokers;
+        Jokers += isUsed ? -set.Jokers : set.Jokers;
     }
 
 
@@ -205,7 +201,7 @@ public class Set : ISet
             MarkTilesAsUsed(set, true, firstUnusedTileIndex);
 
             var newSolution = solution;
-            switch (_usedTiles.Count(b => !b) + _jokers)
+            switch (_usedTiles.Count(b => !b) + Jokers)
             {
                 case 0:
                     solution.IsValid = true;
@@ -231,7 +227,7 @@ public class Set : ISet
 
     private IEnumerable<Run> GetRuns(int tileIndex)
     {
-        var availableJokers = _jokers;
+        var availableJokers = Jokers;
         var color = Tiles[tileIndex].Color;
         var currentRun = new List<Tile> { Tiles[tileIndex] };
         var i = tileIndex + 1;
@@ -254,7 +250,7 @@ public class Set : ISet
 
                 if (currentRun.Count < 3) continue;
 
-                var jokersUsed = _jokers - availableJokers;
+                var jokersUsed = Jokers - availableJokers;
 
                 yield return new Run
                 {
@@ -273,7 +269,7 @@ public class Set : ISet
 
             if (currentRun.Count < 3) continue;
 
-            var jokersUsedJ = _jokers - availableJokers;
+            var jokersUsedJ = Jokers - availableJokers;
 
             yield return new Run
             {
@@ -294,7 +290,7 @@ public class Set : ISet
 
         var size = sameNumberTiles.Count;
 
-        if (_jokers == 0)
+        if (Jokers == 0)
         {
             if (size < 2) yield break;
 
@@ -317,7 +313,7 @@ public class Set : ISet
         }
         else
         {
-            for (var jokersUsed = 0; jokersUsed <= _jokers; jokersUsed++)
+            for (var jokersUsed = 0; jokersUsed <= Jokers; jokersUsed++)
             for (var tilesUsed = 2; tilesUsed <= size + 1; tilesUsed++)
             {
                 var totalTiles = tilesUsed + jokersUsed;

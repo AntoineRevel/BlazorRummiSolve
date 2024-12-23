@@ -77,6 +77,37 @@ public class Game(Guid id)
         CurrentPlayerIndex = (CurrentPlayerIndex + 1) % Players.Count;
         if (CurrentPlayerIndex == 0) Turn++;
     }
+    
+    public void PlayCurrentPlayerTurn_New(Player currentPlayer)
+    {
+        if (IsGameOver) return;
+
+        WriteLine(Turn + " => ___   " + currentPlayer.Name + "'s turn   ___");
+
+        if (NextPlayerSolution.IsValid) BoardSolution = NextPlayerSolution;
+
+        //NextPlayerSolution = currentPlayer.Solve_New(BoardSolution);
+
+        currentPlayer.SaveRack();
+
+        if (NextPlayerSolution.IsValid)
+        {
+            currentPlayer.RemoveTilePlayed();
+            _noPlay = 0;
+        }
+        else
+        {
+            WriteLine(currentPlayer.Name + " can't play.");
+            var drawTile = _tilePool.Dequeue();
+            currentPlayer.SetLastDrewTile(drawTile);
+            Write("Drew tile: ");
+            drawTile.PrintTile();
+            WriteLine();
+            currentPlayer.AddTileToRack(drawTile);
+            _noPlay++;
+        }
+    }
+
 
 
     public void PlayCurrentPlayerTurn(Player currentPlayer)

@@ -35,4 +35,21 @@ public class RummiBench
         Console.WriteLine($"Game duration: {gameStopwatch.Elapsed.TotalSeconds} seconds");
     }
     
+    public static void GetFirstSolution_ReturnsValidSolutionIfPossible()
+    {
+        // Arrange
+        var tiles = new List<Tile>
+        {
+            new(3, TileColor.Red),
+            new(4, TileColor.Red),
+            new(5, TileColor.Red)
+        };
+        var set = new Set(tiles);
+
+        // Act
+        var solution = SolverSet.Create(set, set).GetSolution();
+
+        solution.PrintSolution();
+        // Assert
+    }
 }
