@@ -51,7 +51,10 @@ public class RummiBench
         ]);
 
         // Act
-        var solution = SolverSet.Create(boardSet, playerSet, true).GetSolution();
+        var solver = SolverSet.Create(boardSet, playerSet,true);
+        solver.SearchSolution();
+        var solution = solver.BestSolution;
+        var tileToPlay = solver.TilesToPlay;
 
         solution.PrintSolution();
         // Assert
@@ -73,8 +76,9 @@ public class RummiBench
 
 
         var solver = SolverSet.Create(boardSet, playerSet);
-        var solution = solver.GetSolution();
-        var tileToPlay = solver.GetTilesToPlay();
+        solver.SearchSolution();
+        var solution = solver.BestSolution;
+        var tileToPlay = solver.TilesToPlay;
 
         solution.PrintSolution();
         foreach (var tile in tileToPlay)

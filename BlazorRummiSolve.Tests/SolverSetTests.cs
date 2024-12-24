@@ -21,10 +21,15 @@ public class SolverSetTests
         ]);
 
         // Act
-        var solution = SolverSet.Create(boardSet, playerSet).GetSolution();
-
+        var solver = SolverSet.Create(boardSet, playerSet);
+        solver.SearchSolution();
+        var solution = solver.BestSolution;
+        var tileToPlay = solver.TilesToPlay;
+        
         // Assert
         Assert.True(solution.IsValid);
+        var t = Assert.Single(tileToPlay);
+        Assert.Equal(11, t.Value);
     }
     
     [Fact]
@@ -33,7 +38,7 @@ public class SolverSetTests
         // Arrange
         var boardSet = new Set([
             new Tile(8),
-            new Tile(9, TileColor.Blue, true),
+            new Tile(true),
             new Tile(10),
         ]);
         
@@ -44,10 +49,15 @@ public class SolverSetTests
         ]);
 
         // Act
-        var solution = SolverSet.Create(boardSet, playerSet).GetSolution();
+        var solver = SolverSet.Create(boardSet, playerSet);
+        solver.SearchSolution();
+        var solution = solver.BestSolution;
+        var tileToPlay = solver.TilesToPlay;
 
         // Assert
         Assert.True(solution.IsValid);
+        var t = Assert.Single(tileToPlay);
+        Assert.Equal(11, t.Value);
     }
     
     [Fact]
@@ -68,9 +78,41 @@ public class SolverSetTests
         ]);
 
         // Act
-        var solution = SolverSet.Create(boardSet, playerSet,true).GetSolution();
+        var solver = SolverSet.Create(boardSet, playerSet, true);
+        solver.SearchSolution();
+        var solution = solver.BestSolution;
+        var tileToPlay = solver.TilesToPlay;
 
         // Assert
         Assert.True(solution.IsValid);
     }
+
+    [Fact]
+    public void SearchSolution_First()
+    {
+        // Arrange
+        var boardSet = new Set([
+            new Tile(1, TileColor.Red),
+            new Tile(2, TileColor.Red),
+            new Tile(3, TileColor.Red),
+        ]);
+
+        var playerSet = new Set([
+            new Tile(1),
+            new Tile(2),
+            new Tile(4, TileColor.Red),
+        ]);
+        
+        // Act
+        var solver = SolverSet.Create(boardSet, playerSet);
+        solver.SearchSolution();
+        var solution = solver.BestSolution;
+        var tileToPlay = solver.TilesToPlay;
+        
+        // Assert
+        Assert.True(solution.IsValid);
+        var t = Assert.Single(tileToPlay);
+        Assert.Equal(4, t.Value);
+    }
+
 }

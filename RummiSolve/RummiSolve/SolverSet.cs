@@ -6,51 +6,71 @@ public class SolverSet
     private readonly bool[] _usedTiles;
     private readonly bool[] _isPlayerTile;
     private readonly int _playerJokers;
+    private readonly int _availableJokers;
     private int _jokers;
     private readonly bool _isFirst;
-    private readonly Func<bool> _validateCondition;
+
+    public Solution BestSolution { get; private set; } = new();
+    private bool[] _bestUsedTiles;
+    private int _bestSolutionScore;
+
+    public IEnumerable<Tile> TilesToPlay => _tiles.Where((_, i) => _isPlayerTile[i] && _bestUsedTiles[i]);
 
     private SolverSet(Tile[] tiles, int jokers, bool[] isPlayerTile, int playerJokers, bool isFirst)
     {
         _tiles = tiles;
         _jokers = jokers;
+        _availableJokers = jokers;
         _usedTiles = new bool[tiles.Length];
         _isPlayerTile = isPlayerTile;
         _playerJokers = playerJokers;
         _isFirst = isFirst;
-        _validateCondition = isFirst ? ValidateFirst : ValidateUsedAllBoardTile;
+        _bestUsedTiles = _usedTiles;
+        _bestSolutionScore = isFirst ? 29 : 0;
     }
 
-    private bool ValidateUsedAllBoardTile()
+    private bool ValidateCondition()
     {
-        return !_usedTiles.Where((use, i) => !use && !_isPlayerTile[i]).Any();
+        var allBoardTilesUsed = !_usedTiles.Where((use, i) => !use && !_isPlayerTile[i]).Any();
+
+        return allBoardTilesUsed && GetPlayerScore() > _bestSolutionScore;
     }
 
-    private bool ValidateFirst()
+    private int GetPlayerScore()
     {
-        var score = _tiles.Where((t, i) => _usedTiles[i]).Sum(t => t.Value);
-        return score >= 30;
+        return _tiles.Where((t, i) => _usedTiles[i]).Sum(t => t.Value);
     }
-    public IEnumerable<Tile> GetTilesToPlay() => _tiles.Where((_, i) => _isPlayerTile[i] && _usedTiles[i]);
-    
+
     public int JokerToPlay()
     {
         return 0;
     }
-    
-    public Solution GetSolution()
-    {
-        if (_tiles.Length + _jokers <= 2) Solution.GetInvalidSolution();
 
-        return FindSolution(new Solution(), 0);
+    public void SearchSolution()
+    {
+        if (_tiles.Length + _jokers <= 2) return;
+        
+        while (true)
+        {
+            var newSolution = FindSolution(new Solution(), 0);
+
+            if (!newSolution.IsValid) break;
+            BestSolution = newSolution;
+            _bestUsedTiles = _usedTiles.ToArray();
+            _bestSolutionScore = GetPlayerScore();
+            Array.Fill(_usedTiles, false);
+            _jokers = _availableJokers;
+        }
     }
 
-    
+
     private Solution FindSolution(Solution solution, int startIndex)
     {
         while (startIndex < _usedTiles.Length - 1)
         {
             startIndex = Array.FindIndex(_usedTiles, startIndex, used => !used);
+
+            if (startIndex == -1) return solution;
 
             var solRun = TrySet(GetRuns(startIndex), solution, startIndex,
                 (sol, run) => sol.AddRun(run));
@@ -68,7 +88,7 @@ public class SolverSet
 
         return solution;
     }
-    
+
 
     private Solution TrySet<TS>(IEnumerable<TS> sets, Solution solution, int firstUnusedTileIndex,
         Action<Solution, TS> addSetToSolution)
@@ -81,7 +101,7 @@ public class SolverSet
 
             var newSolution = solution;
 
-            if (_validateCondition()) solution.IsValid = true;
+            if (ValidateCondition()) solution.IsValid = true;
             else newSolution = FindSolution(solution, firstUnusedTileIndex);
 
             if (newSolution.IsValid)
