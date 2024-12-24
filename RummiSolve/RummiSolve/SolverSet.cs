@@ -7,14 +7,16 @@ public class SolverSet
     private readonly bool[] _isPlayerTile;
     private readonly int _playerJokers;
     private int _jokers;
+    private readonly bool _isFirst;
 
-    private SolverSet(Tile[] tiles, int jokers, bool[] isPlayerTile, int playerJokers)
+    private SolverSet(Tile[] tiles, int jokers, bool[] isPlayerTile, int playerJokers, bool isFirst)
     {
         _tiles = tiles;
         _jokers = jokers;
         _usedTiles = new bool[tiles.Length];
         _isPlayerTile = isPlayerTile;
         _playerJokers = playerJokers;
+        _isFirst = isFirst;
     }
 
     public IEnumerable<Tile> GetTilesToPlay() => _tiles.Where((_, i) => _isPlayerTile[i] && _usedTiles[i]);
@@ -24,32 +26,75 @@ public class SolverSet
         return 0;
     }
 
-    
+
     public Solution GetSolution()
     {
-        if (_tiles.Length + _jokers <= 2) return _tiles.Length == 0 ? new Solution() : Solution.GetInvalidSolution();
+        if (_tiles.Length + _jokers <= 2) Solution.GetInvalidSolution();
 
-        var solution = FindSolution(new Solution(), 0);
-
-        return solution.IsValid ? solution : Solution.GetInvalidSolution();
+        return _isFirst ? FindFirstSolution(new Solution(), 0) : FindSolution(new Solution(), 0);
     }
-    private Solution FindSolution(Solution solution, int firstUnusedIndex)
+
+    private Solution FindFirstSolution(Solution solution, int startIndex)
     {
-        firstUnusedIndex = Array.FindIndex(_usedTiles, firstUnusedIndex, used => !used);
+        while (startIndex < _usedTiles.Length - 1)
+        {
+            startIndex = Array.FindIndex(_usedTiles, startIndex, used => !used);
 
-        var solRun = TrySet(GetRuns(firstUnusedIndex), solution, firstUnusedIndex,
-            (sol, run) => sol.AddRun(run));
+            if (startIndex == -1) return solution;
 
-        if (solRun.IsValid) return solRun;
+            var solRun = TrySet(GetRuns(startIndex), solution, startIndex,
+                (sol, run) => sol.AddRun(run), ValidateFirst);
 
-        var solGroup = TrySet(GetGroups(firstUnusedIndex), solution, firstUnusedIndex,
-            (sol, group) => sol.AddGroup(group));
+            if (solRun.IsValid) return solRun;
 
-        return solGroup.IsValid ? solGroup : Solution.GetInvalidSolution();
+            var solGroup = TrySet(GetGroups(startIndex), solution, startIndex,
+                (sol, group) => sol.AddGroup(group), ValidateFirst);
+
+            if (solGroup.IsValid) return solGroup;
+
+            startIndex++;
+        }
+
+        return solution;
     }
+
+    private Solution FindSolution(Solution solution, int startIndex)
+    {
+        while (startIndex < _usedTiles.Length - 1)
+        {
+            startIndex = Array.FindIndex(_usedTiles, startIndex, used => !used);
+
+            var solRun = TrySet(GetRuns(startIndex), solution, startIndex,
+                (sol, run) => sol.AddRun(run), ValidateUsedAllBoardTile);
+
+            if (solRun.IsValid) return solRun;
+
+            var solGroup = TrySet(GetGroups(startIndex), solution, startIndex,
+                (sol, group) => sol.AddGroup(group), ValidateUsedAllBoardTile);
+
+            if (solGroup.IsValid) return solGroup;
+
+            if (_isPlayerTile[startIndex]) startIndex++;
+            else return solution;
+        }
+
+        return solution;
+    }
+
+    private bool ValidateUsedAllBoardTile()
+    {
+        return !_usedTiles.Where((use, i) => !use && !_isPlayerTile[i]).Any();
+    }
+
+    private bool ValidateFirst()
+    {
+        var score = _tiles.Where((t, i) => _usedTiles[i]).Sum(t => t.Value);
+        return score >= 30;
+    }
+
 
     private Solution TrySet<TS>(IEnumerable<TS> sets, Solution solution, int firstUnusedTileIndex,
-        Action<Solution, TS> addSetToSolution)
+        Action<Solution, TS> addSetToSolution, Func<bool> validateCondition)
         where TS : ValidSet
     {
         _usedTiles[firstUnusedTileIndex] = true;
@@ -58,15 +103,9 @@ public class SolverSet
             MarkTilesAsUsed(set, true, firstUnusedTileIndex);
 
             var newSolution = solution;
-            switch (_usedTiles.Count(b => !b) + _jokers)
-            {
-                case 0:
-                    solution.IsValid = true;
-                    break;
-                case > 2:
-                    newSolution = FindSolution(solution, firstUnusedTileIndex);
-                    break;
-            }
+
+            if (validateCondition()) solution.IsValid = true;
+            else newSolution = FindSolution(solution, firstUnusedTileIndex);
 
             if (newSolution.IsValid)
             {
@@ -215,14 +254,15 @@ public class SolverSet
         }
     }
 
-    public static SolverSet Create(Set boardSet, Set playerSet)
+    public static SolverSet Create(Set boardSet, Set playerSet, bool isFirst = false)
     {
-        var combined = new List<(Tile tile, bool isPlayerTile)>(boardSet.Tiles.Count + playerSet.Tiles.Count);
+        var capacity = isFirst ? playerSet.Tiles.Count : boardSet.Tiles.Count + playerSet.Tiles.Count;
+        var combined = new List<(Tile tile, bool isPlayerTile)>(capacity);
 
-        combined.AddRange(boardSet.Tiles.Select(tile => (tile, false)));
+        if (!isFirst) combined.AddRange(boardSet.Tiles.Select(tile => (tile, false)));
         combined.AddRange(playerSet.Tiles.Select(tile => (tile, true)));
 
-        var totalJokers = boardSet.Jokers + playerSet.Jokers;
+        var totalJokers = isFirst ? playerSet.Jokers : boardSet.Jokers + playerSet.Jokers;
 
         combined.Sort((x, y) =>
         {
@@ -239,7 +279,8 @@ public class SolverSet
             finalTiles,
             totalJokers,
             isPlayerTile,
-            playerSet.Jokers
+            playerSet.Jokers,
+            isFirst
         );
     }
 
