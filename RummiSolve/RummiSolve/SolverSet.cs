@@ -5,26 +5,26 @@ public class SolverSet
     private readonly Tile[] _tiles;
     private readonly bool[] _usedTiles;
     private readonly bool[] _isPlayerTile;
-    private readonly int _playerJokers;
+    private readonly int _boardJokers;
     private readonly int _availableJokers;
     private int _jokers;
-    private readonly bool _isFirst;
 
     public Solution BestSolution { get; private set; } = new();
     private bool[] _bestUsedTiles;
+    private int _remainingJoker;
     private int _bestSolutionScore;
 
     public IEnumerable<Tile> TilesToPlay => _tiles.Where((_, i) => _isPlayerTile[i] && _bestUsedTiles[i]);
+    public int JokerToPlay => _availableJokers - _remainingJoker - _boardJokers;
 
-    private SolverSet(Tile[] tiles, int jokers, bool[] isPlayerTile, int playerJokers, bool isFirst)
+    private SolverSet(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardJokers, bool isFirst)
     {
         _tiles = tiles;
         _jokers = jokers;
         _availableJokers = jokers;
         _usedTiles = new bool[tiles.Length];
         _isPlayerTile = isPlayerTile;
-        _playerJokers = playerJokers;
-        _isFirst = isFirst;
+        _boardJokers = boardJokers;
         _bestUsedTiles = _usedTiles;
         _bestSolutionScore = isFirst ? 29 : 0;
     }
@@ -41,15 +41,10 @@ public class SolverSet
         return _tiles.Where((t, i) => _usedTiles[i]).Sum(t => t.Value);
     }
 
-    public int JokerToPlay()
-    {
-        return 0;
-    }
-
     public void SearchSolution()
     {
         if (_tiles.Length + _jokers <= 2) return;
-        
+
         while (true)
         {
             var newSolution = FindSolution(new Solution(), 0);
@@ -58,6 +53,7 @@ public class SolverSet
             BestSolution = newSolution;
             _bestUsedTiles = _usedTiles.ToArray();
             _bestSolutionScore = GetPlayerScore();
+            _remainingJoker = _jokers;
             Array.Fill(_usedTiles, false);
             _jokers = _availableJokers;
         }
@@ -276,7 +272,7 @@ public class SolverSet
             finalTiles,
             totalJokers,
             isPlayerTile,
-            playerSet.Jokers,
+            boardSet.Jokers,
             isFirst
         );
     }

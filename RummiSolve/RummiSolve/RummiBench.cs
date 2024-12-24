@@ -72,6 +72,8 @@ public class RummiBench
             new Tile(1),
             new Tile(2),
             new Tile(4, TileColor.Red),
+            new Tile(true),
+            new Tile(5,TileColor.Red)
         ]);
 
 
@@ -80,10 +82,15 @@ public class RummiBench
         var solution = solver.BestSolution;
         var tileToPlay = solver.TilesToPlay;
 
+        var jokersToPlay = solver.JokerToPlay;
+
         solution.PrintSolution();
         foreach (var tile in tileToPlay)
         {
             tile.PrintTile();
         }
+
+        Console.WriteLine();
+        Console.WriteLine(jokersToPlay);
     }
 }
