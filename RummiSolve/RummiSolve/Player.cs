@@ -8,14 +8,16 @@ public class Player
     public readonly string Name;
     private Tile _lastDrewTile;
     private Set _lastRackTilesSet;
-    public bool _played;
+    private bool _played;
     public bool PlayedToShow;
     public Set RackTileToShow;
     public List<Tile> TilesToPlay = [];
+    public int JokersToPlay;
 
     public Player(string name, List<Tile> tiles)
     {
         Name = name;
+        JokersToPlay = 0;
         _rackTilesSet = new Set(tiles); //pas de copie de la liste TODO
         _lastRackTilesSet = new Set(tiles);
         RackTileToShow = _lastRackTilesSet;
@@ -47,6 +49,32 @@ public class Player
         }
 
         WriteLine();
+    }
+
+    public Solution SolveNew(Solution boardSolution)
+    {
+        TilesToPlay.Clear();
+
+        var boardSet = boardSolution.GetSet();
+        var solver = SolverSet.Create(boardSet, _rackTilesSet, !_played);
+        solver.SearchSolution();
+        var solution = solver.BestSolution;
+        var tilesToPlay = solver.TilesToPlay.ToList();
+        var jokersToPlay = solver.JokerToPlay;
+        var somToPlay = tilesToPlay.Count + jokersToPlay;
+
+        if (somToPlay == 0) return Solution.GetInvalidSolution();
+        if (somToPlay == _rackTilesSet.Tiles.Count) Won = true;
+
+        TilesToPlay = tilesToPlay;
+        JokersToPlay = jokersToPlay;
+
+        if (_played) return solution;
+
+        solution.AddSolution(boardSolution);
+        _played = true;
+
+        return solution;
     }
 
     public Solution Solve(Solution boardSolution, bool boardChange = true)
@@ -145,6 +173,7 @@ public class Player
     public void RemoveTilePlayed()
     {
         foreach (var tile in TilesToPlay) _rackTilesSet.Remove(tile);
+        for (var i = 0; i < JokersToPlay; i++) _rackTilesSet.Remove(new Tile(true));
     }
 
     public void ShowRemovedTile()

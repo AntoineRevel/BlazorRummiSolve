@@ -193,7 +193,7 @@ public class SetTests
 
         player.PrintRackTiles();
 
-        player._played = true;
+        //player._played = true;
 
         // Act
         var newSol = player.Solve(solB);
@@ -237,7 +237,7 @@ public class SetTests
 
         player.PrintRackTiles();
 
-        player._played = true;
+        //player._played = true;
 
         // Act
         var newSol = player.Solve(solB);

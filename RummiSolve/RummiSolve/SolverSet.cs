@@ -26,7 +26,7 @@ public class SolverSet
         _isPlayerTile = isPlayerTile;
         _boardJokers = boardJokers;
         _bestUsedTiles = _usedTiles;
-        _bestSolutionScore = isFirst ? 29 : 0;
+        _bestSolutionScore = isFirst ? 29 : 1;
     }
 
     private bool ValidateCondition()
@@ -41,19 +41,20 @@ public class SolverSet
         return _tiles.Where((t, i) => _usedTiles[i]).Sum(t => t.Value);
     }
 
-    public void SearchSolution()
+    public bool SearchSolution()
     {
-        if (_tiles.Length + _jokers <= 2) return;
+        if (_tiles.Length + _jokers <= 2) return false;
 
         while (true)
         {
             var newSolution = FindSolution(new Solution(), 0);
 
-            if (!newSolution.IsValid) break;
+            if (!newSolution.IsValid) return false;
             BestSolution = newSolution;
             _bestUsedTiles = _usedTiles.ToArray();
             _bestSolutionScore = GetPlayerScore();
             _remainingJoker = _jokers;
+            //if (_usedTiles.Any(b => b==false)) return true;
             Array.Fill(_usedTiles, false);
             _jokers = _availableJokers;
         }
@@ -272,7 +273,7 @@ public class SolverSet
             finalTiles,
             totalJokers,
             isPlayerTile,
-            boardSet.Jokers,
+            isFirst? 0: boardSet.Jokers,
             isFirst
         );
     }
