@@ -54,7 +54,7 @@ public class SolverSet
             _bestUsedTiles = _usedTiles.ToArray();
             _bestSolutionScore = GetPlayerScore();
             _remainingJoker = _jokers;
-            //if (_usedTiles.Any(b => b==false)) return true;
+            if (_usedTiles.All(b => b)) return true;
             Array.Fill(_usedTiles, false);
             _jokers = _availableJokers;
         }
