@@ -57,14 +57,13 @@ public class Player
 
         var boardSet = boardSolution.GetSet();
         var solver = SolverSet.Create(boardSet, _rackTilesSet, !_played);
-        solver.SearchSolution();
+        Won = solver.SearchSolution();
         var solution = solver.BestSolution;
         var tilesToPlay = solver.TilesToPlay.ToList();
         var jokersToPlay = solver.JokerToPlay;
         var somToPlay = tilesToPlay.Count + jokersToPlay;
 
         if (somToPlay == 0) return Solution.GetInvalidSolution();
-        if (somToPlay == _rackTilesSet.Tiles.Count) Won = true;
 
         TilesToPlay = tilesToPlay;
         JokersToPlay = jokersToPlay;
