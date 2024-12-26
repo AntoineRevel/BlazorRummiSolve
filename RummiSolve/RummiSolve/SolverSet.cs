@@ -4,7 +4,7 @@ public class SolverSet
 {
     private readonly Tile[] _tiles;
     private readonly bool[] _usedTiles;
-    private readonly HashSet<int> _playerTileIndices;
+    private readonly bool[] _isPlayerTile;
     private readonly int _boardJokers;
     private readonly int _availableJokers;
     private int _jokers;
@@ -14,16 +14,16 @@ public class SolverSet
     private int _remainingJoker;
     private int _bestSolutionScore;
 
-    public IEnumerable<Tile> TilesToPlay => _tiles.Where((_, i) => _playerTileIndices.Contains(i) && _bestUsedTiles[i]);
+    public IEnumerable<Tile> TilesToPlay => _tiles.Where((_, i) => _isPlayerTile[i] && _bestUsedTiles[i]);
     public int JokerToPlay => _availableJokers - _remainingJoker - _boardJokers;
 
-    private SolverSet(Tile[] tiles, int jokers, HashSet<int> playerTileIndices, int boardJokers, int bestSolutionScore)
+    private SolverSet(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardJokers, int bestSolutionScore)
     {
         _tiles = tiles;
         _jokers = jokers;
         _availableJokers = jokers;
         _usedTiles = new bool[tiles.Length];
-        _playerTileIndices = playerTileIndices;
+        _isPlayerTile = isPlayerTile;
         _boardJokers = boardJokers;
         _bestUsedTiles = _usedTiles;
         _bestSolutionScore = bestSolutionScore;
@@ -31,18 +31,14 @@ public class SolverSet
 
     private bool ValidateCondition()
     {
-        var allBoardTilesUsed = !_usedTiles
-            .Where((use, i) => !use && !_playerTileIndices.Contains(i))
-            .Any();
+        var allBoardTilesUsed = !_usedTiles.Where((use, i) => !use && !_isPlayerTile[i]).Any();
 
         return allBoardTilesUsed && GetPlayerScore() > _bestSolutionScore;
     }
 
     private int GetPlayerScore()
     {
-        return _tiles
-            .Where((_, i) => _playerTileIndices.Contains(i) && _usedTiles[i])
-            .Sum(t => t.Value);
+        return _tiles.Where((_, i) => _isPlayerTile[i] && _usedTiles[i]).Sum(t => t.Value);
     }
 
     public bool SearchSolution()
@@ -84,7 +80,7 @@ public class SolverSet
 
             if (solGroup.IsValid) return solGroup;
 
-            if (_playerTileIndices.Contains(startIndex)) startIndex++;
+            if (_isPlayerTile[startIndex]) startIndex++;
             else return solution;
         }
 
@@ -272,18 +268,13 @@ public class SolverSet
         if (totalJokers > 0) combined.RemoveRange(combined.Count - totalJokers, totalJokers);
 
         var finalTiles = combined.Select(pair => pair.tile).ToArray();
+        var isPlayerTile = combined.Select(pair => pair.isPlayerTile).ToArray();
 
-        var playerTileIndices = new HashSet<int>();
-        for (var i = 0; i < combined.Count; i++)
-        {
-            if (combined[i].isPlayerTile) playerTileIndices.Add(i);
-        }
-
-        var bestSolutionScore = isFirst ? 30 : 1;
+        var bestSolutionScore = isFirst ? 30 : 1; //boardSet.Tiles.Sum(t => t.Value); //totest
         return new SolverSet(
             finalTiles,
             totalJokers,
-            playerTileIndices,
+            isPlayerTile,
             isFirst ? 0 : boardSet.Jokers,
             bestSolutionScore
         );
