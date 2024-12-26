@@ -1,90 +1,78 @@
 namespace RummiSolve;
 
-public class SolverSet
+public class BinarySolver
 {
     private readonly Tile[] _tiles;
     private readonly bool[] _usedTiles;
-    private readonly bool[] _isPlayerTile;
-    private readonly int _boardJokers;
-    private readonly int _availableJokers;
     private int _jokers;
-
     public Solution BestSolution { get; private set; } = new();
-    private bool[] _bestUsedTiles;
-    private int _remainingJoker;
-    private int _bestSolutionScore;
+    public required IEnumerable<Tile> TilesToPlay { get; init; }
+    public required int JokerToPlay { get; init; }
 
-    public IEnumerable<Tile> TilesToPlay => _tiles.Where((_, i) => _isPlayerTile[i] && _bestUsedTiles[i]);
-    public int JokerToPlay => _availableJokers - _remainingJoker - _boardJokers;
-
-    private SolverSet(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardJokers, int bestSolutionScore)
+    private BinarySolver(Tile[] tiles, int jokers)
     {
         _tiles = tiles;
         _jokers = jokers;
-        _availableJokers = jokers;
         _usedTiles = new bool[tiles.Length];
-        _isPlayerTile = isPlayerTile;
-        _boardJokers = boardJokers;
-        _bestUsedTiles = _usedTiles;
-        _bestSolutionScore = bestSolutionScore;
+    }
+
+    public static BinarySolver Create(Set boardSet, List<Tile> playerTiles)
+    {
+        var capacity = boardSet.Tiles.Count + playerTiles.Count;
+
+        var tiles = new List<Tile>(capacity);
+
+        tiles.AddRange(boardSet.Tiles);
+
+        tiles.AddRange(playerTiles);
+
+        tiles.Sort();
+
+        var playerJokers = playerTiles.Count(tile => tile.IsJoker);
+
+        var totalJokers = boardSet.Jokers + playerJokers;
+
+        if (totalJokers > 0) tiles.RemoveRange(tiles.Count - totalJokers, totalJokers);
+
+        return new BinarySolver(
+            tiles.ToArray(),
+            totalJokers
+        )
+        {
+            TilesToPlay = playerTiles,
+            JokerToPlay = playerJokers
+        };
     }
 
     private bool ValidateCondition()
     {
-        var allBoardTilesUsed = !_usedTiles.Where((use, i) => !use && !_isPlayerTile[i]).Any(); //check pas de joker restant ?
+        if (_usedTiles.Any(b => !b)) return false;
 
-        return allBoardTilesUsed && GetPlayerScore() > _bestSolutionScore;
+        return _jokers == 0 ;
     }
 
-    private int GetPlayerScore()
-    {
-        return _tiles.Where((_, i) => _isPlayerTile[i] && _usedTiles[i]).Sum(t => t.Value); // case 10 10 joker
-    }
 
     public bool SearchSolution()
     {
-        if (_tiles.Length + _jokers <= 2) return false;
+        BestSolution = FindSolution(new Solution(), 0);
 
-
-        while (true)
-        {
-            var newSolution = FindSolution(new Solution(), 0);
-
-            if (!newSolution.IsValid) return false;
-            BestSolution = newSolution;
-            _bestUsedTiles = _usedTiles.ToArray();
-            _bestSolutionScore = GetPlayerScore();
-            _remainingJoker = _jokers;
-            if (_usedTiles.All(b => b)) return true;
-            Array.Fill(_usedTiles, false);
-            _jokers = _availableJokers;
-        }
+        return BestSolution.IsValid;
     }
 
 
     private Solution FindSolution(Solution solution, int startIndex)
     {
-        while (startIndex < _usedTiles.Length - 1)
-        {
-            startIndex = Array.FindIndex(_usedTiles, startIndex, used => !used);
+        startIndex = Array.FindIndex(_usedTiles, startIndex, used => !used);
 
-            if (startIndex == -1) return solution;
+        var solRun = TrySet(GetRuns(startIndex), solution, startIndex,
+            (sol, run) => sol.AddRun(run));
 
-            var solRun = TrySet(GetRuns(startIndex), solution, startIndex,
-                (sol, run) => sol.AddRun(run));
+        if (solRun.IsValid) return solRun;
 
-            if (solRun.IsValid) return solRun;
+        var solGroup = TrySet(GetGroups(startIndex), solution, startIndex,
+            (sol, group) => sol.AddGroup(group));
 
-            var solGroup = TrySet(GetGroups(startIndex), solution, startIndex,
-                (sol, group) => sol.AddGroup(group));
-
-            if (solGroup.IsValid) return solGroup;
-
-            if (_isPlayerTile[startIndex]) startIndex++;
-            else return solution;
-        }
-
-        return solution;
+        return solGroup;
     }
 
 
@@ -249,36 +237,6 @@ public class SolverSet
         }
     }
 
-    public static SolverSet Create(Set boardSet, Set playerSet, bool isFirst = false)
-    {
-        var capacity = isFirst ? playerSet.Tiles.Count : boardSet.Tiles.Count + playerSet.Tiles.Count;
-        var combined = new List<(Tile tile, bool isPlayerTile)>(capacity);
-
-        if (!isFirst) combined.AddRange(boardSet.Tiles.Select(tile => (tile, false)));
-        combined.AddRange(playerSet.Tiles.Select(tile => (tile, true)));
-
-        var totalJokers = isFirst ? playerSet.Jokers : boardSet.Jokers + playerSet.Jokers;
-
-        combined.Sort((x, y) =>
-        {
-            var tileCompare = x.tile.CompareTo(y.tile);
-            return tileCompare != 0 ? tileCompare : x.isPlayerTile.CompareTo(y.isPlayerTile);
-        });
-
-        if (totalJokers > 0) combined.RemoveRange(combined.Count - totalJokers, totalJokers);
-
-        var finalTiles = combined.Select(pair => pair.tile).ToArray();
-        var isPlayerTile = combined.Select(pair => pair.isPlayerTile).ToArray();
-
-        var bestSolutionScore = isFirst ? 30 : 1; //boardSet.Tiles.Sum(t => t.Value); //totest
-        return new SolverSet(
-            finalTiles,
-            totalJokers,
-            isPlayerTile,
-            isFirst ? 0 : boardSet.Jokers,
-            bestSolutionScore
-        );
-    }
 
     private static IEnumerable<List<Tile>> GetCombinations(List<Tile> list, int length)
     {

@@ -68,29 +68,40 @@ public class RummiBench
             new Tile(3, TileColor.Red),
         ]);
 
-        var playerSet = new Set([
-            new Tile(1),
-            new Tile(2),
-            new Tile(4, TileColor.Red),
-            // new Tile(true),
-            // new Tile(5,TileColor.Red)
-        ]);
-
-
-        var solver = SolverSet.Create(boardSet, playerSet);
-        solver.SearchSolution();
-        var solution = solver.BestSolution;
-        var tileToPlay = solver.TilesToPlay;
-
-        var jokersToPlay = solver.JokerToPlay;
-
-        solution.PrintSolution();
-        foreach (var tile in tileToPlay)
+        var playerSet = new List<Tile>
         {
-            tile.PrintTile();
-        }
+            new(10),
+            new(10, TileColor.Red), 
+            new(10, TileColor.Black), 
+            //new(true),
 
-        Console.WriteLine();
-        Console.WriteLine(jokersToPlay);
+        };
+
+
+        var solver = BinaryFirstSolver.Create(playerSet);
+
+        if (solver.SearchSolution())
+        {
+            var solution = solver.BestSolution;
+            var tileToPlay = solver.TilesToPlay;
+
+            var jokersToPlay = solver.JokerToPlay;
+
+            solution.PrintSolution();
+        
+            foreach (var tile in tileToPlay)
+            {
+                tile.PrintTile();
+            }
+
+            Console.WriteLine();
+            Console.WriteLine(jokersToPlay);
+        }
+        else
+        {
+            Console.WriteLine("invalid");
+        }
+        
+
     }
 }
