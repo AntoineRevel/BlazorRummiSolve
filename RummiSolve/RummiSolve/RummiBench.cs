@@ -72,8 +72,8 @@ public class RummiBench
             new Tile(1),
             new Tile(2),
             new Tile(4, TileColor.Red),
-            new Tile(true),
-            new Tile(5,TileColor.Red)
+            // new Tile(true),
+            // new Tile(5,TileColor.Red)
         ]);
 
 

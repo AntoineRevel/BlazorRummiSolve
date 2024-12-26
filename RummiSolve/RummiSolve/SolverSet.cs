@@ -17,7 +17,7 @@ public class SolverSet
     public IEnumerable<Tile> TilesToPlay => _tiles.Where((_, i) => _isPlayerTile[i] && _bestUsedTiles[i]);
     public int JokerToPlay => _availableJokers - _remainingJoker - _boardJokers;
 
-    private SolverSet(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardJokers, bool isFirst)
+    private SolverSet(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardJokers, int bestSolutionScore)
     {
         _tiles = tiles;
         _jokers = jokers;
@@ -26,7 +26,7 @@ public class SolverSet
         _isPlayerTile = isPlayerTile;
         _boardJokers = boardJokers;
         _bestUsedTiles = _usedTiles;
-        _bestSolutionScore = isFirst ? 29 : 1;
+        _bestSolutionScore = bestSolutionScore;
     }
 
     private bool ValidateCondition()
@@ -38,12 +38,13 @@ public class SolverSet
 
     private int GetPlayerScore()
     {
-        return _tiles.Where((t, i) => _usedTiles[i]).Sum(t => t.Value);
+        return _tiles.Where((_, i) => _isPlayerTile[i] && _usedTiles[i]).Sum(t => t.Value);
     }
 
     public bool SearchSolution()
     {
         if (_tiles.Length + _jokers <= 2) return false;
+
 
         while (true)
         {
@@ -269,12 +270,13 @@ public class SolverSet
         var finalTiles = combined.Select(pair => pair.tile).ToArray();
         var isPlayerTile = combined.Select(pair => pair.isPlayerTile).ToArray();
 
+        var bestSolutionScore = isFirst ? 30 : 1; //boardSet.Tiles.Sum(t => t.Value); //totest
         return new SolverSet(
             finalTiles,
             totalJokers,
             isPlayerTile,
-            isFirst? 0: boardSet.Jokers,
-            isFirst
+            isFirst ? 0 : boardSet.Jokers,
+            bestSolutionScore
         );
     }
 
