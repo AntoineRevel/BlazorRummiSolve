@@ -58,6 +58,8 @@ public class BinaryFirstSolver
     {
         startIndex = Array.FindIndex(_usedTiles, startIndex, used => !used);
 
+        if (startIndex == -1) return solution;
+
         var solRun = TrySet(GetRuns(startIndex), solution, solutionScore, startIndex,
             (sol, run) => sol.AddRun(run));
 
