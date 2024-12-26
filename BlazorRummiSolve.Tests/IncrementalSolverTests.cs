@@ -120,7 +120,7 @@ public class IncrementalSolverTests
         Assert.True(solution.IsValid);
         Assert.Equal(3, tilesToPlay.Count);
     }
-    
+
     [Fact]
     public void SearchSolution_Invalid()
     {
@@ -145,6 +145,4 @@ public class IncrementalSolverTests
         Assert.False(won);
         Assert.False(solution.IsValid);
     }
-    
-    
 }
