@@ -88,7 +88,42 @@ public class BinarySolverTests
 
         var playerTiles = new List<Tile>
         {
-            new(4, TileColor.Red)
+            new(4, TileColor.Red),
+        };
+
+        var solver = BinarySolver.Create(boardSet, playerTiles);
+
+        // Act
+        var isValid = solver.SearchSolution();
+        var solution = solver.BestSolution;
+        var tilesToPlay = solver.TilesToPlay.ToList();
+
+        // Assert
+        Assert.True(isValid);
+        Assert.True(solution.IsValid);
+
+        Assert.Equal(playerTiles.Count, tilesToPlay.Count);
+
+        foreach (var tile in playerTiles)
+        {
+            Assert.Contains(tile, tilesToPlay);
+        }
+    }
+
+    [Fact]
+    public void SearchSolution_ValidRunJoker()
+    {
+        // Arrange
+        var boardSet = new Set([
+            new Tile(1, TileColor.Red),
+            new Tile(2, TileColor.Red),
+            new Tile(3, TileColor.Red),
+        ]);
+
+        var playerTiles = new List<Tile>
+        {
+            new(4, TileColor.Red),
+            new(true)
         };
 
         var solver = BinarySolver.Create(boardSet, playerTiles);

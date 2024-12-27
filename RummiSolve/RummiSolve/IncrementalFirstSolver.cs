@@ -24,17 +24,17 @@ public class IncrementalFirstSolver
         _usedTiles = new bool[tiles.Length];
         _isPlayerTile = isPlayerTile;
         _bestUsedTiles = _usedTiles;
-        _bestSolutionScore = 30;
+        _bestSolutionScore = 29;
     }
 
-    public static IncrementalFirstSolver Create(Set boardSet, Set playerSet)
+    public static IncrementalFirstSolver Create(Set playerSet)
     {
         var capacity = playerSet.Tiles.Count;
         var combined = new List<(Tile tile, bool isPlayerTile)>(capacity);
-        
+
         combined.AddRange(playerSet.Tiles.Select(tile => (tile, true)));
 
-        var totalJokers =playerSet.Jokers;
+        var totalJokers = playerSet.Jokers;
 
         combined.Sort((x, y) =>
         {
@@ -46,7 +46,7 @@ public class IncrementalFirstSolver
 
         var finalTiles = combined.Select(pair => pair.tile).ToArray();
         var isPlayerTile = combined.Select(pair => pair.isPlayerTile).ToArray();
-        
+
         return new IncrementalFirstSolver(
             finalTiles,
             totalJokers,
@@ -60,11 +60,11 @@ public class IncrementalFirstSolver
             !_usedTiles.Where((use, i) => !use && !_isPlayerTile[i]).Any(); //check pas de joker restant ?
 
         if (!allBoardTilesUsed || solutionScore <= _bestSolutionScore) return false;
-        
+
         _bestSolutionScore = solutionScore;
         return true;
     }
-    
+
 
     public bool SearchSolution()
     {
@@ -73,7 +73,7 @@ public class IncrementalFirstSolver
 
         while (true)
         {
-            var newSolution = FindSolution(new Solution(), 0,0);
+            var newSolution = FindSolution(new Solution(), 0, 0);
 
             if (!newSolution.IsValid) return false;
             BestSolution = newSolution;
