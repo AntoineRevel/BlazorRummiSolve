@@ -54,20 +54,7 @@ public class IncrementalSolver : Solver
         );
     }
 
-    protected override bool ValidateCondition()
-    {
-        var allBoardTilesUsed =
-            !UsedTiles.Where((use, i) => !use && !_isPlayerTile[i]).Any(); //check pas de joker restant ?
-
-        return allBoardTilesUsed && GetPlayerScore() > _bestSolutionScore;
-    }
-
-    private int GetPlayerScore()
-    {
-        return Tiles.Where((_, i) => _isPlayerTile[i] && UsedTiles[i]).Sum(t => t.Value); // case 10 10 joker
-    }
-
-    public bool SearchSolution()
+    public override bool SearchSolution()
     {
         if (Tiles.Length + Jokers <= 2) return false;
 
@@ -87,6 +74,18 @@ public class IncrementalSolver : Solver
         }
     }
 
+    protected override bool ValidateCondition()
+    {
+        var allBoardTilesUsed =
+            !UsedTiles.Where((use, i) => !use && !_isPlayerTile[i]).Any(); //check pas de joker restant ?
+
+        return allBoardTilesUsed && GetPlayerScore() > _bestSolutionScore;
+    }
+
+    private int GetPlayerScore()
+    {
+        return Tiles.Where((_, i) => _isPlayerTile[i] && UsedTiles[i]).Sum(t => t.Value); // case 10 10 joker
+    }
 
     protected override Solution FindSolution(Solution solution, int startIndex)
     {

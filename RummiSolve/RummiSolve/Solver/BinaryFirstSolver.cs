@@ -31,19 +31,17 @@ public class BinaryFirstSolver : FirstSolver
         };
     }
 
-    protected override bool ValidateCondition(int solutionScore)
-    {
-        return solutionScore > MinScore;
-    }
-
-
-    public bool SearchSolution()
+    public override bool SearchSolution()
     {
         BestSolution = FindSolution(new Solution(), 0, 0);
 
         return BestSolution.IsValid;
     }
 
+    protected override bool ValidateCondition(int solutionScore)
+    {
+        return solutionScore > MinScore;
+    }
 
     protected override Solution FindSolution(Solution solution, int solutionScore, int startIndex)
     {

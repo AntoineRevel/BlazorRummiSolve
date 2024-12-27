@@ -35,6 +35,13 @@ public class BinarySolver : Solver
             TilesToPlay = playerTiles,
         };
     }
+    
+    public override bool SearchSolution()
+    {
+        BestSolution = FindSolution(new Solution(), 0);
+
+        return BestSolution.IsValid;
+    }
 
     protected override bool ValidateCondition()
     {
@@ -42,16 +49,7 @@ public class BinarySolver : Solver
 
         return Jokers == 0;
     }
-
-
-    public bool SearchSolution()
-    {
-        BestSolution = FindSolution(new Solution(), 0);
-
-        return BestSolution.IsValid;
-    }
-
-
+    
     protected override Solution FindSolution(Solution solution, int startIndex)
     {
         startIndex = Array.FindIndex(UsedTiles, startIndex, used => !used);

@@ -37,16 +37,7 @@ public class IncrementalFirstSolver : FirstSolver
         );
     }
 
-    protected override bool ValidateCondition(int solutionScore)
-    {
-        if (solutionScore <= _bestSolutionScore) return false;
-
-        _bestSolutionScore = solutionScore;
-        return true;
-    }
-
-
-    public bool SearchSolution()
+    public override bool SearchSolution()
     {
         if (Tiles.Length + Jokers <= 2) return false;
 
@@ -64,6 +55,13 @@ public class IncrementalFirstSolver : FirstSolver
         }
     }
 
+    protected override bool ValidateCondition(int solutionScore)
+    {
+        if (solutionScore <= _bestSolutionScore) return false;
+
+        _bestSolutionScore = solutionScore;
+        return true;
+    }
 
     protected override Solution FindSolution(Solution solution, int solutionScore, int startIndex)
     {
