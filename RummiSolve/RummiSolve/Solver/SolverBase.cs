@@ -143,7 +143,7 @@ public abstract class SolverBase(Tile[] tiles, int jokers)
         }
     }
 
-    protected static IEnumerable<List<Tile>> GetCombinations(List<Tile> list, int length)
+    private static IEnumerable<List<Tile>> GetCombinations(List<Tile> list, int length)
     {
         if (length == 0) yield return [];
 

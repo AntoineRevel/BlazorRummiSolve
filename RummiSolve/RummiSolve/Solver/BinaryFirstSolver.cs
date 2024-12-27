@@ -1,6 +1,6 @@
 namespace RummiSolve.Solver;
 
-public class BinaryFirstSolver : SolverBase
+public class BinaryFirstSolver : FirstSolverBase
 {
     public required IEnumerable<Tile> TilesToPlay { get; init; }
 

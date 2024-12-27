@@ -84,4 +84,39 @@ public class IncrementalFirstSolverTests
         Assert.Equal(1, jokerToPlay);
     }
     
+    
+    [Fact]
+    public void SearchSolution_ValidGroupAndJoker()
+    {
+        // Arrange
+        var playerSet = new Set([
+        
+            new Tile(10),
+            new Tile(10, TileColor.Red),
+            new Tile(10, TileColor.Black),
+            
+            new Tile(4),
+            new Tile(8),
+            new Tile(11),
+            new Tile(11),
+            new Tile(13),
+            new Tile(13, TileColor.Red),
+            new Tile(13, TileColor.Black),
+            
+        ]);
+
+        var solver = IncrementalFirstSolver.Create(playerSet);
+
+        // Act
+        solver.SearchSolution();
+        var solution = solver.BestSolution;
+        var tilesToPlay = solver.TilesToPlay.ToList();
+        var jokerToPlay = solver.JokerToPlay;
+
+        // Assert
+        Assert.True(solution.IsValid);
+        Assert.Equal(6, tilesToPlay.Count);
+        Assert.Equal(0, jokerToPlay);
+    }
+    
 }

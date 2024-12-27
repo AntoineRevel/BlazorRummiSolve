@@ -1,21 +1,19 @@
 namespace RummiSolve.Solver;
 
-public class IncrementalFirstSolver : SolverBase
+public class IncrementalFirstSolver : FirstSolverBase
 {
-    private readonly bool[] _isPlayerTile;
     private readonly int _availableJokers;
 
     private bool[] _bestUsedTiles;
     private int _remainingJoker;
     private int _bestSolutionScore;
 
-    public IEnumerable<Tile> TilesToPlay => Tiles.Where((_, i) => _isPlayerTile[i] && _bestUsedTiles[i]);
+    public IEnumerable<Tile> TilesToPlay => Tiles.Where((_, i) => _bestUsedTiles[i]);
     public int JokerToPlay => _availableJokers - _remainingJoker;
 
-    private IncrementalFirstSolver(Tile[] tiles, int jokers, bool[] isPlayerTile) : base(tiles, jokers)
+    private IncrementalFirstSolver(Tile[] tiles, int jokers) : base(tiles, jokers)
     {
         _availableJokers = jokers;
-        _isPlayerTile = isPlayerTile;
         _bestUsedTiles = UsedTiles;
         _bestSolutionScore = 29;
     }
@@ -38,21 +36,16 @@ public class IncrementalFirstSolver : SolverBase
         if (totalJokers > 0) combined.RemoveRange(combined.Count - totalJokers, totalJokers);
 
         var finalTiles = combined.Select(pair => pair.tile).ToArray();
-        var isPlayerTile = combined.Select(pair => pair.isPlayerTile).ToArray();
 
         return new IncrementalFirstSolver(
             finalTiles,
-            totalJokers,
-            isPlayerTile
+            totalJokers
         );
     }
 
     private bool ValidateCondition(int solutionScore)
     {
-        var allBoardTilesUsed =
-            !UsedTiles.Where((use, i) => !use && !_isPlayerTile[i]).Any(); //check pas de joker restant ?
-
-        if (!allBoardTilesUsed || solutionScore <= _bestSolutionScore) return false;
+        if (solutionScore <= _bestSolutionScore) return false;
 
         _bestSolutionScore = solutionScore;
         return true;
@@ -80,19 +73,26 @@ public class IncrementalFirstSolver : SolverBase
 
     private Solution FindSolution(Solution solution, int solutionScore, int startIndex)
     {
-        startIndex = Array.FindIndex(UsedTiles, startIndex, used => !used);
+        while (startIndex < UsedTiles.Length - 1)
+        {
+            startIndex = Array.FindIndex(UsedTiles, startIndex, used => !used);
 
-        if (startIndex == -1) return solution;
+            if (startIndex == -1) return solution;
 
-        var solRun = TrySet(GetRuns(startIndex), solution, solutionScore, startIndex,
-            (sol, run) => sol.AddRun(run));
+            var solRun = TrySet(GetRuns(startIndex), solution, solutionScore, startIndex,
+                (sol, run) => sol.AddRun(run));
 
-        if (solRun.IsValid) return solRun;
+            if (solRun.IsValid) return solRun;
 
-        var solGroup = TrySet(GetGroups(startIndex), solution, solutionScore, startIndex,
-            (sol, group) => sol.AddGroup(group));
+            var solGroup = TrySet(GetGroups(startIndex), solution, solutionScore,startIndex,
+                (sol, group) => sol.AddGroup(group));
 
-        return solGroup;
+            if (solGroup.IsValid) return solGroup;
+
+            startIndex++;
+        }
+
+        return solution;
     }
 
 

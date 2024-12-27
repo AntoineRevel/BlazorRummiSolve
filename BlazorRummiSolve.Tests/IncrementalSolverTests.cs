@@ -112,7 +112,12 @@ public class IncrementalSolverTests
             new Tile(10, TileColor.Red),
             new Tile(10, TileColor.Black),
 
-            new Tile(5)
+            new Tile(5),
+            new Tile(5),
+            
+            new Tile(1, TileColor.Red),
+            new Tile(2, TileColor.Red),
+            new Tile(3, TileColor.Red),
         ]);
 
         var solver = IncrementalSolver.Create(boardSet, playerSet);
@@ -126,7 +131,7 @@ public class IncrementalSolverTests
         // Assert
         Assert.False(won);
         Assert.True(solution.IsValid);
-        Assert.Equal(3, tilesToPlay.Count);
+        Assert.Equal(6, tilesToPlay.Count);
         Assert.Equal(0, jokerToPlay);
     }
     
