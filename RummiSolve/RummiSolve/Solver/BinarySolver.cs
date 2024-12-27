@@ -1,6 +1,6 @@
 namespace RummiSolve.Solver;
 
-public class BinarySolver : SolverBase
+public class BinarySolver : Solver
 {
     private BinarySolver(Tile[] tiles, int jokers) : base(tiles, jokers)
     {
