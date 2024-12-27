@@ -83,12 +83,17 @@ public abstract class SolverBase(Tile[] tiles, int jokers)
 
     protected IEnumerable<Group> GetGroups(int firstTileIndex)
     {
-        var sameNumberTiles = Tiles
-            .Where((tile, index) => !UsedTiles[index] &&
-                                    tile.Value == Tiles[firstTileIndex].Value &&
-                                    tile.Color != Tiles[firstTileIndex].Color)
-            .Distinct()
-            .ToList();
+        var sameNumberTiles = new HashSet<Tile>();
+
+        for (var i = firstTileIndex; i < Tiles.Length; i++)
+        {
+            if (!UsedTiles[i] &&
+                Tiles[i].Value == Tiles[firstTileIndex].Value &&
+                Tiles[i].Color != Tiles[firstTileIndex].Color)
+            {
+                sameNumberTiles.Add(Tiles[i]);
+            }
+        }
 
         var size = sameNumberTiles.Count;
 
@@ -103,25 +108,27 @@ public abstract class SolverBase(Tile[] tiles, int jokers)
             yield return new Group { Tiles = groupTiles.ToArray() };
 
             if (groupTiles.Count != 4) yield break;
+            var uniqueTilesList = sameNumberTiles.ToList();
 
             for (var i = 0; i < sameNumberTiles.Count; i++)
             for (var j = i + 1; j < sameNumberTiles.Count; j++)
             {
                 yield return new Group
                 {
-                    Tiles = [Tiles[firstTileIndex], sameNumberTiles[i], sameNumberTiles[j]]
+                    Tiles = [Tiles[firstTileIndex], uniqueTilesList[i], uniqueTilesList[j]]
                 };
             }
         }
         else
         {
+            var uniqueTilesList = sameNumberTiles.ToList();
             for (var jokersUsed = 0; jokersUsed <= Jokers; jokersUsed++)
             for (var tilesUsed = 2; tilesUsed <= size + 1; tilesUsed++)
             {
                 var totalTiles = tilesUsed + jokersUsed;
                 if (totalTiles is < 3 or > 4) continue;
 
-                var combinations = GetCombinations(sameNumberTiles, tilesUsed - 1);
+                var combinations = GetCombinations(uniqueTilesList, tilesUsed - 1);
 
                 foreach (var tiles in combinations)
                 {

@@ -71,7 +71,5 @@ public class RummiBench
         {
             tile.PrintTile();
         }
-        
-
     }
 }
