@@ -85,7 +85,7 @@ public class RummiBench
             var solution = solver.BestSolution;
             var tileToPlay = solver.TilesToPlay;
 
-            var jokersToPlay = solver.JokerToPlay;
+
 
             solution.PrintSolution();
         
@@ -95,7 +95,6 @@ public class RummiBench
             }
 
             Console.WriteLine();
-            Console.WriteLine(jokersToPlay);
         }
         else
         {

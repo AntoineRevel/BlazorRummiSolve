@@ -21,11 +21,12 @@ public class IncrementalFirstSolverTests
         solver.SearchSolution();
         var solution = solver.BestSolution;
         var tilesToPlay = solver.TilesToPlay.ToList();
+        var jokerToPlay = solver.JokerToPlay;
 
         // Assert
         Assert.True(solution.IsValid);
-
         Assert.Equal(3, tilesToPlay.Count);
+        Assert.Equal(0, jokerToPlay);
     }
     
     [Fact]
@@ -49,11 +50,12 @@ public class IncrementalFirstSolverTests
         solver.SearchSolution();
         var solution = solver.BestSolution;
         var tilesToPlay = solver.TilesToPlay.ToList();
+        var jokerToPlay = solver.JokerToPlay;
 
         // Assert
         Assert.True(solution.IsValid);
-
         Assert.Equal(6, tilesToPlay.Count);
+        Assert.Equal(0, jokerToPlay);
     }
     
     [Fact]
@@ -73,11 +75,12 @@ public class IncrementalFirstSolverTests
         solver.SearchSolution();
         var solution = solver.BestSolution;
         var tilesToPlay = solver.TilesToPlay.ToList();
+        var jokerToPlay = solver.JokerToPlay;
 
         // Assert
         Assert.True(solution.IsValid);
-
-        Assert.Equal(3, tilesToPlay.Count);
+        Assert.Equal(2, tilesToPlay.Count);
+        Assert.Equal(1, jokerToPlay);
     }
     
 }

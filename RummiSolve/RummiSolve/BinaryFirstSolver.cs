@@ -7,7 +7,6 @@ public class BinaryFirstSolver
     private int _jokers;
     public Solution BestSolution { get; private set; } = new();
     public required IEnumerable<Tile> TilesToPlay { get; init; }
-    public required int JokerToPlay { get; init; }
 
     private BinaryFirstSolver(Tile[] tiles, int jokers)
     {
@@ -36,7 +35,6 @@ public class BinaryFirstSolver
         )
         {
             TilesToPlay = playerTiles,
-            JokerToPlay = playerJokers
         };
     }
 
