@@ -1,3 +1,5 @@
+using RummiSolve.Solver.Interfaces;
+
 namespace RummiSolve.Solver;
 
 public abstract class SolverBase(Tile[] tiles, int jokers)

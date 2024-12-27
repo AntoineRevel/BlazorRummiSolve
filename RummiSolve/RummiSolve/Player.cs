@@ -1,3 +1,5 @@
+using RummiSolve.Solver;
+using RummiSolve.Solver.Interfaces;
 using static System.Console;
 
 namespace RummiSolve;
@@ -56,7 +58,7 @@ public class Player
         TilesToPlay.Clear();
 
         var boardSet = boardSolution.GetSet();
-        var solver = SolverSet.Create(boardSet, _rackTilesSet, !_played);
+        IIncrementalSolver solver = _played ? IncrementalSolver.Create(boardSet, _rackTilesSet) : IncrementalFirstSolver.Create(_rackTilesSet);
         Won = solver.SearchSolution();
         var solution = solver.BestSolution;
         var tilesToPlay = solver.TilesToPlay.ToList();
@@ -185,4 +187,8 @@ public class Player
     {
         RackTileToShow = _lastRackTilesSet;
     }
+    
+    //_____NEW____
+
+    //private Solution CombiSolveFirst(){}
 }

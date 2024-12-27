@@ -1,6 +1,8 @@
+using RummiSolve.Solver.Interfaces;
+
 namespace RummiSolve.Solver;
 
-public class IncrementalFirstSolver : FirstSolver
+public class IncrementalFirstSolver : FirstSolver, IIncrementalSolver
 {
     private readonly int _availableJokers;
 

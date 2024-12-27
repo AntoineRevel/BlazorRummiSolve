@@ -1,13 +1,14 @@
+using RummiSolve.Solver.Interfaces;
+
 namespace RummiSolve.Solver;
 
-public class BinarySolver : Solver
+public class BinarySolver : Solver, IBinarySolver
 {
+    public required IEnumerable<Tile> TilesToPlay { get; init; }
+
     private BinarySolver(Tile[] tiles, int jokers) : base(tiles, jokers)
     {
     }
-
-    public required IEnumerable<Tile> TilesToPlay { get; init; }
-
 
     public static BinarySolver Create(Set boardSet, List<Tile> playerTiles)
     {
@@ -35,7 +36,7 @@ public class BinarySolver : Solver
             TilesToPlay = playerTiles,
         };
     }
-    
+
     public override bool SearchSolution()
     {
         BestSolution = FindSolution(new Solution(), 0);
@@ -49,7 +50,7 @@ public class BinarySolver : Solver
 
         return Jokers == 0;
     }
-    
+
     protected override Solution FindSolution(Solution solution, int startIndex)
     {
         startIndex = Array.FindIndex(UsedTiles, startIndex, used => !used);

@@ -1,9 +1,10 @@
+using RummiSolve.Solver.Interfaces;
+
 namespace RummiSolve.Solver;
 
-public class BinaryFirstSolver : FirstSolver
+public class BinaryFirstSolver : FirstSolver, IBinarySolver
 {
-    public required IEnumerable<Tile> TilesToPlay { get; init; }
-
+    public   IEnumerable<Tile> TilesToPlay { get; init; }
     private BinaryFirstSolver(Tile[] tiles, int jokers) : base(tiles, jokers)
     {
     }
@@ -26,6 +27,7 @@ public class BinaryFirstSolver : FirstSolver
             TilesToPlay = playerTiles,
         };
     }
+    
 
     public override bool SearchSolution()
     {

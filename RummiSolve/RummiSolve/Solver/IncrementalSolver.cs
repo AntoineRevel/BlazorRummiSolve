@@ -1,6 +1,8 @@
+using RummiSolve.Solver.Interfaces;
+
 namespace RummiSolve.Solver;
 
-public class IncrementalSolver : Solver
+public class IncrementalSolver : Solver, IIncrementalSolver
 {
     private readonly bool[] _isPlayerTile;
     private readonly int _boardJokers;
