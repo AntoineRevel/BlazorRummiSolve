@@ -31,7 +31,7 @@ public class BinaryFirstSolver : FirstSolverBase
         };
     }
 
-    private bool ValidateCondition(int solutionScore)
+    protected override bool ValidateCondition(int solutionScore)
     {
         return solutionScore >= 30;
     }
@@ -45,7 +45,7 @@ public class BinaryFirstSolver : FirstSolverBase
     }
 
 
-    private Solution FindSolution(Solution solution, int solutionScore, int startIndex)
+    protected override Solution FindSolution(Solution solution, int solutionScore, int startIndex)
     {
         startIndex = Array.FindIndex(UsedTiles, startIndex, used => !used);
 
@@ -60,35 +60,5 @@ public class BinaryFirstSolver : FirstSolverBase
             (sol, group) => sol.AddGroup(group));
 
         return solGroup;
-    }
-
-
-    private Solution TrySet<TS>(IEnumerable<TS> sets, Solution solution, int solutionScore, int firstUnusedTileIndex,
-        Action<Solution, TS> addSetToSolution)
-        where TS : ValidSet
-    {
-        UsedTiles[firstUnusedTileIndex] = true;
-        foreach (var set in sets)
-        {
-            MarkTilesAsUsed(set, true, firstUnusedTileIndex);
-            var newSolution = solution;
-
-            var newSolutionScore = solutionScore + set.GetScore();
-
-            if (ValidateCondition(newSolutionScore)) solution.IsValid = true;
-            else newSolution = FindSolution(solution, newSolutionScore, firstUnusedTileIndex);
-
-            if (newSolution.IsValid)
-            {
-                addSetToSolution(solution, set);
-                return solution;
-            }
-
-            MarkTilesAsUsed(set, false, firstUnusedTileIndex);
-        }
-
-        UsedTiles[firstUnusedTileIndex] = false;
-
-        return solution;
     }
 }

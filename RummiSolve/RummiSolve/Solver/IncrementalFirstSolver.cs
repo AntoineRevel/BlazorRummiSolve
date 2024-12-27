@@ -43,7 +43,7 @@ public class IncrementalFirstSolver : FirstSolverBase
         );
     }
 
-    private bool ValidateCondition(int solutionScore)
+    protected override bool ValidateCondition(int solutionScore)
     {
         if (solutionScore <= _bestSolutionScore) return false;
 
@@ -71,7 +71,7 @@ public class IncrementalFirstSolver : FirstSolverBase
     }
 
 
-    private Solution FindSolution(Solution solution, int solutionScore, int startIndex)
+    protected override Solution FindSolution(Solution solution, int solutionScore, int startIndex)
     {
         while (startIndex < UsedTiles.Length - 1)
         {
@@ -84,43 +84,13 @@ public class IncrementalFirstSolver : FirstSolverBase
 
             if (solRun.IsValid) return solRun;
 
-            var solGroup = TrySet(GetGroups(startIndex), solution, solutionScore,startIndex,
+            var solGroup = TrySet(GetGroups(startIndex), solution, solutionScore, startIndex,
                 (sol, group) => sol.AddGroup(group));
 
             if (solGroup.IsValid) return solGroup;
 
             startIndex++;
         }
-
-        return solution;
-    }
-
-
-    private Solution TrySet<TS>(IEnumerable<TS> sets, Solution solution, int solutionScore, int firstUnusedTileIndex,
-        Action<Solution, TS> addSetToSolution)
-        where TS : ValidSet
-    {
-        UsedTiles[firstUnusedTileIndex] = true;
-        foreach (var set in sets)
-        {
-            MarkTilesAsUsed(set, true, firstUnusedTileIndex);
-            var newSolution = solution;
-
-            var newSolutionScore = solutionScore + set.GetScore();
-
-            if (ValidateCondition(newSolutionScore)) solution.IsValid = true;
-            else newSolution = FindSolution(solution, newSolutionScore, firstUnusedTileIndex);
-
-            if (newSolution.IsValid)
-            {
-                addSetToSolution(solution, set);
-                return solution;
-            }
-
-            MarkTilesAsUsed(set, false, firstUnusedTileIndex);
-        }
-
-        UsedTiles[firstUnusedTileIndex] = false;
 
         return solution;
     }
