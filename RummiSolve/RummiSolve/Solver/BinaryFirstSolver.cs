@@ -4,7 +4,7 @@ namespace RummiSolve.Solver;
 
 public class BinaryFirstSolver : FirstSolver, IBinarySolver
 {
-    public   IEnumerable<Tile> TilesToPlay { get; init; }
+    public required IEnumerable<Tile> TilesToPlay { get; init; }
     private BinaryFirstSolver(Tile[] tiles, int jokers) : base(tiles, jokers)
     {
     }
