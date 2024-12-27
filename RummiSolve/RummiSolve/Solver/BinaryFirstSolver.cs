@@ -33,7 +33,7 @@ public class BinaryFirstSolver : FirstSolverBase
 
     protected override bool ValidateCondition(int solutionScore)
     {
-        return solutionScore > MIN_SCORE;
+        return solutionScore > MinScore;
     }
 
 

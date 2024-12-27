@@ -15,7 +15,7 @@ public class IncrementalFirstSolver : FirstSolverBase
     {
         _availableJokers = jokers;
         _bestUsedTiles = UsedTiles;
-        _bestSolutionScore = MIN_SCORE;
+        _bestSolutionScore = MinScore;
     }
 
     public static IncrementalFirstSolver Create(in Set playerSet)

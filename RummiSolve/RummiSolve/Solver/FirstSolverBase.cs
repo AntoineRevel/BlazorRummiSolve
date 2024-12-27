@@ -2,7 +2,7 @@ namespace RummiSolve.Solver;
 
 public abstract class FirstSolverBase(Tile[] tiles, int jokers) : SolverBase(tiles, jokers)
 {
-    protected const int MIN_SCORE = 29;
+    protected const int MinScore = 29;
     protected Solution TrySet<TS>(IEnumerable<TS> sets, Solution solution, int solutionScore, int firstUnusedTileIndex,
         Action<Solution, TS> addSetToSolution)
         where TS : ValidSet
