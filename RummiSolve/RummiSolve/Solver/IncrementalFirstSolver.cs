@@ -15,10 +15,10 @@ public class IncrementalFirstSolver : FirstSolverBase
     {
         _availableJokers = jokers;
         _bestUsedTiles = UsedTiles;
-        _bestSolutionScore = 29;
+        _bestSolutionScore = MIN_SCORE;
     }
 
-    public static IncrementalFirstSolver Create(Set playerSet)
+    public static IncrementalFirstSolver Create(in Set playerSet)
     {
         var capacity = playerSet.Tiles.Count;
         var combined = new List<(Tile tile, bool isPlayerTile)>(capacity);
@@ -26,12 +26,6 @@ public class IncrementalFirstSolver : FirstSolverBase
         combined.AddRange(playerSet.Tiles.Select(tile => (tile, true)));
 
         var totalJokers = playerSet.Jokers;
-
-        combined.Sort((x, y) =>
-        {
-            var tileCompare = x.tile.CompareTo(y.tile);
-            return tileCompare != 0 ? tileCompare : x.isPlayerTile.CompareTo(y.isPlayerTile);
-        });
 
         if (totalJokers > 0) combined.RemoveRange(combined.Count - totalJokers, totalJokers);
 

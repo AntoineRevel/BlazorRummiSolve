@@ -8,8 +8,6 @@ public abstract class SolverBase(Tile[] tiles, int jokers)
 
     public Solution BestSolution { get; protected set; } = new();
 
-    //protected abstract bool ValidateCondition();
-
     protected void MarkTilesAsUsed(ValidSet set, bool isUsed, int firstUnusedIndex)
     {
         foreach (var tile in set.Tiles[0].IsJoker ? set.Tiles.Skip(2) : set.Tiles.Skip(1))
