@@ -1,6 +1,6 @@
 namespace RummiSolve;
 
-public class Set : ISet
+public class Set
 {
     public int Jokers;
     public List<Tile> Tiles;

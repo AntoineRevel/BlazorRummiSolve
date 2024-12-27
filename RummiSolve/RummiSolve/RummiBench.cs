@@ -36,30 +36,7 @@ public class RummiBench
         Console.WriteLine($"Game duration: {gameStopwatch.Elapsed.TotalSeconds} seconds");
     }
 
-    public static void DontGetError()
-    {
-        // Arrange
-        var boardSet = new Set([
-            new Tile(8),
-            new Tile(9, TileColor.Blue, true),
-            new Tile(10),
-        ]);
 
-        var playerSet = new Set([
-            new Tile(1),
-            new Tile(2),
-            new Tile(3),
-        ]);
-
-        // Act
-        var solver = SolverSet.Create(boardSet, playerSet,true);
-        solver.SearchSolution();
-        var solution = solver.BestSolution;
-        var tileToPlay = solver.TilesToPlay;
-
-        solution.PrintSolution();
-        // Assert
-    }
 
     public static void DontGetError2()
     {
