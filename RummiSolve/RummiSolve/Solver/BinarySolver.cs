@@ -36,7 +36,7 @@ public class BinarySolver : Solver
         };
     }
 
-    private bool ValidateCondition()
+    protected override bool ValidateCondition()
     {
         if (UsedTiles.Any(b => !b)) return false;
 
@@ -52,7 +52,7 @@ public class BinarySolver : Solver
     }
 
 
-    private Solution FindSolution(Solution solution, int startIndex)
+    protected override Solution FindSolution(Solution solution, int startIndex)
     {
         startIndex = Array.FindIndex(UsedTiles, startIndex, used => !used);
 
@@ -67,34 +67,5 @@ public class BinarySolver : Solver
             (sol, group) => sol.AddGroup(group));
 
         return solGroup;
-    }
-
-
-    private Solution TrySet<TS>(IEnumerable<TS> sets, Solution solution, int firstUnusedTileIndex,
-        Action<Solution, TS> addSetToSolution)
-        where TS : ValidSet
-    {
-        UsedTiles[firstUnusedTileIndex] = true;
-        foreach (var set in sets)
-        {
-            MarkTilesAsUsed(set, true, firstUnusedTileIndex);
-
-            var newSolution = solution;
-
-            if (ValidateCondition()) solution.IsValid = true;
-            else newSolution = FindSolution(solution, firstUnusedTileIndex);
-
-            if (newSolution.IsValid)
-            {
-                addSetToSolution(solution, set);
-                return solution;
-            }
-
-            MarkTilesAsUsed(set, false, firstUnusedTileIndex);
-        }
-
-        UsedTiles[firstUnusedTileIndex] = false;
-
-        return solution;
     }
 }

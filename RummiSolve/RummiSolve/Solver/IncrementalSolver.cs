@@ -54,7 +54,7 @@ public class IncrementalSolver : Solver
         );
     }
 
-    private bool ValidateCondition()
+    protected override bool ValidateCondition()
     {
         var allBoardTilesUsed =
             !UsedTiles.Where((use, i) => !use && !_isPlayerTile[i]).Any(); //check pas de joker restant ?
@@ -88,7 +88,7 @@ public class IncrementalSolver : Solver
     }
 
 
-    private Solution FindSolution(Solution solution, int startIndex)
+    protected override Solution FindSolution(Solution solution, int startIndex)
     {
         while (startIndex < UsedTiles.Length - 1)
         {
@@ -109,35 +109,6 @@ public class IncrementalSolver : Solver
             if (_isPlayerTile[startIndex]) startIndex++;
             else return solution;
         }
-
-        return solution;
-    }
-
-
-    private Solution TrySet<TS>(IEnumerable<TS> sets, Solution solution, int firstUnusedTileIndex,
-        Action<Solution, TS> addSetToSolution)
-        where TS : ValidSet
-    {
-        UsedTiles[firstUnusedTileIndex] = true;
-        foreach (var set in sets)
-        {
-            MarkTilesAsUsed(set, true, firstUnusedTileIndex);
-
-            var newSolution = solution;
-
-            if (ValidateCondition()) solution.IsValid = true;
-            else newSolution = FindSolution(solution, firstUnusedTileIndex);
-
-            if (newSolution.IsValid)
-            {
-                addSetToSolution(solution, set);
-                return solution;
-            }
-
-            MarkTilesAsUsed(set, false, firstUnusedTileIndex);
-        }
-
-        UsedTiles[firstUnusedTileIndex] = false;
 
         return solution;
     }
