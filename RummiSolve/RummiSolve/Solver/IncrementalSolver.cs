@@ -13,14 +13,13 @@ public class IncrementalSolver : Solver
     public IEnumerable<Tile> TilesToPlay => Tiles.Where((_, i) => _isPlayerTile[i] && _bestUsedTiles[i]);
     public int JokerToPlay => _availableJokers - _remainingJoker - _boardJokers;
 
-    private IncrementalSolver(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardJokers, int bestSolutionScore) :
-        base(tiles, jokers)
+    private IncrementalSolver(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardJokers) : base(tiles, jokers)
     {
         _availableJokers = jokers;
         _isPlayerTile = isPlayerTile;
         _boardJokers = boardJokers;
         _bestUsedTiles = UsedTiles;
-        _bestSolutionScore = bestSolutionScore;
+        _bestSolutionScore = 1;
     }
 
     public static IncrementalSolver Create(Set boardSet, Set playerSet)
@@ -43,22 +42,19 @@ public class IncrementalSolver : Solver
 
         var finalTiles = combined.Select(pair => pair.tile).ToArray();
         var isPlayerTile = combined.Select(pair => pair.isPlayerTile).ToArray();
-
-        var bestSolutionScore = 1;
+        
         return new IncrementalSolver(
             finalTiles,
             totalJokers,
             isPlayerTile,
-            boardSet.Jokers,
-            bestSolutionScore
+            boardSet.Jokers
         );
     }
 
     public override bool SearchSolution()
     {
         if (Tiles.Length + Jokers <= 2) return false;
-
-
+        
         while (true)
         {
             var newSolution = FindSolution(new Solution(), 0);
@@ -84,7 +80,7 @@ public class IncrementalSolver : Solver
 
     private int GetPlayerScore()
     {
-        return Tiles.Where((_, i) => _isPlayerTile[i] && UsedTiles[i]).Sum(t => t.Value); // case 10 10 joker
+        return Tiles.Where((_, i) => _isPlayerTile[i] && UsedTiles[i]).Sum(t => t.Value);
     }
 
     protected override Solution FindSolution(Solution solution, int startIndex)

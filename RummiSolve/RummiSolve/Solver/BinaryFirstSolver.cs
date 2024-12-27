@@ -10,12 +10,8 @@ public class BinaryFirstSolver : FirstSolver
 
     public static BinaryFirstSolver Create(List<Tile> playerTiles)
     {
-        var capacity = playerTiles.Count;
-
-        var tiles = new List<Tile>(capacity);
-
-        tiles.AddRange(playerTiles);
-
+        var tiles = new List<Tile>(playerTiles);
+        
         tiles.Sort();
 
         var playerJokers = playerTiles.Count(tile => tile.IsJoker);

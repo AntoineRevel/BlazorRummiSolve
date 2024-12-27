@@ -20,20 +20,15 @@ public class IncrementalFirstSolver : FirstSolver
 
     public static IncrementalFirstSolver Create(in Set playerSet)
     {
-        var capacity = playerSet.Tiles.Count;
-        var combined = new List<(Tile tile, bool isPlayerTile)>(capacity);
+        var tiles = new List<Tile>(playerSet.Tiles);
 
-        combined.AddRange(playerSet.Tiles.Select(tile => (tile, true)));
+        tiles.Sort();
 
-        var totalJokers = playerSet.Jokers;
-
-        if (totalJokers > 0) combined.RemoveRange(combined.Count - totalJokers, totalJokers);
-
-        var finalTiles = combined.Select(pair => pair.tile).ToArray();
+        if (playerSet.Jokers > 0) tiles.RemoveRange(tiles.Count - playerSet.Jokers, playerSet.Jokers);
 
         return new IncrementalFirstSolver(
-            finalTiles,
-            totalJokers
+            tiles.ToArray(),
+            playerSet.Jokers
         );
     }
 
