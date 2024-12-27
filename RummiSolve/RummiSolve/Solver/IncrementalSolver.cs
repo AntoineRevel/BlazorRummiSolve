@@ -1,31 +1,25 @@
-namespace RummiSolve;
+namespace RummiSolve.Solver;
 
-public class IncrementalSolver
+public class IncrementalSolver : SolverBase
 {
-    private readonly Tile[] _tiles;
-    private readonly bool[] _usedTiles;
     private readonly bool[] _isPlayerTile;
     private readonly int _boardJokers;
     private readonly int _availableJokers;
-    private int _jokers;
 
-    public Solution BestSolution { get; private set; } = new();
     private bool[] _bestUsedTiles;
     private int _remainingJoker;
     private int _bestSolutionScore;
 
-    public IEnumerable<Tile> TilesToPlay => _tiles.Where((_, i) => _isPlayerTile[i] && _bestUsedTiles[i]);
+    public IEnumerable<Tile> TilesToPlay => Tiles.Where((_, i) => _isPlayerTile[i] && _bestUsedTiles[i]);
     public int JokerToPlay => _availableJokers - _remainingJoker - _boardJokers;
 
-    private IncrementalSolver(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardJokers, int bestSolutionScore)
+    private IncrementalSolver(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardJokers, int bestSolutionScore) :
+        base(tiles, jokers)
     {
-        _tiles = tiles;
-        _jokers = jokers;
         _availableJokers = jokers;
-        _usedTiles = new bool[tiles.Length];
         _isPlayerTile = isPlayerTile;
         _boardJokers = boardJokers;
-        _bestUsedTiles = _usedTiles;
+        _bestUsedTiles = UsedTiles;
         _bestSolutionScore = bestSolutionScore;
     }
 
@@ -60,22 +54,22 @@ public class IncrementalSolver
         );
     }
 
-    private bool ValidateCondition()
+    protected override bool ValidateCondition()
     {
         var allBoardTilesUsed =
-            !_usedTiles.Where((use, i) => !use && !_isPlayerTile[i]).Any(); //check pas de joker restant ?
+            !UsedTiles.Where((use, i) => !use && !_isPlayerTile[i]).Any(); //check pas de joker restant ?
 
         return allBoardTilesUsed && GetPlayerScore() > _bestSolutionScore;
     }
 
     private int GetPlayerScore()
     {
-        return _tiles.Where((_, i) => _isPlayerTile[i] && _usedTiles[i]).Sum(t => t.Value); // case 10 10 joker
+        return Tiles.Where((_, i) => _isPlayerTile[i] && UsedTiles[i]).Sum(t => t.Value); // case 10 10 joker
     }
 
     public bool SearchSolution()
     {
-        if (_tiles.Length + _jokers <= 2) return false;
+        if (Tiles.Length + Jokers <= 2) return false;
 
 
         while (true)
@@ -84,21 +78,21 @@ public class IncrementalSolver
 
             if (!newSolution.IsValid) return false;
             BestSolution = newSolution;
-            _bestUsedTiles = _usedTiles.ToArray();
+            _bestUsedTiles = UsedTiles.ToArray();
             _bestSolutionScore = GetPlayerScore();
-            _remainingJoker = _jokers;
-            if (_usedTiles.All(b => b)) return true;
-            Array.Fill(_usedTiles, false);
-            _jokers = _availableJokers;
+            _remainingJoker = Jokers;
+            if (UsedTiles.All(b => b)) return true;
+            Array.Fill(UsedTiles, false);
+            Jokers = _availableJokers;
         }
     }
 
 
     private Solution FindSolution(Solution solution, int startIndex)
     {
-        while (startIndex < _usedTiles.Length - 1)
+        while (startIndex < UsedTiles.Length - 1)
         {
-            startIndex = Array.FindIndex(_usedTiles, startIndex, used => !used);
+            startIndex = Array.FindIndex(UsedTiles, startIndex, used => !used);
 
             if (startIndex == -1) return solution;
 
@@ -124,7 +118,7 @@ public class IncrementalSolver
         Action<Solution, TS> addSetToSolution)
         where TS : ValidSet
     {
-        _usedTiles[firstUnusedTileIndex] = true;
+        UsedTiles[firstUnusedTileIndex] = true;
         foreach (var set in sets)
         {
             MarkTilesAsUsed(set, true, firstUnusedTileIndex);
@@ -143,7 +137,7 @@ public class IncrementalSolver
             MarkTilesAsUsed(set, false, firstUnusedTileIndex);
         }
 
-        _usedTiles[firstUnusedTileIndex] = false;
+        UsedTiles[firstUnusedTileIndex] = false;
 
         return solution;
     }
@@ -152,44 +146,44 @@ public class IncrementalSolver
     {
         foreach (var tile in set.Tiles[0].IsJoker ? set.Tiles.Skip(2) : set.Tiles.Skip(1))
         {
-            for (var i = firstUnusedIndex + 1; i < _tiles.Length; i++)
+            for (var i = firstUnusedIndex + 1; i < Tiles.Length; i++)
             {
-                if (_usedTiles[i] == isUsed || !_tiles[i].Equals(tile)) continue;
+                if (UsedTiles[i] == isUsed || !Tiles[i].Equals(tile)) continue;
 
-                _usedTiles[i] = isUsed;
+                UsedTiles[i] = isUsed;
                 break;
             }
         }
 
-        _jokers += isUsed ? -set.Jokers : set.Jokers;
+        Jokers += isUsed ? -set.Jokers : set.Jokers;
     }
 
     private IEnumerable<Run> GetRuns(int tileIndex)
     {
-        var availableJokers = _jokers;
-        var color = _tiles[tileIndex].Color;
-        var currentRun = new List<Tile> { _tiles[tileIndex] };
+        var availableJokers = Jokers;
+        var color = Tiles[tileIndex].Color;
+        var currentRun = new List<Tile> { Tiles[tileIndex] };
         var i = tileIndex + 1;
 
         while (true)
         {
-            for (; i < _tiles.Length; i++)
+            for (; i < Tiles.Length; i++)
             {
-                if (_tiles[i].Color != color)
+                if (Tiles[i].Color != color)
                 {
-                    i = _tiles.Length;
+                    i = Tiles.Length;
                     break;
                 }
 
-                if (_usedTiles[i] || _tiles[i].Value == currentRun[^1].Value) continue;
+                if (UsedTiles[i] || Tiles[i].Value == currentRun[^1].Value) continue;
 
-                if (_tiles[i].Value != currentRun[^1].Value + 1) break;
+                if (Tiles[i].Value != currentRun[^1].Value + 1) break;
 
-                currentRun.Add(_tiles[i]);
+                currentRun.Add(Tiles[i]);
 
                 if (currentRun.Count < 3) continue;
 
-                var jokersUsed = _jokers - availableJokers;
+                var jokersUsed = Jokers - availableJokers;
 
                 yield return new Run
                 {
@@ -208,7 +202,7 @@ public class IncrementalSolver
 
             if (currentRun.Count < 3) continue;
 
-            var jokersUsedJ = _jokers - availableJokers;
+            var jokersUsedJ = Jokers - availableJokers;
 
             yield return new Run
             {
@@ -220,20 +214,20 @@ public class IncrementalSolver
 
     private IEnumerable<Group> GetGroups(int firstTileIndex)
     {
-        var sameNumberTiles = _tiles
-            .Where((tile, index) => !_usedTiles[index] &&
-                                    tile.Value == _tiles[firstTileIndex].Value &&
-                                    tile.Color != _tiles[firstTileIndex].Color)
+        var sameNumberTiles = Tiles
+            .Where((tile, index) => !UsedTiles[index] &&
+                                    tile.Value == Tiles[firstTileIndex].Value &&
+                                    tile.Color != Tiles[firstTileIndex].Color)
             .Distinct()
             .ToList();
 
         var size = sameNumberTiles.Count;
 
-        if (_jokers == 0)
+        if (Jokers == 0)
         {
             if (size < 2) yield break;
 
-            var groupTiles = new List<Tile> { _tiles[firstTileIndex] };
+            var groupTiles = new List<Tile> { Tiles[firstTileIndex] };
 
             groupTiles.AddRange(sameNumberTiles);
 
@@ -246,13 +240,13 @@ public class IncrementalSolver
             {
                 yield return new Group
                 {
-                    Tiles = [_tiles[firstTileIndex], sameNumberTiles[i], sameNumberTiles[j]]
+                    Tiles = [Tiles[firstTileIndex], sameNumberTiles[i], sameNumberTiles[j]]
                 };
             }
         }
         else
         {
-            for (var jokersUsed = 0; jokersUsed <= _jokers; jokersUsed++)
+            for (var jokersUsed = 0; jokersUsed <= Jokers; jokersUsed++)
             for (var tilesUsed = 2; tilesUsed <= size + 1; tilesUsed++)
             {
                 var totalTiles = tilesUsed + jokersUsed;
@@ -264,12 +258,12 @@ public class IncrementalSolver
                 {
                     var groupTiles = new Tile[totalTiles];
 
-                    groupTiles[0] = _tiles[firstTileIndex];
+                    groupTiles[0] = Tiles[firstTileIndex];
 
                     for (var i = 0; i < tilesUsed - 1; i++) groupTiles[i + 1] = tiles[i];
 
                     for (var k = 0; k < jokersUsed; k++)
-                        groupTiles[tilesUsed + k] = new Tile(_tiles[firstTileIndex].Value, isJoker: true);
+                        groupTiles[tilesUsed + k] = new Tile(Tiles[firstTileIndex].Value, isJoker: true);
 
                     yield return new Group
                     {

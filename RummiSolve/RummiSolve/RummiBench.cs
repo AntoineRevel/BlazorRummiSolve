@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using BenchmarkDotNet.Attributes;
+using RummiSolve.Solver;
 
 namespace RummiSolve;
 

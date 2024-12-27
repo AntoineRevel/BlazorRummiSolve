@@ -1,18 +1,13 @@
-namespace RummiSolve;
+namespace RummiSolve.Solver;
 
-public class BinarySolver
+public class BinarySolver : SolverBase
 {
-    private readonly Tile[] _tiles;
-    private readonly bool[] _usedTiles;
-    private int _jokers;
-    public Solution BestSolution { get; private set; } = new();
-    public required IEnumerable<Tile> TilesToPlay { get; init; }
-    private BinarySolver(Tile[] tiles, int jokers)
+    private BinarySolver(Tile[] tiles, int jokers) : base(tiles, jokers)
     {
-        _tiles = tiles;
-        _jokers = jokers;
-        _usedTiles = new bool[tiles.Length];
     }
+
+    public required IEnumerable<Tile> TilesToPlay { get; init; }
+
 
     public static BinarySolver Create(Set boardSet, List<Tile> playerTiles)
     {
@@ -41,11 +36,11 @@ public class BinarySolver
         };
     }
 
-    private bool ValidateCondition()
+    protected override bool ValidateCondition()
     {
-        if (_usedTiles.Any(b => !b)) return false;
+        if (UsedTiles.Any(b => !b)) return false;
 
-        return _jokers == 0 ;
+        return Jokers == 0 ;
     }
 
 
@@ -59,7 +54,7 @@ public class BinarySolver
 
     private Solution FindSolution(Solution solution, int startIndex)
     {
-        startIndex = Array.FindIndex(_usedTiles, startIndex, used => !used);
+        startIndex = Array.FindIndex(UsedTiles, startIndex, used => !used);
 
         if (startIndex == -1) return solution;
         
@@ -79,7 +74,7 @@ public class BinarySolver
         Action<Solution, TS> addSetToSolution)
         where TS : ValidSet
     {
-        _usedTiles[firstUnusedTileIndex] = true;
+        UsedTiles[firstUnusedTileIndex] = true;
         foreach (var set in sets)
         {
             MarkTilesAsUsed(set, true, firstUnusedTileIndex);
@@ -98,7 +93,7 @@ public class BinarySolver
             MarkTilesAsUsed(set, false, firstUnusedTileIndex);
         }
 
-        _usedTiles[firstUnusedTileIndex] = false;
+        UsedTiles[firstUnusedTileIndex] = false;
 
         return solution;
     }
@@ -107,44 +102,44 @@ public class BinarySolver
     {
         foreach (var tile in set.Tiles[0].IsJoker ? set.Tiles.Skip(2) : set.Tiles.Skip(1))
         {
-            for (var i = firstUnusedIndex + 1; i < _tiles.Length; i++)
+            for (var i = firstUnusedIndex + 1; i < Tiles.Length; i++)
             {
-                if (_usedTiles[i] == isUsed || !_tiles[i].Equals(tile)) continue;
+                if (UsedTiles[i] == isUsed || !Tiles[i].Equals(tile)) continue;
 
-                _usedTiles[i] = isUsed;
+                UsedTiles[i] = isUsed;
                 break;
             }
         }
 
-        _jokers += isUsed ? -set.Jokers : set.Jokers;
+        Jokers += isUsed ? -set.Jokers : set.Jokers;
     }
 
     private IEnumerable<Run> GetRuns(int tileIndex)
     {
-        var availableJokers = _jokers;
-        var color = _tiles[tileIndex].Color;
-        var currentRun = new List<Tile> { _tiles[tileIndex] };
+        var availableJokers = Jokers;
+        var color = Tiles[tileIndex].Color;
+        var currentRun = new List<Tile> { Tiles[tileIndex] };
         var i = tileIndex + 1;
 
         while (true)
         {
-            for (; i < _tiles.Length; i++)
+            for (; i < Tiles.Length; i++)
             {
-                if (_tiles[i].Color != color)
+                if (Tiles[i].Color != color)
                 {
-                    i = _tiles.Length;
+                    i = Tiles.Length;
                     break;
                 }
 
-                if (_usedTiles[i] || _tiles[i].Value == currentRun[^1].Value) continue;
+                if (UsedTiles[i] || Tiles[i].Value == currentRun[^1].Value) continue;
 
-                if (_tiles[i].Value != currentRun[^1].Value + 1) break;
+                if (Tiles[i].Value != currentRun[^1].Value + 1) break;
 
-                currentRun.Add(_tiles[i]);
+                currentRun.Add(Tiles[i]);
 
                 if (currentRun.Count < 3) continue;
 
-                var jokersUsed = _jokers - availableJokers;
+                var jokersUsed = Jokers - availableJokers;
 
                 yield return new Run
                 {
@@ -163,7 +158,7 @@ public class BinarySolver
 
             if (currentRun.Count < 3) continue;
 
-            var jokersUsedJ = _jokers - availableJokers;
+            var jokersUsedJ = Jokers - availableJokers;
 
             yield return new Run
             {
@@ -175,20 +170,20 @@ public class BinarySolver
 
     private IEnumerable<Group> GetGroups(int firstTileIndex)
     {
-        var sameNumberTiles = _tiles
-            .Where((tile, index) => !_usedTiles[index] &&
-                                    tile.Value == _tiles[firstTileIndex].Value &&
-                                    tile.Color != _tiles[firstTileIndex].Color)
+        var sameNumberTiles = Tiles
+            .Where((tile, index) => !UsedTiles[index] &&
+                                    tile.Value == Tiles[firstTileIndex].Value &&
+                                    tile.Color != Tiles[firstTileIndex].Color)
             .Distinct()
             .ToList();
 
         var size = sameNumberTiles.Count;
 
-        if (_jokers == 0)
+        if (Jokers == 0)
         {
             if (size < 2) yield break;
 
-            var groupTiles = new List<Tile> { _tiles[firstTileIndex] };
+            var groupTiles = new List<Tile> { Tiles[firstTileIndex] };
 
             groupTiles.AddRange(sameNumberTiles);
 
@@ -201,13 +196,13 @@ public class BinarySolver
             {
                 yield return new Group
                 {
-                    Tiles = [_tiles[firstTileIndex], sameNumberTiles[i], sameNumberTiles[j]]
+                    Tiles = [Tiles[firstTileIndex], sameNumberTiles[i], sameNumberTiles[j]]
                 };
             }
         }
         else
         {
-            for (var jokersUsed = 0; jokersUsed <= _jokers; jokersUsed++)
+            for (var jokersUsed = 0; jokersUsed <= Jokers; jokersUsed++)
             for (var tilesUsed = 2; tilesUsed <= size + 1; tilesUsed++)
             {
                 var totalTiles = tilesUsed + jokersUsed;
@@ -219,12 +214,12 @@ public class BinarySolver
                 {
                     var groupTiles = new Tile[totalTiles];
 
-                    groupTiles[0] = _tiles[firstTileIndex];
+                    groupTiles[0] = Tiles[firstTileIndex];
 
                     for (var i = 0; i < tilesUsed - 1; i++) groupTiles[i + 1] = tiles[i];
 
                     for (var k = 0; k < jokersUsed; k++)
-                        groupTiles[tilesUsed + k] = new Tile(_tiles[firstTileIndex].Value, isJoker: true);
+                        groupTiles[tilesUsed + k] = new Tile(Tiles[firstTileIndex].Value, isJoker: true);
 
                     yield return new Group
                     {

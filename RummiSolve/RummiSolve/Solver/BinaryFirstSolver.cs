@@ -1,4 +1,4 @@
-namespace RummiSolve;
+namespace RummiSolve.Solver;
 
 public class BinaryFirstSolver
 {
