@@ -13,7 +13,7 @@ public class RummiBench
     [IterationSetup]
     public void IterationSetup()
     {
-        _game = new Game(Guid.Parse("f194c3b0-8088-452c-b180-66614ba2f6d7"));
+        _game = new Game(Guid.Parse("74cdccda-9261-460c-9414-31d7270ad2a1"));
         _game.InitializeGame(_playerNames);
     }
 

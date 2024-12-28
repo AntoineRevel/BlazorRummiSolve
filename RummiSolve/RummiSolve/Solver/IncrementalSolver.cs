@@ -2,7 +2,7 @@ using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Solver;
 
-public class IncrementalSolver : Solver, IIncrementalSolver
+public class IncrementalSolver : SolverBase, IIncrementalSolver
 {
     private readonly bool[] _isPlayerTile;
     private readonly int _boardJokers;
@@ -72,7 +72,7 @@ public class IncrementalSolver : Solver, IIncrementalSolver
         }
     }
 
-    protected override bool ValidateCondition()
+    private bool ValidateCondition()
     {
         var allBoardTilesUsed =
             !UsedTiles.Where((use, i) => !use && !_isPlayerTile[i]).Any(); //check pas de joker restant ?
@@ -85,7 +85,7 @@ public class IncrementalSolver : Solver, IIncrementalSolver
         return Tiles.Where((_, i) => _isPlayerTile[i] && UsedTiles[i]).Sum(t => t.Value);
     }
 
-    protected override Solution FindSolution(Solution solution, int startIndex)
+    private Solution FindSolution(Solution solution, int startIndex)
     {
         while (startIndex < UsedTiles.Length - 1)
         {
@@ -106,6 +106,32 @@ public class IncrementalSolver : Solver, IIncrementalSolver
             if (_isPlayerTile[startIndex]) startIndex++;
             else return solution;
         }
+
+        return solution;
+    }
+
+    private Solution TrySet<TS>(IEnumerable<TS> sets, Solution solution, int firstUnusedTileIndex,
+        Action<Solution, TS> addSetToSolution)
+        where TS : ValidSet
+    {
+        UsedTiles[firstUnusedTileIndex] = true;
+        foreach (var set in sets)
+        {
+            MarkTilesAsUsed(set, true, firstUnusedTileIndex);
+
+            if (ValidateCondition()) solution.IsValid = true;
+            else solution = FindSolution(solution, firstUnusedTileIndex);
+
+            if (solution.IsValid)
+            {
+                addSetToSolution(solution, set);
+                return solution;
+            }
+
+            MarkTilesAsUsed(set, false, firstUnusedTileIndex);
+        }
+
+        UsedTiles[firstUnusedTileIndex] = false;
 
         return solution;
     }

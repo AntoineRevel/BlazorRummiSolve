@@ -2,9 +2,10 @@ using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Solver;
 
-public class BinaryFirstSolver : FirstSolver, IBinarySolver
+public class BinaryFirstSolver : SolverBase, IBinarySolver
 {
     public required IEnumerable<Tile> TilesToPlay { get; init; }
+
     private BinaryFirstSolver(Tile[] tiles, int jokers) : base(tiles, jokers)
     {
     }
@@ -12,7 +13,7 @@ public class BinaryFirstSolver : FirstSolver, IBinarySolver
     public static BinaryFirstSolver Create(List<Tile> playerTiles)
     {
         var tiles = new List<Tile>(playerTiles);
-        
+
         tiles.Sort();
 
         var playerJokers = playerTiles.Count(tile => tile.IsJoker);
@@ -27,7 +28,7 @@ public class BinaryFirstSolver : FirstSolver, IBinarySolver
             TilesToPlay = playerTiles,
         };
     }
-    
+
 
     public override bool SearchSolution()
     {
@@ -36,12 +37,12 @@ public class BinaryFirstSolver : FirstSolver, IBinarySolver
         return BestSolution.IsValid;
     }
 
-    protected override bool ValidateCondition(int solutionScore)
+    private bool ValidateCondition(int solutionScore)
     {
         return solutionScore > MinScore;
     }
 
-    protected override Solution FindSolution(Solution solution, int solutionScore, int startIndex)
+    private Solution FindSolution(Solution solution, int solutionScore, int startIndex)
     {
         startIndex = Array.FindIndex(UsedTiles, startIndex, used => !used);
 
@@ -56,5 +57,34 @@ public class BinaryFirstSolver : FirstSolver, IBinarySolver
             (sol, group) => sol.AddGroup(group));
 
         return solGroup;
+    }
+
+    private Solution TrySet<TS>(IEnumerable<TS> sets, Solution solution, int solutionScore, int firstUnusedTileIndex,
+        Action<Solution, TS> addSetToSolution)
+        where TS : ValidSet
+    {
+        UsedTiles[firstUnusedTileIndex] = true;
+        foreach (var set in sets)
+        {
+            MarkTilesAsUsed(set, true, firstUnusedTileIndex);
+            var newSolution = solution;
+
+            var newSolutionScore = solutionScore + set.GetScore();
+
+            if (ValidateCondition(newSolutionScore)) solution.IsValid = true;
+            else newSolution = FindSolution(solution, newSolutionScore, firstUnusedTileIndex);
+
+            if (newSolution.IsValid)
+            {
+                addSetToSolution(solution, set);
+                return solution;
+            }
+
+            MarkTilesAsUsed(set, false, firstUnusedTileIndex);
+        }
+
+        UsedTiles[firstUnusedTileIndex] = false;
+
+        return solution;
     }
 }

@@ -2,7 +2,7 @@ using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Solver;
 
-public class IncrementalFirstSolver : FirstSolver, IIncrementalSolver
+public class IncrementalFirstSolver : SolverBase, IIncrementalSolver
 {
     private readonly int _availableJokers;
 
@@ -52,7 +52,7 @@ public class IncrementalFirstSolver : FirstSolver, IIncrementalSolver
         }
     }
 
-    protected override bool ValidateCondition(int solutionScore)
+    private bool ValidateCondition(int solutionScore)
     {
         if (solutionScore <= _bestSolutionScore) return false;
 
@@ -60,7 +60,7 @@ public class IncrementalFirstSolver : FirstSolver, IIncrementalSolver
         return true;
     }
 
-    protected override Solution FindSolution(Solution solution, int solutionScore, int startIndex)
+    private Solution FindSolution(Solution solution, int solutionScore, int startIndex)
     {
         while (startIndex < UsedTiles.Length - 1)
         {
@@ -80,6 +80,34 @@ public class IncrementalFirstSolver : FirstSolver, IIncrementalSolver
 
             startIndex++;
         }
+
+        return solution;
+    }
+
+    private Solution TrySet<TS>(IEnumerable<TS> sets, Solution solution, int solutionScore, int firstUnusedTileIndex,
+        Action<Solution, TS> addSetToSolution)
+        where TS : ValidSet
+    {
+        UsedTiles[firstUnusedTileIndex] = true;
+        foreach (var set in sets)
+        {
+            MarkTilesAsUsed(set, true, firstUnusedTileIndex);
+
+            var newSolutionScore = solutionScore + set.GetScore();
+
+            if (ValidateCondition(newSolutionScore)) solution.IsValid = true;
+            else solution = FindSolution(solution, newSolutionScore, firstUnusedTileIndex);
+
+            if (solution.IsValid)
+            {
+                addSetToSolution(solution, set);
+                return solution;
+            }
+
+            MarkTilesAsUsed(set, false, firstUnusedTileIndex);
+        }
+
+        UsedTiles[firstUnusedTileIndex] = false;
 
         return solution;
     }
