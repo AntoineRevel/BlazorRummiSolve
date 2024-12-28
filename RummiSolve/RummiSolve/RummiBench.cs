@@ -37,16 +37,14 @@ public class RummiBench
     }
 
 
-
     public static void DontGetError2()
     {
         // Arrange
         var playerSet = new Set([
-        
             new Tile(10),
             new Tile(10, TileColor.Red),
             new Tile(10, TileColor.Black),
-            
+
             new Tile(4),
             new Tile(8),
             new Tile(11),
@@ -54,7 +52,6 @@ public class RummiBench
             new Tile(13),
             new Tile(13, TileColor.Red),
             new Tile(13, TileColor.Black),
-            
         ]);
 
         var solver = IncrementalFirstSolver.Create(playerSet);
@@ -64,12 +61,56 @@ public class RummiBench
         var solution = solver.BestSolution;
         var tilesToPlay = solver.TilesToPlay.ToList();
         var jokerToPlay = solver.JokerToPlay;
-        
+
         solution.PrintSolution();
 
         foreach (var tile in tilesToPlay)
         {
             tile.PrintTile();
         }
+    }
+
+    public static void SearchSolution_ValidNotWon()
+    {
+        // Arrange
+        var boardSet = new Set([
+            new Tile(10),
+            new Tile(11),
+            new Tile(12),
+            new Tile(13),
+
+            new Tile(11, TileColor.Mango),
+            new Tile(true),
+            new Tile(13, TileColor.Mango),
+        ]);
+
+        var playerSet = new Set([
+            new Tile(9, TileColor.Mango),
+            new Tile(13, TileColor.Red),
+            new Tile(13),
+        ]);
+
+        var solver = IncrementalSolver.Create(boardSet, playerSet);
+
+        // Act
+        var won = solver.SearchSolution();
+        var solution = solver.BestSolution;
+        var tilesToPlay = solver.TilesToPlay.ToList();
+        var jokerToPlay = solver.JokerToPlay;
+
+        playerSet.PrintAllTiles();
+        Console.WriteLine();
+        boardSet.PrintAllTiles();
+        Console.WriteLine();
+        Console.WriteLine();
+        solution.PrintSolution();
+        Console.WriteLine("Tile to play :");
+        foreach (var tile in tilesToPlay)
+        {
+            tile.PrintTile();
+        }
+
+        Console.WriteLine("Joker :");
+        Console.WriteLine(jokerToPlay);
     }
 }

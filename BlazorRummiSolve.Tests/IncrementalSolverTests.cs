@@ -167,6 +167,42 @@ public class IncrementalSolverTests
     }
     
     [Fact]
+    public void SearchSolution_ValidNWonIncrscorePlayer()
+    {
+        // Arrange
+        var boardSet = new Set([
+            new Tile(10),
+            new Tile(11),
+            new Tile(12),
+            new Tile(13),
+
+            new Tile(11, TileColor.Mango),
+            new Tile(true),
+            new Tile(13, TileColor.Mango),
+        ]);
+
+        var playerSet = new Set([
+            new Tile(9, TileColor.Mango),
+            new Tile(13, TileColor.Red),
+            new Tile(13),
+        ]);
+
+        var solver = IncrementalSolver.Create(boardSet, playerSet);
+
+        // Act
+        var won = solver.SearchSolution();
+        var solution = solver.BestSolution;
+        var tilesToPlay = solver.TilesToPlay.ToList();
+        var jokerToPlay = solver.JokerToPlay;
+
+        // Assert
+        Assert.True(won);
+        Assert.True(solution.IsValid);
+        Assert.Equal(3, tilesToPlay.Count);
+        Assert.Equal(0, jokerToPlay);
+    }
+    
+    [Fact]
     public void SearchSolution_ValidWinJoker()
     {
         // Arrange

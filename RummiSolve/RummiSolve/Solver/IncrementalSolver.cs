@@ -44,7 +44,7 @@ public sealed class IncrementalSolver : SolverBase, IIncrementalSolver
 
         var finalTiles = combined.Select(pair => pair.tile).ToArray();
         var isPlayerTile = combined.Select(pair => pair.isPlayerTile).ToArray();
-        
+
         return new IncrementalSolver(
             finalTiles,
             totalJokers,
@@ -56,15 +56,14 @@ public sealed class IncrementalSolver : SolverBase, IIncrementalSolver
     public bool SearchSolution()
     {
         if (Tiles.Length + Jokers <= 2) return false;
-        
+
         while (true)
         {
-            var newSolution = FindSolution(new Solution(), 0);
+            var newSolution = FindSolution(new Solution(), 0, 0);
 
             if (!newSolution.IsValid) return false;
             BestSolution = newSolution;
             _bestUsedTiles = UsedTiles.ToArray();
-            _bestSolutionScore = GetPlayerScore();
             _remainingJoker = Jokers;
             if (UsedTiles.All(b => b)) return true;
             Array.Fill(UsedTiles, false);
@@ -72,20 +71,16 @@ public sealed class IncrementalSolver : SolverBase, IIncrementalSolver
         }
     }
 
-    private bool ValidateCondition()
+    private bool ValidateCondition(int solutionScore)
     {
         var allBoardTilesUsed =
             !UsedTiles.Where((use, i) => !use && !_isPlayerTile[i]).Any(); //check pas de joker restant ?
 
-        return allBoardTilesUsed && GetPlayerScore() > _bestSolutionScore;
+        return allBoardTilesUsed && solutionScore > _bestSolutionScore;
     }
 
-    private int GetPlayerScore()
-    {
-        return Tiles.Where((_, i) => _isPlayerTile[i] && UsedTiles[i]).Sum(t => t.Value);
-    }
 
-    private Solution FindSolution(Solution solution, int startIndex)
+    private Solution FindSolution(Solution solution, int solutionScore, int startIndex)
     {
         while (startIndex < UsedTiles.Length - 1)
         {
@@ -93,12 +88,12 @@ public sealed class IncrementalSolver : SolverBase, IIncrementalSolver
 
             if (startIndex == -1) return solution;
 
-            var solRun = TrySet(GetRuns(startIndex), solution, startIndex,
+            var solRun = TrySet(GetRuns(startIndex), solution, solutionScore, startIndex,
                 (sol, run) => sol.AddRun(run));
 
             if (solRun.IsValid) return solRun;
 
-            var solGroup = TrySet(GetGroups(startIndex), solution, startIndex,
+            var solGroup = TrySet(GetGroups(startIndex), solution, solutionScore, startIndex,
                 (sol, group) => sol.AddGroup(group));
 
             if (solGroup.IsValid) return solGroup;
@@ -110,17 +105,21 @@ public sealed class IncrementalSolver : SolverBase, IIncrementalSolver
         return solution;
     }
 
-    private Solution TrySet<TS>(IEnumerable<TS> sets, Solution solution, int firstUnusedTileIndex,
+    private Solution TrySet<TS>(IEnumerable<TS> sets, Solution solution, int solutionScore, int firstUnusedTileIndex,
         Action<Solution, TS> addSetToSolution)
         where TS : ValidSet
     {
-        UsedTiles[firstUnusedTileIndex] = true;
         foreach (var set in sets)
         {
-            MarkTilesAsUsed(set, true, firstUnusedTileIndex);
+            MarkTilesAsUsed(set, true, firstUnusedTileIndex, ref solutionScore);
 
-            if (ValidateCondition()) solution.IsValid = true;
-            else solution = FindSolution(solution, firstUnusedTileIndex);
+
+            if (ValidateCondition(solutionScore))
+            {
+                _bestSolutionScore = solutionScore;
+                solution.IsValid = true;
+            }
+            else solution = FindSolution(solution, solutionScore, firstUnusedTileIndex);
 
             if (solution.IsValid)
             {
@@ -128,11 +127,31 @@ public sealed class IncrementalSolver : SolverBase, IIncrementalSolver
                 return solution;
             }
 
-            MarkTilesAsUsed(set, false, firstUnusedTileIndex);
+            MarkTilesAsUsed(set, false, firstUnusedTileIndex, ref solutionScore);
         }
 
-        UsedTiles[firstUnusedTileIndex] = false;
-
         return solution;
+    }
+
+    private new void MarkTilesAsUsed(ValidSet set, bool isUsed, int firstUnusedIndex, ref int solutionScore)
+    {
+        foreach (var tile in set.Tiles)
+        {
+            if (tile.IsJoker)
+            {
+                Jokers += isUsed ? -1 : 1;
+                continue;
+            }
+
+            for (var i = firstUnusedIndex; i < Tiles.Length; i++)
+            {
+                if (UsedTiles[i] == isUsed || !Tiles[i].Equals(tile)) continue;
+
+                UsedTiles[i] = isUsed;
+
+                if (_isPlayerTile[i]) solutionScore += isUsed ? tile.Value : -tile.Value;
+                break;
+            }
+        }
     }
 }
