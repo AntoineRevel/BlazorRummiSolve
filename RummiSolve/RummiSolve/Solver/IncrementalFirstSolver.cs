@@ -96,6 +96,7 @@ public sealed class IncrementalFirstSolver : SolverBase, IIncrementalSolver
             var newSolutionScore = solutionScore + set.GetScore();
 
             if (ValidateCondition(newSolutionScore)) solution.IsValid = true;
+            
             else solution = FindSolution(solution, newSolutionScore, firstUnusedTileIndex);
 
             if (solution.IsValid)
