@@ -7,15 +7,15 @@ public readonly struct Tile : IComparable<Tile>, IEquatable<Tile>
     public Tile(int value, TileColor color = TileColor.Blue, bool isJoker = false)
     {
         if (value is < 0 or > 15)
-            throw new ArgumentOutOfRangeException(nameof(value), "La valeur doit être entre 0 et 15.");
+            throw new ArgumentOutOfRangeException(nameof(value), "Value must be between 0 and 15.");
 
         if (!Enum.IsDefined(color))
-            throw new ArgumentOutOfRangeException(nameof(color), "Couleur invalide.");
+            throw new ArgumentOutOfRangeException(nameof(color), "Invalid color.");
 
         _data = (byte)(
-            ((isJoker ? 1 : 0) << 6) | // Bit 6 pour IsJoker
-            ((int)color << 4) | // Bits 4-5 pour la couleur
-            (value & 0x0F) // Bits 0-3 pour la valeur
+            ((isJoker ? 1 : 0) << 6) | // Bit 6 for IsJoker
+            ((int)color << 4)        | // Bits 4-5 for the color
+            (value & 0x0F)             // Bits 0-3 for the value
         );
     }
 
