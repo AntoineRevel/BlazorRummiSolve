@@ -117,9 +117,9 @@ public sealed class IncrementalSolver : SolverBase, IIncrementalSolver
         foreach (var set in sets)
         {
             MarkTilesAsUsed(set, true, firstUnusedTileIndex);
-            
+
             if (ValidateCondition(_solutionScore)) solution.IsValid = true;
-            
+
             else solution = FindSolution(solution, firstUnusedTileIndex);
 
             if (solution.IsValid)
