@@ -15,8 +15,13 @@ public abstract class SolverBase(Tile[] tiles, int jokers)
 
     protected void MarkTilesAsUsed(ValidSet set, bool isUsed, int firstUnusedIndex)
     {
-        foreach (var tile in set.Tiles[0].IsJoker ? set.Tiles.Skip(2) : set.Tiles.Skip(1))
+        foreach (var tile in set.Tiles.Skip(1))
         {
+            if (tile.IsJoker)
+            {
+                Jokers += isUsed ? -1 : 1;
+                continue;
+            }
             for (var i = firstUnusedIndex + 1; i < Tiles.Length; i++)
             {
                 if (UsedTiles[i] == isUsed || !Tiles[i].Equals(tile)) continue;
@@ -25,8 +30,6 @@ public abstract class SolverBase(Tile[] tiles, int jokers)
                 break;
             }
         }
-
-        Jokers += isUsed ? -set.Jokers : set.Jokers;
     }
 
     protected IEnumerable<Run> GetRuns(int tileIndex)
@@ -65,9 +68,7 @@ public abstract class SolverBase(Tile[] tiles, int jokers)
 
             if (availableJokers <= 0) yield break;
 
-            if (currentRun[^1].Value != 13) currentRun.Add(new Tile(currentRun[^1].Value + 1, color, true));
-
-            else if (currentRun[0].Value != 1) currentRun.Insert(0, new Tile(currentRun[0].Value - 1, color, true));
+            currentRun.Add(new Tile(currentRun[^1].Value + 1, color, true));
 
             availableJokers--;
 
