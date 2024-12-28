@@ -2,7 +2,7 @@ using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Solver;
 
-public class BinaryFirstSolver : SolverBase, IBinarySolver
+public sealed class BinaryFirstSolver : SolverBase, IBinarySolver
 {
     public required IEnumerable<Tile> TilesToPlay { get; init; }
 
@@ -30,7 +30,7 @@ public class BinaryFirstSolver : SolverBase, IBinarySolver
     }
 
 
-    public override bool SearchSolution()
+    public bool SearchSolution()
     {
         BestSolution = FindSolution(new Solution(), 0, 0);
 

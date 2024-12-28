@@ -2,7 +2,7 @@ using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Solver;
 
-public class IncrementalSolver : SolverBase, IIncrementalSolver
+public sealed class IncrementalSolver : SolverBase, IIncrementalSolver
 {
     private readonly bool[] _isPlayerTile;
     private readonly int _boardJokers;
@@ -53,7 +53,7 @@ public class IncrementalSolver : SolverBase, IIncrementalSolver
         );
     }
 
-    public override bool SearchSolution()
+    public bool SearchSolution()
     {
         if (Tiles.Length + Jokers <= 2) return false;
         

@@ -1,5 +1,5 @@
 namespace RummiSolve.Solver.Interfaces;
 
-public interface IBinarySolver : ISolverBase
+public interface IBinarySolver : ISolver
 {
 }

@@ -1,6 +1,6 @@
 namespace RummiSolve.Solver.Interfaces;
 
-public interface IIncrementalSolver : ISolverBase
+public interface IIncrementalSolver : ISolver
 {
     protected internal int JokerToPlay { get; }
 }

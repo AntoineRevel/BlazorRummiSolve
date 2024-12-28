@@ -1,5 +1,3 @@
-using RummiSolve.Solver.Interfaces;
-
 namespace RummiSolve.Solver;
 
 public abstract class SolverBase(Tile[] tiles, int jokers)
@@ -10,8 +8,6 @@ public abstract class SolverBase(Tile[] tiles, int jokers)
     public Solution BestSolution { get; protected set; } = new();
     
     protected const int MinScore = 29;
-
-    public abstract bool SearchSolution();
 
     protected void MarkTilesAsUsed(ValidSet set, bool isUsed, int firstUnusedIndex)
     {
