@@ -25,7 +25,7 @@ public class RummiBench
 
     public static void TestMultiPlayerGame()
     {
-        Game game = new(Guid.Parse("00fe7af9-3134-4b13-91d9-433501f19a35"));
+        Game game = new(Guid.Parse("74cdccda-9261-460c-9414-31d7270ad2a1"));
         //Guid.Parse("74cdccda-9261-460c-9414-31d7270ad2a1")
 
         var listNames = new List<string> { "Antoine", "Matthieu", "Maguy" };
@@ -144,40 +144,5 @@ public class RummiBench
         Console.WriteLine(jokerToPlay);
     }
 
-    public static void SearchSolution_ValidDoubleNotWon()
-    {
-        // Arrange
-        var boardSet = new Set([
-            new Tile()
-        ]);
 
-        var playerSet = new Set([
-            new Tile(4),
-            new Tile(4),
-            new Tile(13),
-        ]);
-
-        var solver = IncrementalSolver.Create(boardSet, playerSet);
-
-        // Act
-        var won = solver.SearchSolution();
-        var solution = solver.BestSolution;
-        var tilesToPlay = solver.TilesToPlay.ToList();
-        var jokerToPlay = solver.JokerToPlay;
-
-        playerSet.PrintAllTiles();
-        Console.WriteLine();
-        boardSet.PrintAllTiles();
-        Console.WriteLine();
-        Console.WriteLine();
-        solution.PrintSolution();
-        Console.WriteLine("Tile to play :");
-        foreach (var tile in tilesToPlay)
-        {
-            tile.PrintTile();
-        }
-
-        Console.WriteLine("Joker :");
-        Console.WriteLine(jokerToPlay);
-    }
 }
