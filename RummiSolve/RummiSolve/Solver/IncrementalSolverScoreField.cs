@@ -16,7 +16,8 @@ public sealed class IncrementalSolverScoreField : SolverBase, IIncrementalSolver
     public IEnumerable<Tile> TilesToPlay => Tiles.Where((_, i) => _isPlayerTile[i] && _bestUsedTiles[i]);
     public int JokerToPlay => _availableJokers - _remainingJoker - _boardJokers;
 
-    private IncrementalSolverScoreField(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardJokers) : base(tiles, jokers)
+    private IncrementalSolverScoreField(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardJokers) : base(tiles,
+        jokers)
     {
         _availableJokers = jokers;
         _isPlayerTile = isPlayerTile;
@@ -64,24 +65,29 @@ public sealed class IncrementalSolverScoreField : SolverBase, IIncrementalSolver
 
             if (!newSolution.IsValid) return false;
             BestSolution = newSolution;
-            BestSolution.PrintSolution();
             _bestSolutionScore = _solutionScore;
             _bestUsedTiles = UsedTiles.ToArray();
             _remainingJoker = Jokers;
-            Console.WriteLine();
-            Console.WriteLine("Tile to play");
-            foreach (var tile in TilesToPlay)
-            {
-                tile.PrintTile();
-            }
-
-            Console.WriteLine();
-            Console.WriteLine(_bestSolutionScore);
+            PrintInfo();
             if (UsedTiles.All(b => b)) return true;
             Array.Fill(UsedTiles, false);
             Jokers = _availableJokers;
             _solutionScore = 0;
         }
+    }
+
+    private void PrintInfo()
+    {
+        BestSolution.PrintSolution();
+        Console.WriteLine();
+        Console.WriteLine("Tile to play");
+        foreach (var tile in TilesToPlay)
+        {
+            tile.PrintTile();
+        }
+
+        Console.WriteLine();
+        Console.WriteLine(_bestSolutionScore);
     }
 
     private bool ValidateCondition(int solutionScore)
@@ -127,12 +133,12 @@ public sealed class IncrementalSolverScoreField : SolverBase, IIncrementalSolver
         foreach (var set in sets)
         {
             MarkTilesAsUsed(set, true, firstUnusedTileIndex);
-            
+
             var normal = Tiles.Where((_, i) => _isPlayerTile[i] && UsedTiles[i]).Sum(t => t.Value);
             if (_solutionScore != normal) throw new Exception();
-            
+
             if (ValidateCondition(_solutionScore)) solution.IsValid = true;
-            
+
             else solution = FindSolution(solution, firstUnusedTileIndex);
 
             if (solution.IsValid)

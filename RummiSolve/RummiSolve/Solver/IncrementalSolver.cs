@@ -63,22 +63,27 @@ public sealed class IncrementalSolver : SolverBase, IIncrementalSolver
 
             if (!newSolution.IsValid) return false;
             BestSolution = newSolution;
-            BestSolution.PrintSolution();
             _bestUsedTiles = UsedTiles.ToArray();
             _remainingJoker = Jokers;
-            Console.WriteLine();
-            Console.WriteLine("Tile to play");
-            foreach (var tile in TilesToPlay)
-            {
-                tile.PrintTile();
-            }
-
-            Console.WriteLine();
-            Console.WriteLine(_bestSolutionScore);
+            PrintInfo();
             if (UsedTiles.All(b => b)) return true;
             Array.Fill(UsedTiles, false);
             Jokers = _availableJokers;
         }
+    }
+    
+    private void PrintInfo()
+    {
+        BestSolution.PrintSolution();
+        Console.WriteLine();
+        Console.WriteLine("Tile to play");
+        foreach (var tile in TilesToPlay)
+        {
+            tile.PrintTile();
+        }
+
+        Console.WriteLine();
+        Console.WriteLine(_bestSolutionScore);
     }
 
     private bool ValidateCondition(int solutionScore)
