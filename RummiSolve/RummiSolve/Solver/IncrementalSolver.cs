@@ -65,7 +65,7 @@ public sealed class IncrementalSolver : SolverBase, IIncrementalSolver
             BestSolution = newSolution;
             _bestUsedTiles = UsedTiles.ToArray();
             _remainingJoker = Jokers;
-            PrintInfo();
+            //PrintInfo();
             if (UsedTiles.All(b => b)) return true;
             Array.Fill(UsedTiles, false);
             Jokers = _availableJokers;
