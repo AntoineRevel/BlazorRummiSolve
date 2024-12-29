@@ -120,7 +120,7 @@ public class RummiBench
             new Tile(2,TileColor.Black),
         ]);
 
-        var solver = IncrementalSolver.Create(boardSet, playerSet);
+        var solver = IncrementalSolverScoreField.Create(boardSet, playerSet);
 
         // Act
         var won = solver.SearchSolution();

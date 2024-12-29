@@ -65,6 +65,7 @@ public sealed class IncrementalSolverScoreField : SolverBase, IIncrementalSolver
             if (!newSolution.IsValid) return false;
             BestSolution = newSolution;
             BestSolution.PrintSolution();
+            _bestSolutionScore = _solutionScore;
             _bestUsedTiles = UsedTiles.ToArray();
             _remainingJoker = Jokers;
             Console.WriteLine();
@@ -79,6 +80,7 @@ public sealed class IncrementalSolverScoreField : SolverBase, IIncrementalSolver
             if (UsedTiles.All(b => b)) return true;
             Array.Fill(UsedTiles, false);
             Jokers = _availableJokers;
+            _solutionScore = 0;
         }
     }
 
