@@ -25,7 +25,7 @@ public class RummiBench
 
     public static void TestMultiPlayerGame()
     {
-        Game game = new(Guid.Parse("74cdccda-9261-460c-9414-31d7270ad2a1"));
+        Game game = new(Guid.Parse("00fe7af9-3134-4b13-91d9-433501f19a35"));
         //Guid.Parse("74cdccda-9261-460c-9414-31d7270ad2a1")
 
         var listNames = new List<string> { "Antoine", "Matthieu", "Maguy" };
@@ -74,19 +74,86 @@ public class RummiBench
     {
         // Arrange
         var boardSet = new Set([
-            new Tile(10),
-            new Tile(11),
-            new Tile(12),
-            new Tile(13),
-
-            new Tile(11, TileColor.Mango),
+            new Tile(6,TileColor.Mango),
             new Tile(true),
-            new Tile(13, TileColor.Mango),
+            new Tile(8, TileColor.Mango),
+            
+            new Tile(10,TileColor.Red),
+            new Tile(11,TileColor.Red),
+            new Tile(12,TileColor.Red),
+            
+            new Tile(13),
+            new Tile(13,TileColor.Black),
+            new Tile(13,TileColor.Red),
+            
+            new Tile(12),
+            new Tile(12,TileColor.Black),
+            new Tile(12,TileColor.Mango),
+            
+            new Tile(11),
+            new Tile(11,TileColor.Black),
+            new Tile(11,TileColor.Red),
+            
+            new Tile(10),
+            new Tile(10,TileColor.Black),
+            new Tile(10,TileColor.Mango),
+            
+            new Tile(9),
+            new Tile(9,TileColor.Mango),
+            new Tile(9,TileColor.Red),
+            
+            new Tile(6),
+            new Tile(6,TileColor.Black),
+            new Tile(6,TileColor.Red),
+            
+            new Tile(2),
+            new Tile(2,TileColor.Black),
+            new Tile(2,TileColor.Red),
         ]);
 
         var playerSet = new Set([
-            new Tile(9, TileColor.Mango),
-            new Tile(13, TileColor.Red),
+            new Tile(4,TileColor.Black),
+            new Tile(8),
+            new Tile(3,TileColor.Mango),
+            new Tile(2,TileColor.Red),
+            new Tile(8),
+            new Tile(2,TileColor.Black),
+        ]);
+
+        var solver = IncrementalSolver.Create(boardSet, playerSet);
+
+        // Act
+        var won = solver.SearchSolution();
+        var solution = solver.BestSolution;
+        var tilesToPlay = solver.TilesToPlay.ToList();
+        var jokerToPlay = solver.JokerToPlay;
+
+        playerSet.PrintAllTiles();
+        Console.WriteLine();
+        boardSet.PrintAllTiles();
+        Console.WriteLine();
+        Console.WriteLine();
+        solution.PrintSolution();
+        Console.WriteLine("Tile to play :");
+        foreach (var tile in tilesToPlay)
+        {
+            tile.PrintTile();
+        }
+
+        Console.WriteLine("Joker :");
+        Console.WriteLine(jokerToPlay);
+    }
+
+    public static void SearchSolution_ValidDoubleNotWon()
+    {
+        // Arrange
+        var boardSet = new Set([
+            new Tile()
+        ]);
+
+        var playerSet = new Set([
+            new Tile(4),
+            new Tile(4),
             new Tile(13),
         ]);
 
