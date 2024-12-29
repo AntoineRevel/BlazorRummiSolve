@@ -6,23 +6,44 @@ public abstract class SolverBase(Tile[] tiles, int jokers)
     protected readonly bool[] UsedTiles = new bool[tiles.Length];
     protected int Jokers = jokers;
     public Solution BestSolution { get; protected set; } = new();
-    
+
     protected const int MinScore = 29;
 
-    protected void MarkTilesAsUsed(ValidSet set, bool isUsed, int firstUnusedIndex)
+    protected void MarkTilesAsUsed(ValidSet set, int firstUnusedIndex)
     {
         foreach (var tile in set.Tiles.Skip(1))
         {
             if (tile.IsJoker)
             {
-                Jokers += isUsed ? -1 : 1;
+                Jokers -= 1;
                 continue;
             }
+
             for (var i = firstUnusedIndex + 1; i < Tiles.Length; i++)
             {
-                if (UsedTiles[i] == isUsed || !Tiles[i].Equals(tile)) continue;
+                if (UsedTiles[i] || !Tiles[i].Equals(tile)) continue;
 
-                UsedTiles[i] = isUsed;
+                UsedTiles[i] = true;
+                break;
+            }
+        }
+    }
+
+    protected void MarkTilesAsUnused(ValidSet set, int firstUnusedIndex)
+    {
+        foreach (var tile in set.Tiles.Skip(1))
+        {
+            if (tile.IsJoker)
+            {
+                Jokers += 1;
+                continue;
+            }
+
+            for (var i = Tiles.Length - 1; i > firstUnusedIndex; i--)
+            {
+                if (!UsedTiles[i] || !Tiles[i].Equals(tile)) continue;
+
+                UsedTiles[i] = false;
                 break;
             }
         }

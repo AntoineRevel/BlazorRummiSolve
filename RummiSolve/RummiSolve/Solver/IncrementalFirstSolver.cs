@@ -91,7 +91,7 @@ public sealed class IncrementalFirstSolver : SolverBase, IIncrementalSolver
         UsedTiles[firstUnusedTileIndex] = true;
         foreach (var set in sets)
         {
-            MarkTilesAsUsed(set, true, firstUnusedTileIndex);
+            MarkTilesAsUsed(set, firstUnusedTileIndex);
 
             var newSolutionScore = solutionScore + set.GetScore();
 
@@ -105,7 +105,7 @@ public sealed class IncrementalFirstSolver : SolverBase, IIncrementalSolver
                 return solution;
             }
 
-            MarkTilesAsUsed(set, false, firstUnusedTileIndex);
+            MarkTilesAsUnused(set, firstUnusedTileIndex);
         }
 
         UsedTiles[firstUnusedTileIndex] = false;

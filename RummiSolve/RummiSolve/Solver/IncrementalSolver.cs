@@ -148,7 +148,7 @@ public sealed class IncrementalSolver : SolverBase, IIncrementalSolver
                 return solution;
             }
 
-            MarkTilesAsUsed(set, false, firstUnusedTileIndex);
+            MarkTilesAsUnused(set, firstUnusedTileIndex);
         }
 
         UsedTiles[firstUnusedTileIndex] = false;

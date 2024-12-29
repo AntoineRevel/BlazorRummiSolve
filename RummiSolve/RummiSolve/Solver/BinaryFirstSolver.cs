@@ -66,7 +66,7 @@ public sealed class BinaryFirstSolver : SolverBase, IBinarySolver
         UsedTiles[firstUnusedTileIndex] = true;
         foreach (var set in sets)
         {
-            MarkTilesAsUsed(set, true, firstUnusedTileIndex);
+            MarkTilesAsUsed(set, firstUnusedTileIndex);
             var newSolution = solution;
 
             var newSolutionScore = solutionScore + set.GetScore();
@@ -80,7 +80,7 @@ public sealed class BinaryFirstSolver : SolverBase, IBinarySolver
                 return solution;
             }
 
-            MarkTilesAsUsed(set, false, firstUnusedTileIndex);
+            MarkTilesAsUnused(set, firstUnusedTileIndex);
         }
 
         UsedTiles[firstUnusedTileIndex] = false;
