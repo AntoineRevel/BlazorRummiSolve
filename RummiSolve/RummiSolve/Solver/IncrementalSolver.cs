@@ -131,8 +131,9 @@ public sealed class IncrementalSolver : SolverBase, IIncrementalSolver
             MarkTilesAsUsedOut(set, firstUnusedTileIndex, out var playerSetScore);
 
             var newSolutionScore = solutionScore + firstTileScore + playerSetScore;
-            var normal = Tiles.Where((_, i) => _isPlayerTile[i] && UsedTiles[i]).Sum(t => t.Value);
-            if (newSolutionScore != normal) throw new Exception();
+            
+            // var normal = Tiles.Where((_, i) => _isPlayerTile[i] && UsedTiles[i]).Sum(t => t.Value);
+            // if (newSolutionScore != normal) throw new Exception();
 
             if (ValidateCondition(newSolutionScore))
             {

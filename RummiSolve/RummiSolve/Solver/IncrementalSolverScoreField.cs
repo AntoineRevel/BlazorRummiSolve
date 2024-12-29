@@ -132,10 +132,10 @@ public sealed class IncrementalSolverScoreField : SolverBase, IIncrementalSolver
         _solutionScore += _isPlayerTile[firstUnusedTileIndex] ? Tiles[firstUnusedTileIndex].Value : 0;
         foreach (var set in sets)
         {
-            MarkTilesAsUsed(set, true, firstUnusedTileIndex);
+            MarkTilesAsUsed(set, firstUnusedTileIndex);
 
-            var normal = Tiles.Where((_, i) => _isPlayerTile[i] && UsedTiles[i]).Sum(t => t.Value);
-            if (_solutionScore != normal) throw new Exception();
+            // var normal = Tiles.Where((_, i) => _isPlayerTile[i] && UsedTiles[i]).Sum(t => t.Value);
+            // if (_solutionScore != normal) throw new Exception();
 
             if (ValidateCondition(_solutionScore)) solution.IsValid = true;
 
@@ -147,7 +147,7 @@ public sealed class IncrementalSolverScoreField : SolverBase, IIncrementalSolver
                 return solution;
             }
 
-            MarkTilesAsUsed(set, false, firstUnusedTileIndex);
+            MarkTilesAsUnused(set, firstUnusedTileIndex);
         }
 
         UsedTiles[firstUnusedTileIndex] = false;
@@ -156,25 +156,51 @@ public sealed class IncrementalSolverScoreField : SolverBase, IIncrementalSolver
         return solution;
     }
 
-    private new void MarkTilesAsUsed(ValidSet set, bool isUsed, int firstUnusedIndex)
+    private new void MarkTilesAsUsed(ValidSet set, int firstUnusedIndex)
     {
         foreach (var tile in set.Tiles.Skip(1))
         {
             if (tile.IsJoker)
             {
-                Jokers += isUsed ? -1 : 1;
+                Jokers -= 1;
                 continue;
             }
 
             for (var i = firstUnusedIndex + 1; i < Tiles.Length; i++)
             {
-                if (UsedTiles[i] == isUsed || !Tiles[i].Equals(tile)) continue;
+                if (UsedTiles[i] || !Tiles[i].Equals(tile)) continue;
 
-                UsedTiles[i] = isUsed;
+                UsedTiles[i] = true;
 
                 if (_isPlayerTile[i])
                 {
-                    _solutionScore += isUsed ? tile.Value : -tile.Value;
+                    _solutionScore += tile.Value;
+                }
+
+                break;
+            }
+        }
+    }
+
+    private new void MarkTilesAsUnused(ValidSet set, int firstUnusedIndex)
+    {
+        foreach (var tile in set.Tiles.Skip(1))
+        {
+            if (tile.IsJoker)
+            {
+                Jokers += 1;
+                continue;
+            }
+
+            for (var i = firstUnusedIndex + 1; i < Tiles.Length; i++)
+            {
+                if (!UsedTiles[i] || !Tiles[i].Equals(tile)) continue;
+
+                UsedTiles[i] = false;
+
+                if (_isPlayerTile[i])
+                {
+                    _solutionScore -= tile.Value;
                 }
 
                 break;

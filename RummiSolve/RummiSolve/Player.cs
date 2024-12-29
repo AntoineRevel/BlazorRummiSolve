@@ -58,7 +58,7 @@ public class Player
         TilesToPlay.Clear();
 
         var boardSet = boardSolution.GetSet();
-        IIncrementalSolver solver = _played ? IncrementalSolver.Create(boardSet, _rackTilesSet) : IncrementalFirstSolver.Create(_rackTilesSet);
+        IIncrementalSolver solver = _played ? IncrementalSolverScoreField.Create(boardSet, _rackTilesSet) : IncrementalFirstSolver.Create(_rackTilesSet);
         Won = solver.SearchSolution();
         var solution = solver.BestSolution;
         var tilesToPlay = solver.TilesToPlay.ToList();
