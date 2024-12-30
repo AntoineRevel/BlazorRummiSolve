@@ -22,7 +22,7 @@ public class ScoreFirstSolver : SolverBase, IScoreSolver
         return new ScoreFirstSolver(tiles.ToArray(), playerSet.Jokers);
     }
 
-    public bool SearchSolution()
+    public bool SearchBestScore()
     {
         if (Tiles.Length + Jokers <= 2) return false;
 

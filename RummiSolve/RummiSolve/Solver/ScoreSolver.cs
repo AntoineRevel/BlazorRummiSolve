@@ -2,17 +2,10 @@ using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Solver;
 
-public class ScoreSolver : SolverBase, IScoreSolver
+public class ScoreSolver(Tile[] tiles, int jokers, bool[] isPlayerTile) : SolverBase(tiles, jokers), IScoreSolver
 {
-    private readonly bool[] _isPlayerTile;
-
     public int BestScore { get; private set; }
-
-    private ScoreSolver(Tile[] tiles, int jokers, bool[] isPlayerTile) : base(tiles, jokers)
-    {
-        _isPlayerTile = isPlayerTile;
-        BestScore = 0;
-    }
+    
 
     public static ScoreSolver Create(Set boardSet, Set playerSet)
     {
@@ -42,7 +35,7 @@ public class ScoreSolver : SolverBase, IScoreSolver
         );
     }
 
-    public bool SearchSolution()
+    public bool SearchBestScore()
     {
         if (Tiles.Length + Jokers <= 2) return false;
 
@@ -54,7 +47,7 @@ public class ScoreSolver : SolverBase, IScoreSolver
     private bool ValidateCondition()
     {
         var allBoardTilesUsed =
-            !UsedTiles.Where((use, i) => !use && !_isPlayerTile[i]).Any(); //check pas de joker restant ?
+            !UsedTiles.Where((use, i) => !use && !isPlayerTile[i]).Any(); //check pas de joker restant ?
 
         return allBoardTilesUsed;
     }
@@ -72,7 +65,7 @@ public class ScoreSolver : SolverBase, IScoreSolver
 
             TrySet(GetGroups(startIndex), solution, solutionScore, startIndex);
 
-            if (_isPlayerTile[startIndex]) startIndex++;
+            if (isPlayerTile[startIndex]) startIndex++;
             else return;
         }
     }
@@ -81,7 +74,7 @@ public class ScoreSolver : SolverBase, IScoreSolver
         where TS : ValidSet
     {
         UsedTiles[firstUnusedTileIndex] = true;
-        var firstTileScore = _isPlayerTile[firstUnusedTileIndex] ? Tiles[firstUnusedTileIndex].Value : 0;
+        var firstTileScore = isPlayerTile[firstUnusedTileIndex] ? Tiles[firstUnusedTileIndex].Value : 0;
         foreach (var set in sets)
         {
             MarkTilesAsUsedOut(set, firstUnusedTileIndex, out var playerSetScore);
@@ -115,7 +108,7 @@ public class ScoreSolver : SolverBase, IScoreSolver
 
                 UsedTiles[i] = true;
 
-                if (_isPlayerTile[i])
+                if (isPlayerTile[i])
                 {
                     playerSetScore += tile.Value;
                 }

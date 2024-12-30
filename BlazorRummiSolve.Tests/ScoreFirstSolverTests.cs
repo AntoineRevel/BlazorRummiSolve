@@ -18,7 +18,7 @@ public class ScoreFirstSolverTests
         var solver = ScoreFirstSolver.Create(playerSet);
 
         // Act
-        var canPlay = solver.SearchSolution();
+        var canPlay = solver.SearchBestScore();
         var bestScore = solver.BestScore;
 
         // Assert
@@ -39,7 +39,7 @@ public class ScoreFirstSolverTests
         var solver = ScoreFirstSolver.Create(playerSet);
 
         // Act
-        var canPlay = solver.SearchSolution();
+        var canPlay = solver.SearchBestScore();
         var bestScore = solver.BestScore;
 
         // Assert
@@ -63,7 +63,7 @@ public class ScoreFirstSolverTests
         var solver = ScoreFirstSolver.Create(playerSet);
 
         // Act
-        var canPlay = solver.SearchSolution();
+        var canPlay = solver.SearchBestScore();
 
         // Assert
         Assert.False(canPlay);
@@ -87,7 +87,7 @@ public class ScoreFirstSolverTests
         var solver = ScoreFirstSolver.Create(playerSet);
 
         // Act
-        var canPlay = solver.SearchSolution();
+        var canPlay = solver.SearchBestScore();
         var bestScore = solver.BestScore;
 
         // Assert
@@ -111,7 +111,7 @@ public class ScoreFirstSolverTests
         var solver = ScoreFirstSolver.Create(playerSet);
 
         // Act
-        var canPlay = solver.SearchSolution();
+        var canPlay = solver.SearchBestScore();
         var bestScore = solver.BestScore;
 
         // Assert
@@ -134,7 +134,7 @@ public class ScoreFirstSolverTests
         var solver = ScoreFirstSolver.Create(playerSet);
 
         // Act
-        var canPlay = solver.SearchSolution();
+        var canPlay = solver.SearchBestScore();
 
 
         // Assert

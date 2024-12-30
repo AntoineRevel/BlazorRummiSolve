@@ -234,7 +234,7 @@ public class RummiBench
         ]);
 
         var solver = ScoreSolver.Create(boardSet, playerSet);
-        solver.SearchSolution();
+        solver.SearchBestScore();
         Console.WriteLine(solver.BestScore);
     }
 }

@@ -24,7 +24,7 @@ public class ScoreSolverTests
         var solver = ScoreSolver.Create(boardSet, playerSet);
 
         // Act
-        var canPlay = solver.SearchSolution();
+        var canPlay = solver.SearchBestScore();
         var bestScore = solver.BestScore;
 
         // Assert
@@ -51,7 +51,7 @@ public class ScoreSolverTests
         var solver = ScoreSolver.Create(boardSet, playerSet);
 
         // Act
-        var canPlay = solver.SearchSolution();
+        var canPlay = solver.SearchBestScore();
         var bestScore = solver.BestScore;
 
         // Assert
@@ -76,7 +76,7 @@ public class ScoreSolverTests
         var solver = ScoreSolver.Create(boardSet, playerSet);
 
         // Act
-        var canPlay = solver.SearchSolution();
+        var canPlay = solver.SearchBestScore();
         var bestScore = solver.BestScore;
 
         // Assert
@@ -103,7 +103,7 @@ public class ScoreSolverTests
         var solver = ScoreSolver.Create(boardSet, playerSet);
 
         // Act
-        var canPlay = solver.SearchSolution();
+        var canPlay = solver.SearchBestScore();
         var bestScore = solver.BestScore;
 
         // Assert
@@ -137,7 +137,7 @@ public class ScoreSolverTests
         var solver = ScoreSolver.Create(boardSet, playerSet);
 
         // Act
-        var canPlay = solver.SearchSolution();
+        var canPlay = solver.SearchBestScore();
         var bestScore = solver.BestScore;
 
         // Assert
@@ -169,7 +169,7 @@ public class ScoreSolverTests
         var solver = ScoreSolver.Create(boardSet, playerSet);
 
         // Act
-        var canPlay = solver.SearchSolution();
+        var canPlay = solver.SearchBestScore();
         var bestScore = solver.BestScore;
 
         // Assert
@@ -199,7 +199,7 @@ public class ScoreSolverTests
         var solver = ScoreSolver.Create(boardSet, playerSet);
 
         // Act
-        var canPlay = solver.SearchSolution();
+        var canPlay = solver.SearchBestScore();
         var bestScore = solver.BestScore;
 
         // Assert
@@ -224,7 +224,7 @@ public class ScoreSolverTests
         var solver = ScoreSolver.Create(boardSet, playerSet);
 
         // Act
-        var canPlay = solver.SearchSolution();
+        var canPlay = solver.SearchBestScore();
         var bestScore = solver.BestScore;
 
         // Assert
