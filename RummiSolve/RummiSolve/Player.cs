@@ -31,31 +31,48 @@ public class Player
     public bool Won { get; private set; }
 
 
-    public Solution Solve(Solution boardSolution)
+    public async Task<Solution> Solve(Solution boardSolution)
     {
         TilesToPlay.Clear();
         var boardSet = boardSolution.GetSet();
-        
-        ISolver solver = _played
+
+        ISolver bestScoreSolver = _played
             ? BestScoreSolver.Create(boardSet, _rackTilesSet)
             : BestScoreFirstSolver.Create(_rackTilesSet);
-
         
-        return Solve(boardSolution, solver);
+        ISolver incrementalSolver = _played
+            ? IncrementalSolver.Create(boardSet, _rackTilesSet)
+            : IncrementalFirstSolver.Create(_rackTilesSet);
+
+        using var cts = new CancellationTokenSource();
+
+        var incrementalTask = Task.Run(() => incrementalSolver.SearchSolution(), cts.Token);
+        var bestScoreTask = Task.Run(() => bestScoreSolver.SearchSolution(), cts.Token);
+        
+        var completedTask = await Task.WhenAny(bestScoreTask, incrementalTask);
+
+        await cts.CancelAsync();
+
+        if (completedTask == bestScoreTask)
+        {
+            WriteLine("Best Score First");
+            return Solve(boardSolution, bestScoreSolver);
+        }
+
+        WriteLine("increment First");
+        return Solve(boardSolution, incrementalSolver);
     }
-    
+
     private Solution Solve(Solution boardSolution, ISolver solver)
     {
-        solver.SearchSolution();
-        
         if (!solver.Found) return Solution.GetInvalidSolution();
         Won = solver.Won;
-        
+
         var solution = solver.BestSolution;
         TilesToPlay = solver.TilesToPlay.ToList();
         JokersToPlay = solver.JokerToPlay;
 
-        
+
         if (_played) return solution;
 
         solution.AddSolution(boardSolution);
@@ -87,7 +104,7 @@ public class Player
     {
         RackTileToShow = _lastRackTilesSet;
     }
-    
+
     public void AddTileToRack(Tile tile)
     {
         _rackTilesSet.AddTile(tile);

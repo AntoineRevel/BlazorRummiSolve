@@ -118,6 +118,7 @@ public class BestScoreFirstSolver : SolverBase, ISolver
         foreach (var tile in set.Tiles.Skip(1))
         {
             playerSetScore += tile.Value;
+            
             if (tile.IsJoker)
             {
                 Jokers -= 1;
