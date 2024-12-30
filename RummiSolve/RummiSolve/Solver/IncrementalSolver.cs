@@ -127,9 +127,6 @@ public sealed class IncrementalSolver : SolverBase, ISolver
 
             var newSolutionScore = solutionScore + firstTileScore + playerSetScore;
 
-            // var normal = Tiles.Where((_, i) => _isPlayerTile[i] && UsedTiles[i]).Sum(t => t.Value);
-            // if (newSolutionScore != normal) throw new Exception();
-
             if (ValidateCondition(newSolutionScore))
             {
                 _bestSolutionScore = newSolutionScore;

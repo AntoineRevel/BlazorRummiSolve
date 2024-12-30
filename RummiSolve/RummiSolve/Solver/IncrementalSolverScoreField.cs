@@ -2,7 +2,7 @@ using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Solver;
 
-public sealed class IncrementalSolverScoreField : SolverBase
+public sealed class IncrementalSolverScoreField : SolverBase,ISolver
 {
     private readonly bool[] _isPlayerTile;
     private readonly int _boardJokers;
@@ -12,7 +12,8 @@ public sealed class IncrementalSolverScoreField : SolverBase
     private int _remainingJoker;
     private int _solutionScore;
     private int _bestSolutionScore;
-    
+
+    public bool Found => BestSolution.IsValid;
     public Solution BestSolution { get; private set; } = new();
     public IEnumerable<Tile> TilesToPlay => Tiles.Where((_, i) => _isPlayerTile[i] && _bestUsedTiles[i]);
     public bool Won { get; private set; }
@@ -185,7 +186,7 @@ public sealed class IncrementalSolverScoreField : SolverBase
                 continue;
             }
 
-            for (var i = firstUnusedIndex + 1; i < Tiles.Length; i++)
+            for (var i = Tiles.Length - 1; i > firstUnusedIndex; i--)
             {
                 if (!UsedTiles[i] || !Tiles[i].Equals(tile)) continue;
 

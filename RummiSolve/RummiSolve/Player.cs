@@ -30,6 +30,32 @@ public class Player
 
     public bool Won { get; private set; }
 
+    
+    public Solution SolveIncr(Solution boardSolution)
+    {
+        TilesToPlay.Clear();
+        var boardSet = boardSolution.GetSet();
+
+        ISolver incrementalSolver = _played
+            ? IncrementalSolverScoreField.Create(boardSet, _rackTilesSet)
+            : IncrementalFirstSolver.Create(_rackTilesSet);
+        
+        incrementalSolver.SearchSolution();
+        return Solve(boardSolution, incrementalSolver);
+    }
+
+    public Solution SolveBs(Solution boardSolution)
+    {
+        TilesToPlay.Clear();
+        var boardSet = boardSolution.GetSet();
+
+        ISolver bestScoreSolver = _played
+            ? BestScoreSolver.Create(boardSet, _rackTilesSet)
+            : BestScoreFirstSolver.Create(_rackTilesSet);
+        
+        bestScoreSolver.SearchSolution();
+        return Solve(boardSolution, bestScoreSolver);
+    }
 
     public async Task<Solution> Solve(Solution boardSolution)
     {
@@ -39,7 +65,7 @@ public class Player
         ISolver bestScoreSolver = _played
             ? BestScoreSolver.Create(boardSet, _rackTilesSet)
             : BestScoreFirstSolver.Create(_rackTilesSet);
-        
+
         ISolver incrementalSolver = _played
             ? IncrementalSolver.Create(boardSet, _rackTilesSet)
             : IncrementalFirstSolver.Create(_rackTilesSet);
@@ -48,7 +74,7 @@ public class Player
 
         var incrementalTask = Task.Run(() => incrementalSolver.SearchSolution(), cts.Token);
         var bestScoreTask = Task.Run(() => bestScoreSolver.SearchSolution(), cts.Token);
-        
+
         var completedTask = await Task.WhenAny(bestScoreTask, incrementalTask);
 
         await cts.CancelAsync();
