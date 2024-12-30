@@ -63,7 +63,7 @@ public class SolutionWithScoreSolver : SolverBase, ISolutionWithScoreSolver
         _bestUsedTiles = UsedTiles.ToArray();
         _remainingJoker = Jokers;
 
-        return BestSolution.IsValid;
+        return UsedTiles.All(b => b);
     }
 
     private bool ValidateCondition(int solutionScore)
@@ -113,7 +113,7 @@ public class SolutionWithScoreSolver : SolverBase, ISolutionWithScoreSolver
             var newSolutionScore = solutionScore + firstTileScore + playerSetScore;
 
             if (ValidateCondition(newSolutionScore)) solution.IsValid = true;
-            
+
             else solution = FindSolution(solution, newSolutionScore, firstUnusedTileIndex);
 
             if (solution.IsValid)

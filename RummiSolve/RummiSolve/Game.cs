@@ -87,7 +87,7 @@ public class Game(Guid id)
 
         if (NextPlayerSolution.IsValid) BoardSolution = NextPlayerSolution;
 
-        NextPlayerSolution = currentPlayer.SolveNew(BoardSolution);
+        NextPlayerSolution = currentPlayer.SolveNewScore(BoardSolution);
 
         currentPlayer.SaveRack();
 

@@ -53,25 +53,26 @@ public class Player
         WriteLine();
     }
     
-    public Solution SolveNewScore(Solution boardSolution)
+    public Solution SolveNewScoreParra(Solution boardSolution)
     {
         TilesToPlay.Clear();
 
         var boardSet = boardSolution.GetSet();
-        var scoreSolver = ScoreSolver.Create(boardSet, _rackTilesSet);
+        IScoreSolver scoreSolver =
+            _played ? ScoreSolver.Create(boardSet, _rackTilesSet) : ScoreFirstSolver.Create(_rackTilesSet);
 
+        var canPlay = scoreSolver.SearchSolution();
+        if (!canPlay) return Solution.GetInvalidSolution();
 
-        IIncrementalSolver solver = _played ? SolutionWithScoreSolver.Create(boardSet, _rackTilesSet,scoreSolver.BestScore) : IncrementalFirstSolver.Create(_rackTilesSet);
+        WriteLine( "Best score : " + scoreSolver.BestScore);
+        IIncrementalSolver solver = _played
+            ? SolutionWithScoreSolver.Create(boardSet, _rackTilesSet, scoreSolver.BestScore)
+            : IncrementalFirstSolver.Create(_rackTilesSet);
+            
         Won = solver.SearchSolution();
         var solution = solver.BestSolution;
-        var tilesToPlay = solver.TilesToPlay.ToList();
-        var jokersToPlay = solver.JokerToPlay;
-        var somToPlay = tilesToPlay.Count + jokersToPlay;
-
-        if (somToPlay == 0) return Solution.GetInvalidSolution();
-
-        TilesToPlay = tilesToPlay;
-        JokersToPlay = jokersToPlay;
+        TilesToPlay = solver.TilesToPlay.ToList();
+        JokersToPlay = solver.JokerToPlay;
 
         if (_played) return solution;
 
@@ -79,6 +80,37 @@ public class Player
         _played = true;
 
         return solution;
+        
+    }
+
+    public Solution SolveNewScore(Solution boardSolution)
+    {
+        TilesToPlay.Clear();
+
+        var boardSet = boardSolution.GetSet();
+        IScoreSolver scoreSolver =
+            _played ? ScoreSolver.Create(boardSet, _rackTilesSet) : ScoreFirstSolver.Create(_rackTilesSet);
+
+        var canPlay = scoreSolver.SearchSolution();
+        if (!canPlay) return Solution.GetInvalidSolution();
+
+        WriteLine( "Best score : " + scoreSolver.BestScore);
+        IIncrementalSolver solver = _played
+            ? SolutionWithScoreSolver.Create(boardSet, _rackTilesSet, scoreSolver.BestScore)
+            : IncrementalFirstSolver.Create(_rackTilesSet);
+            
+        Won = solver.SearchSolution();
+        var solution = solver.BestSolution;
+        TilesToPlay = solver.TilesToPlay.ToList();
+        JokersToPlay = solver.JokerToPlay;
+
+        if (_played) return solution;
+
+        solution.AddSolution(boardSolution);
+        _played = true;
+
+        return solution;
+        
     }
 
     public Solution SolveNew(Solution boardSolution)
@@ -86,7 +118,9 @@ public class Player
         TilesToPlay.Clear();
 
         var boardSet = boardSolution.GetSet();
-        IIncrementalSolver solver = _played ? IncrementalSolver.Create(boardSet, _rackTilesSet) : IncrementalFirstSolver.Create(_rackTilesSet);
+        IIncrementalSolver solver = _played
+            ? IncrementalSolver.Create(boardSet, _rackTilesSet)
+            : IncrementalFirstSolver.Create(_rackTilesSet);
         Won = solver.SearchSolution();
         var solution = solver.BestSolution;
         var tilesToPlay = solver.TilesToPlay.ToList();
@@ -215,7 +249,7 @@ public class Player
     {
         RackTileToShow = _lastRackTilesSet;
     }
-    
+
     //_____NEW____
 
     //private Solution CombiSolveFirst(){}
