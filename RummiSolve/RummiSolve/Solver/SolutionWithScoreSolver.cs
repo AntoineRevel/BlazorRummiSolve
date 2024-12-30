@@ -68,10 +68,11 @@ public class SolutionWithScoreSolver : SolverBase, ISolutionWithScoreSolver
 
     private bool ValidateCondition(int solutionScore)
     {
+        if (solutionScore != _bestSolutionScore) return false;
         var allBoardTilesUsed =
             !UsedTiles.Where((use, i) => !use && !_isPlayerTile[i]).Any(); //check pas de joker restant ?
 
-        return allBoardTilesUsed && solutionScore == _bestSolutionScore;
+        return allBoardTilesUsed;
     }
 
 
