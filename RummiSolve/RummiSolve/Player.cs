@@ -52,6 +52,34 @@ public class Player
 
         WriteLine();
     }
+    
+    public Solution SolveNewScore(Solution boardSolution)
+    {
+        TilesToPlay.Clear();
+
+        var boardSet = boardSolution.GetSet();
+        var scoreSolver = ScoreSolver.Create(boardSet, _rackTilesSet);
+
+
+        IIncrementalSolver solver = _played ? SolutionWithScoreSolver.Create(boardSet, _rackTilesSet,scoreSolver.BestScore) : IncrementalFirstSolver.Create(_rackTilesSet);
+        Won = solver.SearchSolution();
+        var solution = solver.BestSolution;
+        var tilesToPlay = solver.TilesToPlay.ToList();
+        var jokersToPlay = solver.JokerToPlay;
+        var somToPlay = tilesToPlay.Count + jokersToPlay;
+
+        if (somToPlay == 0) return Solution.GetInvalidSolution();
+
+        TilesToPlay = tilesToPlay;
+        JokersToPlay = jokersToPlay;
+
+        if (_played) return solution;
+
+        solution.AddSolution(boardSolution);
+        _played = true;
+
+        return solution;
+    }
 
     public Solution SolveNew(Solution boardSolution)
     {
