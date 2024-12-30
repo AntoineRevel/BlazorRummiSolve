@@ -6,7 +6,7 @@ public class ScoreFirstSolver : SolverBase, IScoreSolver
 {
     public int BestScore { get; private set; }
 
-    private ScoreFirstSolver(Tile[] tiles, int jokers) : base(tiles, jokers)
+    internal ScoreFirstSolver(Tile[] tiles, int jokers) : base(tiles, jokers)
     {
         BestScore = 0;
     }

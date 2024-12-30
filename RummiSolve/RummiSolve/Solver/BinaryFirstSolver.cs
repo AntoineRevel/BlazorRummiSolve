@@ -7,7 +7,7 @@ public sealed class BinaryFirstSolver : SolverBase, IBinarySolver
     public Solution BinarySolution { get; private set; } = new();
     public required IEnumerable<Tile> TilesToPlay { get; init; }
 
-    private BinaryFirstSolver(Tile[] tiles, int jokers) : base(tiles, jokers)
+    internal BinaryFirstSolver(Tile[] tiles, int jokers) : base(tiles, jokers)
     {
     }
 
