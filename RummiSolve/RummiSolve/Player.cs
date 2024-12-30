@@ -40,6 +40,7 @@ public class Player
             ? BestScoreSolver.Create(boardSet, _rackTilesSet)
             : BestScoreFirstSolver.Create(_rackTilesSet);
 
+        
         return Solve(boardSolution, solver);
     }
     

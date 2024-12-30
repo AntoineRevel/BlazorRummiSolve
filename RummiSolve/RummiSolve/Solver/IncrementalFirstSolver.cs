@@ -2,7 +2,7 @@ using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Solver;
 
-public sealed class IncrementalFirstSolver : SolverBase, IIncrementalSolver
+public sealed class IncrementalFirstSolver : SolverBase, ISolver
 {
     private readonly int _availableJokers;
 

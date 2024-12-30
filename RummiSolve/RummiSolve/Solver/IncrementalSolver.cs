@@ -2,7 +2,7 @@ using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Solver;
 
-public sealed class IncrementalSolver : SolverBase, IIncrementalSolver
+public sealed class IncrementalSolver : SolverBase, ISolver
 {
     private readonly bool[] _isPlayerTile;
     private readonly int _boardJokers;
@@ -10,7 +10,7 @@ public sealed class IncrementalSolver : SolverBase, IIncrementalSolver
 
     private bool[] _bestUsedTiles;
     private int _remainingJoker;
-    private int _bestSolutionScore;
+    private int _bestSolutionScore = 1;
 
     public bool Found => BestSolution.IsValid;
     
@@ -26,7 +26,6 @@ public sealed class IncrementalSolver : SolverBase, IIncrementalSolver
         _isPlayerTile = isPlayerTile;
         _boardJokers = boardJokers;
         _bestUsedTiles = UsedTiles;
-        _bestSolutionScore = 1;
     }
 
     public static IncrementalSolver Create(Set boardSet, Set playerSet)
