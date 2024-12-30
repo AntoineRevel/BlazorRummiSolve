@@ -10,6 +10,7 @@ public sealed class IncrementalFirstSolver : SolverBase, IIncrementalSolver
     private int _remainingJoker;
     private int _bestSolutionScore;
 
+    public bool Found => BestSolution.IsValid;
     public IEnumerable<Tile> TilesToPlay => Tiles.Where((_, i) => _bestUsedTiles[i]);
     public bool Won { get; private set; }
     public int JokerToPlay => _availableJokers - _remainingJoker;

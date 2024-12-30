@@ -2,9 +2,10 @@ namespace RummiSolve.Solver.Interfaces;
 
 public interface ISolver
 {
-    protected internal Solution BestSolution { get; }
+    bool Found { get; }
+    Solution BestSolution { get; }
     IEnumerable<Tile> TilesToPlay { get; }
-    
+    int JokerToPlay { get; }
     bool Won { get; }
     void SearchSolution();
 }

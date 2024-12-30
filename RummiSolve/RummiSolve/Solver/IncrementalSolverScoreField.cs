@@ -2,7 +2,7 @@ using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Solver;
 
-public sealed class IncrementalSolverScoreField : SolverBase, IIncrementalSolver
+public sealed class IncrementalSolverScoreField : SolverBase
 {
     private readonly bool[] _isPlayerTile;
     private readonly int _boardJokers;
