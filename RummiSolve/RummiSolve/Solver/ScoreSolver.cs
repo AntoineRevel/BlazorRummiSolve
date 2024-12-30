@@ -11,7 +11,7 @@ public class ScoreSolver : SolverBase, IScoreSolver
     private ScoreSolver(Tile[] tiles, int jokers, bool[] isPlayerTile) : base(tiles, jokers)
     {
         _isPlayerTile = isPlayerTile;
-        BestScore = -1;
+        BestScore = 0;
     }
 
     public static ScoreSolver Create(Set boardSet, Set playerSet)
@@ -48,7 +48,7 @@ public class ScoreSolver : SolverBase, IScoreSolver
 
         FindBestScore(new Solution(), 0, 0);
 
-        return BestScore != -1;
+        return BestScore != 0;
     }
     
     private bool ValidateCondition()
@@ -90,7 +90,7 @@ public class ScoreSolver : SolverBase, IScoreSolver
 
             if (ValidateCondition() && newSolutionScore > BestScore) BestScore = newSolutionScore;
 
-            else FindBestScore(solution, newSolutionScore, firstUnusedTileIndex);
+            FindBestScore(solution, newSolutionScore, firstUnusedTileIndex);
 
             MarkTilesAsUnused(set, firstUnusedTileIndex);
         }

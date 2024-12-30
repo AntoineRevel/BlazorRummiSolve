@@ -17,6 +17,14 @@
   &lt;TestAncestor&gt;
     &lt;TestId&gt;xUnit::1895341F-D9C3-45B8-AA61-444E26C6BF42::net9.0::BlazorRummiSolve.Tests.IncrementalSolverTests&lt;/TestId&gt;
     &lt;TestId&gt;xUnit::1895341F-D9C3-45B8-AA61-444E26C6BF42::net9.0::BlazorRummiSolve.Tests.IncrementalFirstSolverTests.SearchSolution_Valid&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::1895341F-D9C3-45B8-AA61-444E26C6BF42::net9.0::BlazorRummiSolve.Tests.ScoreSolverTests.SearchSolution_Valid&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::1895341F-D9C3-45B8-AA61-444E26C6BF42::net9.0::BlazorRummiSolve.Tests.ScoreSolverTests.SearchSolution_ValidJoker&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::1895341F-D9C3-45B8-AA61-444E26C6BF42::net9.0::BlazorRummiSolve.Tests.ScoreSolverTests.SearchSolution_ValidRun&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::1895341F-D9C3-45B8-AA61-444E26C6BF42::net9.0::BlazorRummiSolve.Tests.ScoreSolverTests.SearchSolution_ValidRunEnd&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::1895341F-D9C3-45B8-AA61-444E26C6BF42::net9.0::BlazorRummiSolve.Tests.ScoreSolverTests.SearchSolution_ValidNotWon&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::1895341F-D9C3-45B8-AA61-444E26C6BF42::net9.0::BlazorRummiSolve.Tests.ScoreSolverTests.SearchSolution_ValidNWonIncrscorePlayer&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::1895341F-D9C3-45B8-AA61-444E26C6BF42::net9.0::BlazorRummiSolve.Tests.ScoreSolverTests.SearchSolution_ValidWinJoker&lt;/TestId&gt;
+    &lt;TestId&gt;xUnit::1895341F-D9C3-45B8-AA61-444E26C6BF42::net9.0::BlazorRummiSolve.Tests.ScoreSolverTests.SearchSolution_Invalid&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String>
 	
