@@ -74,50 +74,50 @@ public class RummiBench
     {
         // Arrange
         var boardSet = new Set([
-            new Tile(6,TileColor.Mango),
+            new Tile(6, TileColor.Mango),
             new Tile(true),
             new Tile(8, TileColor.Mango),
-            
-            new Tile(10,TileColor.Red),
-            new Tile(11,TileColor.Red),
-            new Tile(12,TileColor.Red),
-            
+
+            new Tile(10, TileColor.Red),
+            new Tile(11, TileColor.Red),
+            new Tile(12, TileColor.Red),
+
             new Tile(13),
-            new Tile(13,TileColor.Black),
-            new Tile(13,TileColor.Red),
-            
+            new Tile(13, TileColor.Black),
+            new Tile(13, TileColor.Red),
+
             new Tile(12),
-            new Tile(12,TileColor.Black),
-            new Tile(12,TileColor.Mango),
-            
+            new Tile(12, TileColor.Black),
+            new Tile(12, TileColor.Mango),
+
             new Tile(11),
-            new Tile(11,TileColor.Black),
-            new Tile(11,TileColor.Red),
-            
+            new Tile(11, TileColor.Black),
+            new Tile(11, TileColor.Red),
+
             new Tile(10),
-            new Tile(10,TileColor.Black),
-            new Tile(10,TileColor.Mango),
-            
+            new Tile(10, TileColor.Black),
+            new Tile(10, TileColor.Mango),
+
             new Tile(9),
-            new Tile(9,TileColor.Mango),
-            new Tile(9,TileColor.Red),
-            
+            new Tile(9, TileColor.Mango),
+            new Tile(9, TileColor.Red),
+
             new Tile(6),
-            new Tile(6,TileColor.Black),
-            new Tile(6,TileColor.Red),
-            
+            new Tile(6, TileColor.Black),
+            new Tile(6, TileColor.Red),
+
             new Tile(2),
-            new Tile(2,TileColor.Black),
-            new Tile(2,TileColor.Red),
+            new Tile(2, TileColor.Black),
+            new Tile(2, TileColor.Red),
         ]);
 
         var playerSet = new Set([
-            new Tile(4,TileColor.Black),
+            new Tile(4, TileColor.Black),
             new Tile(8),
-            new Tile(3,TileColor.Mango),
+            new Tile(3, TileColor.Mango),
             //new Tile(2,TileColor.Red),
             new Tile(8),
-            new Tile(2,TileColor.Black),
+            new Tile(2, TileColor.Black),
         ]);
 
         var solver = IncrementalSolver.Create(boardSet, playerSet);
@@ -143,55 +143,55 @@ public class RummiBench
         Console.WriteLine("Joker :");
         Console.WriteLine(jokerToPlay);
     }
-    
-        public static void SearchSolution_ValidNotBugWon()
+
+    public static void SearchSolution_ValidNotBugWon()
     {
         // Arrange
         var boardSet = new Set([
-            new Tile(6,TileColor.Mango),
+            new Tile(6, TileColor.Mango),
             new Tile(true),
             new Tile(8, TileColor.Mango),
-            
-            new Tile(10,TileColor.Red),
-            new Tile(11,TileColor.Red),
-            new Tile(12,TileColor.Red),
-            
+
+            new Tile(10, TileColor.Red),
+            new Tile(11, TileColor.Red),
+            new Tile(12, TileColor.Red),
+
             new Tile(13),
-            new Tile(13,TileColor.Black),
-            new Tile(13,TileColor.Red),
-            
+            new Tile(13, TileColor.Black),
+            new Tile(13, TileColor.Red),
+
             new Tile(12),
-            new Tile(12,TileColor.Black),
-            new Tile(12,TileColor.Mango),
-            
+            new Tile(12, TileColor.Black),
+            new Tile(12, TileColor.Mango),
+
             new Tile(11),
-            new Tile(11,TileColor.Black),
-            new Tile(11,TileColor.Red),
-            
+            new Tile(11, TileColor.Black),
+            new Tile(11, TileColor.Red),
+
             new Tile(10),
-            new Tile(10,TileColor.Black),
-            new Tile(10,TileColor.Mango),
-            
+            new Tile(10, TileColor.Black),
+            new Tile(10, TileColor.Mango),
+
             new Tile(9),
-            new Tile(9,TileColor.Mango),
-            new Tile(9,TileColor.Red),
-            
+            new Tile(9, TileColor.Mango),
+            new Tile(9, TileColor.Red),
+
             new Tile(6),
-            new Tile(6,TileColor.Black),
-            new Tile(6,TileColor.Red),
-            
+            new Tile(6, TileColor.Black),
+            new Tile(6, TileColor.Red),
+
             new Tile(2),
-            new Tile(2,TileColor.Black),
-            new Tile(2,TileColor.Red),
+            new Tile(2, TileColor.Black),
+            new Tile(2, TileColor.Red),
         ]);
 
         var playerSet = new Set([
-            new Tile(4,TileColor.Black),
+            new Tile(4, TileColor.Black),
             new Tile(8),
-            new Tile(3,TileColor.Mango),
-            new Tile(2,TileColor.Red),
+            new Tile(3, TileColor.Mango),
+            new Tile(2, TileColor.Red),
             new Tile(8),
-            new Tile(2,TileColor.Black),
+            new Tile(2, TileColor.Black),
         ]);
 
         var solver = IncrementalSolver.Create(boardSet, playerSet);
@@ -218,5 +218,22 @@ public class RummiBench
         Console.WriteLine(jokerToPlay);
     }
 
+    public static void TestBestScore()
+    {
+        // Arrange
+        var boardSet = new Set([
+            new Tile(1),
+            new Tile(2),
+            new Tile(3),
+        ]);
 
+        var playerSet = new Set([
+            new Tile(4),
+            new Tile(5),
+        ]);
+
+        var solver = ScoreSolver.Create(boardSet, playerSet);
+        solver.SearchSolution();
+        Console.WriteLine(solver.BestScore);
+    }
 }
