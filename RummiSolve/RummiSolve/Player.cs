@@ -37,7 +37,7 @@ public class Player
         var boardSet = boardSolution.GetSet();
         
         ISolver solver = _played
-            ? FullSolutionWithScoreSolver.Create(boardSet, _rackTilesSet)
+            ? BestScoreSolver.Create(boardSet, _rackTilesSet)
             : IncrementalFirstSolver.Create(_rackTilesSet);
 
         return Solve(boardSolution, solver);

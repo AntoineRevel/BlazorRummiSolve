@@ -11,6 +11,7 @@ public sealed class IncrementalFirstSolver : SolverBase, IIncrementalSolver
     private int _bestSolutionScore;
 
     public bool Found => BestSolution.IsValid;
+    public Solution BestSolution { get; private set; } = new();
     public IEnumerable<Tile> TilesToPlay => Tiles.Where((_, i) => _bestUsedTiles[i]);
     public bool Won { get; private set; }
     public int JokerToPlay => _availableJokers - _remainingJoker;

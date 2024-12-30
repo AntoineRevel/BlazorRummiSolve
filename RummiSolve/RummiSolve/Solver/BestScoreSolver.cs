@@ -2,7 +2,7 @@ using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Solver;
 
-public class FullSolutionWithScoreSolver : SolverBase, ISolver
+public class BestScoreSolver : SolverBase, ISolver
 {
     private readonly bool[] _isPlayerTile;
     private readonly int _boardJokers;
@@ -15,7 +15,7 @@ public class FullSolutionWithScoreSolver : SolverBase, ISolver
     public int JokerToPlay { get; private set; }
     public bool Won { get; private set; }
 
-    private FullSolutionWithScoreSolver(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardJokers) :
+    private BestScoreSolver(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardJokers) :
         base(tiles,
             jokers)
     {
@@ -25,7 +25,7 @@ public class FullSolutionWithScoreSolver : SolverBase, ISolver
     }
 
 
-    public static FullSolutionWithScoreSolver Create(Set boardSet, Set playerSet)
+    public static BestScoreSolver Create(Set boardSet, Set playerSet)
     {
         var capacity = boardSet.Tiles.Count + playerSet.Tiles.Count;
         var combined = new List<(Tile tile, bool isPlayerTile)>(capacity);
@@ -46,7 +46,7 @@ public class FullSolutionWithScoreSolver : SolverBase, ISolver
         var finalTiles = combined.Select(pair => pair.tile).ToArray();
         var isPlayerTile = combined.Select(pair => pair.isPlayerTile).ToArray();
 
-        return new FullSolutionWithScoreSolver(
+        return new BestScoreSolver(
             finalTiles,
             totalJokers,
             isPlayerTile,

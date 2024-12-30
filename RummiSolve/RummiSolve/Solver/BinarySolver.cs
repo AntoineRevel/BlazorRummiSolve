@@ -4,6 +4,7 @@ namespace RummiSolve.Solver;
 
 public sealed class BinarySolver : SolverBase, IBinarySolver
 {
+    public Solution BinarySolution { get; private set; } = new();
     public required IEnumerable<Tile> TilesToPlay { get; init; }
 
     private BinarySolver(Tile[] tiles, int jokers) : base(tiles, jokers)
@@ -39,7 +40,7 @@ public sealed class BinarySolver : SolverBase, IBinarySolver
 
     public void SearchSolution()
     {
-        BestSolution = FindSolution(new Solution(), 0);
+        BinarySolution = FindSolution(new Solution(), 0);
     }
 
     private bool ValidateCondition()
@@ -93,4 +94,6 @@ public sealed class BinarySolver : SolverBase, IBinarySolver
 
         return solution;
     }
+
+    
 }

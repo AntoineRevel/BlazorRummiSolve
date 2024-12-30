@@ -13,6 +13,8 @@ public sealed class IncrementalSolver : SolverBase, IIncrementalSolver
     private int _bestSolutionScore;
 
     public bool Found => BestSolution.IsValid;
+    
+    public Solution BestSolution { get; private set; } = new();
     public IEnumerable<Tile> TilesToPlay => Tiles.Where((_, i) => _isPlayerTile[i] && _bestUsedTiles[i]);
     
     public bool Won { get; private set; }

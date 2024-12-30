@@ -26,7 +26,7 @@ public class BinarySolverTests
 
         // Act
         solver.SearchSolution();
-        var solution = solver.BestSolution;
+        var solution = solver.BinarySolution;
         var tilesToPlay = solver.TilesToPlay.ToList();
 
         // Assert
@@ -61,7 +61,7 @@ public class BinarySolverTests
 
         // Act
         solver.SearchSolution();
-        var solution = solver.BestSolution;
+        var solution = solver.BinarySolution;
         var tilesToPlay = solver.TilesToPlay.ToList();
 
         // Assert
@@ -94,7 +94,7 @@ public class BinarySolverTests
 
         // Act
         solver.SearchSolution();
-        var solution = solver.BestSolution;
+        var solution = solver.BinarySolution;
         var tilesToPlay = solver.TilesToPlay.ToList();
 
         // Assert
@@ -128,7 +128,7 @@ public class BinarySolverTests
 
         // Act
         solver.SearchSolution();
-        var solution = solver.BestSolution;
+        var solution = solver.BinarySolution;
         var tilesToPlay = solver.TilesToPlay.ToList();
 
         // Assert
@@ -165,7 +165,7 @@ public class BinarySolverTests
 
         // Act
         solver.SearchSolution();
-        var solution = solver.BestSolution;
+        var solution = solver.BinarySolution;
 
         // Assert
         Assert.False(solution.IsValid);

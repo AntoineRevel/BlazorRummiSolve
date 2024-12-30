@@ -12,12 +12,12 @@ public sealed class IncrementalSolverScoreField : SolverBase
     private int _remainingJoker;
     private int _solutionScore;
     private int _bestSolutionScore;
-
+    
+    public Solution BestSolution { get; private set; } = new();
     public IEnumerable<Tile> TilesToPlay => Tiles.Where((_, i) => _isPlayerTile[i] && _bestUsedTiles[i]);
     public bool Won { get; private set; }
     public int JokerToPlay => _availableJokers - _remainingJoker - _boardJokers;
     
-
     private IncrementalSolverScoreField(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardJokers) : base(tiles,
         jokers)
     {
@@ -81,7 +81,8 @@ public sealed class IncrementalSolverScoreField : SolverBase
         }
     }
     
-    
+
+
     private bool ValidateCondition(int solutionScore)
     {
         var allBoardTilesUsed =
