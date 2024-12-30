@@ -4,7 +4,7 @@ namespace BlazorRummiSolve.Components.Pages;
 
 public partial class GamePage
 {
-    private Game _currentGame = new(Guid.Parse("74cdccda-9261-460c-9414-31d7270ad2a1"));
+    private Game _currentGame = new();
     private Player _currentPlayer = null!;
 
     private ActionState _currentState;
@@ -79,7 +79,7 @@ public partial class GamePage
 
     protected override async Task OnInitializedAsync()
     {
-        var listNames = new List<string> { "Antoine", "Matthieu", "Maguy" };
+        var listNames = new List<string> { "Antoine", "Maguy" };
 
         _currentGame.InitializeGame(listNames);
         _currentState = ActionState.ShowHint;
