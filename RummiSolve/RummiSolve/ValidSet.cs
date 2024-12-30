@@ -1,6 +1,6 @@
 namespace RummiSolve;
 
-public abstract class ValidSet : ISet
+public abstract class ValidSet
 {
     public required Tile[] Tiles { get; init; }
     public int Jokers { get; init; }

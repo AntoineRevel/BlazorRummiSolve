@@ -1,21 +1,27 @@
+using RummiSolve.Solver;
+using RummiSolve.Solver.Interfaces;
 using static System.Console;
 
 namespace RummiSolve;
 
 public class Player
 {
-    private readonly Set _rackTilesSet;
     public readonly string Name;
+
+    private readonly Set _rackTilesSet;
+
     private Tile _lastDrewTile;
     private Set _lastRackTilesSet;
-    public bool _played;
+    private bool _played;
     public bool PlayedToShow;
     public Set RackTileToShow;
     public List<Tile> TilesToPlay = [];
+    public int JokersToPlay;
 
     public Player(string name, List<Tile> tiles)
     {
         Name = name;
+        JokersToPlay = 0;
         _rackTilesSet = new Set(tiles); //pas de copie de la liste TODO
         _lastRackTilesSet = new Set(tiles);
         RackTileToShow = _lastRackTilesSet;
@@ -23,6 +29,107 @@ public class Player
     }
 
     public bool Won { get; private set; }
+
+    
+    public Solution SolveIncr(Solution boardSolution)
+    {
+        TilesToPlay.Clear();
+        var boardSet = boardSolution.GetSet();
+
+        ISolver incrementalSolver = _played
+            ? IncrementalSolverScoreField.Create(boardSet, _rackTilesSet)
+            : IncrementalFirstSolver.Create(_rackTilesSet);
+        
+        incrementalSolver.SearchSolution();
+        return Solve(boardSolution, incrementalSolver);
+    }
+
+    public Solution SolveBs(Solution boardSolution)
+    {
+        TilesToPlay.Clear();
+        var boardSet = boardSolution.GetSet();
+
+        ISolver bestScoreSolver = _played
+            ? BestScoreSolver.Create(boardSet, _rackTilesSet)
+            : BestScoreFirstSolver.Create(_rackTilesSet);
+        
+        bestScoreSolver.SearchSolution();
+        return Solve(boardSolution, bestScoreSolver);
+    }
+
+    public async Task<Solution> Solve(Solution boardSolution)
+    {
+        TilesToPlay.Clear();
+        var boardSet = boardSolution.GetSet();
+
+        ISolver bestScoreSolver = _played
+            ? BestScoreSolver.Create(boardSet, _rackTilesSet)
+            : BestScoreFirstSolver.Create(_rackTilesSet);
+
+        ISolver incrementalSolver = _played
+            ? IncrementalSolver.Create(boardSet, _rackTilesSet)
+            : IncrementalFirstSolver.Create(_rackTilesSet);
+
+        using var cts = new CancellationTokenSource();
+
+        var incrementalTask = Task.Run(() => incrementalSolver.SearchSolution(), cts.Token);
+        var bestScoreTask = Task.Run(() => bestScoreSolver.SearchSolution(), cts.Token);
+
+        var completedTask = await Task.WhenAny(bestScoreTask, incrementalTask);
+
+        await cts.CancelAsync();
+
+        if (completedTask == bestScoreTask)
+        {
+            WriteLine("Best Score First");
+            return Solve(boardSolution, bestScoreSolver);
+        }
+
+        WriteLine("increment First");
+        return Solve(boardSolution, incrementalSolver);
+    }
+
+    private Solution Solve(Solution boardSolution, ISolver solver)
+    {
+        if (!solver.Found) return Solution.GetInvalidSolution();
+        Won = solver.Won;
+
+        var solution = solver.BestSolution;
+        TilesToPlay = solver.TilesToPlay.ToList();
+        JokersToPlay = solver.JokerToPlay;
+
+
+        if (_played) return solution;
+
+        solution.AddSolution(boardSolution);
+        _played = true;
+
+        return solution;
+    }
+
+
+    public void SaveRack()
+    {
+        _lastRackTilesSet = new Set(_rackTilesSet);
+        RackTileToShow = _lastRackTilesSet;
+    }
+
+    public void RemoveTilePlayed()
+    {
+        foreach (var tile in TilesToPlay) _rackTilesSet.Remove(tile);
+        for (var i = 0; i < JokersToPlay; i++) _rackTilesSet.Remove(new Tile(true));
+    }
+
+    public void ShowRemovedTile()
+    {
+        RackTileToShow = _rackTilesSet;
+        PlayedToShow = _played;
+    }
+
+    public void ShowLastTile()
+    {
+        RackTileToShow = _lastRackTilesSet;
+    }
 
     public void AddTileToRack(Tile tile)
     {
@@ -47,114 +154,5 @@ public class Player
         }
 
         WriteLine();
-    }
-
-    public Solution Solve(Solution boardSolution, bool boardChange = true)
-    {
-        TilesToPlay.Clear();
-        if (!_played) return SolveFirst(boardSolution);
-        var boardSet = boardSolution.GetSet();
-
-        var countOldBoard = boardSet.Tiles.Count;
-
-        var firstRackSolution = boardSet.ConcatNew(new Set(_rackTilesSet.Tiles)).GetSolution();
-        if (firstRackSolution.IsValid)
-        {
-            Won = true;
-            TilesToPlay = [.._rackTilesSet.Tiles];
-            return firstRackSolution;
-        }
-
-        var finalSolution = Solution.GetInvalidSolution();
-        var locker = new Lock();
-        Set finalRackSet = null!;
-
-        for (var tileCount = _rackTilesSet.Tiles.Count - 1; tileCount > 0; tileCount--)
-        {
-            var rackSetsToTry = Set.GetBestSets(_rackTilesSet.Tiles, tileCount);
-
-            rackSetsToTry = boardChange
-                ? rackSetsToTry
-                : rackSetsToTry.Where(tab => tab.Tiles.Contains(_lastDrewTile));
-
-            Parallel.ForEach(rackSetsToTry, (currentRackSet, state) =>
-            {
-                if (finalRackSet != null) state.Stop();
-
-                var solution = boardSet.ConcatNew(currentRackSet).GetSolution();
-
-                if (!solution.IsValid) return;
-
-                lock (locker)
-                {
-                    if (finalRackSet != null) return;
-                    finalRackSet = currentRackSet;
-                    finalSolution = solution;
-                    state.Stop();
-                }
-            });
-
-            // foreach (var currentRackSet in rackSetsToTry)
-            // {
-            //     var solution = boardSet.ConcatNew(currentRackSet).GetSolution();
-            //     if (!solution.IsValid) continue;
-            //     finalRackSet = currentRackSet;
-            //     finalSolution = solution;
-            //     break;
-            // }
-
-            if (finalRackSet != null) break;
-        }
-
-        if (finalRackSet == null) return finalSolution;
-
-        var newBoard = countOldBoard + finalRackSet.Tiles.Count;
-        var boardCount = finalSolution.GetSet().Tiles.Count;
-
-        WriteLine(newBoard + " vs get : " + boardCount);
-        TilesToPlay = finalRackSet.Tiles;
-        Write("Play: ");
-        finalRackSet.PrintAllTiles();
-        WriteLine();
-        if (newBoard != boardCount) throw new Exception();
-        return finalSolution;
-    }
-
-    private Solution SolveFirst(Solution boardSolution)
-    {
-        var finalSolution = new Set(_rackTilesSet.Tiles).GetFirstSolution(); //TONO nocopy Tiles et joker readonly
-        if (!finalSolution.IsValid) return finalSolution;
-
-        TilesToPlay = finalSolution.GetSet().Tiles;
-        finalSolution.AddSolution(boardSolution);
-
-        Write("Playing for the first time: ");
-        foreach (var tile in TilesToPlay) tile.PrintTile();
-        WriteLine();
-
-        _played = true;
-        return finalSolution;
-    }
-
-    public void SaveRack()
-    {
-        _lastRackTilesSet = new Set(_rackTilesSet);
-        RackTileToShow = _lastRackTilesSet;
-    }
-
-    public void RemoveTilePlayed()
-    {
-        foreach (var tile in TilesToPlay) _rackTilesSet.Remove(tile);
-    }
-
-    public void ShowRemovedTile()
-    {
-        RackTileToShow = _rackTilesSet;
-        PlayedToShow = _played;
-    }
-
-    public void ShowLastTile()
-    {
-        RackTileToShow = _lastRackTilesSet;
     }
 }

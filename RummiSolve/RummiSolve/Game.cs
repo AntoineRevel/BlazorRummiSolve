@@ -77,8 +77,8 @@ public class Game(Guid id)
         CurrentPlayerIndex = (CurrentPlayerIndex + 1) % Players.Count;
         if (CurrentPlayerIndex == 0) Turn++;
     }
-
-
+    
+    
     public void PlayCurrentPlayerTurn(Player currentPlayer)
     {
         if (IsGameOver) return;
@@ -87,16 +87,13 @@ public class Game(Guid id)
 
         if (NextPlayerSolution.IsValid) BoardSolution = NextPlayerSolution;
 
-        NextPlayerSolution = _noPlay < Players.Count
-            ? currentPlayer.Solve(BoardSolution)
-            : currentPlayer.Solve(BoardSolution, false);
+        NextPlayerSolution = currentPlayer.SolveIncr(BoardSolution);
 
         currentPlayer.SaveRack();
 
         if (NextPlayerSolution.IsValid)
         {
             currentPlayer.RemoveTilePlayed();
-            _noPlay = 0;
         }
         else
         {
@@ -107,7 +104,6 @@ public class Game(Guid id)
             drawTile.PrintTile();
             WriteLine();
             currentPlayer.AddTileToRack(drawTile);
-            _noPlay++;
         }
     }
 
