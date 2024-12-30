@@ -25,12 +25,11 @@ public class BinarySolverTests
         var solver = BinarySolver.Create(boardSet, playerTiles);
 
         // Act
-        var isValid = solver.SearchSolution();
+        solver.SearchSolution();
         var solution = solver.BestSolution;
         var tilesToPlay = solver.TilesToPlay.ToList();
 
         // Assert
-        Assert.True(isValid);
         Assert.True(solution.IsValid);
 
         Assert.Equal(playerTiles.Count, tilesToPlay.Count);
@@ -61,12 +60,11 @@ public class BinarySolverTests
         var solver = BinarySolver.Create(boardSet, playerTiles);
 
         // Act
-        var isValid = solver.SearchSolution();
+        solver.SearchSolution();
         var solution = solver.BestSolution;
         var tilesToPlay = solver.TilesToPlay.ToList();
 
         // Assert
-        Assert.True(isValid);
         Assert.True(solution.IsValid);
 
         Assert.Equal(playerTiles.Count, tilesToPlay.Count);
@@ -95,12 +93,11 @@ public class BinarySolverTests
         var solver = BinarySolver.Create(boardSet, playerTiles);
 
         // Act
-        var isValid = solver.SearchSolution();
+        solver.SearchSolution();
         var solution = solver.BestSolution;
         var tilesToPlay = solver.TilesToPlay.ToList();
 
         // Assert
-        Assert.True(isValid);
         Assert.True(solution.IsValid);
 
         Assert.Equal(playerTiles.Count, tilesToPlay.Count);
@@ -130,12 +127,11 @@ public class BinarySolverTests
         var solver = BinarySolver.Create(boardSet, playerTiles);
 
         // Act
-        var isValid = solver.SearchSolution();
+        solver.SearchSolution();
         var solution = solver.BestSolution;
         var tilesToPlay = solver.TilesToPlay.ToList();
 
         // Assert
-        Assert.True(isValid);
         Assert.True(solution.IsValid);
 
         Assert.Equal(playerTiles.Count, tilesToPlay.Count);
@@ -168,9 +164,10 @@ public class BinarySolverTests
         var solver = BinarySolver.Create(boardSet, playerTiles);
 
         // Act
-        var isValid = solver.SearchSolution();
+        solver.SearchSolution();
+        var solution = solver.BestSolution;
 
         // Assert
-        Assert.False(isValid);
+        Assert.False(solution.IsValid);
     }
 }

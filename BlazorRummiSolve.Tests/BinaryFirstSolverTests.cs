@@ -19,12 +19,11 @@ public class BinaryFirstSolverTests
         var solver = BinaryFirstSolver.Create(playerTiles);
 
         // Act
-        var isValid = solver.SearchSolution();
+        solver.SearchSolution();
         var solution = solver.BestSolution;
         var tilesToPlay = solver.TilesToPlay.ToList();
 
         // Assert
-        Assert.True(isValid);
         Assert.True(solution.IsValid);
 
         Assert.Equal(playerTiles.Count, tilesToPlay.Count);
@@ -53,12 +52,11 @@ public class BinaryFirstSolverTests
         var solver = BinaryFirstSolver.Create(playerTiles);
 
         // Act
-        var isValid = solver.SearchSolution();
+        solver.SearchSolution();
         var solution = solver.BestSolution;
         var tilesToPlay = solver.TilesToPlay.ToList();
 
         // Assert
-        Assert.True(isValid);
         Assert.True(solution.IsValid);
 
         Assert.Equal(playerTiles.Count, tilesToPlay.Count);
@@ -83,12 +81,11 @@ public class BinaryFirstSolverTests
         var solver = BinaryFirstSolver.Create(playerTiles);
 
         // Act
-        var isValid = solver.SearchSolution();
+        solver.SearchSolution();
         var solution = solver.BestSolution;
         var tilesToPlay = solver.TilesToPlay.ToList();
 
         // Assert
-        Assert.True(isValid);
         Assert.True(solution.IsValid);
 
         Assert.Equal(playerTiles.Count, tilesToPlay.Count);
@@ -114,12 +111,11 @@ public class BinaryFirstSolverTests
         var solver = BinaryFirstSolver.Create(playerTiles);
 
         // Act
-        var isValid = solver.SearchSolution();
+        solver.SearchSolution();
         var solution = solver.BestSolution;
         var tilesToPlay = solver.TilesToPlay.ToList();
 
         // Assert
-        Assert.True(isValid);
         Assert.True(solution.IsValid);
 
         Assert.Equal(playerTiles.Count, tilesToPlay.Count);
@@ -144,12 +140,11 @@ public class BinaryFirstSolverTests
         var solver = BinaryFirstSolver.Create(playerTiles);
 
         // Act
-        var isValid = solver.SearchSolution();
+        solver.SearchSolution();
         var solution = solver.BestSolution;
         var tilesToPlay = solver.TilesToPlay.ToList();
 
         // Assert
-        Assert.True(isValid);
         Assert.True(solution.IsValid);
 
         Assert.Equal(playerTiles.Count, tilesToPlay.Count);
@@ -174,10 +169,11 @@ public class BinaryFirstSolverTests
         var solver = BinaryFirstSolver.Create(playerTiles);
 
         // Act
-        var isValid = solver.SearchSolution();
+        solver.SearchSolution();
+        var solution = solver.BestSolution;
 
         // Assert
-        Assert.False(isValid);
+        Assert.False(solution.IsValid);
     }
 
     [Fact]
@@ -194,10 +190,11 @@ public class BinaryFirstSolverTests
         var solver = BinaryFirstSolver.Create(playerTiles);
 
         // Act
-        var isValid = solver.SearchSolution();
+        solver.SearchSolution();
+        var solution = solver.BestSolution;
 
         // Assert
-        Assert.False(isValid);
+        Assert.False(solution.IsValid);
     }
 
 
@@ -215,9 +212,10 @@ public class BinaryFirstSolverTests
         var solver = BinaryFirstSolver.Create(playerTiles);
 
         // Act
-        var isValid = solver.SearchSolution();
+        solver.SearchSolution();
+        var solution = solver.BestSolution;
 
         // Assert
-        Assert.False(isValid);
+        Assert.False(solution.IsValid);
     }
 }

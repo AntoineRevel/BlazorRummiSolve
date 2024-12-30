@@ -11,6 +11,7 @@ public sealed class IncrementalFirstSolver : SolverBase, IIncrementalSolver
     private int _bestSolutionScore;
 
     public IEnumerable<Tile> TilesToPlay => Tiles.Where((_, i) => _bestUsedTiles[i]);
+    public bool Won { get; private set; }
     public int JokerToPlay => _availableJokers - _remainingJoker;
 
     private IncrementalFirstSolver(Tile[] tiles, int jokers) : base(tiles, jokers)
@@ -34,19 +35,24 @@ public sealed class IncrementalFirstSolver : SolverBase, IIncrementalSolver
         );
     }
 
-    public bool SearchSolution()
+    public void SearchSolution()
     {
-        if (Tiles.Length + Jokers <= 2) return false;
-
+        if (Tiles.Length + Jokers <= 2) return;
 
         while (true)
         {
             var newSolution = FindSolution(new Solution(), 0, 0);
 
-            if (!newSolution.IsValid) return false;
+            if (!newSolution.IsValid) return;
             BestSolution = newSolution;
             _bestUsedTiles = UsedTiles.ToArray();
             _remainingJoker = Jokers;
+            if (UsedTiles.All(b => b))
+            {
+                Won = true;
+                return;
+            }
+
             Array.Fill(UsedTiles, false);
             Jokers = _availableJokers;
         }
@@ -96,7 +102,7 @@ public sealed class IncrementalFirstSolver : SolverBase, IIncrementalSolver
             var newSolutionScore = solutionScore + set.GetScore();
 
             if (ValidateCondition(newSolutionScore)) solution.IsValid = true;
-            
+
             else solution = FindSolution(solution, newSolutionScore, firstUnusedTileIndex);
 
             if (solution.IsValid)

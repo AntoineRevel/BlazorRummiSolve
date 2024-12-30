@@ -30,11 +30,9 @@ public sealed class BinaryFirstSolver : SolverBase, IBinarySolver
     }
 
 
-    public bool SearchSolution()
+    public void SearchSolution()
     {
         BestSolution = FindSolution(new Solution(), 0, 0);
-
-        return BestSolution.IsValid;
     }
 
     private bool ValidateCondition(int solutionScore)

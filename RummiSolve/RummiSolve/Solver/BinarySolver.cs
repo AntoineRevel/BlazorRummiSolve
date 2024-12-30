@@ -37,11 +37,9 @@ public sealed class BinarySolver : SolverBase, IBinarySolver
         };
     }
 
-    public bool SearchSolution()
+    public void SearchSolution()
     {
         BestSolution = FindSolution(new Solution(), 0);
-
-        return BestSolution.IsValid;
     }
 
     private bool ValidateCondition()

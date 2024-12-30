@@ -8,12 +8,10 @@ public class SolutionWithScoreSolver : SolverBase, ISolutionWithScoreSolver
     private readonly int _boardJokers;
     private readonly int _availableJokers;
     private readonly int _bestSolutionScore;
-    private bool[] _bestUsedTiles;
-    private int _remainingJoker;
-
-
-    public IEnumerable<Tile> TilesToPlay => Tiles.Where((_, i) => _isPlayerTile[i] && _bestUsedTiles[i]);
-    public int JokerToPlay => _availableJokers - _remainingJoker - _boardJokers;
+    
+    public IEnumerable<Tile> TilesToPlay => Tiles.Where((_, i) => _isPlayerTile[i] && UsedTiles[i]);
+    public bool Won => UsedTiles.All(b => b);
+    public int JokerToPlay => _availableJokers - Jokers - _boardJokers;
 
     private SolutionWithScoreSolver(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardJokers, int bestScore) :
         base(tiles,
@@ -22,7 +20,6 @@ public class SolutionWithScoreSolver : SolverBase, ISolutionWithScoreSolver
         _availableJokers = jokers;
         _isPlayerTile = isPlayerTile;
         _boardJokers = boardJokers;
-        _bestUsedTiles = UsedTiles;
         _bestSolutionScore = bestScore;
     }
 
@@ -56,14 +53,9 @@ public class SolutionWithScoreSolver : SolverBase, ISolutionWithScoreSolver
         );
     }
 
-    public bool SearchSolution()
+    public void SearchSolution()
     {
         BestSolution = FindSolution(new Solution(), 0, 0);
-
-        _bestUsedTiles = UsedTiles.ToArray();
-        _remainingJoker = Jokers;
-
-        return UsedTiles.All(b => b);
     }
 
     private bool ValidateCondition(int solutionScore)

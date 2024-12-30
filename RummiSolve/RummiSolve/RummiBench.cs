@@ -123,7 +123,7 @@ public class RummiBench
         var solver = IncrementalSolver.Create(boardSet, playerSet);
 
         // Act
-        var won = solver.SearchSolution();
+        solver.SearchSolution();
         var solution = solver.BestSolution;
         var tilesToPlay = solver.TilesToPlay.ToList();
         var jokerToPlay = solver.JokerToPlay;
@@ -197,7 +197,8 @@ public class RummiBench
         var solver = IncrementalSolver.Create(boardSet, playerSet);
 
         // Act
-        var won = solver.SearchSolution();
+
+        solver.SearchSolution();
         var solution = solver.BestSolution;
         var tilesToPlay = solver.TilesToPlay.ToList();
         var jokerToPlay = solver.JokerToPlay;
