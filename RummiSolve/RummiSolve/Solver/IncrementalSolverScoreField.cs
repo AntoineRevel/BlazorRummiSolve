@@ -86,10 +86,19 @@ public sealed class IncrementalSolverScoreField : SolverBase,ISolver
 
     private bool ValidateCondition(int solutionScore)
     {
-        var allBoardTilesUsed =
-            !UsedTiles.Where((use, i) => !use && !_isPlayerTile[i]).Any(); //check pas de joker restant ?
+        if (solutionScore <= _bestSolutionScore) return false;
+        
+        //var allBoardTilesUsed = !UsedTiles.Where((use, i) => !use && !_isPlayerTile[i]).Any(); //check pas de joker restant ?
 
-        return allBoardTilesUsed && solutionScore > _bestSolutionScore;
+        var allBoardTilesUsed = true;
+        for (var i = 0; i < UsedTiles.Length; i++)
+        {
+            // Si c'est un tile du board et qu'il n'est pas utilisé
+            if (_isPlayerTile[i] || UsedTiles[i]) continue;
+            allBoardTilesUsed = false;
+            break;
+        }
+        return allBoardTilesUsed;
     }
 
 
