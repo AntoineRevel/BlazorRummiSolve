@@ -2,7 +2,7 @@ using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Solver;
 
-public sealed class IncrementalSolverScoreField : SolverBase,ISolver
+public sealed class IncrementalSolverScoreField : SolverBase, ISolver
 {
     private readonly bool[] _isPlayerTile;
     private readonly int _boardJokers;
@@ -18,7 +18,7 @@ public sealed class IncrementalSolverScoreField : SolverBase,ISolver
     public IEnumerable<Tile> TilesToPlay => Tiles.Where((_, i) => _isPlayerTile[i] && _bestUsedTiles[i]);
     public bool Won { get; private set; }
     public int JokerToPlay => _availableJokers - _remainingJoker - _boardJokers;
-    
+
     private IncrementalSolverScoreField(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardJokers) : base(tiles,
         jokers)
     {
@@ -66,7 +66,7 @@ public sealed class IncrementalSolverScoreField : SolverBase,ISolver
         {
             var newSolution = FindSolution(new Solution(), 0);
 
-            if (!newSolution.IsValid) return ;
+            if (!newSolution.IsValid) return;
             BestSolution = newSolution;
             _bestSolutionScore = _solutionScore;
             _bestUsedTiles = UsedTiles.ToArray();
@@ -76,18 +76,18 @@ public sealed class IncrementalSolverScoreField : SolverBase,ISolver
                 Won = true;
                 return;
             }
+
             Array.Fill(UsedTiles, false);
             Jokers = _availableJokers;
             _solutionScore = 0;
         }
     }
-    
 
 
     private bool ValidateCondition(int solutionScore)
     {
         if (solutionScore <= _bestSolutionScore) return false;
-        
+
         //var allBoardTilesUsed = !UsedTiles.Where((use, i) => !use && !_isPlayerTile[i]).Any(); //check pas de joker restant ?
 
         var allBoardTilesUsed = true;
@@ -98,6 +98,7 @@ public sealed class IncrementalSolverScoreField : SolverBase,ISolver
             allBoardTilesUsed = false;
             break;
         }
+
         return allBoardTilesUsed;
     }
 
@@ -161,8 +162,9 @@ public sealed class IncrementalSolverScoreField : SolverBase,ISolver
 
     private new void MarkTilesAsUsed(ValidSet set, int firstUnusedIndex)
     {
-        foreach (var tile in set.Tiles.Skip(1))
+        for (var tIndex = 1; tIndex < set.Tiles.Length; tIndex++)
         {
+            var tile = set.Tiles[tIndex];
             if (tile.IsJoker)
             {
                 Jokers -= 1;
@@ -187,8 +189,9 @@ public sealed class IncrementalSolverScoreField : SolverBase,ISolver
 
     private new void MarkTilesAsUnused(ValidSet set, int firstUnusedIndex)
     {
-        foreach (var tile in set.Tiles.Skip(1))
+        for (var tIndex = 1; tIndex < set.Tiles.Length; tIndex++)
         {
+            var tile = set.Tiles[tIndex];
             if (tile.IsJoker)
             {
                 Jokers += 1;

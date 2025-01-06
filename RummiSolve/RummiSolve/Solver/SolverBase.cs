@@ -30,8 +30,10 @@ public abstract class SolverBase(Tile[] tiles, int jokers)
 
     protected void MarkTilesAsUnused(ValidSet set, int firstUnusedIndex)
     {
-        foreach (var tile in set.Tiles.Skip(1))
+        for (var tIndex = 1; tIndex < set.Tiles.Length; tIndex++)
         {
+            var tile = set.Tiles[tIndex];
+
             if (tile.IsJoker)
             {
                 Jokers += 1;
