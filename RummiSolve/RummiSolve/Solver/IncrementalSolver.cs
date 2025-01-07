@@ -158,9 +158,10 @@ public sealed class IncrementalSolver : SolverBase, ISolver
         return solution;
     }
 
-    private void MarkTilesAsUsedOut(ValidSet set, int firstUnusedIndex, out int playerSetScore)
+    private void MarkTilesAsUsedOut(ValidSet set, int unusedIndex, out int playerSetScore)
     {
         playerSetScore = 0;
+        unusedIndex++;
         for (var tIndex = 1; tIndex < set.Tiles.Length; tIndex++)
         {
             var tile = set.Tiles[tIndex];
@@ -170,13 +171,13 @@ public sealed class IncrementalSolver : SolverBase, ISolver
                 continue;
             }
 
-            for (var i = firstUnusedIndex + 1; i < Tiles.Length; i++)
+            for (; unusedIndex < Tiles.Length; unusedIndex++)
             {
-                if (UsedTiles[i] || !Tiles[i].Equals(tile)) continue;
+                if (UsedTiles[unusedIndex] || !Tiles[unusedIndex].Equals(tile)) continue;
 
-                UsedTiles[i] = true;
+                UsedTiles[unusedIndex] = true;
 
-                if (_isPlayerTile[i])
+                if (_isPlayerTile[unusedIndex])
                 {
                     playerSetScore += tile.Value;
                 }

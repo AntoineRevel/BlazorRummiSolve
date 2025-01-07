@@ -159,7 +159,10 @@ public abstract class SolverBase(Tile[] tiles, int jokers)
 
                     groupTiles[0] = Tiles[firstTileIndex];
 
-                    for (var i = 0; i < tilesUsed - 1; i++) groupTiles[i + 1] = tiles[i];
+                    for (int i = tilesUsed - 2, j = 1; i >= 0; i--, j++)
+                    {
+                        groupTiles[j] = tiles[i];
+                    }
 
                     for (var k = 0; k < jokersUsed; k++)
                         groupTiles[tilesUsed + k] = new Tile(Tiles[firstTileIndex].Value, isJoker: true);
