@@ -10,19 +10,21 @@ public abstract class SolverBase(Tile[] tiles, int jokers)
 
     protected void MarkTilesAsUsed(ValidSet set, int firstUnusedIndex)
     {
-        foreach (var tile in set.Tiles.Skip(1))
+        firstUnusedIndex++;
+        for (var tIndex = 1; tIndex < set.Tiles.Length; tIndex++)
         {
+            var tile = set.Tiles[tIndex];
             if (tile.IsJoker)
             {
                 Jokers -= 1;
                 continue;
             }
 
-            for (var i = firstUnusedIndex + 1; i < Tiles.Length; i++)
+            for (; firstUnusedIndex < Tiles.Length; firstUnusedIndex++)
             {
-                if (UsedTiles[i] || !Tiles[i].Equals(tile)) continue;
+                if (UsedTiles[firstUnusedIndex] || !Tiles[firstUnusedIndex].Equals(tile)) continue;
 
-                UsedTiles[i] = true;
+                UsedTiles[firstUnusedIndex] = true;
                 break;
             }
         }
