@@ -159,8 +159,9 @@ public sealed class IncrementalSolverScoreField : SolverBase, ISolver
         return solution;
     }
 
-    private new void MarkTilesAsUsed(ValidSet set, int firstUnusedIndex)
+    private new void MarkTilesAsUsed(ValidSet set, int unusedIndex)
     {
+        unusedIndex++;
         for (var tIndex = 1; tIndex < set.Tiles.Length; tIndex++)
         {
             var tile = set.Tiles[tIndex];
@@ -170,13 +171,13 @@ public sealed class IncrementalSolverScoreField : SolverBase, ISolver
                 continue;
             }
 
-            for (var i = firstUnusedIndex + 1; i < Tiles.Length; i++)
+            for (; unusedIndex < Tiles.Length; unusedIndex++)
             {
-                if (UsedTiles[i] || !Tiles[i].Equals(tile)) continue;
+                if (UsedTiles[unusedIndex] || !Tiles[unusedIndex].Equals(tile)) continue;
 
-                UsedTiles[i] = true;
+                UsedTiles[unusedIndex] = true;
 
-                if (_isPlayerTile[i])
+                if (_isPlayerTile[unusedIndex])
                 {
                     _solutionScore += tile.Value;
                 }
@@ -188,7 +189,9 @@ public sealed class IncrementalSolverScoreField : SolverBase, ISolver
 
     private new void MarkTilesAsUnused(ValidSet set, int firstUnusedIndex)
     {
-        for (var tIndex = 1; tIndex < set.Tiles.Length; tIndex++)
+        var lastIndex = Tiles.Length - 1;
+
+        for (var tIndex = set.Tiles.Length - 1; tIndex > 0; tIndex--)
         {
             var tile = set.Tiles[tIndex];
             if (tile.IsJoker)
@@ -197,13 +200,13 @@ public sealed class IncrementalSolverScoreField : SolverBase, ISolver
                 continue;
             }
 
-            for (var i = Tiles.Length - 1; i > firstUnusedIndex; i--)
+            for (; lastIndex > firstUnusedIndex; lastIndex--)
             {
-                if (!UsedTiles[i] || !Tiles[i].Equals(tile)) continue;
+                if (!UsedTiles[lastIndex] || !Tiles[lastIndex].Equals(tile)) continue;
 
-                UsedTiles[i] = false;
+                UsedTiles[lastIndex] = false;
 
-                if (_isPlayerTile[i])
+                if (_isPlayerTile[lastIndex])
                 {
                     _solutionScore -= tile.Value;
                 }
