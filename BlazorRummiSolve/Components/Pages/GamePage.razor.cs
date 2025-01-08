@@ -4,7 +4,7 @@ namespace BlazorRummiSolve.Components.Pages;
 
 public partial class GamePage
 {
-    private Game _currentGame = new(Guid.Parse("b3b4ff72-9e5d-4c3b-a0bf-b08e193fb156"));
+    private Game _currentGame = new();
     private Player _currentPlayer = null!;
 
     private ActionState _currentState;
