@@ -13,14 +13,15 @@ public sealed class IncrementalComplexSolver : ComplexSolver, ISolver
     private int _bestSolutionScore = 1;
 
     public bool Found => BestSolution.IsValid;
-    
+
     public Solution BestSolution { get; private set; } = new();
     public IEnumerable<Tile> TilesToPlay => Tiles.Where((_, i) => IsPlayerTile[i] && _bestUsedTiles[i]);
-    
+
     public bool Won { get; private set; }
     public int JokerToPlay => _availableJokers - _remainingJoker - _boardJokers;
 
-    private IncrementalComplexSolver(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardJokers) : base(tiles, jokers, isPlayerTile)
+    private IncrementalComplexSolver(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardJokers) : base(tiles,
+        jokers, isPlayerTile)
     {
         _availableJokers = jokers;
         _boardJokers = boardJokers;
@@ -84,16 +85,16 @@ public sealed class IncrementalComplexSolver : ComplexSolver, ISolver
     {
         if (solutionScore <= _bestSolutionScore) return false;
         
-        //var allBoardTilesUsed = !UsedTiles.Where((use, i) => !use && !_isPlayerTile[i]).Any(); //check pas de joker restant ?
-
         var allBoardTilesUsed = true;
+        
+        // ReSharper disable once LoopCanBeConvertedToQuery
         for (var i = 0; i < UsedTiles.Length; i++)
         {
-            // Si c'est un tile du board et qu'il n'est pas utilisé
             if (IsPlayerTile[i] || UsedTiles[i]) continue;
             allBoardTilesUsed = false;
             break;
         }
+
         return allBoardTilesUsed;
     }
 
@@ -156,6 +157,4 @@ public sealed class IncrementalComplexSolver : ComplexSolver, ISolver
 
         return solution;
     }
-
-
 }

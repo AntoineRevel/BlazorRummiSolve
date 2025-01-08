@@ -233,7 +233,7 @@ public class RummiBench
             new Tile(5),
         ]);
 
-        var solver = ScoreComplexSolver.Create(boardSet, playerSet);
+        var solver = ComplexScoreSolver.Create(boardSet, playerSet);
         solver.SearchBestScore();
         Console.WriteLine(solver.BestScore);
     }

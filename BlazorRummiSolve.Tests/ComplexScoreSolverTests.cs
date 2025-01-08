@@ -3,7 +3,7 @@ using RummiSolve.Solver;
 
 namespace BlazorRummiSolve.Tests;
 
-public class ScoreComplexSolverTests
+public class ComplexScoreSolverTests
 {
     [Fact]
     public void SearchSolution_Valid()
@@ -21,7 +21,7 @@ public class ScoreComplexSolverTests
             new Tile(10, TileColor.Black),
         ]);
 
-        var solver = ScoreComplexSolver.Create(boardSet, playerSet);
+        var solver = ComplexScoreSolver.Create(boardSet, playerSet);
 
         // Act
         var canPlay = solver.SearchBestScore();
@@ -48,7 +48,7 @@ public class ScoreComplexSolverTests
             new Tile(10, TileColor.Red),
         ]);
 
-        var solver = ScoreComplexSolver.Create(boardSet, playerSet);
+        var solver = ComplexScoreSolver.Create(boardSet, playerSet);
 
         // Act
         var canPlay = solver.SearchBestScore();
@@ -73,7 +73,7 @@ public class ScoreComplexSolverTests
             new Tile(4, TileColor.Red)
         ]);
 
-        var solver = ScoreComplexSolver.Create(boardSet, playerSet);
+        var solver = ComplexScoreSolver.Create(boardSet, playerSet);
 
         // Act
         var canPlay = solver.SearchBestScore();
@@ -100,7 +100,7 @@ public class ScoreComplexSolverTests
             new Tile(13),
         ]);
 
-        var solver = ScoreComplexSolver.Create(boardSet, playerSet);
+        var solver = ComplexScoreSolver.Create(boardSet, playerSet);
 
         // Act
         var canPlay = solver.SearchBestScore();
@@ -134,7 +134,7 @@ public class ScoreComplexSolverTests
             new Tile(3, TileColor.Red),
         ]);
 
-        var solver = ScoreComplexSolver.Create(boardSet, playerSet);
+        var solver = ComplexScoreSolver.Create(boardSet, playerSet);
 
         // Act
         var canPlay = solver.SearchBestScore();
@@ -166,7 +166,7 @@ public class ScoreComplexSolverTests
             new Tile(13),
         ]);
 
-        var solver = ScoreComplexSolver.Create(boardSet, playerSet);
+        var solver = ComplexScoreSolver.Create(boardSet, playerSet);
 
         // Act
         var canPlay = solver.SearchBestScore();
@@ -196,7 +196,7 @@ public class ScoreComplexSolverTests
             new Tile(true)
         ]);
 
-        var solver = ScoreComplexSolver.Create(boardSet, playerSet);
+        var solver = ComplexScoreSolver.Create(boardSet, playerSet);
 
         // Act
         var canPlay = solver.SearchBestScore();
@@ -221,7 +221,7 @@ public class ScoreComplexSolverTests
             new Tile(5)
         ]);
 
-        var solver = ScoreComplexSolver.Create(boardSet, playerSet);
+        var solver = ComplexScoreSolver.Create(boardSet, playerSet);
 
         // Act
         var canPlay = solver.SearchBestScore();

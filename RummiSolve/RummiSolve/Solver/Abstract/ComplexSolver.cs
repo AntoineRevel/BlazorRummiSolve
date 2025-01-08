@@ -3,7 +3,7 @@ namespace RummiSolve.Solver.Abstract;
 public abstract class ComplexSolver(Tile[] tiles, int jokers, bool[] isPlayerTile) : BaseSolver(tiles, jokers)
 {
     protected readonly bool[] IsPlayerTile = isPlayerTile;
-    protected void MarkTilesAsUsedOut(ValidSet set, int unusedIndex, out int playerSetScore)
+    protected new void MarkTilesAsUsedOut(ValidSet set, int unusedIndex, out int playerSetScore)
     {
         playerSetScore = 0;
         unusedIndex++;

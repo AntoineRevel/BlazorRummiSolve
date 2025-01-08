@@ -7,7 +7,6 @@ public class BestScoreFirstBaseSolver : BaseSolver, ISolver
 {
     private readonly int _availableJokers;
     private int _bestSolutionScore;
-
     public bool Found { get; private set; }
     public Solution BestSolution { get; private set; } = new();
     public IEnumerable<Tile> TilesToPlay { get; private set; } = [];
@@ -111,29 +110,5 @@ public class BestScoreFirstBaseSolver : BaseSolver, ISolver
         UsedTiles[firstUnusedTileIndex] = false;
 
         return solution;
-    }
-
-    private void MarkTilesAsUsedOut(ValidSet set, int firstUnusedIndex, out int playerSetScore)
-    {
-        playerSetScore = 0;
-        foreach (var tile in set.Tiles.Skip(1))
-        {
-            playerSetScore += tile.Value;
-            
-            if (tile.IsJoker)
-            {
-                Jokers -= 1;
-                continue;
-            }
-
-            for (var i = firstUnusedIndex + 1; i < Tiles.Length; i++)
-            {
-                if (UsedTiles[i] || !Tiles[i].Equals(tile)) continue;
-
-                UsedTiles[i] = true;
-                
-                break;
-            }
-        }
     }
 }

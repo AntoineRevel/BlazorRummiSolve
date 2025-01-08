@@ -32,11 +32,10 @@ public class ScoreFirstBaseSolver : BaseSolver, IScoreSolver
         return BestScore != 0;
     }
 
-    private bool ValidateCondition(int solutionScore)
+    private static bool ValidateCondition(int solutionScore)
     {
         return solutionScore >= 30;
     }
-
 
     private void FindBestScore(Solution solution, int solutionScore, int startIndex)
     {
@@ -73,30 +72,5 @@ public class ScoreFirstBaseSolver : BaseSolver, IScoreSolver
         }
 
         UsedTiles[firstUnusedTileIndex] = false;
-    }
-
-    private void MarkTilesAsUsedOut(ValidSet set, int firstUnusedIndex, out int playerSetScore)
-    {
-        playerSetScore = 0;
-        foreach (var tile in set.Tiles.Skip(1))
-        {
-            playerSetScore += tile.Value;
-
-            if (tile.IsJoker)
-            {
-                Jokers -= 1;
-
-                continue;
-            }
-
-            for (var i = firstUnusedIndex + 1; i < Tiles.Length; i++)
-            {
-                if (UsedTiles[i] || !Tiles[i].Equals(tile)) continue;
-
-                UsedTiles[i] = true;
-
-                break;
-            }
-        }
     }
 }

@@ -3,9 +3,8 @@ using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Solver;
 
-public sealed class IncrementalBaseSolverScoreField : BaseSolver, ISolver
+public sealed class IncrementalScoreFieldComplexSolver : ComplexSolver, ISolver
 {
-    private readonly bool[] _isPlayerTile;
     private readonly int _boardJokers;
     private readonly int _availableJokers;
 
@@ -16,21 +15,21 @@ public sealed class IncrementalBaseSolverScoreField : BaseSolver, ISolver
 
     public bool Found => BestSolution.IsValid;
     public Solution BestSolution { get; private set; } = new();
-    public IEnumerable<Tile> TilesToPlay => Tiles.Where((_, i) => _isPlayerTile[i] && _bestUsedTiles[i]);
+    public IEnumerable<Tile> TilesToPlay => Tiles.Where((_, i) => IsPlayerTile[i] && _bestUsedTiles[i]);
     public bool Won { get; private set; }
     public int JokerToPlay => _availableJokers - _remainingJoker - _boardJokers;
 
-    private IncrementalBaseSolverScoreField(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardJokers) : base(tiles,
-        jokers)
+    private IncrementalScoreFieldComplexSolver(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardJokers) : base(
+        tiles,
+        jokers, isPlayerTile)
     {
         _availableJokers = jokers;
-        _isPlayerTile = isPlayerTile;
         _boardJokers = boardJokers;
         _bestUsedTiles = UsedTiles;
         _bestSolutionScore = 1;
     }
 
-    public static IncrementalBaseSolverScoreField Create(Set boardSet, Set playerSet)
+    public static IncrementalScoreFieldComplexSolver Create(Set boardSet, Set playerSet)
     {
         var capacity = boardSet.Tiles.Count + playerSet.Tiles.Count;
         var combined = new List<(Tile tile, bool isPlayerTile)>(capacity);
@@ -51,7 +50,7 @@ public sealed class IncrementalBaseSolverScoreField : BaseSolver, ISolver
         var finalTiles = combined.Select(pair => pair.tile).ToArray();
         var isPlayerTile = combined.Select(pair => pair.isPlayerTile).ToArray();
 
-        return new IncrementalBaseSolverScoreField(
+        return new IncrementalScoreFieldComplexSolver(
             finalTiles,
             totalJokers,
             isPlayerTile,
@@ -88,13 +87,13 @@ public sealed class IncrementalBaseSolverScoreField : BaseSolver, ISolver
     private bool ValidateCondition(int solutionScore) //check pas de joker restant ?
     {
         if (solutionScore <= _bestSolutionScore) return false;
-        
+
         var allBoardTilesUsed = true;
-        
+
         // ReSharper disable once LoopCanBeConvertedToQuery
         for (var i = 0; i < UsedTiles.Length; i++)
         {
-            if (_isPlayerTile[i] || UsedTiles[i]) continue;
+            if (IsPlayerTile[i] || UsedTiles[i]) continue;
             allBoardTilesUsed = false;
             break;
         }
@@ -121,7 +120,7 @@ public sealed class IncrementalBaseSolverScoreField : BaseSolver, ISolver
 
             if (solGroup.IsValid) return solGroup;
 
-            if (_isPlayerTile[startIndex]) startIndex++;
+            if (IsPlayerTile[startIndex]) startIndex++;
             else return solution;
         }
 
@@ -133,7 +132,7 @@ public sealed class IncrementalBaseSolverScoreField : BaseSolver, ISolver
         where TS : ValidSet
     {
         UsedTiles[firstUnusedTileIndex] = true;
-        _solutionScore += _isPlayerTile[firstUnusedTileIndex] ? Tiles[firstUnusedTileIndex].Value : 0;
+        _solutionScore += IsPlayerTile[firstUnusedTileIndex] ? Tiles[firstUnusedTileIndex].Value : 0;
         foreach (var set in sets)
         {
             MarkTilesAsUsed(set, firstUnusedTileIndex);
@@ -155,7 +154,7 @@ public sealed class IncrementalBaseSolverScoreField : BaseSolver, ISolver
         }
 
         UsedTiles[firstUnusedTileIndex] = false;
-        _solutionScore -= _isPlayerTile[firstUnusedTileIndex] ? Tiles[firstUnusedTileIndex].Value : 0;
+        _solutionScore -= IsPlayerTile[firstUnusedTileIndex] ? Tiles[firstUnusedTileIndex].Value : 0;
 
         return solution;
     }
@@ -178,7 +177,7 @@ public sealed class IncrementalBaseSolverScoreField : BaseSolver, ISolver
 
                 UsedTiles[unusedIndex] = true;
 
-                if (_isPlayerTile[unusedIndex])
+                if (IsPlayerTile[unusedIndex])
                 {
                     _solutionScore += tile.Value;
                 }
@@ -207,7 +206,7 @@ public sealed class IncrementalBaseSolverScoreField : BaseSolver, ISolver
 
                 UsedTiles[lastIndex] = false;
 
-                if (_isPlayerTile[lastIndex])
+                if (IsPlayerTile[lastIndex])
                 {
                     _solutionScore -= tile.Value;
                 }

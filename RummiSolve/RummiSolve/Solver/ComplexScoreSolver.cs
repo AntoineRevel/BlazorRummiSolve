@@ -3,12 +3,12 @@ using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Solver;
 
-public class ScoreComplexSolver(Tile[] tiles, int jokers, bool[] isPlayerTile)
+public class ComplexScoreSolver(Tile[] tiles, int jokers, bool[] isPlayerTile)
     : ComplexSolver(tiles, jokers, isPlayerTile), IScoreSolver
 {
     public int BestScore { get; private set; }
 
-    public static ScoreComplexSolver Create(Set boardSet, Set playerSet)
+    public static ComplexScoreSolver Create(Set boardSet, Set playerSet)
     {
         var capacity = boardSet.Tiles.Count + playerSet.Tiles.Count;
         var combined = new List<(Tile tile, bool isPlayerTile)>(capacity);
@@ -29,7 +29,7 @@ public class ScoreComplexSolver(Tile[] tiles, int jokers, bool[] isPlayerTile)
         var finalTiles = combined.Select(pair => pair.tile).ToArray();
         var isPlayerTile = combined.Select(pair => pair.isPlayerTile).ToArray();
 
-        return new ScoreComplexSolver(
+        return new ComplexScoreSolver(
             finalTiles,
             totalJokers,
             isPlayerTile

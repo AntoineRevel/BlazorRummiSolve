@@ -57,7 +57,7 @@ public class BestScoreBaseSolver : BaseSolver, ISolver
 
     public void SearchSolution()
     {
-        var scoreSolver = new ScoreComplexSolver(Tiles, Jokers, _isPlayerTile);
+        var scoreSolver = new ComplexScoreSolver(Tiles, Jokers, _isPlayerTile);
 
         var canPlay = scoreSolver.SearchBestScore();
 

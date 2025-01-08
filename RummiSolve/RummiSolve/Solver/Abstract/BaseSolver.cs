@@ -54,6 +54,33 @@ public abstract class BaseSolver(Tile[] tiles, int jokers)
         }
     }
 
+    protected void MarkTilesAsUsedOut(ValidSet set, int unusedIndex, out int playerSetScore)
+    {
+        playerSetScore = 0;
+        unusedIndex++;
+        for (var tIndex = 1; tIndex < set.Tiles.Length; tIndex++)
+        {
+            var tile = set.Tiles[tIndex];
+            playerSetScore += tile.Value;
+
+            if (tile.IsJoker)
+            {
+                Jokers -= 1;
+
+                continue;
+            }
+
+            for (; unusedIndex < Tiles.Length; unusedIndex++)
+            {
+                if (UsedTiles[unusedIndex] || !Tiles[unusedIndex].Equals(tile)) continue;
+
+                UsedTiles[unusedIndex] = true;
+
+                break;
+            }
+        }
+    }
+
     protected IEnumerable<Run> GetRuns(int tileIndex)
     {
         var availableJokers = Jokers;
