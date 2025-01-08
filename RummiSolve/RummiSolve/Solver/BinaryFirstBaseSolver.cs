@@ -87,5 +87,4 @@ public sealed class BinaryFirstBaseSolver : BaseSolver, IBinarySolver
 
         return solution;
     }
-    
 }

@@ -95,6 +95,4 @@ public sealed class BinaryBaseSolver : BaseSolver, IBinarySolver
 
         return solution;
     }
-
-    
 }
