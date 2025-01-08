@@ -3,7 +3,7 @@ using RummiSolve.Solver;
 
 namespace BlazorRummiSolve.Tests;
 
-public class ScoreFirstSolverTests
+public class ScoreFirstBaseSolverTests
 {
     [Fact]
     public void SearchSolution_Valid()
@@ -15,7 +15,7 @@ public class ScoreFirstSolverTests
             new Tile(10, TileColor.Black),
         ]);
 
-        var solver = ScoreFirstSolver.Create(playerSet);
+        var solver = ScoreFirstBaseSolver.Create(playerSet);
 
         // Act
         var canPlay = solver.SearchBestScore();
@@ -36,7 +36,7 @@ public class ScoreFirstSolverTests
             new Tile(true)
         ]);
 
-        var solver = ScoreFirstSolver.Create(playerSet);
+        var solver = ScoreFirstBaseSolver.Create(playerSet);
 
         // Act
         var canPlay = solver.SearchBestScore();
@@ -60,7 +60,7 @@ public class ScoreFirstSolverTests
             new Tile(7, TileColor.Red),
         ]);
 
-        var solver = ScoreFirstSolver.Create(playerSet);
+        var solver = ScoreFirstBaseSolver.Create(playerSet);
 
         // Act
         var canPlay = solver.SearchBestScore();
@@ -84,7 +84,7 @@ public class ScoreFirstSolverTests
             new Tile(8, TileColor.Red),
         ]);
 
-        var solver = ScoreFirstSolver.Create(playerSet);
+        var solver = ScoreFirstBaseSolver.Create(playerSet);
 
         // Act
         var canPlay = solver.SearchBestScore();
@@ -108,7 +108,7 @@ public class ScoreFirstSolverTests
             new Tile(13),
         ]);
 
-        var solver = ScoreFirstSolver.Create(playerSet);
+        var solver = ScoreFirstBaseSolver.Create(playerSet);
 
         // Act
         var canPlay = solver.SearchBestScore();
@@ -131,7 +131,7 @@ public class ScoreFirstSolverTests
             new Tile(13),
         ]);
 
-        var solver = ScoreFirstSolver.Create(playerSet);
+        var solver = ScoreFirstBaseSolver.Create(playerSet);
 
         // Act
         var canPlay = solver.SearchBestScore();

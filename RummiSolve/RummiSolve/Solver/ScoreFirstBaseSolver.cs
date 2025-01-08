@@ -1,38 +1,26 @@
+using RummiSolve.Solver.Abstract;
 using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Solver;
 
-public class ScoreSolver(Tile[] tiles, int jokers, bool[] isPlayerTile) : SolverBase(tiles, jokers), IScoreSolver
+public class ScoreFirstBaseSolver : BaseSolver, IScoreSolver
 {
     public int BestScore { get; private set; }
-    
 
-    public static ScoreSolver Create(Set boardSet, Set playerSet)
+    internal ScoreFirstBaseSolver(Tile[] tiles, int jokers) : base(tiles, jokers)
     {
-        var capacity = boardSet.Tiles.Count + playerSet.Tiles.Count;
-        var combined = new List<(Tile tile, bool isPlayerTile)>(capacity);
+        BestScore = 0;
+    }
 
-        combined.AddRange(boardSet.Tiles.Select(tile => (tile, false)));
-        combined.AddRange(playerSet.Tiles.Select(tile => (tile, true)));
+    public static ScoreFirstBaseSolver Create(Set playerSet)
+    {
+        var tiles = new List<Tile>(playerSet.Tiles);
 
-        var totalJokers = boardSet.Jokers + playerSet.Jokers;
+        tiles.Sort();
 
-        combined.Sort((x, y) =>
-        {
-            var tileCompare = x.tile.CompareTo(y.tile);
-            return tileCompare != 0 ? tileCompare : x.isPlayerTile.CompareTo(y.isPlayerTile);
-        });
+        if (playerSet.Jokers > 0) tiles.RemoveRange(tiles.Count - playerSet.Jokers, playerSet.Jokers);
 
-        if (totalJokers > 0) combined.RemoveRange(combined.Count - totalJokers, totalJokers);
-
-        var finalTiles = combined.Select(pair => pair.tile).ToArray();
-        var isPlayerTile = combined.Select(pair => pair.isPlayerTile).ToArray();
-
-        return new ScoreSolver(
-            finalTiles,
-            totalJokers,
-            isPlayerTile
-        );
+        return new ScoreFirstBaseSolver(tiles.ToArray(), playerSet.Jokers);
     }
 
     public bool SearchBestScore()
@@ -43,13 +31,10 @@ public class ScoreSolver(Tile[] tiles, int jokers, bool[] isPlayerTile) : Solver
 
         return BestScore != 0;
     }
-    
-    private bool ValidateCondition()
-    {
-        var allBoardTilesUsed =
-            !UsedTiles.Where((use, i) => !use && !isPlayerTile[i]).Any(); //check pas de joker restant ?
 
-        return allBoardTilesUsed;
+    private bool ValidateCondition(int solutionScore)
+    {
+        return solutionScore >= 30;
     }
 
 
@@ -65,8 +50,7 @@ public class ScoreSolver(Tile[] tiles, int jokers, bool[] isPlayerTile) : Solver
 
             TrySet(GetGroups(startIndex), solution, solutionScore, startIndex);
 
-            if (isPlayerTile[startIndex]) startIndex++;
-            else return;
+            startIndex++;
         }
     }
 
@@ -74,14 +58,14 @@ public class ScoreSolver(Tile[] tiles, int jokers, bool[] isPlayerTile) : Solver
         where TS : ValidSet
     {
         UsedTiles[firstUnusedTileIndex] = true;
-        var firstTileScore = isPlayerTile[firstUnusedTileIndex] ? Tiles[firstUnusedTileIndex].Value : 0;
+        var firstTileScore = Tiles[firstUnusedTileIndex].Value;
         foreach (var set in sets)
         {
             MarkTilesAsUsedOut(set, firstUnusedTileIndex, out var playerSetScore);
 
             var newSolutionScore = solutionScore + firstTileScore + playerSetScore;
 
-            if (ValidateCondition() && newSolutionScore > BestScore) BestScore = newSolutionScore;
+            if (ValidateCondition(newSolutionScore) && newSolutionScore > BestScore) BestScore = newSolutionScore;
 
             FindBestScore(solution, newSolutionScore, firstUnusedTileIndex);
 
@@ -96,9 +80,12 @@ public class ScoreSolver(Tile[] tiles, int jokers, bool[] isPlayerTile) : Solver
         playerSetScore = 0;
         foreach (var tile in set.Tiles.Skip(1))
         {
+            playerSetScore += tile.Value;
+
             if (tile.IsJoker)
             {
                 Jokers -= 1;
+
                 continue;
             }
 
@@ -107,11 +94,6 @@ public class ScoreSolver(Tile[] tiles, int jokers, bool[] isPlayerTile) : Solver
                 if (UsedTiles[i] || !Tiles[i].Equals(tile)) continue;
 
                 UsedTiles[i] = true;
-
-                if (isPlayerTile[i])
-                {
-                    playerSetScore += tile.Value;
-                }
 
                 break;
             }

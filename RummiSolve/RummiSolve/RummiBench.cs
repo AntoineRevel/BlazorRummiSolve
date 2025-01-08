@@ -54,7 +54,7 @@ public class RummiBench
             new Tile(13, TileColor.Black),
         ]);
 
-        var solver = IncrementalFirstSolver.Create(playerSet);
+        var solver = IncrementalFirstBaseSolver.Create(playerSet);
 
         // Act
         solver.SearchSolution();
@@ -120,7 +120,7 @@ public class RummiBench
             new Tile(2, TileColor.Black),
         ]);
 
-        var solver = IncrementalSolver.Create(boardSet, playerSet);
+        var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
 
         // Act
         solver.SearchSolution();
@@ -194,7 +194,7 @@ public class RummiBench
             new Tile(2, TileColor.Black),
         ]);
 
-        var solver = IncrementalSolver.Create(boardSet, playerSet);
+        var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
 
         // Act
 
@@ -233,7 +233,7 @@ public class RummiBench
             new Tile(5),
         ]);
 
-        var solver = ScoreSolver.Create(boardSet, playerSet);
+        var solver = ScoreComplexSolver.Create(boardSet, playerSet);
         solver.SearchBestScore();
         Console.WriteLine(solver.BestScore);
     }

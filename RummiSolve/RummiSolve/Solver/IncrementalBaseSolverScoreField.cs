@@ -1,8 +1,9 @@
+using RummiSolve.Solver.Abstract;
 using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Solver;
 
-public sealed class IncrementalSolverScoreField : SolverBase, ISolver
+public sealed class IncrementalBaseSolverScoreField : BaseSolver, ISolver
 {
     private readonly bool[] _isPlayerTile;
     private readonly int _boardJokers;
@@ -19,7 +20,7 @@ public sealed class IncrementalSolverScoreField : SolverBase, ISolver
     public bool Won { get; private set; }
     public int JokerToPlay => _availableJokers - _remainingJoker - _boardJokers;
 
-    private IncrementalSolverScoreField(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardJokers) : base(tiles,
+    private IncrementalBaseSolverScoreField(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardJokers) : base(tiles,
         jokers)
     {
         _availableJokers = jokers;
@@ -29,7 +30,7 @@ public sealed class IncrementalSolverScoreField : SolverBase, ISolver
         _bestSolutionScore = 1;
     }
 
-    public static IncrementalSolverScoreField Create(Set boardSet, Set playerSet)
+    public static IncrementalBaseSolverScoreField Create(Set boardSet, Set playerSet)
     {
         var capacity = boardSet.Tiles.Count + playerSet.Tiles.Count;
         var combined = new List<(Tile tile, bool isPlayerTile)>(capacity);
@@ -50,7 +51,7 @@ public sealed class IncrementalSolverScoreField : SolverBase, ISolver
         var finalTiles = combined.Select(pair => pair.tile).ToArray();
         var isPlayerTile = combined.Select(pair => pair.isPlayerTile).ToArray();
 
-        return new IncrementalSolverScoreField(
+        return new IncrementalBaseSolverScoreField(
             finalTiles,
             totalJokers,
             isPlayerTile,

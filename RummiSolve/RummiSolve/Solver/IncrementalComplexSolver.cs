@@ -1,10 +1,10 @@
+using RummiSolve.Solver.Abstract;
 using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Solver;
 
-public sealed class IncrementalSolver : SolverBase, ISolver
+public sealed class IncrementalComplexSolver : ComplexSolver, ISolver
 {
-    private readonly bool[] _isPlayerTile;
     private readonly int _boardJokers;
     private readonly int _availableJokers;
 
@@ -15,20 +15,19 @@ public sealed class IncrementalSolver : SolverBase, ISolver
     public bool Found => BestSolution.IsValid;
     
     public Solution BestSolution { get; private set; } = new();
-    public IEnumerable<Tile> TilesToPlay => Tiles.Where((_, i) => _isPlayerTile[i] && _bestUsedTiles[i]);
+    public IEnumerable<Tile> TilesToPlay => Tiles.Where((_, i) => IsPlayerTile[i] && _bestUsedTiles[i]);
     
     public bool Won { get; private set; }
     public int JokerToPlay => _availableJokers - _remainingJoker - _boardJokers;
 
-    private IncrementalSolver(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardJokers) : base(tiles, jokers)
+    private IncrementalComplexSolver(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardJokers) : base(tiles, jokers, isPlayerTile)
     {
         _availableJokers = jokers;
-        _isPlayerTile = isPlayerTile;
         _boardJokers = boardJokers;
         _bestUsedTiles = UsedTiles;
     }
 
-    public static IncrementalSolver Create(Set boardSet, Set playerSet)
+    public static IncrementalComplexSolver Create(Set boardSet, Set playerSet)
     {
         var capacity = boardSet.Tiles.Count + playerSet.Tiles.Count;
         var combined = new List<(Tile tile, bool isPlayerTile)>(capacity);
@@ -49,7 +48,7 @@ public sealed class IncrementalSolver : SolverBase, ISolver
         var finalTiles = combined.Select(pair => pair.tile).ToArray();
         var isPlayerTile = combined.Select(pair => pair.isPlayerTile).ToArray();
 
-        return new IncrementalSolver(
+        return new IncrementalComplexSolver(
             finalTiles,
             totalJokers,
             isPlayerTile,
@@ -91,7 +90,7 @@ public sealed class IncrementalSolver : SolverBase, ISolver
         for (var i = 0; i < UsedTiles.Length; i++)
         {
             // Si c'est un tile du board et qu'il n'est pas utilisé
-            if (_isPlayerTile[i] || UsedTiles[i]) continue;
+            if (IsPlayerTile[i] || UsedTiles[i]) continue;
             allBoardTilesUsed = false;
             break;
         }
@@ -117,7 +116,7 @@ public sealed class IncrementalSolver : SolverBase, ISolver
 
             if (solGroup.IsValid) return solGroup;
 
-            if (_isPlayerTile[startIndex]) startIndex++;
+            if (IsPlayerTile[startIndex]) startIndex++;
             else return solution;
         }
 
@@ -129,7 +128,7 @@ public sealed class IncrementalSolver : SolverBase, ISolver
         where TS : ValidSet
     {
         UsedTiles[firstUnusedTileIndex] = true;
-        var firstTileScore = _isPlayerTile[firstUnusedTileIndex] ? Tiles[firstUnusedTileIndex].Value : 0;
+        var firstTileScore = IsPlayerTile[firstUnusedTileIndex] ? Tiles[firstUnusedTileIndex].Value : 0;
         foreach (var set in sets)
         {
             MarkTilesAsUsedOut(set, firstUnusedTileIndex, out var playerSetScore);
@@ -158,32 +157,5 @@ public sealed class IncrementalSolver : SolverBase, ISolver
         return solution;
     }
 
-    private void MarkTilesAsUsedOut(ValidSet set, int unusedIndex, out int playerSetScore)
-    {
-        playerSetScore = 0;
-        unusedIndex++;
-        for (var tIndex = 1; tIndex < set.Tiles.Length; tIndex++)
-        {
-            var tile = set.Tiles[tIndex];
-            if (tile.IsJoker)
-            {
-                Jokers -= 1;
-                continue;
-            }
 
-            for (; unusedIndex < Tiles.Length; unusedIndex++)
-            {
-                if (UsedTiles[unusedIndex] || !Tiles[unusedIndex].Equals(tile)) continue;
-
-                UsedTiles[unusedIndex] = true;
-
-                if (_isPlayerTile[unusedIndex])
-                {
-                    playerSetScore += tile.Value;
-                }
-
-                break;
-            }
-        }
-    }
 }

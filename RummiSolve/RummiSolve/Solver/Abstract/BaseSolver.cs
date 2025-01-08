@@ -1,6 +1,6 @@
-namespace RummiSolve.Solver;
+namespace RummiSolve.Solver.Abstract;
 
-public abstract class SolverBase(Tile[] tiles, int jokers)
+public abstract class BaseSolver(Tile[] tiles, int jokers)
 {
     protected readonly Tile[] Tiles = tiles;
     protected readonly bool[] UsedTiles = new bool[tiles.Length];

@@ -3,7 +3,7 @@ using RummiSolve.Solver;
 
 namespace BlazorRummiSolve.Tests;
 
-public class ScoreSolverTests
+public class IncrementalComplexSolverTests
 {
     [Fact]
     public void SearchSolution_Valid()
@@ -21,15 +21,20 @@ public class ScoreSolverTests
             new Tile(10, TileColor.Black),
         ]);
 
-        var solver = ScoreSolver.Create(boardSet, playerSet);
+        var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
 
         // Act
-        var canPlay = solver.SearchBestScore();
-        var bestScore = solver.BestScore;
+        solver.SearchSolution();
+        var won = solver.Won;
+        var solution = solver.BestSolution;
+        var tilesToPlay = solver.TilesToPlay.ToList();
+        var jokerToPlay = solver.JokerToPlay;
 
         // Assert
-        Assert.True(canPlay);
-        Assert.Equal(30, bestScore);
+        Assert.True(won);
+        Assert.True(solution.IsValid);
+        Assert.Equal(3, tilesToPlay.Count);
+        Assert.Equal(0, jokerToPlay);
     }
 
     [Fact]
@@ -48,16 +53,22 @@ public class ScoreSolverTests
             new Tile(10, TileColor.Red),
         ]);
 
-        var solver = ScoreSolver.Create(boardSet, playerSet);
+        var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
 
         // Act
-        var canPlay = solver.SearchBestScore();
-        var bestScore = solver.BestScore;
+        solver.SearchSolution();
+        var won = solver.Won;
+        var solution = solver.BestSolution;
+        var tilesToPlay = solver.TilesToPlay.ToList();
+        var jokerToPlay = solver.JokerToPlay;
 
         // Assert
-        Assert.True(canPlay);
-        Assert.Equal(20, bestScore);
+        Assert.True(won);
+        Assert.True(solution.IsValid);
+        Assert.Equal(2, tilesToPlay.Count);
+        Assert.Equal(0, jokerToPlay);
     }
+
 
     [Fact]
     public void SearchSolution_ValidRun()
@@ -73,15 +84,20 @@ public class ScoreSolverTests
             new Tile(4, TileColor.Red)
         ]);
 
-        var solver = ScoreSolver.Create(boardSet, playerSet);
+        var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
 
         // Act
-        var canPlay = solver.SearchBestScore();
-        var bestScore = solver.BestScore;
+        solver.SearchSolution();
+        var won = solver.Won;
+        var solution = solver.BestSolution;
+        var tilesToPlay = solver.TilesToPlay.ToList();
+        var jokerToPlay = solver.JokerToPlay;
 
         // Assert
-        Assert.True(canPlay);
-        Assert.Equal(4, bestScore);
+        Assert.True(won);
+        Assert.True(solution.IsValid);
+        Assert.Single(tilesToPlay);
+        Assert.Equal(0, jokerToPlay);
     }
     
     [Fact]
@@ -100,17 +116,22 @@ public class ScoreSolverTests
             new Tile(13),
         ]);
 
-        var solver = ScoreSolver.Create(boardSet, playerSet);
+        var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
 
         // Act
-        var canPlay = solver.SearchBestScore();
-        var bestScore = solver.BestScore;
+        solver.SearchSolution();
+        var won = solver.Won;
+        var solution = solver.BestSolution;
+        var tilesToPlay = solver.TilesToPlay.ToList();
+        var jokerToPlay = solver.JokerToPlay;
 
         // Assert
-        Assert.True(canPlay);
-        Assert.Equal(25, bestScore);
+        Assert.True(won);
+        Assert.True(solution.IsValid);
+        Assert.Equal(2,tilesToPlay.Count);
+        Assert.Equal(0, jokerToPlay);
     }
-    
+
     [Fact]
     public void SearchSolution_ValidNotWon()
     {
@@ -134,15 +155,20 @@ public class ScoreSolverTests
             new Tile(3, TileColor.Red),
         ]);
 
-        var solver = ScoreSolver.Create(boardSet, playerSet);
+        var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
 
         // Act
-        var canPlay = solver.SearchBestScore();
-        var bestScore = solver.BestScore;
+        solver.SearchSolution();
+        var won = solver.Won;
+        var solution = solver.BestSolution;
+        var tilesToPlay = solver.TilesToPlay.ToList();
+        var jokerToPlay = solver.JokerToPlay;
 
         // Assert
-        Assert.True(canPlay);
-        Assert.Equal(36, bestScore);
+        Assert.False(won);
+        Assert.True(solution.IsValid);
+        Assert.Equal(6, tilesToPlay.Count);
+        Assert.Equal(0, jokerToPlay);
     }
     
     [Fact]
@@ -166,15 +192,20 @@ public class ScoreSolverTests
             new Tile(13),
         ]);
 
-        var solver = ScoreSolver.Create(boardSet, playerSet);
+        var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
 
         // Act
-        var canPlay = solver.SearchBestScore();
-        var bestScore = solver.BestScore;
+        solver.SearchSolution();
+        var won = solver.Won;
+        var solution = solver.BestSolution;
+        var tilesToPlay = solver.TilesToPlay.ToList();
+        var jokerToPlay = solver.JokerToPlay;
 
         // Assert
-        Assert.True(canPlay);
-        Assert.Equal(35, bestScore);
+        Assert.True(won);
+        Assert.True(solution.IsValid);
+        Assert.Equal(3, tilesToPlay.Count);
+        Assert.Equal(0, jokerToPlay);
     }
     
     [Fact]
@@ -196,17 +227,22 @@ public class ScoreSolverTests
             new Tile(true)
         ]);
 
-        var solver = ScoreSolver.Create(boardSet, playerSet);
+        var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
 
         // Act
-        var canPlay = solver.SearchBestScore();
-        var bestScore = solver.BestScore;
+        solver.SearchSolution();
+        var won = solver.Won;
+        var solution = solver.BestSolution;
+        var tilesToPlay = solver.TilesToPlay.ToList();
+        var jokerToPlay = solver.JokerToPlay;
 
         // Assert
-        Assert.True(canPlay);
-        Assert.Equal(35, bestScore);
+        Assert.True(won);
+        Assert.True(solution.IsValid);
+        Assert.Equal(4, tilesToPlay.Count);
+        Assert.Equal(1, jokerToPlay);
     }
-    
+
     [Fact]
     public void SearchSolution_Invalid()
     {
@@ -221,14 +257,15 @@ public class ScoreSolverTests
             new Tile(5)
         ]);
 
-        var solver = ScoreSolver.Create(boardSet, playerSet);
+        var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
 
         // Act
-        var canPlay = solver.SearchBestScore();
-        var bestScore = solver.BestScore;
+        solver.SearchSolution();
+        var won = solver.Won;
+        var solution = solver.BestSolution;
 
         // Assert
-        Assert.False(canPlay);
-        Assert.Equal(0, bestScore);
+        Assert.False(won);
+        Assert.False(solution.IsValid);
     }
 }

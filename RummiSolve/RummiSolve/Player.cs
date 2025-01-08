@@ -37,8 +37,8 @@ public class Player
         var boardSet = boardSolution.GetSet();
 
         ISolver incrementalSolver = _played
-            ? IncrementalSolver.Create(boardSet, _rackTilesSet)
-            : IncrementalFirstSolver.Create(_rackTilesSet);
+            ? IncrementalComplexSolver.Create(boardSet, _rackTilesSet)
+            : IncrementalFirstBaseSolver.Create(_rackTilesSet);
         
         incrementalSolver.SearchSolution();
         return Solve(boardSolution, incrementalSolver);
@@ -50,8 +50,8 @@ public class Player
         var boardSet = boardSolution.GetSet();
 
         ISolver bestScoreSolver = _played
-            ? BestScoreSolver.Create(boardSet, _rackTilesSet)
-            : BestScoreFirstSolver.Create(_rackTilesSet);
+            ? BestScoreBaseSolver.Create(boardSet, _rackTilesSet)
+            : BestScoreFirstBaseSolver.Create(_rackTilesSet);
         
         bestScoreSolver.SearchSolution();
         return Solve(boardSolution, bestScoreSolver);
@@ -63,12 +63,12 @@ public class Player
         var boardSet = boardSolution.GetSet();
 
         ISolver bestScoreSolver = _played
-            ? BestScoreSolver.Create(boardSet, _rackTilesSet)
-            : BestScoreFirstSolver.Create(_rackTilesSet);
+            ? BestScoreBaseSolver.Create(boardSet, _rackTilesSet)
+            : BestScoreFirstBaseSolver.Create(_rackTilesSet);
 
         ISolver incrementalSolver = _played
-            ? IncrementalSolver.Create(boardSet, _rackTilesSet)
-            : IncrementalFirstSolver.Create(_rackTilesSet);
+            ? IncrementalComplexSolver.Create(boardSet, _rackTilesSet)
+            : IncrementalFirstBaseSolver.Create(_rackTilesSet);
 
         using var cts = new CancellationTokenSource();
 

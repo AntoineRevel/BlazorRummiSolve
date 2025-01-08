@@ -1,8 +1,9 @@
+using RummiSolve.Solver.Abstract;
 using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Solver;
 
-public sealed class IncrementalFirstSolver : SolverBase, ISolver
+public sealed class IncrementalFirstBaseSolver : BaseSolver, ISolver
 {
     private readonly int _availableJokers;
 
@@ -16,14 +17,14 @@ public sealed class IncrementalFirstSolver : SolverBase, ISolver
     public bool Won { get; private set; }
     public int JokerToPlay => _availableJokers - _remainingJoker;
 
-    private IncrementalFirstSolver(Tile[] tiles, int jokers) : base(tiles, jokers)
+    private IncrementalFirstBaseSolver(Tile[] tiles, int jokers) : base(tiles, jokers)
     {
         _availableJokers = jokers;
         _bestUsedTiles = UsedTiles;
         _bestSolutionScore = MinScore;
     }
 
-    public static IncrementalFirstSolver Create(in Set playerSet)
+    public static IncrementalFirstBaseSolver Create(in Set playerSet)
     {
         var tiles = new List<Tile>(playerSet.Tiles);
 
@@ -31,7 +32,7 @@ public sealed class IncrementalFirstSolver : SolverBase, ISolver
 
         if (playerSet.Jokers > 0) tiles.RemoveRange(tiles.Count - playerSet.Jokers, playerSet.Jokers);
 
-        return new IncrementalFirstSolver(
+        return new IncrementalFirstBaseSolver(
             tiles.ToArray(),
             playerSet.Jokers
         );
