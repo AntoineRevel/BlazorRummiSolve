@@ -1,6 +1,6 @@
 @using RummiSolve
 <div class="tile @(Tile.IsJoker ? "joker" : "") @(ShouldHighlight ? "highlight" : "")">
-    <div class="tile-number" style="color:@GetColor(Tile.Color)">
+    <div class="tile-number" style="color:@(Tile.IsJoker ? "purple" : GetColor(Tile.Color))">
         <b>@(Tile.IsJoker ? "J" : Tile.Value.ToString())</b>
     </div>
 </div>

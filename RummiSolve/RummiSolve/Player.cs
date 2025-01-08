@@ -1,3 +1,4 @@
+using System.Security.Cryptography.X509Certificates;
 using RummiSolve.Solver;
 using RummiSolve.Solver.Interfaces;
 using static System.Console;
@@ -96,7 +97,7 @@ public class Player
 
         var solution = solver.BestSolution;
         TilesToPlay = solver.TilesToPlay.ToList();
-        JokersToPlay = solver.JokerToPlay;
+        for(var i = 0; i<solver.JokerToPlay; i++) TilesToPlay.Add(new Tile(true));
 
 
         if (_played) return solution;
