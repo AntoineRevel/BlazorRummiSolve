@@ -84,21 +84,17 @@ public sealed class IncrementalScoreFieldComplexSolver : ComplexSolver, ISolver
     }
 
 
-    private bool ValidateCondition(int solutionScore) //check pas de joker restant ?
+    private bool ValidateCondition()
     {
-        if (solutionScore <= _bestSolutionScore) return false;
-
-        var allBoardTilesUsed = true;
+        if (_solutionScore <= _bestSolutionScore) return false;
 
         // ReSharper disable once LoopCanBeConvertedToQuery
         for (var i = 0; i < UsedTiles.Length; i++)
         {
-            if (IsPlayerTile[i] || UsedTiles[i]) continue;
-            allBoardTilesUsed = false;
-            break;
+            if (!IsPlayerTile[i] && !UsedTiles[i]) return false;
         }
 
-        return allBoardTilesUsed;
+        return Jokers == 0;
     }
 
 
@@ -140,7 +136,7 @@ public sealed class IncrementalScoreFieldComplexSolver : ComplexSolver, ISolver
             // var normal = Tiles.Where((_, i) => _isPlayerTile[i] && UsedTiles[i]).Sum(t => t.Value);
             // if (_solutionScore != normal) throw new Exception();
 
-            if (ValidateCondition(_solutionScore)) solution.IsValid = true;
+            if (ValidateCondition()) solution.IsValid = true;
 
             else solution = FindSolution(solution, firstUnusedTileIndex);
 

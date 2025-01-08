@@ -101,6 +101,37 @@ public class IncrementalComplexSolverTests
     }
     
     [Fact]
+    public void SearchSolution_ValidRunJoker()
+    {
+        // Arrange
+        var boardSet = new Set([
+            new Tile(1, TileColor.Red),
+            new Tile(2, TileColor.Red),
+            new Tile(3, TileColor.Red),
+        ]);
+
+        var playerSet = new Set([
+            new Tile(4, TileColor.Red),
+            new Tile(true)
+        ]);
+
+        var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
+
+        // Act
+        solver.SearchSolution();
+        var won = solver.Won;
+        var solution = solver.BestSolution;
+        var tilesToPlay = solver.TilesToPlay.ToList();
+        var jokerToPlay = solver.JokerToPlay;
+
+        // Assert
+        Assert.True(won);
+        Assert.True(solution.IsValid);
+        Assert.Single(tilesToPlay);
+        Assert.Equal(1, jokerToPlay);
+    }
+    
+    [Fact]
     public void SearchSolution_ValidRunEnd()
     {
         // Arrange

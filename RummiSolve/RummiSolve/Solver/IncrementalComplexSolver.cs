@@ -85,17 +85,13 @@ public sealed class IncrementalComplexSolver : ComplexSolver, ISolver
     {
         if (solutionScore <= _bestSolutionScore) return false;
         
-        var allBoardTilesUsed = true;
-        
         // ReSharper disable once LoopCanBeConvertedToQuery
         for (var i = 0; i < UsedTiles.Length; i++)
         {
-            if (IsPlayerTile[i] || UsedTiles[i]) continue;
-            allBoardTilesUsed = false;
-            break;
+            if (!IsPlayerTile[i] && !UsedTiles[i]) return false;
         }
 
-        return allBoardTilesUsed;
+        return Jokers == 0;
     }
 
 
