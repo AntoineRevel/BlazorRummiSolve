@@ -10,7 +10,7 @@ public sealed class IncrementalComplexSolver : ComplexSolver, ISolver
 
     private bool[] _bestUsedTiles;
     private int _remainingJoker;
-    private int _bestSolutionScore = 1;
+    private int _bestSolutionScore;
 
     public bool Found => BestSolution.IsValid;
 
@@ -84,7 +84,7 @@ public sealed class IncrementalComplexSolver : ComplexSolver, ISolver
     private bool ValidateCondition(int solutionScore)
     {
         if (solutionScore <= _bestSolutionScore) return false;
-        
+
         // ReSharper disable once LoopCanBeConvertedToQuery
         for (var i = 0; i < UsedTiles.Length; i++)
         {

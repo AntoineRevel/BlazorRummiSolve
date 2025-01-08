@@ -83,7 +83,32 @@ public class ComplexScoreSolverTests
         Assert.True(canPlay);
         Assert.Equal(4, bestScore);
     }
-    
+
+    [Fact]
+    public void SearchSolution_ValidPlay1()
+    {
+        // Arrange
+        var boardSet = new Set([
+            new Tile(2, TileColor.Red),
+            new Tile(3, TileColor.Red),
+            new Tile(4 ,TileColor.Red),
+        ]);
+
+        var playerSet = new Set([
+            new Tile(1, TileColor.Red)
+        ]);
+
+        var solver = ComplexScoreSolver.Create(boardSet, playerSet);
+
+        // Act
+        var canPlay = solver.SearchBestScore();
+        var bestScore = solver.BestScore;
+
+        // Assert
+        Assert.True(canPlay);
+        Assert.Equal(1, bestScore);
+    }
+
     [Fact]
     public void SearchSolution_ValidRunEnd()
     {
@@ -110,7 +135,7 @@ public class ComplexScoreSolverTests
         Assert.True(canPlay);
         Assert.Equal(25, bestScore);
     }
-    
+
     [Fact]
     public void SearchSolution_ValidNotWon()
     {
@@ -128,7 +153,7 @@ public class ComplexScoreSolverTests
 
             new Tile(5),
             new Tile(5),
-            
+
             new Tile(1, TileColor.Red),
             new Tile(2, TileColor.Red),
             new Tile(3, TileColor.Red),
@@ -144,7 +169,7 @@ public class ComplexScoreSolverTests
         Assert.True(canPlay);
         Assert.Equal(36, bestScore);
     }
-    
+
     [Fact]
     public void SearchSolution_ValidNWonIncrscorePlayer()
     {
@@ -176,7 +201,7 @@ public class ComplexScoreSolverTests
         Assert.True(canPlay);
         Assert.Equal(35, bestScore);
     }
-    
+
     [Fact]
     public void SearchSolution_ValidWinJoker()
     {
@@ -192,7 +217,7 @@ public class ComplexScoreSolverTests
             new Tile(10, TileColor.Red),
             new Tile(10, TileColor.Black),
 
-            new Tile(5,TileColor.Red),
+            new Tile(5, TileColor.Red),
             new Tile(true)
         ]);
 
@@ -206,7 +231,7 @@ public class ComplexScoreSolverTests
         Assert.True(canPlay);
         Assert.Equal(35, bestScore);
     }
-    
+
     [Fact]
     public void SearchSolution_Invalid()
     {

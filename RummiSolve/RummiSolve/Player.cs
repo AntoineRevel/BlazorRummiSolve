@@ -50,7 +50,7 @@ public class Player
         var boardSet = boardSolution.GetSet();
 
         ISolver bestScoreSolver = _played
-            ? BestScoreBaseSolver.Create(boardSet, _rackTilesSet)
+            ? BestScoreComplexSolver.Create(boardSet, _rackTilesSet)
             : BestScoreFirstBaseSolver.Create(_rackTilesSet);
         
         bestScoreSolver.SearchSolution();
@@ -63,7 +63,7 @@ public class Player
         var boardSet = boardSolution.GetSet();
 
         ISolver bestScoreSolver = _played
-            ? BestScoreBaseSolver.Create(boardSet, _rackTilesSet)
+            ? BestScoreComplexSolver.Create(boardSet, _rackTilesSet)
             : BestScoreFirstBaseSolver.Create(_rackTilesSet);
 
         ISolver incrementalSolver = _played

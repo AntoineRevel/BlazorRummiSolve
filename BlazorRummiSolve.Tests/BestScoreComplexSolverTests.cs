@@ -3,7 +3,7 @@ using RummiSolve.Solver;
 
 namespace BlazorRummiSolve.Tests;
 
-public class IncrementalComplexSolverTests
+public class BestScoreComplexSolverTests
 {
     [Fact]
     public void SearchSolution_Valid()
@@ -21,7 +21,7 @@ public class IncrementalComplexSolverTests
             new Tile(10, TileColor.Black),
         ]);
 
-        var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
+        var solver = BestScoreComplexSolver.Create(boardSet, playerSet);
 
         // Act
         solver.SearchSolution();
@@ -51,7 +51,7 @@ public class IncrementalComplexSolverTests
             new Tile(1, TileColor.Red)
         ]);
 
-        var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
+        var solver = BestScoreComplexSolver.Create(boardSet, playerSet);
 
         // Act
         solver.SearchSolution();
@@ -83,7 +83,7 @@ public class IncrementalComplexSolverTests
             new Tile(10, TileColor.Red),
         ]);
 
-        var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
+        var solver = BestScoreComplexSolver.Create(boardSet, playerSet);
 
         // Act
         solver.SearchSolution();
@@ -114,7 +114,7 @@ public class IncrementalComplexSolverTests
             new Tile(4, TileColor.Red)
         ]);
 
-        var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
+        var solver = BestScoreComplexSolver.Create(boardSet, playerSet);
 
         // Act
         solver.SearchSolution();
@@ -129,7 +129,7 @@ public class IncrementalComplexSolverTests
         Assert.Single(tilesToPlay);
         Assert.Equal(0, jokerToPlay);
     }
-    
+
     [Fact]
     public void SearchSolution_ValidRunJoker()
     {
@@ -145,7 +145,7 @@ public class IncrementalComplexSolverTests
             new Tile(true)
         ]);
 
-        var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
+        var solver = BestScoreComplexSolver.Create(boardSet, playerSet);
 
         // Act
         solver.SearchSolution();
@@ -160,7 +160,7 @@ public class IncrementalComplexSolverTests
         Assert.Single(tilesToPlay);
         Assert.Equal(1, jokerToPlay);
     }
-    
+
     [Fact]
     public void SearchSolution_ValidRunEnd()
     {
@@ -177,7 +177,7 @@ public class IncrementalComplexSolverTests
             new Tile(13),
         ]);
 
-        var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
+        var solver = BestScoreComplexSolver.Create(boardSet, playerSet);
 
         // Act
         solver.SearchSolution();
@@ -189,7 +189,7 @@ public class IncrementalComplexSolverTests
         // Assert
         Assert.True(won);
         Assert.True(solution.IsValid);
-        Assert.Equal(2,tilesToPlay.Count);
+        Assert.Equal(2, tilesToPlay.Count);
         Assert.Equal(0, jokerToPlay);
     }
 
@@ -210,13 +210,13 @@ public class IncrementalComplexSolverTests
 
             new Tile(5),
             new Tile(5),
-            
+
             new Tile(1, TileColor.Red),
             new Tile(2, TileColor.Red),
             new Tile(3, TileColor.Red),
         ]);
 
-        var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
+        var solver = BestScoreComplexSolver.Create(boardSet, playerSet);
 
         // Act
         solver.SearchSolution();
@@ -231,7 +231,7 @@ public class IncrementalComplexSolverTests
         Assert.Equal(6, tilesToPlay.Count);
         Assert.Equal(0, jokerToPlay);
     }
-    
+
     [Fact]
     public void SearchSolution_ValidNWonIncrscorePlayer()
     {
@@ -253,7 +253,7 @@ public class IncrementalComplexSolverTests
             new Tile(13),
         ]);
 
-        var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
+        var solver = BestScoreComplexSolver.Create(boardSet, playerSet);
 
         // Act
         solver.SearchSolution();
@@ -268,7 +268,7 @@ public class IncrementalComplexSolverTests
         Assert.Equal(3, tilesToPlay.Count);
         Assert.Equal(0, jokerToPlay);
     }
-    
+
     [Fact]
     public void SearchSolution_ValidWinJoker()
     {
@@ -284,11 +284,11 @@ public class IncrementalComplexSolverTests
             new Tile(10, TileColor.Red),
             new Tile(10, TileColor.Black),
 
-            new Tile(5,TileColor.Red),
+            new Tile(5, TileColor.Red),
             new Tile(true)
         ]);
 
-        var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
+        var solver = BestScoreComplexSolver.Create(boardSet, playerSet);
 
         // Act
         solver.SearchSolution();
@@ -318,7 +318,7 @@ public class IncrementalComplexSolverTests
             new Tile(5)
         ]);
 
-        var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
+        var solver = BestScoreComplexSolver.Create(boardSet, playerSet);
 
         // Act
         solver.SearchSolution();
