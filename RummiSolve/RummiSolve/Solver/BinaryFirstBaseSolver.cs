@@ -37,7 +37,7 @@ public sealed class BinaryFirstBaseSolver : BaseSolver, IBinarySolver
         BinarySolution = FindSolution(new Solution(), 0, 0);
     }
 
-    private bool ValidateCondition(int solutionScore)
+    private static bool ValidateCondition(int solutionScore)
     {
         return solutionScore > MinScore;
     }
