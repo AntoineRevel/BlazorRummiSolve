@@ -10,14 +10,15 @@ public class CombinationsFirstSolver(List<Tile> tiles) : ISolver
     public int JokerToPlay { get; private set; }
     public bool Won { get; private set; }
 
-    public static CombinationsSolver Create(Set playerSet)
+    public static CombinationsFirstSolver Create(Set playerSet)
     {
-        return new CombinationsSolver(playerSet.Tiles);
+        return new CombinationsFirstSolver(playerSet.Tiles);
     }
     
     public void SearchSolution()
     {
         tiles.Sort();
+        
         var tilesFirstTry = new List<Tile>(tiles);
         
         var playerJokers = tiles.Count(tile => tile.IsJoker);
@@ -37,9 +38,6 @@ public class CombinationsFirstSolver(List<Tile> tiles) : ISolver
             Won = true;
             return ;
         }
-        
-        
-
         
     }
     
