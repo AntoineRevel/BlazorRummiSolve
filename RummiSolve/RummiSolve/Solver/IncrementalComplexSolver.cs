@@ -1,31 +1,34 @@
+using RummiSolve.Solver.Abstract;
 using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Solver;
 
-public class BestScoreSolver : SolverBase, ISolver
+public sealed class IncrementalComplexSolver : ComplexSolver, ISolver
 {
-    private readonly bool[] _isPlayerTile;
     private readonly int _boardJokers;
     private readonly int _availableJokers;
+
+    private bool[] _bestUsedTiles;
+    private int _remainingJoker;
     private int _bestSolutionScore;
 
-    public bool Found { get; private set; }
-    public Solution BestSolution { get; private set; } = new();
-    public IEnumerable<Tile> TilesToPlay { get; private set; } = [];
-    public int JokerToPlay { get; private set; }
-    public bool Won { get; private set; }
+    public bool Found => BestSolution.IsValid;
 
-    private BestScoreSolver(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardJokers) :
-        base(tiles,
-            jokers)
+    public Solution BestSolution { get; private set; } = new();
+    public IEnumerable<Tile> TilesToPlay => Tiles.Where((_, i) => IsPlayerTile[i] && _bestUsedTiles[i]);
+
+    public bool Won { get; private set; }
+    public int JokerToPlay => _availableJokers - _remainingJoker - _boardJokers;
+
+    private IncrementalComplexSolver(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardJokers) : base(tiles,
+        jokers, isPlayerTile)
     {
         _availableJokers = jokers;
-        _isPlayerTile = isPlayerTile;
         _boardJokers = boardJokers;
+        _bestUsedTiles = UsedTiles;
     }
 
-
-    public static BestScoreSolver Create(Set boardSet, Set playerSet)
+    public static IncrementalComplexSolver Create(Set boardSet, Set playerSet)
     {
         var capacity = boardSet.Tiles.Count + playerSet.Tiles.Count;
         var combined = new List<(Tile tile, bool isPlayerTile)>(capacity);
@@ -46,7 +49,7 @@ public class BestScoreSolver : SolverBase, ISolver
         var finalTiles = combined.Select(pair => pair.tile).ToArray();
         var isPlayerTile = combined.Select(pair => pair.isPlayerTile).ToArray();
 
-        return new BestScoreSolver(
+        return new IncrementalComplexSolver(
             finalTiles,
             totalJokers,
             isPlayerTile,
@@ -56,29 +59,39 @@ public class BestScoreSolver : SolverBase, ISolver
 
     public void SearchSolution()
     {
-        var scoreSolver = new ScoreSolver(Tiles, Jokers, _isPlayerTile);
+        if (Tiles.Length + Jokers <= 2) return;
 
-        var canPlay = scoreSolver.SearchBestScore();
+        while (true)
+        {
+            var newSolution = FindSolution(new Solution(), 0, 0);
 
-        if (!canPlay) return;
+            if (!newSolution.IsValid) return;
+            BestSolution = newSolution;
+            _bestUsedTiles = UsedTiles.ToArray();
+            _remainingJoker = Jokers;
+            if (UsedTiles.All(b => b))
+            {
+                Won = true;
+                return;
+            }
 
-        Found = true;
-
-        _bestSolutionScore = scoreSolver.BestScore;
-        BestSolution = FindSolution(new Solution(), 0, 0);
-        Won = UsedTiles.All(b => b);
-        TilesToPlay = Tiles.Where((_, i) => _isPlayerTile[i] && UsedTiles[i]);
-        JokerToPlay = _availableJokers - Jokers - _boardJokers;
+            Array.Fill(UsedTiles, false);
+            Jokers = _availableJokers;
+        }
     }
 
 
     private bool ValidateCondition(int solutionScore)
     {
-        if (solutionScore != _bestSolutionScore) return false;
-        var allBoardTilesUsed =
-            !UsedTiles.Where((use, i) => !use && !_isPlayerTile[i]).Any(); //check pas de joker restant ?
+        if (solutionScore <= _bestSolutionScore) return false;
 
-        return allBoardTilesUsed;
+        // ReSharper disable once LoopCanBeConvertedToQuery
+        for (var i = 0; i < UsedTiles.Length; i++)
+        {
+            if (!IsPlayerTile[i] && !UsedTiles[i]) return false;
+        }
+
+        return Jokers == 0;
     }
 
 
@@ -100,7 +113,7 @@ public class BestScoreSolver : SolverBase, ISolver
 
             if (solGroup.IsValid) return solGroup;
 
-            if (_isPlayerTile[startIndex]) startIndex++;
+            if (IsPlayerTile[startIndex]) startIndex++;
             else return solution;
         }
 
@@ -112,14 +125,18 @@ public class BestScoreSolver : SolverBase, ISolver
         where TS : ValidSet
     {
         UsedTiles[firstUnusedTileIndex] = true;
-        var firstTileScore = _isPlayerTile[firstUnusedTileIndex] ? Tiles[firstUnusedTileIndex].Value : 0;
+        var firstTileScore = IsPlayerTile[firstUnusedTileIndex] ? Tiles[firstUnusedTileIndex].Value : 0;
         foreach (var set in sets)
         {
             MarkTilesAsUsedOut(set, firstUnusedTileIndex, out var playerSetScore);
 
             var newSolutionScore = solutionScore + firstTileScore + playerSetScore;
 
-            if (ValidateCondition(newSolutionScore)) solution.IsValid = true;
+            if (ValidateCondition(newSolutionScore))
+            {
+                _bestSolutionScore = newSolutionScore;
+                solution.IsValid = true;
+            }
 
             else solution = FindSolution(solution, newSolutionScore, firstUnusedTileIndex);
 
@@ -135,32 +152,5 @@ public class BestScoreSolver : SolverBase, ISolver
         UsedTiles[firstUnusedTileIndex] = false;
 
         return solution;
-    }
-
-    private void MarkTilesAsUsedOut(ValidSet set, int firstUnusedIndex, out int playerSetScore)
-    {
-        playerSetScore = 0;
-        foreach (var tile in set.Tiles.Skip(1))
-        {
-            if (tile.IsJoker)
-            {
-                Jokers -= 1;
-                continue;
-            }
-
-            for (var i = firstUnusedIndex + 1; i < Tiles.Length; i++)
-            {
-                if (UsedTiles[i] || !Tiles[i].Equals(tile)) continue;
-
-                UsedTiles[i] = true;
-
-                if (_isPlayerTile[i])
-                {
-                    playerSetScore += tile.Value;
-                }
-
-                break;
-            }
-        }
     }
 }

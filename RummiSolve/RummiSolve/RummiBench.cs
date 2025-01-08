@@ -25,8 +25,8 @@ public class RummiBench
 
     public static void TestMultiPlayerGame()
     {
-        Game game = new(Guid.Parse("4b00f4d3-5107-42b0-8c6d-e3091eb07705"));
-        //Guid.Parse("4b00f4d3-5107-42b0-8c6d-e3091eb07705")
+        Game game = new(Guid.Parse("107acd14-0304-48b6-a81d-fbb221507499"));
+        //Guid.Parse("107acd14-0304-48b6-a81d-fbb221507499") Guid.Parse("74cdccda-9261-460c-9414-31d7270ad2a1")
 
         var listNames = new List<string> { "Antoine", "Matthieu", "Maguy" };
         game.InitializeGame(listNames);
@@ -54,7 +54,7 @@ public class RummiBench
             new Tile(13, TileColor.Black),
         ]);
 
-        var solver = IncrementalFirstSolver.Create(playerSet);
+        var solver = IncrementalFirstBaseSolver.Create(playerSet);
 
         // Act
         solver.SearchSolution();
@@ -120,7 +120,7 @@ public class RummiBench
             new Tile(2, TileColor.Black),
         ]);
 
-        var solver = IncrementalSolver.Create(boardSet, playerSet);
+        var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
 
         // Act
         solver.SearchSolution();
@@ -194,7 +194,7 @@ public class RummiBench
             new Tile(2, TileColor.Black),
         ]);
 
-        var solver = IncrementalSolver.Create(boardSet, playerSet);
+        var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
 
         // Act
 
@@ -233,7 +233,7 @@ public class RummiBench
             new Tile(5),
         ]);
 
-        var solver = ScoreSolver.Create(boardSet, playerSet);
+        var solver = ComplexScoreSolver.Create(boardSet, playerSet);
         solver.SearchBestScore();
         Console.WriteLine(solver.BestScore);
     }

@@ -3,7 +3,7 @@ using RummiSolve.Solver;
 
 namespace BlazorRummiSolve.Tests;
 
-public class BinaryFirstSolverTests
+public class BinaryFirstBaseSolverTests
 {
     [Fact]
     public void SearchSolution_Valid()
@@ -16,7 +16,7 @@ public class BinaryFirstSolverTests
             new(10, TileColor.Black),
         };
 
-        var solver = BinaryFirstSolver.Create(playerTiles);
+        var solver = BinaryFirstBaseSolver.Create(playerTiles);
 
         // Act
         solver.SearchSolution();
@@ -49,7 +49,7 @@ public class BinaryFirstSolverTests
             new(3),
         };
 
-        var solver = BinaryFirstSolver.Create(playerTiles);
+        var solver = BinaryFirstBaseSolver.Create(playerTiles);
 
         // Act
         solver.SearchSolution();
@@ -78,7 +78,7 @@ public class BinaryFirstSolverTests
             new(true)
         };
 
-        var solver = BinaryFirstSolver.Create(playerTiles);
+        var solver = BinaryFirstBaseSolver.Create(playerTiles);
 
         // Act
         solver.SearchSolution();
@@ -108,7 +108,7 @@ public class BinaryFirstSolverTests
             new(true)
         };
 
-        var solver = BinaryFirstSolver.Create(playerTiles);
+        var solver = BinaryFirstBaseSolver.Create(playerTiles);
 
         // Act
         solver.SearchSolution();
@@ -137,7 +137,7 @@ public class BinaryFirstSolverTests
             new(true)
         };
 
-        var solver = BinaryFirstSolver.Create(playerTiles);
+        var solver = BinaryFirstBaseSolver.Create(playerTiles);
 
         // Act
         solver.SearchSolution();
@@ -166,7 +166,7 @@ public class BinaryFirstSolverTests
             new(true)
         };
 
-        var solver = BinaryFirstSolver.Create(playerTiles);
+        var solver = BinaryFirstBaseSolver.Create(playerTiles);
 
         // Act
         solver.SearchSolution();
@@ -187,7 +187,7 @@ public class BinaryFirstSolverTests
             new(3),
         };
 
-        var solver = BinaryFirstSolver.Create(playerTiles);
+        var solver = BinaryFirstBaseSolver.Create(playerTiles);
 
         // Act
         solver.SearchSolution();
@@ -209,7 +209,7 @@ public class BinaryFirstSolverTests
             new(true)
         };
 
-        var solver = BinaryFirstSolver.Create(playerTiles);
+        var solver = BinaryFirstBaseSolver.Create(playerTiles);
 
         // Act
         solver.SearchSolution();

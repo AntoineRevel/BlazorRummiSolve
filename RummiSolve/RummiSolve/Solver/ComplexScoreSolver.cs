@@ -1,13 +1,14 @@
+using RummiSolve.Solver.Abstract;
 using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Solver;
 
-public class ScoreSolver(Tile[] tiles, int jokers, bool[] isPlayerTile) : SolverBase(tiles, jokers), IScoreSolver
+public class ComplexScoreSolver(Tile[] tiles, int jokers, bool[] isPlayerTile)
+    : ComplexSolver(tiles, jokers, isPlayerTile), IScoreSolver
 {
     public int BestScore { get; private set; }
-    
 
-    public static ScoreSolver Create(Set boardSet, Set playerSet)
+    public static ComplexScoreSolver Create(Set boardSet, Set playerSet)
     {
         var capacity = boardSet.Tiles.Count + playerSet.Tiles.Count;
         var combined = new List<(Tile tile, bool isPlayerTile)>(capacity);
@@ -28,7 +29,7 @@ public class ScoreSolver(Tile[] tiles, int jokers, bool[] isPlayerTile) : Solver
         var finalTiles = combined.Select(pair => pair.tile).ToArray();
         var isPlayerTile = combined.Select(pair => pair.isPlayerTile).ToArray();
 
-        return new ScoreSolver(
+        return new ComplexScoreSolver(
             finalTiles,
             totalJokers,
             isPlayerTile
@@ -43,11 +44,11 @@ public class ScoreSolver(Tile[] tiles, int jokers, bool[] isPlayerTile) : Solver
 
         return BestScore != 0;
     }
-    
+
     private bool ValidateCondition()
     {
         var allBoardTilesUsed =
-            !UsedTiles.Where((use, i) => !use && !isPlayerTile[i]).Any(); //check pas de joker restant ?
+            !UsedTiles.Where((use, i) => !use && !IsPlayerTile[i]).Any(); //check pas de joker restant ?
 
         return allBoardTilesUsed;
     }
@@ -65,7 +66,7 @@ public class ScoreSolver(Tile[] tiles, int jokers, bool[] isPlayerTile) : Solver
 
             TrySet(GetGroups(startIndex), solution, solutionScore, startIndex);
 
-            if (isPlayerTile[startIndex]) startIndex++;
+            if (IsPlayerTile[startIndex]) startIndex++;
             else return;
         }
     }
@@ -74,7 +75,7 @@ public class ScoreSolver(Tile[] tiles, int jokers, bool[] isPlayerTile) : Solver
         where TS : ValidSet
     {
         UsedTiles[firstUnusedTileIndex] = true;
-        var firstTileScore = isPlayerTile[firstUnusedTileIndex] ? Tiles[firstUnusedTileIndex].Value : 0;
+        var firstTileScore = IsPlayerTile[firstUnusedTileIndex] ? Tiles[firstUnusedTileIndex].Value : 0;
         foreach (var set in sets)
         {
             MarkTilesAsUsedOut(set, firstUnusedTileIndex, out var playerSetScore);
@@ -89,32 +90,5 @@ public class ScoreSolver(Tile[] tiles, int jokers, bool[] isPlayerTile) : Solver
         }
 
         UsedTiles[firstUnusedTileIndex] = false;
-    }
-
-    private void MarkTilesAsUsedOut(ValidSet set, int firstUnusedIndex, out int playerSetScore)
-    {
-        playerSetScore = 0;
-        foreach (var tile in set.Tiles.Skip(1))
-        {
-            if (tile.IsJoker)
-            {
-                Jokers -= 1;
-                continue;
-            }
-
-            for (var i = firstUnusedIndex + 1; i < Tiles.Length; i++)
-            {
-                if (UsedTiles[i] || !Tiles[i].Equals(tile)) continue;
-
-                UsedTiles[i] = true;
-
-                if (isPlayerTile[i])
-                {
-                    playerSetScore += tile.Value;
-                }
-
-                break;
-            }
-        }
     }
 }

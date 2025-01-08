@@ -1,17 +1,18 @@
+using RummiSolve.Solver.Abstract;
 using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Solver;
 
-public sealed class BinaryFirstSolver : SolverBase, IBinarySolver
+public sealed class BinaryFirstBaseSolver : BaseSolver, IBinarySolver
 {
     public Solution BinarySolution { get; private set; } = new();
     public required IEnumerable<Tile> TilesToPlay { get; init; }
 
-    internal BinaryFirstSolver(Tile[] tiles, int jokers) : base(tiles, jokers)
+    internal BinaryFirstBaseSolver(Tile[] tiles, int jokers) : base(tiles, jokers)
     {
     }
 
-    public static BinaryFirstSolver Create(List<Tile> playerTiles)
+    public static BinaryFirstBaseSolver Create(List<Tile> playerTiles)
     {
         var tiles = new List<Tile>(playerTiles);
 
@@ -21,7 +22,7 @@ public sealed class BinaryFirstSolver : SolverBase, IBinarySolver
 
         if (playerJokers > 0) tiles.RemoveRange(tiles.Count - playerJokers, playerJokers);
 
-        return new BinaryFirstSolver(
+        return new BinaryFirstBaseSolver(
             tiles.ToArray(),
             playerJokers
         )

@@ -1,6 +1,6 @@
-namespace RummiSolve.Solver;
+namespace RummiSolve.Solver.Abstract;
 
-public abstract class SolverBase(Tile[] tiles, int jokers)
+public abstract class BaseSolver(Tile[] tiles, int jokers)
 {
     protected readonly Tile[] Tiles = tiles;
     protected readonly bool[] UsedTiles = new bool[tiles.Length];
@@ -8,41 +8,74 @@ public abstract class SolverBase(Tile[] tiles, int jokers)
 
     protected const int MinScore = 29;
 
-    protected void MarkTilesAsUsed(ValidSet set, int firstUnusedIndex)
+    protected void MarkTilesAsUsed(ValidSet set, int unusedIndex)
     {
-        foreach (var tile in set.Tiles.Skip(1))
+        unusedIndex++;
+        for (var tIndex = 1; tIndex < set.Tiles.Length; tIndex++)
         {
+            var tile = set.Tiles[tIndex];
             if (tile.IsJoker)
             {
                 Jokers -= 1;
                 continue;
             }
 
-            for (var i = firstUnusedIndex + 1; i < Tiles.Length; i++)
+            for (; unusedIndex < Tiles.Length; unusedIndex++)
             {
-                if (UsedTiles[i] || !Tiles[i].Equals(tile)) continue;
+                if (UsedTiles[unusedIndex] || !Tiles[unusedIndex].Equals(tile)) continue;
 
-                UsedTiles[i] = true;
+                UsedTiles[unusedIndex] = true;
                 break;
             }
         }
     }
 
-    protected void MarkTilesAsUnused(ValidSet set, int firstUnusedIndex)
+    protected void MarkTilesAsUnused(ValidSet set, int unusedIndex)
     {
-        foreach (var tile in set.Tiles.Skip(1))
+        var lastIndex = Tiles.Length - 1;
+
+        for (var tIndex = set.Tiles.Length - 1; tIndex > 0; tIndex--)
         {
+            var tile = set.Tiles[tIndex];
+
             if (tile.IsJoker)
             {
                 Jokers += 1;
                 continue;
             }
 
-            for (var i = Tiles.Length - 1; i > firstUnusedIndex; i--)
+            for (; lastIndex > unusedIndex; lastIndex--)
             {
-                if (!UsedTiles[i] || !Tiles[i].Equals(tile)) continue;
+                if (!UsedTiles[lastIndex] || !Tiles[lastIndex].Equals(tile)) continue;
 
-                UsedTiles[i] = false;
+                UsedTiles[lastIndex] = false;
+                break;
+            }
+        }
+    }
+
+    protected void MarkTilesAsUsedOut(ValidSet set, int unusedIndex, out int playerSetScore)
+    {
+        playerSetScore = 0;
+        unusedIndex++;
+        for (var tIndex = 1; tIndex < set.Tiles.Length; tIndex++)
+        {
+            var tile = set.Tiles[tIndex];
+            playerSetScore += tile.Value;
+
+            if (tile.IsJoker)
+            {
+                Jokers -= 1;
+
+                continue;
+            }
+
+            for (; unusedIndex < Tiles.Length; unusedIndex++)
+            {
+                if (UsedTiles[unusedIndex] || !Tiles[unusedIndex].Equals(tile)) continue;
+
+                UsedTiles[unusedIndex] = true;
+
                 break;
             }
         }
@@ -155,7 +188,10 @@ public abstract class SolverBase(Tile[] tiles, int jokers)
 
                     groupTiles[0] = Tiles[firstTileIndex];
 
-                    for (var i = 0; i < tilesUsed - 1; i++) groupTiles[i + 1] = tiles[i];
+                    for (int i = tilesUsed - 2, j = 1; i >= 0; i--, j++)
+                    {
+                        groupTiles[j] = tiles[i];
+                    }
 
                     for (var k = 0; k < jokersUsed; k++)
                         groupTiles[tilesUsed + k] = new Tile(Tiles[firstTileIndex].Value, isJoker: true);

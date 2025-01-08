@@ -3,7 +3,7 @@ using RummiSolve.Solver;
 
 namespace BlazorRummiSolve.Tests;
 
-public class BinarySolverTests
+public class BinaryBaseSolverTests
 {
     [Fact]
     public void SearchSolution_Valid()
@@ -22,7 +22,7 @@ public class BinarySolverTests
             new(10, TileColor.Black),
         };
 
-        var solver = BinarySolver.Create(boardSet, playerTiles);
+        var solver = BinaryBaseSolver.Create(boardSet, playerTiles);
 
         // Act
         solver.SearchSolution();
@@ -57,7 +57,7 @@ public class BinarySolverTests
             new(10, TileColor.Red),
         };
 
-        var solver = BinarySolver.Create(boardSet, playerTiles);
+        var solver = BinaryBaseSolver.Create(boardSet, playerTiles);
 
         // Act
         solver.SearchSolution();
@@ -90,7 +90,7 @@ public class BinarySolverTests
             new(4, TileColor.Red),
         };
 
-        var solver = BinarySolver.Create(boardSet, playerTiles);
+        var solver = BinaryBaseSolver.Create(boardSet, playerTiles);
 
         // Act
         solver.SearchSolution();
@@ -124,7 +124,7 @@ public class BinarySolverTests
             new(true)
         };
 
-        var solver = BinarySolver.Create(boardSet, playerTiles);
+        var solver = BinaryBaseSolver.Create(boardSet, playerTiles);
 
         // Act
         solver.SearchSolution();
@@ -161,7 +161,7 @@ public class BinarySolverTests
             new(5)
         };
 
-        var solver = BinarySolver.Create(boardSet, playerTiles);
+        var solver = BinaryBaseSolver.Create(boardSet, playerTiles);
 
         // Act
         solver.SearchSolution();

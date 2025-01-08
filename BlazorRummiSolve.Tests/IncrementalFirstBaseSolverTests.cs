@@ -3,7 +3,7 @@ using RummiSolve.Solver;
 
 namespace BlazorRummiSolve.Tests;
 
-public class IncrementalFirstSolverTests
+public class IncrementalFirstBaseSolverTests
 {
     [Fact]
     public void SearchSolution_Valid()
@@ -16,7 +16,7 @@ public class IncrementalFirstSolverTests
             new Tile(10, TileColor.Black),
         ]);
 
-        var solver = IncrementalFirstSolver.Create(playerSet);
+        var solver = IncrementalFirstBaseSolver.Create(playerSet);
 
         // Act
         solver.SearchSolution();
@@ -45,7 +45,7 @@ public class IncrementalFirstSolverTests
             new Tile(3),
         ]);
 
-        var solver = IncrementalFirstSolver.Create(playerSet);
+        var solver = IncrementalFirstBaseSolver.Create(playerSet);
 
         // Act
         solver.SearchSolution();
@@ -70,7 +70,7 @@ public class IncrementalFirstSolverTests
             new Tile(true)
         ]);
 
-        var solver = IncrementalFirstSolver.Create(playerSet);
+        var solver = IncrementalFirstBaseSolver.Create(playerSet);
 
         // Act
         solver.SearchSolution();
@@ -105,7 +105,7 @@ public class IncrementalFirstSolverTests
             
         ]);
 
-        var solver = IncrementalFirstSolver.Create(playerSet);
+        var solver = IncrementalFirstBaseSolver.Create(playerSet);
 
         // Act
         solver.SearchSolution();
@@ -152,7 +152,7 @@ public class IncrementalFirstSolverTests
             
         ]);
 
-        var solver = IncrementalFirstSolver.Create(playerSet);
+        var solver = IncrementalFirstBaseSolver.Create(playerSet);
 
         // Act
         solver.SearchSolution();
