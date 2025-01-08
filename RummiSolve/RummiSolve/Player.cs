@@ -17,12 +17,10 @@ public class Player
     public bool PlayedToShow;
     public Set RackTileToShow;
     public List<Tile> TilesToPlay = [];
-    public int JokersToPlay;
 
     public Player(string name, List<Tile> tiles)
     {
         Name = name;
-        JokersToPlay = 0;
         _rackTilesSet = new Set(tiles); //pas de copie de la liste TODO
         _lastRackTilesSet = new Set(tiles);
         RackTileToShow = _lastRackTilesSet;
@@ -31,7 +29,7 @@ public class Player
 
     public bool Won { get; private set; }
 
-    
+
     public Solution SolveIncr(Solution boardSolution)
     {
         TilesToPlay.Clear();
@@ -40,7 +38,7 @@ public class Player
         ISolver incrementalSolver = _played
             ? IncrementalComplexSolver.Create(boardSet, _rackTilesSet)
             : IncrementalFirstBaseSolver.Create(_rackTilesSet);
-        
+
         incrementalSolver.SearchSolution();
         return Solve(boardSolution, incrementalSolver);
     }
@@ -53,7 +51,7 @@ public class Player
         ISolver bestScoreSolver = _played
             ? BestScoreComplexSolver.Create(boardSet, _rackTilesSet)
             : BestScoreFirstBaseSolver.Create(_rackTilesSet);
-        
+
         bestScoreSolver.SearchSolution();
         return Solve(boardSolution, bestScoreSolver);
     }
@@ -96,13 +94,15 @@ public class Player
         Won = solver.Won;
 
         var solution = solver.BestSolution;
+        
         TilesToPlay = solver.TilesToPlay.ToList();
-        for(var i = 0; i<solver.JokerToPlay; i++) TilesToPlay.Add(new Tile(true));
 
-
+        for (var i = 0; i < solver.JokerToPlay; i++) TilesToPlay.Add(new Tile(true));
+        
         if (_played) return solution;
 
         solution.AddSolution(boardSolution);
+        
         _played = true;
 
         return solution;
@@ -118,7 +118,6 @@ public class Player
     public void RemoveTilePlayed()
     {
         foreach (var tile in TilesToPlay) _rackTilesSet.Remove(tile);
-        for (var i = 0; i < JokersToPlay; i++) _rackTilesSet.Remove(new Tile(true));
     }
 
     public void ShowRemovedTile()
