@@ -3,38 +3,14 @@ using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Solver.Combinations.First;
 
-public sealed class BinaryFirstBaseSolver : BaseSolver, IBinarySolver
+public sealed class BinaryFirstBaseSolver(Tile[] tiles, int jokers) : BaseSolver(tiles, jokers), IBinarySolver
 {
     public Solution BinarySolution { get; private set; } = new();
-    public required IEnumerable<Tile> TilesToPlay { get; init; }
-
-    private BinaryFirstBaseSolver(Tile[] tiles, int jokers) : base(tiles, jokers)
-    {
-    }
-
-    public static BinaryFirstBaseSolver Create(List<Tile> playerTiles)
-    {
-        var tiles = new List<Tile>(playerTiles);
-
-        tiles.Sort();
-
-        var playerJokers = playerTiles.Count(tile => tile.IsJoker);
-
-        if (playerJokers > 0) tiles.RemoveRange(tiles.Count - playerJokers, playerJokers);
-
-        return new BinaryFirstBaseSolver(
-            tiles.ToArray(),
-            playerJokers
-        )
-        {
-            TilesToPlay = playerTiles,
-        };
-    }
-
-
-    public void SearchSolution()
+    
+    public bool SearchSolution()
     {
         BinarySolution = FindSolution(new Solution(), 0, 0);
+        return BinarySolution.IsValid;
     }
 
     private static bool ValidateCondition(int solutionScore)

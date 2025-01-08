@@ -4,19 +4,42 @@ namespace RummiSolve.Solver.Combinations.First;
 
 public class CombinationsFirstSolver(List<Tile> tiles) : ISolver
 {
-    private List<Tile> _playerTiles = tiles;
-    public bool Found { get; }
-    public Solution BestSolution { get; }
-    public IEnumerable<Tile> TilesToPlay { get; }
-    public int JokerToPlay { get; }
-    public bool Won { get; }
+    public bool Found { get; private set; }
+    public Solution BestSolution { get; private set; }
+    public IEnumerable<Tile> TilesToPlay { get; private set; }
+    public int JokerToPlay { get; private set; }
+    public bool Won { get; private set; }
 
     public static CombinationsSolver Create(Set playerSet)
     {
         return new CombinationsSolver(playerSet.Tiles);
     }
+    
     public void SearchSolution()
     {
+        tiles.Sort();
+        var tilesFirstTry = new List<Tile>(tiles);
+        
+        var playerJokers = tiles.Count(tile => tile.IsJoker);
+        
+        if (playerJokers > 0) tilesFirstTry.RemoveRange(tilesFirstTry.Count - playerJokers, playerJokers);
+        
+        var firstBinarySolver = new BinaryFirstBaseSolver(tilesFirstTry.ToArray(), playerJokers);
+
+        var isValid = firstBinarySolver.SearchSolution();
+
+        if (isValid)
+        {
+            Found = true;
+            BestSolution = firstBinarySolver.BinarySolution;
+            TilesToPlay = tilesFirstTry;
+            JokerToPlay = playerJokers;
+            Won = true;
+            return ;
+        }
+        
+        
+
         
     }
     
