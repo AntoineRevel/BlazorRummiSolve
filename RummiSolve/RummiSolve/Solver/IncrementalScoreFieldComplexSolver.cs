@@ -26,7 +26,6 @@ public sealed class IncrementalScoreFieldComplexSolver : ComplexSolver, ISolver
         _availableJokers = jokers;
         _boardJokers = boardJokers;
         _bestUsedTiles = UsedTiles;
-        _bestSolutionScore = 1;
     }
 
     public static IncrementalScoreFieldComplexSolver Create(Set boardSet, Set playerSet)
