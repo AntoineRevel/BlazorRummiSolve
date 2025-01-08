@@ -1,5 +1,7 @@
-using System.Security.Cryptography.X509Certificates;
 using RummiSolve.Solver;
+using RummiSolve.Solver.BestScore;
+using RummiSolve.Solver.BestScore.First;
+using RummiSolve.Solver.Incremental;
 using RummiSolve.Solver.Interfaces;
 using static System.Console;
 

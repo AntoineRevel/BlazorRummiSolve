@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using BenchmarkDotNet.Attributes;
 using RummiSolve.Solver;
+using RummiSolve.Solver.BestScore;
+using RummiSolve.Solver.Incremental;
 
 namespace RummiSolve;
 

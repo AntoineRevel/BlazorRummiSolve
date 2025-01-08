@@ -1,5 +1,7 @@
 using RummiSolve;
 using RummiSolve.Solver;
+using RummiSolve.Solver.Combi;
+using RummiSolve.Solver.Combi.First;
 
 namespace BlazorRummiSolve.Tests;
 
