@@ -1,14 +1,14 @@
 using RummiSolve.Solver.Abstract;
 using RummiSolve.Solver.Interfaces;
 
-namespace RummiSolve.Solver.Combi.First;
+namespace RummiSolve.Solver.Combinations.First;
 
 public sealed class BinaryFirstBaseSolver : BaseSolver, IBinarySolver
 {
     public Solution BinarySolution { get; private set; } = new();
     public required IEnumerable<Tile> TilesToPlay { get; init; }
 
-    internal BinaryFirstBaseSolver(Tile[] tiles, int jokers) : base(tiles, jokers)
+    private BinaryFirstBaseSolver(Tile[] tiles, int jokers) : base(tiles, jokers)
     {
     }
 

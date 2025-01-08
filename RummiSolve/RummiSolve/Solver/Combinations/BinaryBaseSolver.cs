@@ -1,7 +1,7 @@
 using RummiSolve.Solver.Abstract;
 using RummiSolve.Solver.Interfaces;
 
-namespace RummiSolve.Solver.Combi;
+namespace RummiSolve.Solver.Combinations;
 
 public sealed class BinaryBaseSolver : BaseSolver, IBinarySolver
 {
