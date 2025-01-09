@@ -100,7 +100,11 @@ public class Player
         var solution = solver.BestSolution;
         
         TilesToPlay = solver.TilesToPlay.ToList();
-
+        
+        WriteLine("Play :");
+        foreach (var tile in TilesToPlay) tile.PrintTile();
+        WriteLine();
+        
         for (var i = 0; i < solver.JokerToPlay; i++) TilesToPlay.Add(new Tile(true));
         
         if (_played) return solution;

@@ -6,7 +6,7 @@ namespace RummiSolve.Solver.Combinations.First;
 public sealed class BinaryFirstBaseSolver(Tile[] tiles, int jokers) : BaseSolver(tiles, jokers), IBinarySolver
 {
     public IEnumerable<Tile> TilesToPlay => Tiles;
-    public int JokerToPlay => Jokers;
+    public int JokerToPlay { get; } = jokers;
     public Solution BinarySolution { get; private set; } = new();
 
     public bool SearchSolution()

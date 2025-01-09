@@ -46,29 +46,30 @@ public class CombinationsFirstSolver(List<Tile> tiles) : ISolver
 
         for (var tileTry = tiles.Count - 1; tileTry > 2; tileTry--)
         {
-            // Parallel.ForEach(BaseSolver.GetCombinations(tiles, tileTry),
-            //     (combi, loopState) =>
-            //     {
-            //         if (bestSolver != null)
+            //     Parallel.ForEach(BaseSolver.GetCombinations(tiles, tileTry),
+            //         (combi, loopState) =>
             //         {
+            //             if (bestSolver != null)
+            //             {
+            //                 loopState.Stop();
+            //                 return;
+            //             }
+            //             
+            //             var joker = combi.Count(tile => tile.IsJoker);
+            //             var solver = new BinaryFirstBaseSolver(combi.ToArray(), joker);
+            //             var found = solver.SearchSolution();
+            //             if (!found) return;
+            //             bestSolver = solver;
             //             loopState.Stop();
-            //             return;
-            //         }
-            //
-            //         var solver = new BinaryFirstBaseSolver(combi.ToArray(), combi.Count(tile => tile.IsJoker));
-            //         var found = solver.SearchSolution();
-            //         if (!found) return;
-            //         bestSolver = solver;
-            //         loopState.Stop();
-            //     });
-            //
-            // if (bestSolver == null) continue;
-            //
-            // Found = true;
-            // BestSolution = bestSolver.BinarySolution;
-            // TilesToPlay = bestSolver.TilesToPlay;
-            // JokerToPlay = bestSolver.JokerToPlay;
-            // return;
+            //         });
+            //     
+            //     if (bestSolver == null) continue;
+            //     
+            //     Found = true;
+            //     BestSolution = bestSolver.BinarySolution;
+            //     TilesToPlay = bestSolver.TilesToPlay;
+            //     JokerToPlay = bestSolver.JokerToPlay;
+            //     return;
 
             foreach (var combi in BaseSolver.GetCombinations(tiles, tileTry))
             {
@@ -79,7 +80,7 @@ public class CombinationsFirstSolver(List<Tile> tiles) : ISolver
                 if (!Found) continue;
                 BestSolution = solver.BinarySolution;
                 TilesToPlay = solver.TilesToPlay;
-                JokerToPlay = joker;
+                JokerToPlay = solver.JokerToPlay;
                 return;
             }
         }
