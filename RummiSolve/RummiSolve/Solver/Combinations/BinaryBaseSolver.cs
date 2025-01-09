@@ -5,6 +5,7 @@ namespace RummiSolve.Solver.Combinations;
 
 public sealed class BinaryBaseSolver : BaseSolver, IBinarySolver
 {
+    public int JokerToPlay => Jokers;
     public Solution BinarySolution { get; private set; } = new();
     public required IEnumerable<Tile> TilesToPlay { get; init; }
 

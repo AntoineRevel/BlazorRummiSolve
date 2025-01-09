@@ -2,6 +2,7 @@ using System.Diagnostics;
 using BenchmarkDotNet.Attributes;
 using RummiSolve.Solver;
 using RummiSolve.Solver.BestScore;
+using RummiSolve.Solver.Combinations.First;
 using RummiSolve.Solver.Incremental;
 
 namespace RummiSolve;
@@ -27,7 +28,7 @@ public class RummiBench
 
     public static void TestMultiPlayerGame()
     {
-        Game game = new(Guid.Parse("107acd14-0304-48b6-a81d-fbb221507499"));
+        Game game = new(Guid.Parse("74cdccda-9261-460c-9414-31d7270ad2a1"));
         //Guid.Parse("b3b4ff72-9e5d-4c3b-a0bf-b08e193fb156") Guid.Parse("74cdccda-9261-460c-9414-31d7270ad2a1")
 
         var listNames = new List<string> { "Antoine", "Matthieu", "Maguy" };
@@ -224,19 +225,30 @@ public class RummiBench
     public static void TestBestScore()
     {
         // Arrange
-        var boardSet = new Set([
-            new Tile(1),
-            new Tile(2),
-            new Tile(3),
-        ]);
+        var playerTiles = new Tile[]
+        {
+            new((byte)26),    
+            new((byte)36),
+            new((byte)43),
+            new((byte)45),
+            new((byte)57),
+            new((byte)58),
+            new((byte)59),
 
-        var playerSet = new Set([
-            new Tile(4),
-            new Tile(5),
-        ]);
+        };
 
-        var solver = ComplexScoreSolver.Create(boardSet, playerSet);
-        solver.SearchBestScore();
-        Console.WriteLine(solver.BestScore);
+        foreach (var tile in playerTiles) tile.PrintTile();
+
+        Console.WriteLine();
+
+        var solver = new BinaryFirstBaseSolver(playerTiles,1);
+
+        // Act
+        solver.SearchSolution();
+        var solution = solver.BinarySolution;
+        
+        solution.PrintSolution();
     }
+    
+    
 }

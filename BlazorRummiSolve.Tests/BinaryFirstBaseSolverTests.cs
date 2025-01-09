@@ -17,7 +17,7 @@ public class BinaryFirstBaseSolverTests
             new(10, TileColor.Black),
         };
 
-        var solver = new BinaryFirstBaseSolver(playerTiles,0);
+        var solver = new BinaryFirstBaseSolver(playerTiles, 0);
 
         // Act
         solver.SearchSolution();
@@ -25,7 +25,6 @@ public class BinaryFirstBaseSolverTests
 
         // Assert
         Assert.True(solution.IsValid);
-        
     }
 
     [Fact]
@@ -43,7 +42,7 @@ public class BinaryFirstBaseSolverTests
             new(3),
         };
 
-        var solver = new BinaryFirstBaseSolver(playerTiles,0);
+        var solver = new BinaryFirstBaseSolver(playerTiles, 0);
 
         // Act
         solver.SearchSolution();
@@ -63,7 +62,7 @@ public class BinaryFirstBaseSolverTests
             new(10, TileColor.Red),
         };
 
-        var solver = new BinaryFirstBaseSolver(playerTiles,1);
+        var solver = new BinaryFirstBaseSolver(playerTiles, 1);
 
         // Act
         solver.SearchSolution();
@@ -84,7 +83,7 @@ public class BinaryFirstBaseSolverTests
             new(10, TileColor.Black)
         };
 
-        var solver = new BinaryFirstBaseSolver(playerTiles,1);
+        var solver = new BinaryFirstBaseSolver(playerTiles, 1);
 
         // Act
         solver.SearchSolution();
@@ -104,7 +103,7 @@ public class BinaryFirstBaseSolverTests
             new(10),
         };
 
-        var solver = new BinaryFirstBaseSolver(playerTiles,1);
+        var solver = new BinaryFirstBaseSolver(playerTiles, 1);
 
         // Act
         solver.SearchSolution();
@@ -124,7 +123,7 @@ public class BinaryFirstBaseSolverTests
             new(9),
         };
 
-        var solver = new BinaryFirstBaseSolver(playerTiles,1);
+        var solver = new BinaryFirstBaseSolver(playerTiles, 1);
 
         // Act
         solver.SearchSolution();
@@ -145,7 +144,7 @@ public class BinaryFirstBaseSolverTests
             new(3),
         };
 
-        var solver = new BinaryFirstBaseSolver(playerTiles,0);
+        var solver = new BinaryFirstBaseSolver(playerTiles, 0);
 
         // Act
         solver.SearchSolution();
@@ -167,7 +166,32 @@ public class BinaryFirstBaseSolverTests
             new(true)
         };
 
-        var solver = new BinaryFirstBaseSolver(playerTiles,1);
+        var solver = new BinaryFirstBaseSolver(playerTiles, 1);
+
+        // Act
+        solver.SearchSolution();
+        var solution = solver.BinarySolution;
+
+        // Assert
+        Assert.False(solution.IsValid);
+    }
+
+    [Fact]
+    public void SearchSolution_InvalidJoker()
+    {
+        // Arrange
+        var playerTiles = new Tile[]
+        {
+            new((byte)26),
+            new((byte)36),
+            new((byte)43),
+            new((byte)45),
+            new((byte)57),
+            new((byte)58),
+            new((byte)59),
+        };
+
+        var solver = new BinaryFirstBaseSolver(playerTiles, 1);
 
         // Act
         solver.SearchSolution();

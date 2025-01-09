@@ -4,8 +4,7 @@ public class Set
 {
     public int Jokers;
     public List<Tile> Tiles;
-
-
+    
     public Set()
     {
         Tiles = [];

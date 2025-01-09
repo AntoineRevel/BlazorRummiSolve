@@ -5,17 +5,21 @@ namespace RummiSolve.Solver.Combinations.First;
 
 public sealed class BinaryFirstBaseSolver(Tile[] tiles, int jokers) : BaseSolver(tiles, jokers), IBinarySolver
 {
+    public IEnumerable<Tile> TilesToPlay => Tiles;
+    public int JokerToPlay => Jokers;
     public Solution BinarySolution { get; private set; } = new();
-    
+
     public bool SearchSolution()
     {
         BinarySolution = FindSolution(new Solution(), 0, 0);
         return BinarySolution.IsValid;
     }
 
-    private static bool ValidateCondition(int solutionScore)
+    private bool ValidateCondition(int solutionScore)
     {
-        return solutionScore > MinScore;
+        if (UsedTiles.Any(b => !b)) return false;
+
+        return solutionScore > MinScore && Jokers == 0;
     }
 
     private Solution FindSolution(Solution solution, int solutionScore, int startIndex)
