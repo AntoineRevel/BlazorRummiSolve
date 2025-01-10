@@ -73,7 +73,7 @@ public class CombinationsFirstSolver(List<Tile> tiles) : ISolver
             // JokerToPlay = bestSolver.JokerToPlay;
             // return;
 
-            foreach (var combi in 
+            foreach (var combi in
                      BaseSolver.GetCombinations(tiles, tileTry).OrderByDescending(l => l.Sum(t => t.Value)))
             {
                 var joker = combi.Count(tile => tile.IsJoker);
