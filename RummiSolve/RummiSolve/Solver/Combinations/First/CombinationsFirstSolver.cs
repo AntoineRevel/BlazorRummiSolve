@@ -3,14 +3,19 @@ using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Solver.Combinations.First;
 
-public class CombinationsFirstSolver(List<Tile> tiles) : ISolver
+public class CombinationsFirstSolver : ISolver
 {
+    private readonly List<Tile> _tiles;
     public bool Found { get; private set; }
     public Solution BestSolution { get; private set; } = new();
     public IEnumerable<Tile> TilesToPlay { get; private set; } = [];
     public int JokerToPlay { get; private set; }
     public bool Won { get; private set; }
 
+    private CombinationsFirstSolver(List<Tile> tiles)
+    {
+        _tiles = tiles;
+    }
     public static CombinationsFirstSolver Create(Set playerSet)
     {
         return new CombinationsFirstSolver(playerSet.Tiles);
@@ -18,11 +23,11 @@ public class CombinationsFirstSolver(List<Tile> tiles) : ISolver
 
     public void SearchSolution()
     {
-        tiles.Sort();
+        _tiles.Sort();
 
-        var tilesFirstTry = new List<Tile>(tiles);
+        var tilesFirstTry = new List<Tile>(_tiles);
 
-        var playerJokers = tiles.Count(tile => tile.IsJoker);
+        var playerJokers = _tiles.Count(tile => tile.IsJoker);
 
         if (playerJokers > 0) tilesFirstTry.RemoveRange(tilesFirstTry.Count - playerJokers, playerJokers);
 
@@ -40,11 +45,11 @@ public class CombinationsFirstSolver(List<Tile> tiles) : ISolver
             return;
         }
 
-        tiles.Reverse();
+        _tiles.Reverse();
 
         //BinaryFirstBaseSolver? bestSolver = null;
 
-        for (var tileTry = tiles.Count - 1; tileTry > 2; tileTry--)
+        for (var tileTry = _tiles.Count - 1; tileTry > 2; tileTry--)
         {
             // var size = tileTry;
             // Parallel.ForEach(BaseSolver.GetCombinations(tiles, tileTry),
@@ -74,7 +79,7 @@ public class CombinationsFirstSolver(List<Tile> tiles) : ISolver
             // return;
 
             foreach (var combi in
-                     BaseSolver.GetCombinations(tiles, tileTry).OrderByDescending(l => l.Sum(t => t.Value)))
+                     BaseSolver.GetCombinations(_tiles, tileTry).OrderByDescending(l => l.Sum(t => t.Value)))
             {
                 var joker = combi.Count(tile => tile.IsJoker);
                 if (joker > 0) combi.RemoveRange(tileTry - joker, joker);
