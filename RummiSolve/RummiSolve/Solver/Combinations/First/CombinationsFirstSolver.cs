@@ -33,11 +33,10 @@ public class CombinationsFirstSolver : ISolver
 
         var firstBinarySolver = new BinaryFirstBaseSolver(tilesFirstTry.ToArray(), playerJokers);
 
-        var isValid = firstBinarySolver.SearchSolution();
+        Found = firstBinarySolver.SearchSolution();
 
-        if (isValid)
+        if (Found)
         {
-            Found = true;
             BestSolution = firstBinarySolver.BinarySolution;
             TilesToPlay = tilesFirstTry;
             JokerToPlay = playerJokers;

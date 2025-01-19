@@ -34,6 +34,19 @@ public class Player
     public bool Won { get; private set; }
 
 
+    public Solution SolveCombi(Solution boardSolution)
+    {
+        TilesToPlay.Clear();
+        var boardSet = boardSolution.GetSet();
+
+        ISolver incrementalSolver = _played
+            ? CombinationsSolver.Create(boardSet, _rackTilesSet)
+            : CombinationsFirstSolver.Create(_rackTilesSet);
+
+        incrementalSolver.SearchSolution();
+        return Solve(boardSolution, incrementalSolver);
+    }
+    
     public Solution SolveIncr(Solution boardSolution)
     {
         TilesToPlay.Clear();
@@ -41,7 +54,7 @@ public class Player
 
         ISolver incrementalSolver = _played
             ? IncrementalComplexSolver.Create(boardSet, _rackTilesSet)
-            : CombinationsFirstSolver.Create(_rackTilesSet);
+            : IncrementalFirstBaseSolver.Create(_rackTilesSet);
 
         incrementalSolver.SearchSolution();
         return Solve(boardSolution, incrementalSolver);
