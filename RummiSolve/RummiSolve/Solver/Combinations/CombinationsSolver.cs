@@ -58,14 +58,13 @@ public class CombinationsSolver : ISolver
         }
 
 
-        for (var tileTry = _playerTilesJ.Count - 1; tileTry > 2; tileTry--)
+        for (var tileTry = _playerTilesJ.Count - 1; tileTry > 0; tileTry--)
         {
             foreach (
                 var combi in
                 BaseSolver.GetCombinations(_playerTilesJ, tileTry)
                     .OrderByDescending(l => l.Sum(t => t.Value)))
             {
-                
                 var joker = combi.Count(tile => tile.IsJoker);
                 if (joker > 0) combi.RemoveRange(tileTry - joker, joker);
 

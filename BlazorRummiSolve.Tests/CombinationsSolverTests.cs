@@ -198,6 +198,40 @@ public class CombinationsSolverTests
         Assert.Equal(6, tilesToPlay.Count);
         Assert.Equal(0, jokerToPlay);
     }
+    
+    [Fact]
+    public void SearchSolution_ValidNotWon2()
+    {
+        // Arrange
+        var boardSet = new Set([
+            new Tile(8),
+            new Tile(9),
+            new Tile(10),
+            new Tile(11),
+        ]);
+
+        var playerSet = new Set([
+            new Tile(8,TileColor.Black),
+            new Tile(8,TileColor.Red),
+            
+            new Tile(1)
+        ]);
+
+        var solver = CombinationsSolver.Create(boardSet, playerSet);
+
+        // Act
+        solver.SearchSolution();
+        var won = solver.Won;
+        var solution = solver.BestSolution;
+        var tilesToPlay = solver.TilesToPlay.ToList();
+        var jokerToPlay = solver.JokerToPlay;
+
+        // Assert
+        Assert.False(won);
+        Assert.True(solution.IsValid);
+        Assert.Equal(2, tilesToPlay.Count);
+        Assert.Equal(0, jokerToPlay);
+    }
 
     [Fact]
     public void SearchSolution_ValidNWonIncrscorePlayer()
