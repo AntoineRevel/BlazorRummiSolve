@@ -1,3 +1,4 @@
+using RummiSolve.Solver.Abstract;
 using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Solver.Combinations;
@@ -38,7 +39,7 @@ public class CombinationsSolver : ISolver
 
         var winnableTiles = playerTiles.Concat(_boardTiles).ToList();
         winnableTiles.Sort();
-        
+
         var firstBinarySolver = new BinaryBaseSolver(winnableTiles.ToArray(), playerJokers + _boardJokers)
         {
             TilesToPlay = playerTiles,
@@ -46,7 +47,7 @@ public class CombinationsSolver : ISolver
         };
 
         Found = firstBinarySolver.SearchSolution();
-        
+
         if (Found)
         {
             BestSolution = firstBinarySolver.BinarySolution;
@@ -54,6 +55,34 @@ public class CombinationsSolver : ISolver
             JokerToPlay = firstBinarySolver.JokerToPlay;
             Won = true;
             return;
+        }
+
+
+        for (var tileTry = _playerTilesJ.Count - 1; tileTry > 2; tileTry--)
+        {
+            foreach (
+                var combi in
+                BaseSolver.GetCombinations(_playerTilesJ, tileTry)
+                    .OrderByDescending(l => l.Sum(t => t.Value)))
+            {
+                
+                var joker = combi.Count(tile => tile.IsJoker);
+                if (joker > 0) combi.RemoveRange(tileTry - joker, joker);
+
+
+                var solver = new BinaryBaseSolver(_boardTiles.Concat(combi).Order().ToArray(), joker + _boardJokers)
+                {
+                    TilesToPlay = combi,
+                    JokerToPlay = joker
+                };
+
+                Found = solver.SearchSolution();
+                if (!Found) continue;
+                BestSolution = solver.BinarySolution;
+                TilesToPlay = solver.TilesToPlay;
+                JokerToPlay = solver.JokerToPlay;
+                return;
+            }
         }
     }
 }

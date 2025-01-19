@@ -46,39 +46,13 @@ public class CombinationsFirstSolver : ISolver
 
         _tiles.Reverse();
 
-        //BinaryFirstBaseSolver? bestSolver = null;
-
         for (var tileTry = _tiles.Count - 1; tileTry > 2; tileTry--)
         {
-            // var size = tileTry;
-            // Parallel.ForEach(BaseSolver.GetCombinations(tiles, tileTry),
-            //     (combi, loopState) =>
-            //     {
-            //         if (bestSolver != null)
-            //         {
-            //             loopState.Stop();
-            //             return;
-            //         }
-            //         
-            //         var joker = combi.Count(tile => tile.IsJoker);
-            //         if (joker > 0) combi.RemoveRange(size - joker, joker);
-            //         var solver = new BinaryFirstBaseSolver(combi.ToArray(), joker);
-            //         var found = solver.SearchSolution();
-            //         if (!found) return;
-            //         bestSolver = solver;
-            //         loopState.Stop();
-            //     });
-            //
-            // if (bestSolver == null) continue;
-            //
-            // Found = true;
-            // BestSolution = bestSolver.BinarySolution;
-            // TilesToPlay = bestSolver.TilesToPlay;
-            // JokerToPlay = bestSolver.JokerToPlay;
-            // return;
-
-            foreach (var combi in
-                     BaseSolver.GetCombinations(_tiles, tileTry).OrderByDescending(l => l.Sum(t => t.Value)))
+            
+            foreach (
+                var combi in
+                     BaseSolver.GetCombinations(_tiles, tileTry)
+                         .OrderByDescending(l => l.Sum(t => t.Value)))
             {
                 var joker = combi.Count(tile => tile.IsJoker);
                 if (joker > 0) combi.RemoveRange(tileTry - joker, joker);
