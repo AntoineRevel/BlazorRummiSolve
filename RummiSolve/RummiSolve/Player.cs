@@ -53,7 +53,7 @@ public class Player
         var boardSet = boardSolution.GetSet();
 
         ISolver incrementalSolver = _played
-            ? IncrementalComplexSolver.Create(boardSet, _rackTilesSet)
+            ? IncrementalComplexSolverScAndTile.Create(boardSet, _rackTilesSet)
             : IncrementalFirstBaseSolver.Create(_rackTilesSet);
 
         incrementalSolver.SearchSolution();
