@@ -3,7 +3,7 @@ using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Solver.Incremental;
 
-public sealed class IncrementalComplexSolverScAndTile : ComplexSolver, ISolver
+public sealed class IncrementalComplexSolverTileAndSc : ComplexSolver, ISolver
 {
     private readonly int _boardJokers;
     private readonly int _availableJokers;
@@ -21,7 +21,7 @@ public sealed class IncrementalComplexSolverScAndTile : ComplexSolver, ISolver
     public bool Won { get; private set; }
     public int JokerToPlay => _availableJokers - _remainingJoker - _boardJokers;
 
-    private IncrementalComplexSolverScAndTile(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardJokers) : base(
+    private IncrementalComplexSolverTileAndSc(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardJokers) : base(
         tiles,
         jokers, isPlayerTile)
     {
@@ -31,7 +31,7 @@ public sealed class IncrementalComplexSolverScAndTile : ComplexSolver, ISolver
         _bestPlayerUsedTiles = 0;
     }
 
-    public static IncrementalComplexSolverScAndTile Create(Set boardSet, Set playerSet)
+    public static IncrementalComplexSolverTileAndSc Create(Set boardSet, Set playerSet)
     {
         var capacity = boardSet.Tiles.Count + playerSet.Tiles.Count;
         var combined = new List<(Tile tile, bool isPlayerTile)>(capacity);
@@ -52,7 +52,7 @@ public sealed class IncrementalComplexSolverScAndTile : ComplexSolver, ISolver
         var finalTiles = combined.Select(pair => pair.tile).ToArray();
         var isPlayerTile = combined.Select(pair => pair.isPlayerTile).ToArray();
 
-        return new IncrementalComplexSolverScAndTile(
+        return new IncrementalComplexSolverTileAndSc(
             finalTiles,
             totalJokers,
             isPlayerTile,

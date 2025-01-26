@@ -3,7 +3,7 @@ using RummiSolve.Solver.Incremental;
 
 namespace BlazorRummiSolve.Tests;
 
-public class IncrementalComplexSolverScAndTileTests
+public class IncrementalComplexSolverTileAndScTests
 {
     [Fact]
     public void SearchSolution_Valid()
@@ -27,7 +27,7 @@ public class IncrementalComplexSolverScAndTileTests
 
             new Tile(7)
         ]);
-        var solver = IncrementalComplexSolverScAndTile.Create(boardSet, playerSet);
+        var solver = IncrementalComplexSolverTileAndSc.Create(boardSet, playerSet);
 
         // Act
         solver.SearchSolution();

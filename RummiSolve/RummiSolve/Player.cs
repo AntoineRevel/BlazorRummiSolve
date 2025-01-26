@@ -53,7 +53,7 @@ public class Player
         var boardSet = boardSolution.GetSet();
 
         ISolver incrementalSolver = _played
-            ? IncrementalComplexSolverScAndTile.Create(boardSet, _rackTilesSet)
+            ? IncrementalComplexSolverTileAndSc.Create(boardSet, _rackTilesSet)
             : IncrementalFirstBaseSolver.Create(_rackTilesSet);
 
         incrementalSolver.SearchSolution();
@@ -78,27 +78,27 @@ public class Player
         TilesToPlay.Clear();
         var boardSet = boardSolution.GetSet();
 
-        ISolver bestScoreSolver = _played
-            ? BestScoreComplexSolver.Create(boardSet, _rackTilesSet)
-            : BestScoreFirstBaseSolver.Create(_rackTilesSet);
+        ISolver combiSolver = _played
+            ? CombinationsSolver.Create(boardSet, _rackTilesSet)
+            : CombinationsFirstSolver.Create(_rackTilesSet);
 
         ISolver incrementalSolver = _played
-            ? IncrementalComplexSolver.Create(boardSet, _rackTilesSet)
+            ? IncrementalComplexSolverTileAndSc.Create(boardSet, _rackTilesSet)
             : IncrementalFirstBaseSolver.Create(_rackTilesSet);
 
         using var cts = new CancellationTokenSource();
 
         var incrementalTask = Task.Run(() => incrementalSolver.SearchSolution(), cts.Token);
-        var bestScoreTask = Task.Run(() => bestScoreSolver.SearchSolution(), cts.Token);
+        var combiTask = Task.Run(() => combiSolver.SearchSolution(), cts.Token);
 
-        var completedTask = await Task.WhenAny(bestScoreTask, incrementalTask);
+        var completedTask = await Task.WhenAny(combiTask, incrementalTask);
 
         await cts.CancelAsync();
 
-        if (completedTask == bestScoreTask)
+        if (completedTask == combiTask)
         {
             WriteLine("Best Score First");
-            return Solve(boardSolution, bestScoreSolver);
+            return Solve(boardSolution, combiSolver);
         }
 
         WriteLine("increment First");
