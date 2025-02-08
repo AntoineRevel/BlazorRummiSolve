@@ -46,8 +46,21 @@ public class Player
         incrementalSolver.SearchSolution();
         return Solve(boardSolution, incrementalSolver);
     }
-    
+
     public Solution SolveIncr(Solution boardSolution)
+    {
+        TilesToPlay.Clear();
+        var boardSet = boardSolution.GetSet();
+
+        ISolver incrementalSolver = _played
+            ? IncrementalComplexSolver.Create(boardSet, _rackTilesSet)
+            : IncrementalFirstBaseSolver.Create(_rackTilesSet);
+
+        incrementalSolver.SearchSolution();
+        return Solve(boardSolution, incrementalSolver);
+    }
+
+    public Solution SolveIncrTileAndSc(Solution boardSolution)
     {
         TilesToPlay.Clear();
         var boardSet = boardSolution.GetSet();
@@ -111,19 +124,19 @@ public class Player
         Won = solver.Won;
 
         var solution = solver.BestSolution;
-        
+
         TilesToPlay = solver.TilesToPlay.ToList();
-        
+
         WriteLine("Play :");
         foreach (var tile in TilesToPlay) tile.PrintTile();
         WriteLine();
-        
+
         for (var i = 0; i < solver.JokerToPlay; i++) TilesToPlay.Add(new Tile(true));
-        
+
         if (_played) return solution;
 
         solution.AddSolution(boardSolution);
-        
+
         _played = true;
 
         return solution;

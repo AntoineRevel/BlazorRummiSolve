@@ -88,7 +88,7 @@ public sealed class IncrementalComplexSolverTileAndSc : ComplexSolver, ISolver
     {
         usedTiles = 0;
         
-        if (solutionScore < _bestSolutionScore) return false;
+        //if (solutionScore < _bestSolutionScore) return false;
         
         for (var i = 0; i < UsedTiles.Length; i++)
         {
@@ -96,9 +96,12 @@ public sealed class IncrementalComplexSolverTileAndSc : ComplexSolver, ISolver
             if (IsPlayerTile[i] && UsedTiles[i]) usedTiles++;
         }
 
+        if (usedTiles < _bestPlayerUsedTiles) return false;
+
         if (Jokers != 0) return false;
 
-        if (solutionScore == _bestSolutionScore) return usedTiles > _bestPlayerUsedTiles;
+        //if (solutionScore == _bestSolutionScore) return usedTiles > _bestPlayerUsedTiles;
+        if (usedTiles == _bestPlayerUsedTiles) return solutionScore > _bestSolutionScore;
 
         return true;
     }

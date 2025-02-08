@@ -42,4 +42,33 @@ public class IncrementalComplexSolverTileAndScTests
         Assert.Equal(2, tilesToPlay.Count);
         Assert.Equal(0, jokerToPlay);
     }
+
+    // [Fact]
+    // public void SearchSolution_ValidOneJ()
+    // {
+    //     // Arrange
+    //     var boardSet = new Set([
+    //         new Tile(5),
+    //         new Tile(5, TileColor.Red),
+    //         new Tile(5, TileColor.Black),
+    //     ]);
+    //
+    //     var playerSet = new Set([
+    //         new Tile(true)
+    //     ]);
+    //     var solver = IncrementalComplexSolverTileAndSc.Create(boardSet, playerSet);
+    //
+    //     // Act
+    //     solver.SearchSolution();
+    //     var won = solver.Won;
+    //     var solution = solver.BestSolution;
+    //     var tilesToPlay = solver.TilesToPlay.ToList();
+    //     var jokerToPlay = solver.JokerToPlay;
+    //
+    //     // Assert
+    //     Assert.True(won);
+    //     Assert.True(solution.IsValid);
+    //     Assert.Empty(tilesToPlay);
+    //     Assert.Equal(1, jokerToPlay);
+    // }
 }
