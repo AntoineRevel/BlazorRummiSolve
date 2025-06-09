@@ -1,6 +1,10 @@
 using System.Diagnostics;
 using BenchmarkDotNet.Attributes;
 using RummiSolve.Solver;
+using RummiSolve.Solver.BestScore;
+using RummiSolve.Solver.Combinations;
+using RummiSolve.Solver.Combinations.First;
+using RummiSolve.Solver.Incremental;
 
 namespace RummiSolve;
 
@@ -25,7 +29,7 @@ public class RummiBench
 
     public static void TestMultiPlayerGame()
     {
-        Game game = new(Guid.Parse("107acd14-0304-48b6-a81d-fbb221507499"));
+        Game game = new(Guid.Parse("8ae34041-70c4-4338-9bb5-1c68bed2cfdc"));
         //Guid.Parse("b3b4ff72-9e5d-4c3b-a0bf-b08e193fb156") Guid.Parse("74cdccda-9261-460c-9414-31d7270ad2a1")
 
         var listNames = new List<string> { "Antoine", "Matthieu", "Maguy" };
@@ -148,50 +152,22 @@ public class RummiBench
     {
         // Arrange
         var boardSet = new Set([
-            new Tile(6, TileColor.Mango),
-            new Tile(true),
-            new Tile(8, TileColor.Mango),
-
-            new Tile(10, TileColor.Red),
-            new Tile(11, TileColor.Red),
-            new Tile(12, TileColor.Red),
-
-            new Tile(13),
-            new Tile(13, TileColor.Black),
-            new Tile(13, TileColor.Red),
-
-            new Tile(12),
-            new Tile(12, TileColor.Black),
-            new Tile(12, TileColor.Mango),
-
-            new Tile(11),
-            new Tile(11, TileColor.Black),
-            new Tile(11, TileColor.Red),
-
-            new Tile(10),
-            new Tile(10, TileColor.Black),
-            new Tile(10, TileColor.Mango),
-
-            new Tile(9),
-            new Tile(9, TileColor.Mango),
-            new Tile(9, TileColor.Red),
-
+            new Tile(5),
+            new Tile(5,TileColor.Red),
+            new Tile(5,TileColor.Black),
+            new Tile(5,TileColor.Mango),
+            
             new Tile(6),
-            new Tile(6, TileColor.Black),
-            new Tile(6, TileColor.Red),
-
-            new Tile(2),
-            new Tile(2, TileColor.Black),
-            new Tile(2, TileColor.Red),
+            new Tile(6,TileColor.Red),
+            new Tile(6,TileColor.Black),
+            new Tile(6,TileColor.Mango),
         ]);
 
         var playerSet = new Set([
-            new Tile(4, TileColor.Black),
-            new Tile(8),
-            new Tile(3, TileColor.Mango),
-            new Tile(2, TileColor.Red),
-            new Tile(8),
-            new Tile(2, TileColor.Black),
+            new Tile(3,TileColor.Red),
+            new Tile(4,TileColor.Red),
+            
+            new Tile(7)
         ]);
 
         var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
@@ -215,26 +191,34 @@ public class RummiBench
             tile.PrintTile();
         }
 
-        Console.WriteLine("Joker :");
-        Console.WriteLine(jokerToPlay);
+        // Console.WriteLine("Joker :");
+        // Console.WriteLine(jokerToPlay);
     }
 
     public static void TestBestScore()
     {
         // Arrange
-        var boardSet = new Set([
-            new Tile(1),
-            new Tile(2),
-            new Tile(3),
-        ]);
+        var playerTiles = new Tile[]
+        {
+            new((byte)26),
+            new((byte)36),
+            new((byte)43),
+            new((byte)45),
+            new((byte)57),
+            new((byte)58),
+            new((byte)59),
+        };
 
-        var playerSet = new Set([
-            new Tile(4),
-            new Tile(5),
-        ]);
+        foreach (var tile in playerTiles) tile.PrintTile();
 
-        var solver = ComplexScoreSolver.Create(boardSet, playerSet);
-        solver.SearchBestScore();
-        Console.WriteLine(solver.BestScore);
+        Console.WriteLine();
+
+        var solver = new BinaryFirstBaseSolver(playerTiles, 1);
+
+        // Act
+        solver.SearchSolution();
+        var solution = solver.BinarySolution;
+
+        solution.PrintSolution();
     }
 }

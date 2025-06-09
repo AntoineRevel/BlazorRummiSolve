@@ -4,8 +4,7 @@ public class Set
 {
     public int Jokers;
     public List<Tile> Tiles;
-
-
+    
     public Set()
     {
         Tiles = [];
@@ -69,21 +68,5 @@ public class Set
     public void PrintAllTiles()
     {
         foreach (var tile in Tiles) tile.PrintTile();
-    }
-
-
-    private static IEnumerable<List<Tile>> GetCombinations(List<Tile> list, int length)
-    {
-        if (length == 0) yield return [];
-
-        for (var i = 0; i < list.Count; i++)
-        {
-            var element = list[i];
-            foreach (var combination in GetCombinations(list.Skip(i + 1).ToList(), length - 1))
-            {
-                combination.Add(element);
-                yield return combination;
-            }
-        }
     }
 }

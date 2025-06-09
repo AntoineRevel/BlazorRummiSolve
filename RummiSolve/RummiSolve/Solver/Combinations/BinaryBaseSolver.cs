@@ -1,47 +1,19 @@
 using RummiSolve.Solver.Abstract;
 using RummiSolve.Solver.Interfaces;
 
-namespace RummiSolve.Solver;
+namespace RummiSolve.Solver.Combinations;
 
-public sealed class BinaryBaseSolver : BaseSolver, IBinarySolver
+public sealed class BinaryBaseSolver(Tile[] tiles, int jokers) : BaseSolver(tiles, jokers), IBinarySolver
 {
+    public required int JokerToPlay  { get; init; }
     public Solution BinarySolution { get; private set; } = new();
     public required IEnumerable<Tile> TilesToPlay { get; init; }
 
-    private BinaryBaseSolver(Tile[] tiles, int jokers) : base(tiles, jokers)
-    {
-    }
-
-    public static BinaryBaseSolver Create(Set boardSet, List<Tile> playerTiles)
-    {
-        var capacity = boardSet.Tiles.Count + playerTiles.Count;
-
-        var tiles = new List<Tile>(capacity);
-
-        tiles.AddRange(boardSet.Tiles);
-
-        tiles.AddRange(playerTiles);
-
-        tiles.Sort();
-
-        var playerJokers = playerTiles.Count(tile => tile.IsJoker);
-
-        var totalJokers = boardSet.Jokers + playerJokers;
-
-        if (totalJokers > 0) tiles.RemoveRange(tiles.Count - totalJokers, totalJokers);
-
-        return new BinaryBaseSolver(
-            tiles.ToArray(),
-            totalJokers
-        )
-        {
-            TilesToPlay = playerTiles,
-        };
-    }
-
-    public void SearchSolution()
+    public bool SearchSolution()
     {
         BinarySolution = FindSolution(new Solution(), 0);
+        return BinarySolution.IsValid;
+
     }
 
     private bool ValidateCondition()
@@ -95,6 +67,4 @@ public sealed class BinaryBaseSolver : BaseSolver, IBinarySolver
 
         return solution;
     }
-
-    
 }

@@ -1,7 +1,7 @@
 using RummiSolve.Solver.Abstract;
 using RummiSolve.Solver.Interfaces;
 
-namespace RummiSolve.Solver;
+namespace RummiSolve.Solver.Incremental;
 
 public sealed class IncrementalScoreFieldComplexSolver : ComplexSolver, ISolver
 {

@@ -1,9 +1,9 @@
 using RummiSolve.Solver.Abstract;
 using RummiSolve.Solver.Interfaces;
 
-namespace RummiSolve.Solver;
+namespace RummiSolve.Solver.Incremental;
 
-public sealed class IncrementalComplexSolver : ComplexSolver, ISolver
+public sealed class IncrementalComplexSolverTileAndSc : ComplexSolver, ISolver
 {
     private readonly int _boardJokers;
     private readonly int _availableJokers;
@@ -11,6 +11,7 @@ public sealed class IncrementalComplexSolver : ComplexSolver, ISolver
     private bool[] _bestUsedTiles;
     private int _remainingJoker;
     private int _bestSolutionScore;
+    private int _bestPlayerUsedTiles;
 
     public bool Found => BestSolution.IsValid;
 
@@ -20,15 +21,17 @@ public sealed class IncrementalComplexSolver : ComplexSolver, ISolver
     public bool Won { get; private set; }
     public int JokerToPlay => _availableJokers - _remainingJoker - _boardJokers;
 
-    private IncrementalComplexSolver(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardJokers) : base(tiles,
+    private IncrementalComplexSolverTileAndSc(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardJokers) : base(
+        tiles,
         jokers, isPlayerTile)
     {
         _availableJokers = jokers;
         _boardJokers = boardJokers;
         _bestUsedTiles = UsedTiles;
+        _bestPlayerUsedTiles = 0;
     }
 
-    public static IncrementalComplexSolver Create(Set boardSet, Set playerSet)
+    public static IncrementalComplexSolverTileAndSc Create(Set boardSet, Set playerSet)
     {
         var capacity = boardSet.Tiles.Count + playerSet.Tiles.Count;
         var combined = new List<(Tile tile, bool isPlayerTile)>(capacity);
@@ -49,7 +52,7 @@ public sealed class IncrementalComplexSolver : ComplexSolver, ISolver
         var finalTiles = combined.Select(pair => pair.tile).ToArray();
         var isPlayerTile = combined.Select(pair => pair.isPlayerTile).ToArray();
 
-        return new IncrementalComplexSolver(
+        return new IncrementalComplexSolverTileAndSc(
             finalTiles,
             totalJokers,
             isPlayerTile,
@@ -81,17 +84,26 @@ public sealed class IncrementalComplexSolver : ComplexSolver, ISolver
     }
 
 
-    private bool ValidateCondition(int solutionScore)
+    private bool ValidateCondition(int solutionScore, out int usedTiles)
     {
-        if (solutionScore <= _bestSolutionScore) return false;
-
-        // ReSharper disable once LoopCanBeConvertedToQuery
+        usedTiles = 0;
+        
+        //if (solutionScore < _bestSolutionScore) return false;
+        
         for (var i = 0; i < UsedTiles.Length; i++)
         {
             if (!IsPlayerTile[i] && !UsedTiles[i]) return false;
+            if (IsPlayerTile[i] && UsedTiles[i]) usedTiles++;
         }
 
-        return Jokers == 0;
+        if (usedTiles < _bestPlayerUsedTiles) return false;
+
+        if (Jokers != 0) return false;
+
+        //if (solutionScore == _bestSolutionScore) return usedTiles > _bestPlayerUsedTiles;
+        if (usedTiles == _bestPlayerUsedTiles) return solutionScore > _bestSolutionScore;
+
+        return true;
     }
 
 
@@ -132,9 +144,10 @@ public sealed class IncrementalComplexSolver : ComplexSolver, ISolver
 
             var newSolutionScore = solutionScore + firstTileScore + playerSetScore;
 
-            if (ValidateCondition(newSolutionScore))
+            if (ValidateCondition(newSolutionScore, out var usedTiles))
             {
                 _bestSolutionScore = newSolutionScore;
+                _bestPlayerUsedTiles = usedTiles;
                 solution.IsValid = true;
             }
 
