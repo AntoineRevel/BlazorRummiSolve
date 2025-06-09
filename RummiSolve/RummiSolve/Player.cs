@@ -96,26 +96,36 @@ public class Player
             : CombinationsFirstSolver.Create(_rackTilesSet);
 
         ISolver incrementalSolver = _played
-            ? IncrementalComplexSolverTileAndSc.Create(boardSet, _rackTilesSet)
+            ? IncrementalComplexSolver.Create(boardSet, _rackTilesSet)
             : IncrementalFirstBaseSolver.Create(_rackTilesSet);
 
         using var cts = new CancellationTokenSource();
 
-        var incrementalTask = Task.Run(() => incrementalSolver.SearchSolution(), cts.Token);
-        var combiTask = Task.Run(() => combiSolver.SearchSolution(), cts.Token);
-
-        var completedTask = await Task.WhenAny(combiTask, incrementalTask);
-
-        await cts.CancelAsync();
-
-        if (completedTask == combiTask)
+        var tasks = new[]
         {
-            WriteLine("Best Score First");
-            return Solve(boardSolution, combiSolver);
-        }
+            Task.Run(() => incrementalSolver.SearchSolution(), cts.Token),
+            Task.Run(() => combiSolver.SearchSolution(), cts.Token)
+        };
 
-        WriteLine("increment First");
-        return Solve(boardSolution, incrementalSolver);
+        try 
+        {
+            var completedTask = await Task.WhenAny(tasks);
+        
+            // Annuler les autres tâches
+            await cts.CancelAsync();
+
+            var winner = completedTask == tasks[0] 
+                ? (solver: incrementalSolver, name: "Incremental") 
+                : (solver: combiSolver, name: "Combi");
+
+            WriteLine($"{winner.name} First");
+            return Solve(boardSolution, winner.solver);
+        }
+        finally
+        {
+            // S'assurer que toutes les tâches sont annulées
+            await cts.CancelAsync();
+        }
     }
 
     private Solution Solve(Solution boardSolution, ISolver solver)

@@ -79,7 +79,7 @@ public partial class GamePage
 
     protected override async Task OnInitializedAsync()
     {
-        var listNames = new List<string> { "Antoine", "Maguy" };
+        var listNames = new List<string> { "Antoine", "Maguy", "Matthieu"};
 
         _currentGame.InitializeGame(listNames);
         _currentState = ActionState.ShowHint;
