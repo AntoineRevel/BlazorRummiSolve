@@ -1,4 +1,3 @@
-using RummiSolve.Solver;
 using RummiSolve.Solver.BestScore;
 using RummiSolve.Solver.BestScore.First;
 using RummiSolve.Solver.Combinations;
@@ -11,9 +10,8 @@ namespace RummiSolve;
 
 public class Player
 {
-    public readonly string Name;
-
     private readonly Set _rackTilesSet;
+    public readonly string Name;
 
     private Tile _lastDrewTile;
     private Set _lastRackTilesSet;
@@ -86,10 +84,12 @@ public class Player
         return Solve(boardSolution, bestScoreSolver);
     }
 
-    public async Task<Solution> Solve(Solution boardSolution)
+    public Solution Solve(Solution boardSolution)
     {
         TilesToPlay.Clear();
         var boardSet = boardSolution.GetSet();
+
+        using var cts = new CancellationTokenSource();
 
         ISolver combiSolver = _played
             ? CombinationsSolver.Create(boardSet, _rackTilesSet)
@@ -99,33 +99,19 @@ public class Player
             ? IncrementalComplexSolver.Create(boardSet, _rackTilesSet)
             : IncrementalFirstBaseSolver.Create(_rackTilesSet);
 
-        using var cts = new CancellationTokenSource();
+        var incrementalTask = Task.Run(() => incrementalSolver.SearchSolution(), cts.Token);
+        var combiTask = Task.Run(() => combiSolver.SearchSolution(), cts.Token);
 
-        var tasks = new[]
-        {
-            Task.Run(() => incrementalSolver.SearchSolution(), cts.Token),
-            Task.Run(() => combiSolver.SearchSolution(), cts.Token)
-        };
+        var completedTask = Task.WaitAny(incrementalTask, combiTask);
 
-        try 
-        {
-            var completedTask = await Task.WhenAny(tasks);
-        
-            // Annuler les autres tâches
-            await cts.CancelAsync();
+        cts.Cancel();
 
-            var winner = completedTask == tasks[0] 
-                ? (solver: incrementalSolver, name: "Incremental") 
-                : (solver: combiSolver, name: "Combi");
+        var winner = completedTask == 0
+            ? (solver: incrementalSolver, name: "Incremental")
+            : (solver: combiSolver, name: "Combi");
 
-            WriteLine($"{winner.name} First");
-            return Solve(boardSolution, winner.solver);
-        }
-        finally
-        {
-            // S'assurer que toutes les tâches sont annulées
-            await cts.CancelAsync();
-        }
+        WriteLine($"{winner.name} First");
+        return Solve(boardSolution, winner.solver);
     }
 
     private Solution Solve(Solution boardSolution, ISolver solver)

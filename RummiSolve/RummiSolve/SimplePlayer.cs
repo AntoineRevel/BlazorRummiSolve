@@ -1,0 +1,82 @@
+using RummiSolve.Solver.Combinations;
+using RummiSolve.Solver.Combinations.First;
+using RummiSolve.Solver.Incremental;
+using RummiSolve.Solver.Interfaces;
+using static System.Console;
+
+namespace RummiSolve;
+
+public class SimplePlayer(string name, List<Tile> tiles)
+{
+    private bool _played;
+    public string Name { get; } = name;
+
+    public Set Rack { get; } = new(tiles);
+    public List<Tile> TilesToPlay { get; private set; } = [];
+    public bool Won { get; private set; }
+
+
+    public Solution Solve(Solution boardSolution)
+    {
+        var boardSet = boardSolution.GetSet();
+
+        using var cts = new CancellationTokenSource();
+
+        ISolver combiSolver = _played
+            ? CombinationsSolver.Create(boardSet, Rack)
+            : CombinationsFirstSolver.Create(Rack);
+
+        ISolver incrementalSolver = _played
+            ? IncrementalComplexSolver.Create(boardSet, Rack)
+            : IncrementalFirstBaseSolver.Create(Rack);
+
+        var incrementalTask = Task.Run(() => incrementalSolver.SearchSolution(), cts.Token);
+        var combiTask = Task.Run(() => combiSolver.SearchSolution(), cts.Token);
+
+        var completedTask = Task.WaitAny(incrementalTask, combiTask);
+
+        cts.Cancel();
+
+        var winner = completedTask == 0
+            ? (solver: incrementalSolver, name: "Incremental")
+            : (solver: combiSolver, name: "Combi");
+
+        WriteLine($"{winner.name} First");
+        return ProcessSolution(boardSolution, winner.solver);
+    }
+
+    private Solution ProcessSolution(Solution boardSolution, ISolver solver)
+    {
+        if (!solver.Found) return Solution.GetInvalidSolution();
+        Won = solver.Won;
+
+
+        TilesToPlay = solver.TilesToPlay.ToList();
+        for (var i = 0; i < solver.JokerToPlay; i++) TilesToPlay.Add(new Tile(true));
+
+
+        if (_played) return solver.BestSolution;
+
+        _played = true;
+        return solver.BestSolution.AddSolution(boardSolution);
+    }
+
+    public void Play()
+    {
+        WriteLine("Play : ");
+        foreach (var tile in TilesToPlay)
+        {
+            Rack.Remove(tile);
+            tile.PrintTile();
+        }
+
+        WriteLine();
+
+        TilesToPlay.Clear();
+    }
+
+    public void Drew(Tile tile)
+    {
+        Rack.AddTile(tile);
+    }
+}
