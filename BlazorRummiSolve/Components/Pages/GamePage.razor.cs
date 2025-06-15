@@ -4,10 +4,14 @@ namespace BlazorRummiSolve.Components.Pages;
 
 public partial class GamePage
 {
+    private Solution _board = new();
     private SimpleGame _currentGame = new();
 
     private ActionState _currentState;
-    private SimplePlayer CurrentPlayer => _currentGame.Players[_currentGame.PlayerIndex];
+
+    private Set _playerRack = new();
+
+    private SimplePlayer CurrentPlayer { get; set; } = new("Default", []);
     private List<SimplePlayer> OtherPlayers => _currentGame.Players.Where(p => p != CurrentPlayer).ToList();
     private bool IsGameOver => _currentGame.IsGameOver;
     private int TurnNumber => _currentGame.Turn;
@@ -27,6 +31,7 @@ public partial class GamePage
 
             case ActionState.ShowSolution:
                 ShowHint = false;
+                _board = _currentGame.Board;
                 _currentState = ActionState.NextPlayer;
                 break;
 
@@ -79,6 +84,8 @@ public partial class GamePage
 
         _currentGame.InitializeGame(listNames);
         _currentState = ActionState.ShowHint;
+        CurrentPlayer = _currentGame.Players[0];
+        _playerRack = CurrentPlayer.Rack;
         await Play();
     }
 

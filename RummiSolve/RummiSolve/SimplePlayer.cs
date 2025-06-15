@@ -18,6 +18,7 @@ public class SimplePlayer(string name, List<Tile> tiles)
 
     public Solution Solve(Solution boardSolution)
     {
+        TilesToPlay.Clear();
         using var cts = new CancellationTokenSource();
 
         ISolver combiSolver = Played
@@ -69,8 +70,6 @@ public class SimplePlayer(string name, List<Tile> tiles)
         }
 
         WriteLine();
-
-        TilesToPlay.Clear();
     }
 
     public void Drew(Tile tile)

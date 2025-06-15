@@ -5,11 +5,12 @@
         <span
             class="tile-count @(Player.Played ? "played" : "not-played")">@Player.Rack.Tiles.Count</span>
     </div>
-    <SetComponent Set="Player.Rack" ShowHint="false" HighlightTiles="Player.TilesToPlay"/>
+    <SetComponent Set="Player.Rack" ShowHint="ShowHint" HighlightTiles="Player.TilesToPlay"/>
 </div>
 
 @code {
     [Parameter] public required SimplePlayer Player { get; set; }
+    [Parameter] public bool ShowHint { get; set; }
 }
 
 <style>
