@@ -1,8 +1,7 @@
 using RummiSolve;
-using RummiSolve.Solver;
 using RummiSolve.Solver.Combinations;
 
-namespace BlazorRummiSolve.Tests;
+namespace BlazorRummiSolve.Tests.Solver;
 
 public class BinaryBaseSolverTests
 {

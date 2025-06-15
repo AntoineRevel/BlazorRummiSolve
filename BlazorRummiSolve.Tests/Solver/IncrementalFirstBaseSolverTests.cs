@@ -1,8 +1,7 @@
 using RummiSolve;
-using RummiSolve.Solver;
 using RummiSolve.Solver.Incremental;
 
-namespace BlazorRummiSolve.Tests;
+namespace BlazorRummiSolve.Tests.Solver;
 
 public class IncrementalFirstBaseSolverTests
 {

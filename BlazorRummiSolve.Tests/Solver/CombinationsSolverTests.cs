@@ -1,10 +1,9 @@
 using RummiSolve;
-using RummiSolve.Solver;
-using RummiSolve.Solver.BestScore;
+using RummiSolve.Solver.Combinations;
 
-namespace BlazorRummiSolve.Tests;
+namespace BlazorRummiSolve.Tests.Solver;
 
-public class BestScoreComplexSolverTests
+public class CombinationsSolverTests
 {
     [Fact]
     public void SearchSolution_Valid()
@@ -22,7 +21,7 @@ public class BestScoreComplexSolverTests
             new Tile(10, TileColor.Black),
         ]);
 
-        var solver = BestScoreComplexSolver.Create(boardSet, playerSet);
+        var solver = CombinationsSolver.Create(boardSet, playerSet);
 
         // Act
         solver.SearchSolution();
@@ -37,7 +36,7 @@ public class BestScoreComplexSolverTests
         Assert.Equal(3, tilesToPlay.Count);
         Assert.Equal(0, jokerToPlay);
     }
-    
+
     [Fact]
     public void SearchSolution_ValidPlay1()
     {
@@ -52,7 +51,7 @@ public class BestScoreComplexSolverTests
             new Tile(1, TileColor.Red)
         ]);
 
-        var solver = BestScoreComplexSolver.Create(boardSet, playerSet);
+        var solver = CombinationsSolver.Create(boardSet, playerSet);
 
         // Act
         solver.SearchSolution();
@@ -84,7 +83,7 @@ public class BestScoreComplexSolverTests
             new Tile(10, TileColor.Red),
         ]);
 
-        var solver = BestScoreComplexSolver.Create(boardSet, playerSet);
+        var solver = CombinationsSolver.Create(boardSet, playerSet);
 
         // Act
         solver.SearchSolution();
@@ -100,7 +99,6 @@ public class BestScoreComplexSolverTests
         Assert.Equal(0, jokerToPlay);
     }
 
-
     [Fact]
     public void SearchSolution_ValidRun()
     {
@@ -115,7 +113,7 @@ public class BestScoreComplexSolverTests
             new Tile(4, TileColor.Red)
         ]);
 
-        var solver = BestScoreComplexSolver.Create(boardSet, playerSet);
+        var solver = CombinationsSolver.Create(boardSet, playerSet);
 
         // Act
         solver.SearchSolution();
@@ -146,7 +144,7 @@ public class BestScoreComplexSolverTests
             new Tile(true)
         ]);
 
-        var solver = BestScoreComplexSolver.Create(boardSet, playerSet);
+        var solver = CombinationsSolver.Create(boardSet, playerSet);
 
         // Act
         solver.SearchSolution();
@@ -160,38 +158,6 @@ public class BestScoreComplexSolverTests
         Assert.True(solution.IsValid);
         Assert.Single(tilesToPlay);
         Assert.Equal(1, jokerToPlay);
-    }
-
-    [Fact]
-    public void SearchSolution_ValidRunEnd()
-    {
-        // Arrange
-        var boardSet = new Set([
-            new Tile(1, TileColor.Red),
-            new Tile(2, TileColor.Red),
-            new Tile(3, TileColor.Red),
-            new Tile(true)
-        ]);
-
-        var playerSet = new Set([
-            new Tile(12),
-            new Tile(13),
-        ]);
-
-        var solver = BestScoreComplexSolver.Create(boardSet, playerSet);
-
-        // Act
-        solver.SearchSolution();
-        var won = solver.Won;
-        var solution = solver.BestSolution;
-        var tilesToPlay = solver.TilesToPlay.ToList();
-        var jokerToPlay = solver.JokerToPlay;
-
-        // Assert
-        Assert.True(won);
-        Assert.True(solution.IsValid);
-        Assert.Equal(2, tilesToPlay.Count);
-        Assert.Equal(0, jokerToPlay);
     }
 
     [Fact]
@@ -217,7 +183,7 @@ public class BestScoreComplexSolverTests
             new Tile(3, TileColor.Red),
         ]);
 
-        var solver = BestScoreComplexSolver.Create(boardSet, playerSet);
+        var solver = CombinationsSolver.Create(boardSet, playerSet);
 
         // Act
         solver.SearchSolution();
@@ -230,6 +196,40 @@ public class BestScoreComplexSolverTests
         Assert.False(won);
         Assert.True(solution.IsValid);
         Assert.Equal(6, tilesToPlay.Count);
+        Assert.Equal(0, jokerToPlay);
+    }
+    
+    [Fact]
+    public void SearchSolution_ValidNotWon2()
+    {
+        // Arrange
+        var boardSet = new Set([
+            new Tile(8),
+            new Tile(9),
+            new Tile(10),
+            new Tile(11),
+        ]);
+
+        var playerSet = new Set([
+            new Tile(8,TileColor.Black),
+            new Tile(8,TileColor.Red),
+            
+            new Tile(1)
+        ]);
+
+        var solver = CombinationsSolver.Create(boardSet, playerSet);
+
+        // Act
+        solver.SearchSolution();
+        var won = solver.Won;
+        var solution = solver.BestSolution;
+        var tilesToPlay = solver.TilesToPlay.ToList();
+        var jokerToPlay = solver.JokerToPlay;
+
+        // Assert
+        Assert.False(won);
+        Assert.True(solution.IsValid);
+        Assert.Equal(2, tilesToPlay.Count);
         Assert.Equal(0, jokerToPlay);
     }
 
@@ -254,7 +254,7 @@ public class BestScoreComplexSolverTests
             new Tile(13),
         ]);
 
-        var solver = BestScoreComplexSolver.Create(boardSet, playerSet);
+        var solver = CombinationsSolver.Create(boardSet, playerSet);
 
         // Act
         solver.SearchSolution();
@@ -289,7 +289,7 @@ public class BestScoreComplexSolverTests
             new Tile(true)
         ]);
 
-        var solver = BestScoreComplexSolver.Create(boardSet, playerSet);
+        var solver = CombinationsSolver.Create(boardSet, playerSet);
 
         // Act
         solver.SearchSolution();
@@ -302,6 +302,35 @@ public class BestScoreComplexSolverTests
         Assert.True(won);
         Assert.True(solution.IsValid);
         Assert.Equal(4, tilesToPlay.Count);
+        Assert.Equal(1, jokerToPlay);
+    }
+    
+    [Fact]
+    public void SearchSolution_ValidOneJ()
+    {
+        // Arrange
+        var boardSet = new Set([
+            new Tile(5),
+            new Tile(5, TileColor.Red),
+            new Tile(5, TileColor.Black),
+        ]);
+
+        var playerSet = new Set([
+            new Tile(true)
+        ]);
+        var solver = CombinationsSolver.Create(boardSet, playerSet);
+
+        // Act
+        solver.SearchSolution();
+        var won = solver.Won;
+        var solution = solver.BestSolution;
+        var tilesToPlay = solver.TilesToPlay.ToList();
+        var jokerToPlay = solver.JokerToPlay;
+
+        // Assert
+        Assert.True(won);
+        Assert.True(solution.IsValid);
+        Assert.Empty(tilesToPlay);
         Assert.Equal(1, jokerToPlay);
     }
 
@@ -319,7 +348,7 @@ public class BestScoreComplexSolverTests
             new Tile(5)
         ]);
 
-        var solver = BestScoreComplexSolver.Create(boardSet, playerSet);
+        var solver = CombinationsSolver.Create(boardSet, playerSet);
 
         // Act
         solver.SearchSolution();
