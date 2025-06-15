@@ -9,14 +9,12 @@ public partial class GamePage
     private ActionState _currentState;
     private SimplePlayer CurrentPlayer => _currentGame.Players[_currentGame.PlayerIndex];
     private List<SimplePlayer> OtherPlayers => _currentGame.Players.Where(p => p != CurrentPlayer).ToList();
-
     private bool IsGameOver => _currentGame.IsGameOver;
-
-    //private Player Winner => _currentGame.Winner!;
     private int TurnNumber => _currentGame.Turn;
     private Guid Id => _currentGame.Id;
     private bool IsLoading { get; set; }
     private bool ShowHint { get; set; }
+
 
     private async Task HandleActionAsync()
     {
@@ -34,7 +32,7 @@ public partial class GamePage
 
             case ActionState.NextPlayer:
                 _currentGame.Play();
-                await FindSolution();
+                await Play();
                 _currentState = ActionState.ShowHint;
                 break;
             default:
@@ -81,10 +79,10 @@ public partial class GamePage
 
         _currentGame.InitializeGame(listNames);
         _currentState = ActionState.ShowHint;
-        await FindSolution();
+        await Play();
     }
 
-    private async Task FindSolution()
+    private async Task Play()
     {
         IsLoading = true;
         try
