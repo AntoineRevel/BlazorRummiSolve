@@ -10,11 +10,14 @@ public class SimpleGame(Guid id)
     {
     }
 
-    public List<SimplePlayer> Players { get; } = new();
+    public List<SimplePlayer> Players { get; } = [];
 
     public int Turn { get; private set; }
     public int PlayerIndex { get; private set; }
-    public Solution BoardSolution { get; set; } = new();
+    public int PrevPlayerIndex { get; private set; }
+    public Solution BoardSolution { get; private set; } = new();
+
+    public bool IsGameOver { get; private set; }
 
     public void InitializeGame(List<string> playerNames)
     {
@@ -39,11 +42,13 @@ public class SimpleGame(Guid id)
         {
             BoardSolution = playerSolution;
             player.Play();
+            if (player.Won) IsGameOver = true;
         }
         else
         {
             player.Drew(_tilePool.Dequeue());
         }
+
 
         NextPlayer();
     }
@@ -98,7 +103,25 @@ public class SimpleGame(Guid id)
 
     private void NextPlayer()
     {
+        PrevPlayerIndex = PlayerIndex;
         PlayerIndex = (PlayerIndex + 1) % Players.Count;
         if (PlayerIndex == 0) Turn++;
+    }
+
+    public int AllTiles()
+    {
+        var sum = 0;
+
+        sum += _tilePool.Count;
+
+        Write(sum + " ");
+
+        sum += Players.Sum(player => player.Rack.Tiles.Count);
+        Write(sum + " ");
+
+        sum += BoardSolution.GetSet().Tiles.Count;
+        WriteLine(sum);
+
+        return sum;
     }
 }

@@ -5,13 +5,28 @@ namespace BlazorRummiSolve.Tests;
 public class GameTests
 {
     [Fact]
-    public void GameTest()
+    public void AllTiles_ShouldRemainAccountedFor_ThroughoutEntireGame()
     {
-        SimpleGame game = new(Guid.Parse("8f53d490-db85-4962-8886-8a49c0e2afb8"));
+        // Arrange
+        var game = new SimpleGame(Guid.Parse("8f53d490-db85-4962-8886-8a49c0e2afb8"));
+        var playerNames = new List<string> { "Antoine", "Matthieu", "Maguy" };
 
-        var listNames = new List<string> { "Antoine", "Matthieu", "Maguy" };
-        game.InitializeGame(listNames);
+        // Act & Assert - Initialisation
+        game.InitializeGame(playerNames);
+        Assert.Equal(106, game.AllTiles());
 
-        game.Play();
+        var ct = 0;
+        while (!game.IsGameOver)
+        {
+            ct++;
+            // Act
+            game.Play();
+
+            // Assert
+            Assert.Equal(106, game.AllTiles());
+        }
+
+        // Vérification finale
+        Assert.Equal(106, game.AllTiles());
     }
 }

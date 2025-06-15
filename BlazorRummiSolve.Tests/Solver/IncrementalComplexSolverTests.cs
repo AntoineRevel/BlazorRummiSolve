@@ -66,7 +66,7 @@ public class IncrementalComplexSolverTests
         Assert.Single(tilesToPlay);
         Assert.Equal(0, jokerToPlay);
     }
-    
+
     //[Fact]
     // public void SearchSolution_ValidOneJ()
     // {
@@ -394,6 +394,39 @@ public class IncrementalComplexSolverTests
         Assert.False(won);
         Assert.True(solution.IsValid);
         Assert.Single(tilesToPlay); // Can play 3 4 => IncrementalComplexSolverScAndTile
+        Assert.Equal(0, jokerToPlay);
+    }
+
+    [Fact]
+    public void SearchSolution_ReplaceJoker()
+    {
+        // Arrange
+        var boardSet = new Set([
+            new Tile(11, TileColor.Mango),
+            new Tile(true),
+            new Tile(13, TileColor.Mango)
+        ]);
+
+        var playerSet = new Set([
+            new Tile(12, TileColor.Mango),
+
+            new Tile(13, TileColor.Red),
+            new Tile(13)
+        ]);
+
+        var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
+
+        // Act
+        solver.SearchSolution();
+        var won = solver.Won;
+        var solution = solver.BestSolution;
+        var tilesToPlay = solver.TilesToPlay.ToList();
+        var jokerToPlay = solver.JokerToPlay;
+
+        // Assert
+        Assert.True(won);
+        Assert.True(solution.IsValid);
+        Assert.Equal(3, tilesToPlay.Count);
         Assert.Equal(0, jokerToPlay);
     }
 }

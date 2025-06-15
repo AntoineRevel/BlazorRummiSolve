@@ -33,9 +33,10 @@ public class RummiBench
         game.InitializeGame(listNames);
         var player = game.Players[game.PlayerIndex];
 
+        Console.WriteLine(game.AllTiles());
         player.Rack.PrintAllTiles();
         game.Play();
-
+        Console.WriteLine(game.AllTiles());
         game.BoardSolution.PrintSolution();
 
         Console.WriteLine();
@@ -43,11 +44,60 @@ public class RummiBench
         player = game.Players[game.PlayerIndex];
         player.Rack.PrintAllTiles();
         game.Play();
+        Console.WriteLine(game.AllTiles());
+        game.Players[game.PrevPlayerIndex].Rack.PrintAllTiles();
+        game.BoardSolution.PrintSolution();
 
-        game.Players[game.PlayerIndex - 1].Rack.PrintAllTiles();
+        Console.WriteLine();
+
+        player = game.Players[game.PlayerIndex];
+        Console.WriteLine(game.AllTiles());
+        player.Rack.PrintAllTiles();
+        game.Play();
+        game.Players[game.PrevPlayerIndex].Rack.PrintAllTiles();
+        Console.WriteLine(game.AllTiles());
         game.BoardSolution.PrintSolution();
     }
 
+
+    public static void TestSimpleGame2()
+    {
+        var game = new SimpleGame(Guid.Parse("8f53d490-db85-4962-8886-8a49c0e2afb8"));
+        var playerNames = new List<string> { "Antoine", "Matthieu", "Maguy" };
+
+        game.InitializeGame(playerNames);
+
+        Console.WriteLine("=== DÉBUT DE LA PARTIE ===");
+        Console.WriteLine($"Joueurs: {string.Join(", ", playerNames)}");
+        Console.WriteLine($"Tuiles complètes: {game.AllTiles()}\n");
+
+        for (var round = 1; round <= 23; round++)
+        {
+            var currentPlayer = game.Players[game.PlayerIndex];
+
+            Console.WriteLine($"=== TOUR {game.Turn} ===");
+            Console.WriteLine($"Joueur actuel: {currentPlayer.Name}");
+            Console.WriteLine("Main du joueur:");
+            currentPlayer.Rack.PrintAllTiles();
+
+            game.Play();
+
+            Console.WriteLine("\nRésultat du tour:");
+            Console.WriteLine($"Tuiles complètes: {game.AllTiles()}");
+
+
+            Console.WriteLine("Main du joueur:");
+            currentPlayer.Rack.PrintAllTiles();
+
+
+            Console.WriteLine("\nPlateau actuel:");
+            game.BoardSolution.PrintSolution();
+
+            Console.WriteLine("\n--------------------------------\n");
+        }
+
+        Console.WriteLine("=== FIN DE LA PARTIE ===");
+    }
 
     public static void TestMultiPlayerGame()
     {
@@ -174,22 +224,46 @@ public class RummiBench
     {
         // Arrange
         var boardSet = new Set([
-            new Tile(5),
-            new Tile(5, TileColor.Red),
-            new Tile(5, TileColor.Black),
-            new Tile(5, TileColor.Mango),
+            new Tile(10, TileColor.Black),
+            new Tile(11, TileColor.Black),
+            new Tile(12, TileColor.Black),
+            new Tile(13, TileColor.Black),
+
+            new Tile(true),
+            new Tile(12),
+            new Tile(13),
 
             new Tile(6),
-            new Tile(6, TileColor.Red),
-            new Tile(6, TileColor.Black),
-            new Tile(6, TileColor.Mango)
+            new Tile(7),
+            new Tile(8),
+
+            new Tile(8, TileColor.Red),
+            new Tile(8, TileColor.Mango),
+            new Tile(8, TileColor.Black),
+
+            new Tile(5),
+            new Tile(5, TileColor.Mango),
+            new Tile(5, TileColor.Black)
         ]);
 
         var playerSet = new Set([
-            new Tile(3, TileColor.Red),
-            new Tile(4, TileColor.Red),
+            new Tile(10, TileColor.Black),
+            new Tile(5, TileColor.Black),
 
-            new Tile(7)
+            new Tile(13, TileColor.Mango),
+            new Tile(13, TileColor.Mango),
+            new Tile(12, TileColor.Mango),
+            new Tile(9, TileColor.Mango),
+            new Tile(7, TileColor.Mango),
+            new Tile(5, TileColor.Mango),
+            new Tile(3, TileColor.Mango),
+            new Tile(2, TileColor.Mango),
+
+            new Tile(10, TileColor.Red),
+            new Tile(7, TileColor.Red),
+
+            new Tile(11),
+            new Tile(9)
         ]);
 
         var solver = IncrementalComplexSolver.Create(boardSet, playerSet);

@@ -18,16 +18,14 @@ public class SimplePlayer(string name, List<Tile> tiles)
 
     public Solution Solve(Solution boardSolution)
     {
-        var boardSet = boardSolution.GetSet();
-
         using var cts = new CancellationTokenSource();
 
         ISolver combiSolver = _played
-            ? CombinationsSolver.Create(boardSet, Rack)
+            ? CombinationsSolver.Create(boardSolution.GetSet(), Rack)
             : CombinationsFirstSolver.Create(Rack);
 
         ISolver incrementalSolver = _played
-            ? IncrementalComplexSolver.Create(boardSet, Rack)
+            ? IncrementalComplexSolver.Create(boardSolution.GetSet(), Rack)
             : IncrementalFirstBaseSolver.Create(Rack);
 
         var incrementalTask = Task.Run(() => incrementalSolver.SearchSolution(), cts.Token);
@@ -48,12 +46,12 @@ public class SimplePlayer(string name, List<Tile> tiles)
     private Solution ProcessSolution(Solution boardSolution, ISolver solver)
     {
         if (!solver.Found) return Solution.GetInvalidSolution();
+
         Won = solver.Won;
 
-
         TilesToPlay = solver.TilesToPlay.ToList();
-        for (var i = 0; i < solver.JokerToPlay; i++) TilesToPlay.Add(new Tile(true));
 
+        for (var i = 0; i < solver.JokerToPlay; i++) TilesToPlay.Add(new Tile(true));
 
         if (_played) return solver.BestSolution;
 
@@ -78,5 +76,9 @@ public class SimplePlayer(string name, List<Tile> tiles)
     public void Drew(Tile tile)
     {
         Rack.AddTile(tile);
+
+        Write("Drew : ");
+        tile.PrintTile();
+        WriteLine();
     }
 }
