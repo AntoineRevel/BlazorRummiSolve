@@ -15,10 +15,8 @@ public class GameTests
         game.InitializeGame(playerNames);
         Assert.Equal(106, game.AllTiles());
 
-        var ct = 0;
         while (!game.IsGameOver)
         {
-            ct++;
             // Act
             game.Play();
 

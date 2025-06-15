@@ -71,7 +71,7 @@ public class RummiBench
         Console.WriteLine($"Joueurs: {string.Join(", ", playerNames)}");
         Console.WriteLine($"Tuiles complètes: {game.AllTiles()}\n");
 
-        for (var round = 1; round <= 23; round++)
+        while (!game.IsGameOver)
         {
             var currentPlayer = game.Players[game.PlayerIndex];
 
