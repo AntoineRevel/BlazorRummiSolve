@@ -3,13 +3,13 @@
     <div class="header">
         <h2>@Player.Name</h2>
         <span
-            class="tile-count @(Player.PlayedToShow ? "played" : "not-played")">@Player.RackTileToShow.Tiles.Count</span>
+            class="tile-count @(Player.Played ? "played" : "not-played")">@Player.Rack.Tiles.Count</span>
     </div>
-    <SetComponent Set="Player.RackTileToShow" ShowHint="ShowHint" HighlightTiles="Player.TilesToPlay"/>
+    <SetComponent Set="Player.Rack" ShowHint="ShowHint" HighlightTiles="Player.TilesToPlay"/>
 </div>
 
 @code {
-    [Parameter] public required Player Player { get; set; }
+    [Parameter] public required SimplePlayer Player { get; set; }
     [Parameter] public bool ShowHint { get; set; }
 }
 

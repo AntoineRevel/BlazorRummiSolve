@@ -37,7 +37,7 @@ public class RummiBench
         player.Rack.PrintAllTiles();
         game.Play();
         Console.WriteLine(game.AllTiles());
-        game.BoardSolution.PrintSolution();
+        game.Board.PrintSolution();
 
         Console.WriteLine();
 
@@ -46,7 +46,7 @@ public class RummiBench
         game.Play();
         Console.WriteLine(game.AllTiles());
         game.Players[game.PrevPlayerIndex].Rack.PrintAllTiles();
-        game.BoardSolution.PrintSolution();
+        game.Board.PrintSolution();
 
         Console.WriteLine();
 
@@ -56,7 +56,7 @@ public class RummiBench
         game.Play();
         game.Players[game.PrevPlayerIndex].Rack.PrintAllTiles();
         Console.WriteLine(game.AllTiles());
-        game.BoardSolution.PrintSolution();
+        game.Board.PrintSolution();
     }
 
 
@@ -91,7 +91,7 @@ public class RummiBench
 
 
             Console.WriteLine("\nPlateau actuel:");
-            game.BoardSolution.PrintSolution();
+            game.Board.PrintSolution();
 
             Console.WriteLine("\n--------------------------------\n");
         }

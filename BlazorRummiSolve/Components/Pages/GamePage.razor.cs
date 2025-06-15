@@ -4,13 +4,15 @@ namespace BlazorRummiSolve.Components.Pages;
 
 public partial class GamePage
 {
-    private Game _currentGame = new();
-    private Player _currentPlayer = null!;
+    private SimpleGame _currentGame = new();
 
     private ActionState _currentState;
-    private List<Player>? _otherPlayers;
+    private SimplePlayer CurrentPlayer => _currentGame.Players[_currentGame.PlayerIndex];
+    private List<SimplePlayer> OtherPlayers => _currentGame.Players.Where(p => p != CurrentPlayer).ToList();
+
     private bool IsGameOver => _currentGame.IsGameOver;
-    private Player Winner => _currentGame.Winner!;
+
+    //private Player Winner => _currentGame.Winner!;
     private int TurnNumber => _currentGame.Turn;
     private Guid Id => _currentGame.Id;
     private bool IsLoading { get; set; }
@@ -27,13 +29,11 @@ public partial class GamePage
 
             case ActionState.ShowSolution:
                 ShowHint = false;
-                _currentGame.ShowSolution(_currentPlayer);
                 _currentState = ActionState.NextPlayer;
                 break;
 
             case ActionState.NextPlayer:
-                _currentGame.NextTurn();
-                UpdatePlayers();
+                _currentGame.Play();
                 await FindSolution();
                 _currentState = ActionState.ShowHint;
                 break;
@@ -52,8 +52,6 @@ public partial class GamePage
                 break;
 
             case ActionState.NextPlayer:
-                _currentGame.BackSolution();
-                _currentPlayer.ShowLastTile();
                 ShowHint = true;
 
                 _currentState = ActionState.ShowSolution;
@@ -70,8 +68,8 @@ public partial class GamePage
     {
         return _currentState switch
         {
-            ActionState.ShowHint => $"Show hint for {_currentPlayer.Name}'s turn",
-            ActionState.ShowSolution => $"Play {_currentPlayer.Name}'s turn",
+            ActionState.ShowHint => $"Show hint for {CurrentPlayer.Name}'s turn",
+            ActionState.ShowSolution => $"Play {CurrentPlayer.Name}'s turn",
             ActionState.NextPlayer => "Next Player",
             _ => "Action"
         };
@@ -79,11 +77,10 @@ public partial class GamePage
 
     protected override async Task OnInitializedAsync()
     {
-        var listNames = new List<string> { "Antoine", "Maguy", "Matthieu"};
+        var listNames = new List<string> { "Antoine", "Maguy", "Matthieu" };
 
         _currentGame.InitializeGame(listNames);
         _currentState = ActionState.ShowHint;
-        UpdatePlayers();
         await FindSolution();
     }
 
@@ -92,7 +89,7 @@ public partial class GamePage
         IsLoading = true;
         try
         {
-            await Task.Run(() => _currentGame.PlayCurrentPlayerTurn(_currentPlayer));
+            await Task.Run(() => _currentGame.Play());
         }
         finally
         {
@@ -100,15 +97,9 @@ public partial class GamePage
         }
     }
 
-    private void UpdatePlayers()
-    {
-        _currentPlayer = _currentGame.Players[_currentGame.CurrentPlayerIndex];
-        _otherPlayers = _currentGame.Players.Where(p => p != _currentPlayer).ToList();
-    }
-
     private async Task ResetGameAsync()
     {
-        _currentGame = new Game();
+        _currentGame = new SimpleGame();
         await OnInitializedAsync();
     }
 

@@ -10,13 +10,12 @@ public class SimpleGame(Guid id)
     {
     }
 
+    public Guid Id { get; } = id;
     public List<SimplePlayer> Players { get; } = [];
-
     public int Turn { get; private set; }
     public int PlayerIndex { get; private set; }
     public int PrevPlayerIndex { get; private set; }
-    public Solution BoardSolution { get; private set; } = new();
-
+    public Solution Board { get; private set; } = new();
     public bool IsGameOver { get; private set; }
 
     public void InitializeGame(List<string> playerNames)
@@ -24,11 +23,11 @@ public class SimpleGame(Guid id)
         if (playerNames == null || playerNames.Count == 0)
             throw new ArgumentException("Player names cannot be null or empty", nameof(playerNames));
 
-        WriteLine($"GameId: {id}");
+        WriteLine($"GameId: {Id}");
 
         var tiles = GenerateTiles();
 
-        Shuffle(tiles, new Random(id.GetHashCode()));
+        Shuffle(tiles, new Random(Id.GetHashCode()));
 
         DistributeTiles(tiles, playerNames);
     }
@@ -36,11 +35,11 @@ public class SimpleGame(Guid id)
     public void Play()
     {
         var player = Players[PlayerIndex];
-        var playerSolution = player.Solve(BoardSolution);
+        var playerSolution = player.Solve(Board);
 
         if (playerSolution.IsValid)
         {
-            BoardSolution = playerSolution;
+            Board = playerSolution;
             player.Play();
             if (player.Won) IsGameOver = true;
         }
@@ -119,7 +118,7 @@ public class SimpleGame(Guid id)
         sum += Players.Sum(player => player.Rack.Tiles.Count);
         Write(sum + " ");
 
-        sum += BoardSolution.GetSet().Tiles.Count;
+        sum += Board.GetSet().Tiles.Count;
         WriteLine(sum);
 
         return sum;

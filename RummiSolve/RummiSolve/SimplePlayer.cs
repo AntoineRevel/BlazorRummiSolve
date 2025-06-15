@@ -8,7 +8,7 @@ namespace RummiSolve;
 
 public class SimplePlayer(string name, List<Tile> tiles)
 {
-    private bool _played;
+    public bool Played { get; private set; }
     public string Name { get; } = name;
 
     public Set Rack { get; } = new(tiles);
@@ -20,11 +20,11 @@ public class SimplePlayer(string name, List<Tile> tiles)
     {
         using var cts = new CancellationTokenSource();
 
-        ISolver combiSolver = _played
+        ISolver combiSolver = Played
             ? CombinationsSolver.Create(boardSolution.GetSet(), Rack)
             : CombinationsFirstSolver.Create(Rack);
 
-        ISolver incrementalSolver = _played
+        ISolver incrementalSolver = Played
             ? IncrementalComplexSolver.Create(boardSolution.GetSet(), Rack)
             : IncrementalFirstBaseSolver.Create(Rack);
 
@@ -53,9 +53,9 @@ public class SimplePlayer(string name, List<Tile> tiles)
 
         for (var i = 0; i < solver.JokerToPlay; i++) TilesToPlay.Add(new Tile(true));
 
-        if (_played) return solver.BestSolution;
+        if (Played) return solver.BestSolution;
 
-        _played = true;
+        Played = true;
         return solver.BestSolution.AddSolution(boardSolution);
     }
 

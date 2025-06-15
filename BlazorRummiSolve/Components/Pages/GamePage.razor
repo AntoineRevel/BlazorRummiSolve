@@ -11,7 +11,7 @@
     @if (IsGameOver)
     {
         <div class="game-over">
-            <h2>🎉 @Winner.Name has won the game! 🎉</h2>
+            <h2>🎉 @CurrentPlayer.Name has won the game! 🎉</h2>
         </div>
     }
 
@@ -22,7 +22,7 @@
         </div>
 
         <div class="solution-section">
-            <SolutionComponent Solution="_currentGame.SolutionToShow"/>
+            <SolutionComponent Solution="_currentGame.Board"/>
         </div>
 
         <div class="actions">
@@ -48,7 +48,7 @@
         </div>
         <div class="players-section">
             <h2>Players</h2>
-            <PlayersContainerComponent CurrentPlayer="_currentPlayer" OtherPlayers="_otherPlayers" ShowHint="ShowHint"/>
+            <PlayersContainerComponent CurrentPlayer="CurrentPlayer" OtherPlayers="OtherPlayers" ShowHint="ShowHint"/>
         </div>
     </section>
 </div>
