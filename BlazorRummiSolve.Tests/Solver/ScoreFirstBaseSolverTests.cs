@@ -1,9 +1,7 @@
 using RummiSolve;
-using RummiSolve.Solver;
-using RummiSolve.Solver.BestScore;
 using RummiSolve.Solver.BestScore.First;
 
-namespace BlazorRummiSolve.Tests;
+namespace BlazorRummiSolve.Tests.Solver;
 
 public class ScoreFirstBaseSolverTests
 {

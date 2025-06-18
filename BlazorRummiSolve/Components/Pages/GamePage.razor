@@ -8,10 +8,10 @@
         <h3>Game ID: @Id</h3>
     </header>
 
-    @if (IsGameOver)
+    @if (_isGameOver)
     {
         <div class="game-over">
-            <h2>🎉 @Winner.Name has won the game! 🎉</h2>
+            <h2>🎉 @CurrentPlayer.Name has won the game! 🎉</h2>
         </div>
     }
 
@@ -22,7 +22,7 @@
         </div>
 
         <div class="solution-section">
-            <SolutionComponent Solution="_currentGame.SolutionToShow"/>
+            <SolutionComponent Solution="_board"/>
         </div>
 
         <div class="actions">
@@ -32,23 +32,34 @@
                 </button>
             </div>
             <div class="main-actions">
-                @if (_currentState != ActionState.ShowHint && !IsLoading)
+                @if (!_isGameOver)
                 {
-                    <button @onclick="HandleActionBack" class="btn-secondary">
-                        Back
-                    </button>
-                }
-                @if (!IsGameOver || _currentState != ActionState.NextPlayer)
-                {
+                    @if (_currentState != ActionState.ShowHint && !IsLoading && !_isGameOver)
+                    {
+                        <button @onclick="HandleActionBack" class="btn-secondary">
+                            Back
+                        </button>
+                    }
+
                     <button @onclick="HandleActionAsync" disabled="@(IsLoading)" class="btn-primary">
-                        @GetButtonLabel()
+                        @if (IsLoading)
+                        {
+                            <span class="spinner"></span>
+                            <span style="margin-left: 10px;">Loading...</span>
+                        }
+                        else
+                        {
+                            @GetButtonLabel()
+                        }
                     </button>
                 }
+
             </div>
         </div>
         <div class="players-section">
             <h2>Players</h2>
-            <PlayersContainerComponent CurrentPlayer="_currentPlayer" OtherPlayers="_otherPlayers" ShowHint="ShowHint"/>
+            <PlayersContainerComponent CurrentPlayer="CurrentPlayer" OtherPlayers="OtherPlayers" ShowHint="ShowHint"
+                                       CurrentPlayerRack="_playerRack"/>
         </div>
     </section>
 </div>
@@ -193,4 +204,26 @@
         display: flex;
         gap: 10px; /* Ajoute un espace entre Back et le bouton principal */
     }
+
+    @@keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .spinner {
+        width: 18px;
+        height: 18px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-top: 3px solid white;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+
 </style>

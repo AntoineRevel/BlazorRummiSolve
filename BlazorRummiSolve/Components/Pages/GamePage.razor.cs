@@ -4,17 +4,24 @@ namespace BlazorRummiSolve.Components.Pages;
 
 public partial class GamePage
 {
+    private Solution _board = new();
     private Game _currentGame = new();
-    private Player _currentPlayer = null!;
 
     private ActionState _currentState;
-    private List<Player>? _otherPlayers;
-    private bool IsGameOver => _currentGame.IsGameOver;
-    private Player Winner => _currentGame.Winner!;
+    private bool _isGameOver;
+    private Solution _lastBoard = new();
+    private Set _lastPlayerRack = new();
+
+
+    private Set _playerRack = new();
+
+    private Player CurrentPlayer { get; set; } = new("Default", []);
+    private List<Player> OtherPlayers => _currentGame.Players.Where(p => p != CurrentPlayer).ToList();
     private int TurnNumber => _currentGame.Turn;
     private Guid Id => _currentGame.Id;
     private bool IsLoading { get; set; }
     private bool ShowHint { get; set; }
+
 
     private async Task HandleActionAsync()
     {
@@ -27,14 +34,20 @@ public partial class GamePage
 
             case ActionState.ShowSolution:
                 ShowHint = false;
-                _currentGame.ShowSolution(_currentPlayer);
-                _currentState = ActionState.NextPlayer;
+                _board = _currentGame.Board;
+                _playerRack = CurrentPlayer.Rack;
+
+                _isGameOver = _currentGame.IsGameOver;
+
+                if (!_isGameOver) _currentState = ActionState.NextPlayer;
                 break;
 
             case ActionState.NextPlayer:
-                _currentGame.NextTurn();
-                UpdatePlayers();
-                await FindSolution();
+                CurrentPlayer = _currentGame.Players[_currentGame.PlayerIndex];
+                _playerRack = new Set(_currentGame.Players[_currentGame.PlayerIndex].Rack);
+                _lastPlayerRack = new Set(_playerRack);
+                _lastBoard = _board;
+                await Play();
                 _currentState = ActionState.ShowHint;
                 break;
             default:
@@ -48,12 +61,13 @@ public partial class GamePage
         {
             case ActionState.ShowSolution:
                 ShowHint = false;
+                Console.WriteLine("caca");
                 _currentState = ActionState.ShowHint;
                 break;
 
             case ActionState.NextPlayer:
-                _currentGame.BackSolution();
-                _currentPlayer.ShowLastTile();
+                _board = _lastBoard;
+                _playerRack = _lastPlayerRack;
                 ShowHint = true;
 
                 _currentState = ActionState.ShowSolution;
@@ -70,8 +84,8 @@ public partial class GamePage
     {
         return _currentState switch
         {
-            ActionState.ShowHint => $"Show hint for {_currentPlayer.Name}'s turn",
-            ActionState.ShowSolution => $"Play {_currentPlayer.Name}'s turn",
+            ActionState.ShowHint => $"Show hint for {CurrentPlayer.Name}'s turn",
+            ActionState.ShowSolution => $"Play {CurrentPlayer.Name}'s turn",
             ActionState.NextPlayer => "Next Player",
             _ => "Action"
         };
@@ -79,31 +93,28 @@ public partial class GamePage
 
     protected override async Task OnInitializedAsync()
     {
-        var listNames = new List<string> { "Antoine", "Maguy", "Matthieu"};
+        var listNames = new List<string> { "Antoine", "Maguy", "Matthieu" };
 
         _currentGame.InitializeGame(listNames);
         _currentState = ActionState.ShowHint;
-        UpdatePlayers();
-        await FindSolution();
+        CurrentPlayer = _currentGame.Players[0];
+        _playerRack = new Set(CurrentPlayer.Rack);
+        _lastPlayerRack = new Set(CurrentPlayer.Rack);
+
+        await Play();
     }
 
-    private async Task FindSolution()
+    private async Task Play()
     {
         IsLoading = true;
         try
         {
-            await Task.Run(() => _currentGame.PlayCurrentPlayerTurn(_currentPlayer));
+            await Task.Run(() => _currentGame.Play());
         }
         finally
         {
             IsLoading = false;
         }
-    }
-
-    private void UpdatePlayers()
-    {
-        _currentPlayer = _currentGame.Players[_currentGame.CurrentPlayerIndex];
-        _otherPlayers = _currentGame.Players.Where(p => p != _currentPlayer).ToList();
     }
 
     private async Task ResetGameAsync()

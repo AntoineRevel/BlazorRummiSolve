@@ -4,7 +4,7 @@ public class Set
 {
     public int Jokers;
     public List<Tile> Tiles;
-    
+
     public Set()
     {
         Tiles = [];
@@ -68,5 +68,6 @@ public class Set
     public void PrintAllTiles()
     {
         foreach (var tile in Tiles) tile.PrintTile();
+        Console.WriteLine();
     }
 }
