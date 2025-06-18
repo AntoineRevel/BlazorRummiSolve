@@ -41,7 +41,15 @@
                 @if (!_isGameOver || _currentState != ActionState.NextPlayer)
                 {
                     <button @onclick="HandleActionAsync" disabled="@(IsLoading)" class="btn-primary">
-                        @GetButtonLabel()
+                        @if (IsLoading)
+                        {
+                            <span class="spinner"></span>
+                            <span style="margin-left: 10px;">Loading...</span>
+                        }
+                        else
+                        {
+                            @GetButtonLabel()
+                        }
                     </button>
                 }
             </div>
@@ -194,4 +202,26 @@
         display: flex;
         gap: 10px; /* Ajoute un espace entre Back et le bouton principal */
     }
+
+    @@keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .spinner {
+        width: 18px;
+        height: 18px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-top: 3px solid white;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+
 </style>
