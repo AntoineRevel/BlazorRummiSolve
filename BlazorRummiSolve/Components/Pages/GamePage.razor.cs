@@ -8,13 +8,15 @@ public partial class GamePage
     private SimpleGame _currentGame = new();
 
     private ActionState _currentState;
+    private bool _isGameOver;
+    private Solution _lastBoard = new();
     private Set _lastPlayerRack = new();
+
 
     private Set _playerRack = new();
 
     private SimplePlayer CurrentPlayer { get; set; } = new("Default", []);
     private List<SimplePlayer> OtherPlayers => _currentGame.Players.Where(p => p != CurrentPlayer).ToList();
-    private bool IsGameOver => _currentGame.IsGameOver;
     private int TurnNumber => _currentGame.Turn;
     private Guid Id => _currentGame.Id;
     private bool IsLoading { get; set; }
@@ -34,13 +36,17 @@ public partial class GamePage
                 ShowHint = false;
                 _board = _currentGame.Board;
                 _playerRack = CurrentPlayer.Rack;
-                _currentState = ActionState.NextPlayer;
+
+                _isGameOver = _currentGame.IsGameOver;
+
+                if (!_isGameOver) _currentState = ActionState.NextPlayer;
                 break;
 
             case ActionState.NextPlayer:
                 CurrentPlayer = _currentGame.Players[_currentGame.PlayerIndex];
                 _playerRack = new Set(_currentGame.Players[_currentGame.PlayerIndex].Rack);
                 _lastPlayerRack = new Set(_playerRack);
+                _lastBoard = _board;
                 await Play();
                 _currentState = ActionState.ShowHint;
                 break;
@@ -55,10 +61,12 @@ public partial class GamePage
         {
             case ActionState.ShowSolution:
                 ShowHint = false;
+                Console.WriteLine("caca");
                 _currentState = ActionState.ShowHint;
                 break;
 
             case ActionState.NextPlayer:
+                _board = _lastBoard;
                 _playerRack = _lastPlayerRack;
                 ShowHint = true;
 
