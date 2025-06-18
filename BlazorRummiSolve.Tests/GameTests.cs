@@ -8,7 +8,7 @@ public class GameTests
     public void AllTiles_ShouldRemainAccountedFor_ThroughoutEntireGame()
     {
         // Arrange
-        var game = new SimpleGame();
+        var game = new Game();
         var playerNames = new List<string> { "Antoine", "Matthieu", "Maguy" };
 
         // Act & Assert - Initialisation

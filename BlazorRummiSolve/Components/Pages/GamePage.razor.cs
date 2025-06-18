@@ -5,7 +5,7 @@ namespace BlazorRummiSolve.Components.Pages;
 public partial class GamePage
 {
     private Solution _board = new();
-    private SimpleGame _currentGame = new();
+    private Game _currentGame = new();
 
     private ActionState _currentState;
     private bool _isGameOver;
@@ -15,8 +15,8 @@ public partial class GamePage
 
     private Set _playerRack = new();
 
-    private SimplePlayer CurrentPlayer { get; set; } = new("Default", []);
-    private List<SimplePlayer> OtherPlayers => _currentGame.Players.Where(p => p != CurrentPlayer).ToList();
+    private Player CurrentPlayer { get; set; } = new("Default", []);
+    private List<Player> OtherPlayers => _currentGame.Players.Where(p => p != CurrentPlayer).ToList();
     private int TurnNumber => _currentGame.Turn;
     private Guid Id => _currentGame.Id;
     private bool IsLoading { get; set; }
@@ -119,7 +119,7 @@ public partial class GamePage
 
     private async Task ResetGameAsync()
     {
-        _currentGame = new SimpleGame();
+        _currentGame = new Game();
         await OnInitializedAsync();
     }
 

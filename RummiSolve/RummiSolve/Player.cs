@@ -1,5 +1,3 @@
-using RummiSolve.Solver.BestScore;
-using RummiSolve.Solver.BestScore.First;
 using RummiSolve.Solver.Combinations;
 using RummiSolve.Solver.Combinations.First;
 using RummiSolve.Solver.Incremental;
@@ -8,96 +6,28 @@ using static System.Console;
 
 namespace RummiSolve;
 
-public class Player
+public class Player(string name, List<Tile> tiles)
 {
-    private readonly Set _rackTilesSet;
-    public readonly string Name;
+    public bool Played { get; private set; }
+    public string Name { get; } = name;
 
-    private Tile _lastDrewTile;
-    private Set _lastRackTilesSet;
-    private bool _played;
-    public bool PlayedToShow;
-    public Set RackTileToShow;
-    public List<Tile> TilesToPlay = [];
-
-    public Player(string name, List<Tile> tiles)
-    {
-        Name = name;
-        _rackTilesSet = new Set(tiles); //pas de copie de la liste TODO
-        _lastRackTilesSet = new Set(tiles);
-        RackTileToShow = _lastRackTilesSet;
-        PlayedToShow = false;
-    }
-
+    public Set Rack { get; } = new(tiles);
+    public List<Tile> TilesToPlay { get; private set; } = [];
     public bool Won { get; private set; }
 
-
-    public Solution SolveCombi(Solution boardSolution)
-    {
-        TilesToPlay.Clear();
-        var boardSet = boardSolution.GetSet();
-
-        ISolver incrementalSolver = _played
-            ? CombinationsSolver.Create(boardSet, _rackTilesSet)
-            : CombinationsFirstSolver.Create(_rackTilesSet);
-
-        incrementalSolver.SearchSolution();
-        return Solve(boardSolution, incrementalSolver);
-    }
-
-    public Solution SolveIncr(Solution boardSolution)
-    {
-        TilesToPlay.Clear();
-        var boardSet = boardSolution.GetSet();
-
-        ISolver incrementalSolver = _played
-            ? IncrementalComplexSolver.Create(boardSet, _rackTilesSet)
-            : IncrementalFirstBaseSolver.Create(_rackTilesSet);
-
-        incrementalSolver.SearchSolution();
-        return Solve(boardSolution, incrementalSolver);
-    }
-
-    public Solution SolveIncrTileAndSc(Solution boardSolution)
-    {
-        TilesToPlay.Clear();
-        var boardSet = boardSolution.GetSet();
-
-        ISolver incrementalSolver = _played
-            ? IncrementalComplexSolverTileAndSc.Create(boardSet, _rackTilesSet)
-            : IncrementalFirstBaseSolver.Create(_rackTilesSet);
-
-        incrementalSolver.SearchSolution();
-        return Solve(boardSolution, incrementalSolver);
-    }
-
-    public Solution SolveBs(Solution boardSolution)
-    {
-        TilesToPlay.Clear();
-        var boardSet = boardSolution.GetSet();
-
-        ISolver bestScoreSolver = _played
-            ? BestScoreComplexSolver.Create(boardSet, _rackTilesSet)
-            : BestScoreFirstBaseSolver.Create(_rackTilesSet);
-
-        bestScoreSolver.SearchSolution();
-        return Solve(boardSolution, bestScoreSolver);
-    }
 
     public Solution Solve(Solution boardSolution)
     {
         TilesToPlay.Clear();
-        var boardSet = boardSolution.GetSet();
-
         using var cts = new CancellationTokenSource();
 
-        ISolver combiSolver = _played
-            ? CombinationsSolver.Create(boardSet, _rackTilesSet)
-            : CombinationsFirstSolver.Create(_rackTilesSet);
+        ISolver combiSolver = Played
+            ? CombinationsSolver.Create(boardSolution.GetSet(), Rack)
+            : CombinationsFirstSolver.Create(Rack);
 
-        ISolver incrementalSolver = _played
-            ? IncrementalComplexSolver.Create(boardSet, _rackTilesSet)
-            : IncrementalFirstBaseSolver.Create(_rackTilesSet);
+        ISolver incrementalSolver = Played
+            ? IncrementalComplexSolver.Create(boardSolution.GetSet(), Rack)
+            : IncrementalFirstBaseSolver.Create(Rack);
 
         var incrementalTask = Task.Run(() => incrementalSolver.SearchSolution(), cts.Token);
         var combiTask = Task.Run(() => combiSolver.SearchSolution(), cts.Token);
@@ -111,78 +41,43 @@ public class Player
             : (solver: combiSolver, name: "Combi");
 
         WriteLine($"{winner.name} First");
-        return Solve(boardSolution, winner.solver);
+        return ProcessSolution(boardSolution, winner.solver);
     }
 
-    private Solution Solve(Solution boardSolution, ISolver solver)
+    private Solution ProcessSolution(Solution boardSolution, ISolver solver)
     {
         if (!solver.Found) return Solution.GetInvalidSolution();
-        Won = solver.Won;
 
-        var solution = solver.BestSolution;
+        Won = solver.Won;
 
         TilesToPlay = solver.TilesToPlay.ToList();
 
-        WriteLine("Play :");
-        foreach (var tile in TilesToPlay) tile.PrintTile();
-        WriteLine();
-
         for (var i = 0; i < solver.JokerToPlay; i++) TilesToPlay.Add(new Tile(true));
 
-        if (_played) return solution;
+        if (Played) return solver.BestSolution;
 
-        solution.AddSolution(boardSolution);
-
-        _played = true;
-
-        return solution;
+        Played = true;
+        return solver.BestSolution.AddSolution(boardSolution);
     }
 
-
-    public void SaveRack()
+    public void Play()
     {
-        _lastRackTilesSet = new Set(_rackTilesSet);
-        RackTileToShow = _lastRackTilesSet;
-    }
-
-    public void RemoveTilePlayed()
-    {
-        foreach (var tile in TilesToPlay) _rackTilesSet.Remove(tile);
-    }
-
-    public void ShowRemovedTile()
-    {
-        RackTileToShow = _rackTilesSet;
-        PlayedToShow = _played;
-    }
-
-    public void ShowLastTile()
-    {
-        RackTileToShow = _lastRackTilesSet;
-    }
-
-    public void AddTileToRack(Tile tile)
-    {
-        _rackTilesSet.AddTile(tile);
-    }
-
-    public void SetLastDrewTile(Tile tile)
-    {
-        _lastDrewTile = tile;
-    }
-
-    public void PrintRackTiles()
-    {
-        if (!Won)
+        WriteLine("Play : ");
+        foreach (var tile in TilesToPlay)
         {
-            WriteLine(Name + " tiles : ");
-            _rackTilesSet.Tiles.ForEach(t => t.PrintTile());
-        }
-        else
-        {
-            WriteLine(Name + " Win !!!");
+            Rack.Remove(tile);
+            tile.PrintTile();
         }
 
+        WriteLine();
+    }
+
+    public void Drew(Tile tile)
+    {
+        Rack.AddTile(tile);
+
+        Write("Drew : ");
+        tile.PrintTile();
         WriteLine();
     }
 }

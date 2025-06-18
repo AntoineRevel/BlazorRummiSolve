@@ -1,135 +1,126 @@
-using System.Diagnostics;
 using static System.Console;
 
 namespace RummiSolve;
 
 public class Game(Guid id)
 {
-    public readonly List<Player> Players = [];
-
-    private int _noPlay;
-
-    private Queue<Tile> _tilePool = null!;
-
-    public Guid Id = id;
-    public Solution SolutionToShow = new();
-
-    public int Turn;
-
+    private readonly Queue<Tile> _tilePool = new();
 
     public Game() : this(Guid.NewGuid())
     {
     }
 
-    private Solution BoardSolution { get; set; } = new();
-    private Solution NextPlayerSolution { get; set; } = new();
-    public int CurrentPlayerIndex { get; private set; }
+    public Guid Id { get; } = id;
+    public List<Player> Players { get; } = [];
+    public int Turn { get; private set; }
+    public int PlayerIndex { get; private set; }
+    public int PrevPlayerIndex { get; private set; }
+    public Solution Board { get; private set; } = new();
     public bool IsGameOver { get; private set; }
-    public Player? Winner { get; private set; }
 
     public void InitializeGame(List<string> playerNames)
     {
-        WriteLine("GameId : " + Id);
-        var guidBytes = Id.ToByteArray();
-        var seed = BitConverter.ToInt32(guidBytes, 0);
-        var tiles = new List<Tile>();
-        foreach (var color in Enum.GetValues<TileColor>())
-            for (var i = 1; i <= 13; i++)
-            {
-                tiles.Add(new Tile(i, color));
-                tiles.Add(new Tile(i, color));
-            }
+        if (playerNames == null || playerNames.Count == 0)
+            throw new ArgumentException("Player names cannot be null or empty", nameof(playerNames));
 
-        tiles.Add(new Tile(true));
-        tiles.Add(new Tile(true));
+        WriteLine($"GameId: {Id}");
 
-        var rng = new Random(seed);
+        var tiles = GenerateTiles();
 
-        var shuffledTiles = tiles.OrderBy(_ => rng.Next()).ToList(); // One iteration ? RST-108 TODO
+        Shuffle(tiles, new Random(Id.GetHashCode()));
 
-
-        Players.AddRange(playerNames.Select((name, index) =>
-        {
-            var playerTiles = shuffledTiles.Skip(index * 14).Take(14).ToList();
-            return new Player(name, playerTiles);
-        }));
-
-
-        _tilePool = new Queue<Tile>(shuffledTiles.Skip(playerNames.Count * 14));
+        DistributeTiles(tiles, playerNames);
     }
 
-    public void Start()
+    public void Play()
     {
-        while (!IsGameOver)
+        var player = Players[PlayerIndex];
+        var playerSolution = player.Solve(Board);
+
+        if (playerSolution.IsValid)
         {
-            var gameStopwatch = Stopwatch.StartNew();
-            var player = Players[CurrentPlayerIndex];
-            PlayCurrentPlayerTurn(player);
-            ShowSolution(player);
-            NextTurn();
-            gameStopwatch.Stop();
-            WriteLine($"Turn : {gameStopwatch.Elapsed.TotalSeconds} seconds");
-        }
-    }
-
-    public void NextTurn()
-    {
-        CurrentPlayerIndex = (CurrentPlayerIndex + 1) % Players.Count;
-        if (CurrentPlayerIndex == 0) Turn++;
-    }
-    
-    
-    public void PlayCurrentPlayerTurn(Player currentPlayer)
-    {
-        if (IsGameOver) return;
-
-        WriteLine(Turn + " => ___   " + currentPlayer.Name + "'s turn   ___");
-
-        if (NextPlayerSolution.IsValid) BoardSolution = NextPlayerSolution;
-
-        NextPlayerSolution = currentPlayer.SolveIncrTileAndSc(BoardSolution);
-
-        currentPlayer.SaveRack();
-
-        if (NextPlayerSolution.IsValid)
-        {
-            currentPlayer.RemoveTilePlayed();
+            Board = playerSolution;
+            player.Play();
+            if (player.Won) IsGameOver = true;
         }
         else
         {
-            WriteLine(currentPlayer.Name + " can't play.");
-            var drawTile = _tilePool.Dequeue();
-            currentPlayer.SetLastDrewTile(drawTile);
-            Write("Drew tile: ");
-            drawTile.PrintTile();
-            WriteLine();
-            currentPlayer.AddTileToRack(drawTile);
+            player.Drew(_tilePool.Dequeue());
+        }
+
+
+        NextPlayer();
+    }
+
+
+    private static Tile[] GenerateTiles()
+    {
+        var tiles = new Tile[106];
+        var index = 0;
+
+        foreach (var color in Enum.GetValues<TileColor>())
+            for (var i = 1; i <= 13; i++)
+            {
+                tiles[index++] = new Tile(i, color);
+                tiles[index++] = new Tile(i, color);
+            }
+
+        tiles[index++] = new Tile(true);
+        tiles[index] = new Tile(true);
+
+        return tiles;
+    }
+
+    private void DistributeTiles(Tile[] tiles, List<string> playerNames)
+    {
+        const int tilesPerPlayer = 14;
+        var totalDistributed = playerNames.Count * tilesPerPlayer;
+
+        Players.Clear();
+        Players.Capacity = playerNames.Count;
+
+        for (var i = 0; i < playerNames.Count; i++)
+        {
+            var startIndex = i * tilesPerPlayer;
+            var playerTiles = new Tile[tilesPerPlayer];
+            Array.Copy(tiles, startIndex, playerTiles, 0, tilesPerPlayer);
+            Players.Add(new Player(playerNames[i], playerTiles.ToList()));
+        }
+
+        _tilePool.Clear();
+        for (var i = totalDistributed; i < tiles.Length; i++) _tilePool.Enqueue(tiles[i]);
+    }
+
+    private static void Shuffle(Tile[] tiles, Random rng)
+    {
+        for (var i = tiles.Length - 1; i > 0; i--)
+        {
+            var j = rng.Next(i + 1);
+            (tiles[i], tiles[j]) = (tiles[j], tiles[i]);
         }
     }
 
-    public void ShowSolution(Player currentPlayer)
+    private void NextPlayer()
     {
-        if (NextPlayerSolution.IsValid) SolutionToShow = NextPlayerSolution;
-
-        currentPlayer.ShowRemovedTile();
-
-        Print(currentPlayer);
-
-        if (!currentPlayer.Won) return;
-        IsGameOver = true;
-        Winner = currentPlayer;
+        PrevPlayerIndex = PlayerIndex;
+        PlayerIndex = (PlayerIndex + 1) % Players.Count;
+        if (PlayerIndex == 0) Turn++;
     }
 
-    public void BackSolution()
+    public int AllTiles()
     {
-        SolutionToShow = BoardSolution;
-    }
+        var sum = 0;
 
-    private void Print(Player player)
-    {
-        player.PrintRackTiles();
-        WriteLine("");
-        SolutionToShow.PrintSolution();
-        WriteLine("");
+        sum += _tilePool.Count;
+
+        Write(sum + " ");
+
+        sum += Players.Sum(player => player.Rack.Tiles.Count);
+        Write(sum + " ");
+
+        sum += Board.GetSet().Tiles.Count;
+        WriteLine(sum);
+
+        return sum;
     }
 }
