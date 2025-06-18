@@ -32,14 +32,15 @@
                 </button>
             </div>
             <div class="main-actions">
-                @if (_currentState != ActionState.ShowHint && !IsLoading)
+                @if (!_isGameOver)
                 {
-                    <button @onclick="HandleActionBack" class="btn-secondary">
-                        Back
-                    </button>
-                }
-                @if (!_isGameOver || _currentState != ActionState.NextPlayer)
-                {
+                    @if (_currentState != ActionState.ShowHint && !IsLoading && !_isGameOver)
+                    {
+                        <button @onclick="HandleActionBack" class="btn-secondary">
+                            Back
+                        </button>
+                    }
+
                     <button @onclick="HandleActionAsync" disabled="@(IsLoading)" class="btn-primary">
                         @if (IsLoading)
                         {
@@ -52,6 +53,7 @@
                         }
                     </button>
                 }
+
             </div>
         </div>
         <div class="players-section">
