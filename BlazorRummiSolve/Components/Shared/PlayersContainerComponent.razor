@@ -1,7 +1,7 @@
 @using RummiSolve
 <div class="players-container">
     <div class="current-player">
-        <PlayerComponent Player="CurrentPlayer" ShowHint="ShowHint"/>
+        <PlayerComponent Player="CurrentPlayer" ShowHint="ShowHint" CurrentPlayerRack="CurrentPlayerRack"/>
     </div>
 
     <hr/>
@@ -10,7 +10,7 @@
     @foreach (var player in OtherPlayers)
     {
         <div class="other-players">
-            <PlayerComponent Player="player"/>
+            <PlayerComponent Player="player" ShowHint="false" CurrentPlayerRack="player.Rack"/>
         </div>
     }
 
@@ -22,6 +22,9 @@
     [Parameter] public required List<SimplePlayer> OtherPlayers { get; set; }
 
     [Parameter] public bool ShowHint { get; set; }
+
+    [Parameter] public required Set CurrentPlayerRack { get; set; }
+
 }
 
 <style>

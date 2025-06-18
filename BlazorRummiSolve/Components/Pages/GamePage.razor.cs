@@ -8,6 +8,7 @@ public partial class GamePage
     private SimpleGame _currentGame = new();
 
     private ActionState _currentState;
+    private Set _lastPlayerRack = new();
 
     private Set _playerRack = new();
 
@@ -32,11 +33,14 @@ public partial class GamePage
             case ActionState.ShowSolution:
                 ShowHint = false;
                 _board = _currentGame.Board;
+                _playerRack = CurrentPlayer.Rack;
                 _currentState = ActionState.NextPlayer;
                 break;
 
             case ActionState.NextPlayer:
-                _currentGame.Play();
+                CurrentPlayer = _currentGame.Players[_currentGame.PlayerIndex];
+                _playerRack = new Set(_currentGame.Players[_currentGame.PlayerIndex].Rack);
+                _lastPlayerRack = new Set(_playerRack);
                 await Play();
                 _currentState = ActionState.ShowHint;
                 break;
@@ -55,6 +59,7 @@ public partial class GamePage
                 break;
 
             case ActionState.NextPlayer:
+                _playerRack = _lastPlayerRack;
                 ShowHint = true;
 
                 _currentState = ActionState.ShowSolution;
@@ -85,7 +90,9 @@ public partial class GamePage
         _currentGame.InitializeGame(listNames);
         _currentState = ActionState.ShowHint;
         CurrentPlayer = _currentGame.Players[0];
-        _playerRack = CurrentPlayer.Rack;
+        _playerRack = new Set(CurrentPlayer.Rack);
+        _lastPlayerRack = new Set(CurrentPlayer.Rack);
+
         await Play();
     }
 
