@@ -5,21 +5,13 @@ namespace RummiSolve.Solver.Incremental;
 
 public sealed class IncrementalComplexSolverTileAndSc : ComplexSolver, ISolver
 {
-    private readonly int _boardJokers;
     private readonly int _availableJokers;
+    private readonly int _boardJokers;
+    private int _bestPlayerUsedTiles;
+    private int _bestSolutionScore;
 
     private bool[] _bestUsedTiles;
     private int _remainingJoker;
-    private int _bestSolutionScore;
-    private int _bestPlayerUsedTiles;
-
-    public bool Found => BestSolution.IsValid;
-
-    public Solution BestSolution { get; private set; } = new();
-    public IEnumerable<Tile> TilesToPlay => Tiles.Where((_, i) => IsPlayerTile[i] && _bestUsedTiles[i]);
-
-    public bool Won { get; private set; }
-    public int JokerToPlay => _availableJokers - _remainingJoker - _boardJokers;
 
     private IncrementalComplexSolverTileAndSc(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardJokers) : base(
         tiles,
@@ -29,6 +21,31 @@ public sealed class IncrementalComplexSolverTileAndSc : ComplexSolver, ISolver
         _boardJokers = boardJokers;
         _bestUsedTiles = UsedTiles;
         _bestPlayerUsedTiles = 0;
+    }
+
+    private IEnumerable<Tile> TilesToPlay => Tiles.Where((_, i) => IsPlayerTile[i] && _bestUsedTiles[i]);
+    private int JokerToPlay => _availableJokers - _remainingJoker - _boardJokers;
+
+    public SolverResult SearchSolution()
+    {
+        if (Tiles.Length + Jokers <= 2) return SolverResult.Invalid;
+
+        Solution bestSolution = new();
+
+        while (true)
+        {
+            var newSolution = FindSolution(new Solution(), 0, 0);
+
+            if (!newSolution.IsValid) return new SolverResult(bestSolution, TilesToPlay, JokerToPlay);
+            bestSolution = newSolution;
+            _bestUsedTiles = UsedTiles.ToArray();
+            _remainingJoker = Jokers;
+
+            if (UsedTiles.All(b => b)) return new SolverResult(bestSolution, TilesToPlay, JokerToPlay, true);
+
+            Array.Fill(UsedTiles, false);
+            Jokers = _availableJokers;
+        }
     }
 
     public static IncrementalComplexSolverTileAndSc Create(Set boardSet, Set playerSet)
@@ -60,36 +77,13 @@ public sealed class IncrementalComplexSolverTileAndSc : ComplexSolver, ISolver
         );
     }
 
-    public void SearchSolution()
-    {
-        if (Tiles.Length + Jokers <= 2) return;
-
-        while (true)
-        {
-            var newSolution = FindSolution(new Solution(), 0, 0);
-
-            if (!newSolution.IsValid) return;
-            BestSolution = newSolution;
-            _bestUsedTiles = UsedTiles.ToArray();
-            _remainingJoker = Jokers;
-            if (UsedTiles.All(b => b))
-            {
-                Won = true;
-                return;
-            }
-
-            Array.Fill(UsedTiles, false);
-            Jokers = _availableJokers;
-        }
-    }
-
 
     private bool ValidateCondition(int solutionScore, out int usedTiles)
     {
         usedTiles = 0;
-        
+
         //if (solutionScore < _bestSolutionScore) return false;
-        
+
         for (var i = 0; i < UsedTiles.Length; i++)
         {
             if (!IsPlayerTile[i] && !UsedTiles[i]) return false;

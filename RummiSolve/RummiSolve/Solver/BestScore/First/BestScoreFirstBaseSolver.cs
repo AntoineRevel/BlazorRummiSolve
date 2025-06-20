@@ -7,15 +7,27 @@ public class BestScoreFirstBaseSolver : BaseSolver, ISolver
 {
     private readonly int _availableJokers;
     private int _bestSolutionScore;
-    public bool Found { get; private set; }
-    public Solution BestSolution { get; private set; } = new();
-    public IEnumerable<Tile> TilesToPlay { get; private set; } = [];
-    public int JokerToPlay { get; private set; }
-    public bool Won { get; private set; }
 
     private BestScoreFirstBaseSolver(Tile[] tiles, int jokers) : base(tiles, jokers)
     {
         _availableJokers = jokers;
+    }
+
+    public SolverResult SearchSolution()
+    {
+        var scoreSolver = new ScoreFirstBaseSolver(Tiles, Jokers);
+
+        var canPlay = scoreSolver.SearchBestScore();
+
+        if (!canPlay) return SolverResult.Invalid;
+
+        _bestSolutionScore = scoreSolver.BestScore;
+        var bestSolution = FindSolution(new Solution(), 0, 0);
+        var tilesToPlay = Tiles.Where((_, i) => UsedTiles[i]);
+        var jokerToPlay = _availableJokers - Jokers;
+        var won = UsedTiles.All(b => b);
+
+        return new SolverResult(bestSolution, tilesToPlay, jokerToPlay, won);
     }
 
 
@@ -26,29 +38,12 @@ public class BestScoreFirstBaseSolver : BaseSolver, ISolver
         tiles.Sort();
 
         if (playerSet.Jokers > 0) tiles.RemoveRange(tiles.Count - playerSet.Jokers, playerSet.Jokers);
-        
-        
+
+
         return new BestScoreFirstBaseSolver(
             tiles.ToArray(),
             playerSet.Jokers
         );
-    }
-
-    public void SearchSolution()
-    {
-        var scoreSolver = new ScoreFirstBaseSolver(Tiles, Jokers);
-
-        var canPlay = scoreSolver.SearchBestScore();
-
-        if (!canPlay) return;
-
-        Found = true;
-
-        _bestSolutionScore = scoreSolver.BestScore;
-        BestSolution = FindSolution(new Solution(), 0, 0);
-        Won = UsedTiles.All(b => b);
-        TilesToPlay = Tiles.Where((_, i) => UsedTiles[i]);
-        JokerToPlay = _availableJokers - Jokers;
     }
 
 

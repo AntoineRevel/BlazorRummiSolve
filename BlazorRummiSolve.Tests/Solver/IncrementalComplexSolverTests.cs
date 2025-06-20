@@ -24,8 +24,8 @@ public class IncrementalComplexSolverTests
         var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
 
         // Act
-        solver.SearchSolution();
-        var won = solver.Won;
+        var result = solver.SearchSolution();
+        var won = result.Won;
         var solution = solver.BestSolution;
         var tilesToPlay = solver.TilesToPlay.ToList();
         var jokerToPlay = solver.JokerToPlay;
@@ -54,8 +54,8 @@ public class IncrementalComplexSolverTests
         var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
 
         // Act
-        solver.SearchSolution();
-        var won = solver.Won;
+        var result = solver.SearchSolution();
+        var won = result.Won;
         var solution = solver.BestSolution;
         var tilesToPlay = solver.TilesToPlay.ToList();
         var jokerToPlay = solver.JokerToPlay;
@@ -83,8 +83,8 @@ public class IncrementalComplexSolverTests
     //     var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
     //
     //     // Act
-    //     solver.SearchSolution();
-    //     var won = solver.Won;
+    //     var result = solver.SearchSolution();
+    //     var won = result.Won;
     //     var solution = solver.BestSolution;
     //     var tilesToPlay = solver.TilesToPlay.ToList();
     //     var jokerToPlay = solver.JokerToPlay;
@@ -115,8 +115,8 @@ public class IncrementalComplexSolverTests
         var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
 
         // Act
-        solver.SearchSolution();
-        var won = solver.Won;
+        var result = solver.SearchSolution();
+        var won = result.Won;
         var solution = solver.BestSolution;
         var tilesToPlay = solver.TilesToPlay.ToList();
         var jokerToPlay = solver.JokerToPlay;
@@ -146,8 +146,8 @@ public class IncrementalComplexSolverTests
         var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
 
         // Act
-        solver.SearchSolution();
-        var won = solver.Won;
+        var result = solver.SearchSolution();
+        var won = result.Won;
         var solution = solver.BestSolution;
         var tilesToPlay = solver.TilesToPlay.ToList();
         var jokerToPlay = solver.JokerToPlay;
@@ -177,8 +177,8 @@ public class IncrementalComplexSolverTests
         var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
 
         // Act
-        solver.SearchSolution();
-        var won = solver.Won;
+        var result = solver.SearchSolution();
+        var won = result.Won;
         var solution = solver.BestSolution;
         var tilesToPlay = solver.TilesToPlay.ToList();
         var jokerToPlay = solver.JokerToPlay;
@@ -209,8 +209,8 @@ public class IncrementalComplexSolverTests
         var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
 
         // Act
-        solver.SearchSolution();
-        var won = solver.Won;
+        var result = solver.SearchSolution();
+        var won = result.Won;
         var solution = solver.BestSolution;
         var tilesToPlay = solver.TilesToPlay.ToList();
         var jokerToPlay = solver.JokerToPlay;
@@ -248,8 +248,8 @@ public class IncrementalComplexSolverTests
         var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
 
         // Act
-        solver.SearchSolution();
-        var won = solver.Won;
+        var result = solver.SearchSolution();
+        var won = result.Won;
         var solution = solver.BestSolution;
         var tilesToPlay = solver.TilesToPlay.ToList();
         var jokerToPlay = solver.JokerToPlay;
@@ -285,8 +285,8 @@ public class IncrementalComplexSolverTests
         var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
 
         // Act
-        solver.SearchSolution();
-        var won = solver.Won;
+        var result = solver.SearchSolution();
+        var won = result.Won;
         var solution = solver.BestSolution;
         var tilesToPlay = solver.TilesToPlay.ToList();
         var jokerToPlay = solver.JokerToPlay;
@@ -320,8 +320,8 @@ public class IncrementalComplexSolverTests
         var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
 
         // Act
-        solver.SearchSolution();
-        var won = solver.Won;
+        var result = solver.SearchSolution();
+        var won = result.Won;
         var solution = solver.BestSolution;
         var tilesToPlay = solver.TilesToPlay.ToList();
         var jokerToPlay = solver.JokerToPlay;
@@ -350,8 +350,8 @@ public class IncrementalComplexSolverTests
         var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
 
         // Act
-        solver.SearchSolution();
-        var won = solver.Won;
+        var result = solver.SearchSolution();
+        var won = result.Won;
         var solution = solver.BestSolution;
 
         // Assert
@@ -384,8 +384,8 @@ public class IncrementalComplexSolverTests
         var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
 
         // Act
-        solver.SearchSolution();
-        var won = solver.Won;
+        var result = solver.SearchSolution();
+        var won = result.Won;
         var solution = solver.BestSolution;
         var tilesToPlay = solver.TilesToPlay.ToList();
         var jokerToPlay = solver.JokerToPlay;
@@ -417,8 +417,8 @@ public class IncrementalComplexSolverTests
         var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
 
         // Act
-        solver.SearchSolution();
-        var won = solver.Won;
+        var result = solver.SearchSolution();
+        var won = result.Won;
         var solution = solver.BestSolution;
         var tilesToPlay = solver.TilesToPlay.ToList();
         var jokerToPlay = solver.JokerToPlay;

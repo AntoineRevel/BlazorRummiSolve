@@ -1,3 +1,4 @@
+using RummiSolve.Solver;
 using RummiSolve.Solver.Combinations;
 using RummiSolve.Solver.Combinations.First;
 using RummiSolve.Solver.Incremental;
@@ -6,7 +7,7 @@ using static System.Console;
 
 namespace RummiSolve;
 
-public class Player(string name, List<Tile> tiles)
+public class Player(string name, List<Tile> tiles) //, ISolverStrategy solverStrategy)
 {
     public bool Played { get; private set; }
     public string Name { get; } = name;
@@ -15,6 +16,7 @@ public class Player(string name, List<Tile> tiles)
     public List<Tile> TilesToPlay { get; private set; } = [];
     public bool Won { get; private set; }
 
+    //TODO private readonly ISolverStrategy _solverStrategy =solverStrategy;
 
     public Solution Solve(Solution boardSolution)
     {
@@ -30,6 +32,7 @@ public class Player(string name, List<Tile> tiles)
             : IncrementalFirstBaseSolver.Create(Rack);
 
         var incrementalTask = Task.Run(() => incrementalSolver.SearchSolution(), cts.Token);
+
         var combiTask = Task.Run(() => combiSolver.SearchSolution(), cts.Token);
 
         var completedTask = Task.WaitAny(incrementalTask, combiTask);
@@ -37,27 +40,27 @@ public class Player(string name, List<Tile> tiles)
         cts.Cancel();
 
         var winner = completedTask == 0
-            ? (solver: incrementalSolver, name: "Incremental")
-            : (solver: combiSolver, name: "Combi");
+            ? (solverTask: incrementalTask, name: "Incremental")
+            : (solverTask: combiTask, name: "Combi");
 
         WriteLine($"{winner.name} First");
-        return ProcessSolution(boardSolution, winner.solver);
+        return ProcessSolution(boardSolution, winner.solverTask.Result);
     }
 
-    private Solution ProcessSolution(Solution boardSolution, ISolver solver)
+    private Solution ProcessSolution(Solution boardSolution, SolverResult result)
     {
-        if (!solver.Found) return Solution.GetInvalidSolution();
+        if (!result.Found) return Solution.InvalidSolution;
 
-        Won = solver.Won;
+        Won = result.Won;
 
-        TilesToPlay = solver.TilesToPlay.ToList();
+        TilesToPlay = result.TilesToPlay.ToList();
 
-        for (var i = 0; i < solver.JokerToPlay; i++) TilesToPlay.Add(new Tile(true));
+        for (var i = 0; i < result.JokerToPlay; i++) TilesToPlay.Add(new Tile(true));
 
-        if (Played) return solver.BestSolution;
+        if (Played) return result.BestSolution;
 
         Played = true;
-        return solver.BestSolution.AddSolution(boardSolution);
+        return result.BestSolution.AddSolution(boardSolution);
     }
 
     public void Play()

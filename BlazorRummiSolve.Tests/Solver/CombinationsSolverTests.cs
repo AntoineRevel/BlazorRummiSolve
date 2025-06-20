@@ -24,11 +24,11 @@ public class CombinationsSolverTests
         var solver = CombinationsSolver.Create(boardSet, playerSet);
 
         // Act
-        solver.SearchSolution();
-        var won = solver.Won;
-        var solution = solver.BestSolution;
-        var tilesToPlay = solver.TilesToPlay.ToList();
-        var jokerToPlay = solver.JokerToPlay;
+        var result = solver.SearchSolution();
+        var won = result.Won;
+        var solution = result.BestSolution;
+        var tilesToPlay = result.TilesToPlay.ToList();
+        var jokerToPlay = result.JokerToPlay;
 
         // Assert
         Assert.True(won);
@@ -54,11 +54,11 @@ public class CombinationsSolverTests
         var solver = CombinationsSolver.Create(boardSet, playerSet);
 
         // Act
-        solver.SearchSolution();
-        var won = solver.Won;
-        var solution = solver.BestSolution;
-        var tilesToPlay = solver.TilesToPlay.ToList();
-        var jokerToPlay = solver.JokerToPlay;
+        var result = solver.SearchSolution();
+        var won = result.Won;
+        var solution = result.BestSolution;
+        var tilesToPlay = result.TilesToPlay.ToList();
+        var jokerToPlay = result.JokerToPlay;
 
         // Assert
         Assert.True(won);
@@ -86,11 +86,11 @@ public class CombinationsSolverTests
         var solver = CombinationsSolver.Create(boardSet, playerSet);
 
         // Act
-        solver.SearchSolution();
-        var won = solver.Won;
-        var solution = solver.BestSolution;
-        var tilesToPlay = solver.TilesToPlay.ToList();
-        var jokerToPlay = solver.JokerToPlay;
+        var result = solver.SearchSolution();
+        var won = result.Won;
+        var solution = result.BestSolution;
+        var tilesToPlay = result.TilesToPlay.ToList();
+        var jokerToPlay = result.JokerToPlay;
 
         // Assert
         Assert.True(won);
@@ -116,11 +116,11 @@ public class CombinationsSolverTests
         var solver = CombinationsSolver.Create(boardSet, playerSet);
 
         // Act
-        solver.SearchSolution();
-        var won = solver.Won;
-        var solution = solver.BestSolution;
-        var tilesToPlay = solver.TilesToPlay.ToList();
-        var jokerToPlay = solver.JokerToPlay;
+        var result = solver.SearchSolution();
+        var won = result.Won;
+        var solution = result.BestSolution;
+        var tilesToPlay = result.TilesToPlay.ToList();
+        var jokerToPlay = result.JokerToPlay;
 
         // Assert
         Assert.True(won);
@@ -147,11 +147,11 @@ public class CombinationsSolverTests
         var solver = CombinationsSolver.Create(boardSet, playerSet);
 
         // Act
-        solver.SearchSolution();
-        var won = solver.Won;
-        var solution = solver.BestSolution;
-        var tilesToPlay = solver.TilesToPlay.ToList();
-        var jokerToPlay = solver.JokerToPlay;
+        var result = solver.SearchSolution();
+        var won = result.Won;
+        var solution = result.BestSolution;
+        var tilesToPlay = result.TilesToPlay.ToList();
+        var jokerToPlay = result.JokerToPlay;
 
         // Assert
         Assert.True(won);
@@ -186,11 +186,11 @@ public class CombinationsSolverTests
         var solver = CombinationsSolver.Create(boardSet, playerSet);
 
         // Act
-        solver.SearchSolution();
-        var won = solver.Won;
-        var solution = solver.BestSolution;
-        var tilesToPlay = solver.TilesToPlay.ToList();
-        var jokerToPlay = solver.JokerToPlay;
+        var result = solver.SearchSolution();
+        var won = result.Won;
+        var solution = result.BestSolution;
+        var tilesToPlay = result.TilesToPlay.ToList();
+        var jokerToPlay = result.JokerToPlay;
 
         // Assert
         Assert.False(won);
@@ -198,7 +198,7 @@ public class CombinationsSolverTests
         Assert.Equal(6, tilesToPlay.Count);
         Assert.Equal(0, jokerToPlay);
     }
-    
+
     [Fact]
     public void SearchSolution_ValidNotWon2()
     {
@@ -211,20 +211,20 @@ public class CombinationsSolverTests
         ]);
 
         var playerSet = new Set([
-            new Tile(8,TileColor.Black),
-            new Tile(8,TileColor.Red),
-            
+            new Tile(8, TileColor.Black),
+            new Tile(8, TileColor.Red),
+
             new Tile(1)
         ]);
 
         var solver = CombinationsSolver.Create(boardSet, playerSet);
 
         // Act
-        solver.SearchSolution();
-        var won = solver.Won;
-        var solution = solver.BestSolution;
-        var tilesToPlay = solver.TilesToPlay.ToList();
-        var jokerToPlay = solver.JokerToPlay;
+        var result = solver.SearchSolution();
+        var won = result.Won;
+        var solution = result.BestSolution;
+        var tilesToPlay = result.TilesToPlay.ToList();
+        var jokerToPlay = result.JokerToPlay;
 
         // Assert
         Assert.False(won);
@@ -257,11 +257,11 @@ public class CombinationsSolverTests
         var solver = CombinationsSolver.Create(boardSet, playerSet);
 
         // Act
-        solver.SearchSolution();
-        var won = solver.Won;
-        var solution = solver.BestSolution;
-        var tilesToPlay = solver.TilesToPlay.ToList();
-        var jokerToPlay = solver.JokerToPlay;
+        var result = solver.SearchSolution();
+        var won = result.Won;
+        var solution = result.BestSolution;
+        var tilesToPlay = result.TilesToPlay.ToList();
+        var jokerToPlay = result.JokerToPlay;
 
         // Assert
         Assert.True(won);
@@ -292,11 +292,11 @@ public class CombinationsSolverTests
         var solver = CombinationsSolver.Create(boardSet, playerSet);
 
         // Act
-        solver.SearchSolution();
-        var won = solver.Won;
-        var solution = solver.BestSolution;
-        var tilesToPlay = solver.TilesToPlay.ToList();
-        var jokerToPlay = solver.JokerToPlay;
+        var result = solver.SearchSolution();
+        var won = result.Won;
+        var solution = result.BestSolution;
+        var tilesToPlay = result.TilesToPlay.ToList();
+        var jokerToPlay = result.JokerToPlay;
 
         // Assert
         Assert.True(won);
@@ -304,7 +304,7 @@ public class CombinationsSolverTests
         Assert.Equal(4, tilesToPlay.Count);
         Assert.Equal(1, jokerToPlay);
     }
-    
+
     [Fact]
     public void SearchSolution_ValidOneJ()
     {
@@ -321,11 +321,11 @@ public class CombinationsSolverTests
         var solver = CombinationsSolver.Create(boardSet, playerSet);
 
         // Act
-        solver.SearchSolution();
-        var won = solver.Won;
-        var solution = solver.BestSolution;
-        var tilesToPlay = solver.TilesToPlay.ToList();
-        var jokerToPlay = solver.JokerToPlay;
+        var result = solver.SearchSolution();
+        var won = result.Won;
+        var solution = result.BestSolution;
+        var tilesToPlay = result.TilesToPlay.ToList();
+        var jokerToPlay = result.JokerToPlay;
 
         // Assert
         Assert.True(won);
@@ -351,9 +351,9 @@ public class CombinationsSolverTests
         var solver = CombinationsSolver.Create(boardSet, playerSet);
 
         // Act
-        solver.SearchSolution();
-        var won = solver.Won;
-        var solution = solver.BestSolution;
+        var result = solver.SearchSolution();
+        var won = result.Won;
+        var solution = result.BestSolution;
 
         // Assert
         Assert.False(won);
