@@ -3,7 +3,7 @@
     <div class="header">
         <h2>@Player.Name</h2>
         <span
-            class="tile-count @(Player.Played ? "played" : "not-played")">@Player.Rack.Tiles.Count</span>
+            class="tile-count @(Player.Played ? "played" : "not-played")">@CurrentPlayerRack.Tiles.Count</span>
     </div>
     <SetComponent Set="CurrentPlayerRack" ShowHint="ShowHint" HighlightTiles="Player.TilesToPlay"/>
 </div>

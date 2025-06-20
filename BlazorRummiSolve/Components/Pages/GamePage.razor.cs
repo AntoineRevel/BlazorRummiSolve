@@ -61,7 +61,6 @@ public partial class GamePage
         {
             case ActionState.ShowSolution:
                 ShowHint = false;
-                Console.WriteLine("caca");
                 _currentState = ActionState.ShowHint;
                 break;
 
