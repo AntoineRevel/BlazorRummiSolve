@@ -9,6 +9,7 @@ public class GameTests
     {
         // Arrange
         var game = new Game();
+
         var playerNames = new List<string> { "Antoine", "Matthieu", "Maguy" };
 
         // Act & Assert - Initialisation
@@ -25,6 +26,6 @@ public class GameTests
         }
 
         // Vérification finale
-        Assert.Equal(106, game.AllTiles());
+        Assert.True(game.AllTiles() == 106, $"game.Id = {game.Id}");
     }
 }

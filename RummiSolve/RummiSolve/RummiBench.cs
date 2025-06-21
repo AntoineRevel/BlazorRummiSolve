@@ -297,4 +297,50 @@ public class RummiBench
 
         solution.PrintSolution();
     }
+
+
+    public static async Task RunGamesUntilErrorAsync(int maxGames = 1000)
+    {
+        var tasks = new List<Task>();
+
+
+        for (var i = 0; i < maxGames; i++)
+            tasks.Add(Task.Run(async () =>
+            {
+                var game = new Game();
+                game.InitializeGame(["Antoine", "Matthieu", "Maguy"]);
+
+                try
+                {
+                    if (game.AllTiles() != 106)
+                        throw new Exception("Erreur au départ");
+
+                    while (!game.IsGameOver)
+                    {
+                        await game.PlayAsync();
+                        if (game.AllTiles() != 106)
+                            throw new Exception("Erreur en cours de partie");
+                    }
+
+                    if (game.AllTiles() != 106)
+                        throw new Exception("Erreur en fin de partie");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"🛑 Game ID {game.Id} a échoué : {ex.Message}");
+
+                    throw;
+                }
+            }));
+
+        try
+        {
+            await Task.WhenAll(tasks);
+            Console.WriteLine("✅ Toutes les parties se sont bien déroulées !");
+        }
+        catch
+        {
+            Console.WriteLine("❌ Une erreur a été détectée, arrêt des tests.");
+        }
+    }
 }
