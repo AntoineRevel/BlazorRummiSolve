@@ -24,11 +24,11 @@ public class BestScoreComplexSolverTests
         var solver = BestScoreComplexSolver.Create(boardSet, playerSet);
 
         // Act
-        solver.SearchSolution();
-        var won = solver.Won;
-        var solution = solver.BestSolution;
-        var tilesToPlay = solver.TilesToPlay.ToList();
-        var jokerToPlay = solver.JokerToPlay;
+        var result = solver.SearchSolution();
+        var won = result.Won;
+        var solution = result.BestSolution;
+        var tilesToPlay = result.TilesToPlay.ToList();
+        var jokerToPlay = result.JokerToPlay;
 
         // Assert
         Assert.True(won);
@@ -36,7 +36,7 @@ public class BestScoreComplexSolverTests
         Assert.Equal(3, tilesToPlay.Count);
         Assert.Equal(0, jokerToPlay);
     }
-    
+
     [Fact]
     public void SearchSolution_ValidPlay1()
     {
@@ -54,11 +54,11 @@ public class BestScoreComplexSolverTests
         var solver = BestScoreComplexSolver.Create(boardSet, playerSet);
 
         // Act
-        solver.SearchSolution();
-        var won = solver.Won;
-        var solution = solver.BestSolution;
-        var tilesToPlay = solver.TilesToPlay.ToList();
-        var jokerToPlay = solver.JokerToPlay;
+        var result = solver.SearchSolution();
+        var won = result.Won;
+        var solution = result.BestSolution;
+        var tilesToPlay = result.TilesToPlay.ToList();
+        var jokerToPlay = result.JokerToPlay;
 
         // Assert
         Assert.True(won);
@@ -86,11 +86,11 @@ public class BestScoreComplexSolverTests
         var solver = BestScoreComplexSolver.Create(boardSet, playerSet);
 
         // Act
-        solver.SearchSolution();
-        var won = solver.Won;
-        var solution = solver.BestSolution;
-        var tilesToPlay = solver.TilesToPlay.ToList();
-        var jokerToPlay = solver.JokerToPlay;
+        var result = solver.SearchSolution();
+        var won = result.Won;
+        var solution = result.BestSolution;
+        var tilesToPlay = result.TilesToPlay.ToList();
+        var jokerToPlay = result.JokerToPlay;
 
         // Assert
         Assert.True(won);
@@ -117,11 +117,11 @@ public class BestScoreComplexSolverTests
         var solver = BestScoreComplexSolver.Create(boardSet, playerSet);
 
         // Act
-        solver.SearchSolution();
-        var won = solver.Won;
-        var solution = solver.BestSolution;
-        var tilesToPlay = solver.TilesToPlay.ToList();
-        var jokerToPlay = solver.JokerToPlay;
+        var result = solver.SearchSolution();
+        var won = result.Won;
+        var solution = result.BestSolution;
+        var tilesToPlay = result.TilesToPlay.ToList();
+        var jokerToPlay = result.JokerToPlay;
 
         // Assert
         Assert.True(won);
@@ -148,11 +148,11 @@ public class BestScoreComplexSolverTests
         var solver = BestScoreComplexSolver.Create(boardSet, playerSet);
 
         // Act
-        solver.SearchSolution();
-        var won = solver.Won;
-        var solution = solver.BestSolution;
-        var tilesToPlay = solver.TilesToPlay.ToList();
-        var jokerToPlay = solver.JokerToPlay;
+        var result = solver.SearchSolution();
+        var won = result.Won;
+        var solution = result.BestSolution;
+        var tilesToPlay = result.TilesToPlay.ToList();
+        var jokerToPlay = result.JokerToPlay;
 
         // Assert
         Assert.True(won);
@@ -180,11 +180,11 @@ public class BestScoreComplexSolverTests
         var solver = BestScoreComplexSolver.Create(boardSet, playerSet);
 
         // Act
-        solver.SearchSolution();
-        var won = solver.Won;
-        var solution = solver.BestSolution;
-        var tilesToPlay = solver.TilesToPlay.ToList();
-        var jokerToPlay = solver.JokerToPlay;
+        var result = solver.SearchSolution();
+        var won = result.Won;
+        var solution = result.BestSolution;
+        var tilesToPlay = result.TilesToPlay.ToList();
+        var jokerToPlay = result.JokerToPlay;
 
         // Assert
         Assert.True(won);
@@ -219,11 +219,11 @@ public class BestScoreComplexSolverTests
         var solver = BestScoreComplexSolver.Create(boardSet, playerSet);
 
         // Act
-        solver.SearchSolution();
-        var won = solver.Won;
-        var solution = solver.BestSolution;
-        var tilesToPlay = solver.TilesToPlay.ToList();
-        var jokerToPlay = solver.JokerToPlay;
+        var result = solver.SearchSolution();
+        var won = result.Won;
+        var solution = result.BestSolution;
+        var tilesToPlay = result.TilesToPlay.ToList();
+        var jokerToPlay = result.JokerToPlay;
 
         // Assert
         Assert.False(won);
@@ -256,11 +256,11 @@ public class BestScoreComplexSolverTests
         var solver = BestScoreComplexSolver.Create(boardSet, playerSet);
 
         // Act
-        solver.SearchSolution();
-        var won = solver.Won;
-        var solution = solver.BestSolution;
-        var tilesToPlay = solver.TilesToPlay.ToList();
-        var jokerToPlay = solver.JokerToPlay;
+        var result = solver.SearchSolution();
+        var won = result.Won;
+        var solution = result.BestSolution;
+        var tilesToPlay = result.TilesToPlay.ToList();
+        var jokerToPlay = result.JokerToPlay;
 
         // Assert
         Assert.True(won);
@@ -291,11 +291,11 @@ public class BestScoreComplexSolverTests
         var solver = BestScoreComplexSolver.Create(boardSet, playerSet);
 
         // Act
-        solver.SearchSolution();
-        var won = solver.Won;
-        var solution = solver.BestSolution;
-        var tilesToPlay = solver.TilesToPlay.ToList();
-        var jokerToPlay = solver.JokerToPlay;
+        var result = solver.SearchSolution();
+        var won = result.Won;
+        var solution = result.BestSolution;
+        var tilesToPlay = result.TilesToPlay.ToList();
+        var jokerToPlay = result.JokerToPlay;
 
         // Assert
         Assert.True(won);
@@ -321,9 +321,9 @@ public class BestScoreComplexSolverTests
         var solver = BestScoreComplexSolver.Create(boardSet, playerSet);
 
         // Act
-        solver.SearchSolution();
-        var won = solver.Won;
-        var solution = solver.BestSolution;
+        var result = solver.SearchSolution();
+        var won = result.Won;
+        var solution = result.BestSolution;
 
         // Assert
         Assert.False(won);

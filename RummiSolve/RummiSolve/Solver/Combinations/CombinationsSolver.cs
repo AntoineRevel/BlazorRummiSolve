@@ -1,3 +1,4 @@
+using RummiSolve.Results;
 using RummiSolve.Solver.Abstract;
 using RummiSolve.Solver.Interfaces;
 
@@ -5,14 +6,9 @@ namespace RummiSolve.Solver.Combinations;
 
 public class CombinationsSolver : ISolver
 {
-    private readonly List<Tile> _boardTiles;
     private readonly int _boardJokers;
+    private readonly List<Tile> _boardTiles;
     private readonly List<Tile> _playerTilesJ;
-    public bool Found { get; private set; }
-    public Solution BestSolution { get; private set; } = new();
-    public IEnumerable<Tile> TilesToPlay { get; private set; } = [];
-    public int JokerToPlay { get; private set; }
-    public bool Won { get; private set; }
 
     private CombinationsSolver(List<Tile> boardTiles, int boardJokers, List<Tile> playerTiles)
     {
@@ -21,16 +17,7 @@ public class CombinationsSolver : ISolver
         _playerTilesJ = playerTiles;
     }
 
-    public static CombinationsSolver Create(Set boardSet, Set playerSet)
-    {
-        boardSet.Tiles.Sort();
-
-        if (boardSet.Jokers > 0) boardSet.Tiles.RemoveRange(boardSet.Tiles.Count - boardSet.Jokers, boardSet.Jokers);
-
-        return new CombinationsSolver(boardSet.Tiles, boardSet.Jokers, playerSet.Tiles);
-    }
-
-    public void SearchSolution()
+    public SolverResult SearchSolution()
     {
         var playerJokers = _playerTilesJ.Count(tile => tile.IsJoker);
         var playerTiles = new List<Tile>(_playerTilesJ);
@@ -46,16 +33,12 @@ public class CombinationsSolver : ISolver
             JokerToPlay = playerJokers
         };
 
-        Found = firstBinarySolver.SearchSolution();
-
-        if (Found)
-        {
-            BestSolution = firstBinarySolver.BinarySolution;
-            TilesToPlay = firstBinarySolver.TilesToPlay;
-            JokerToPlay = firstBinarySolver.JokerToPlay;
-            Won = true;
-            return;
-        }
+        if (firstBinarySolver.SearchSolution())
+            return new SolverResult(
+                GetType().Name,
+                firstBinarySolver.BinarySolution,
+                firstBinarySolver.TilesToPlay,
+                firstBinarySolver.JokerToPlay, true);
 
 
         for (var tileTry = _playerTilesJ.Count - 1; tileTry > 0; tileTry--)
@@ -66,8 +49,12 @@ public class CombinationsSolver : ISolver
                     .OrderByDescending(l => l.Sum(t => t.Value)))
             {
                 var joker = combi.Count(tile => tile.IsJoker);
-                if (joker > 0) combi.RemoveRange(tileTry - joker, joker);
 
+                if (joker > 0)
+                {
+                    combi.Sort();
+                    combi.RemoveRange(tileTry - joker, joker);
+                }
 
                 var solver = new BinaryBaseSolver(_boardTiles.Concat(combi).Order().ToArray(), joker + _boardJokers)
                 {
@@ -75,13 +62,22 @@ public class CombinationsSolver : ISolver
                     JokerToPlay = joker
                 };
 
-                Found = solver.SearchSolution();
-                if (!Found) continue;
-                BestSolution = solver.BinarySolution;
-                TilesToPlay = solver.TilesToPlay;
-                JokerToPlay = solver.JokerToPlay;
-                return;
+                if (!solver.SearchSolution()) continue;
+
+                return new SolverResult(GetType().Name, solver.BinarySolution, solver.TilesToPlay, solver.JokerToPlay);
             }
         }
+
+        return new SolverResult(GetType().Name);
+        ;
+    }
+
+    public static CombinationsSolver Create(Set boardSet, Set playerSet)
+    {
+        boardSet.Tiles.Sort();
+
+        if (boardSet.Jokers > 0) boardSet.Tiles.RemoveRange(boardSet.Tiles.Count - boardSet.Jokers, boardSet.Jokers);
+
+        return new CombinationsSolver(boardSet.Tiles, boardSet.Jokers, playerSet.Tiles);
     }
 }

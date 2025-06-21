@@ -10,20 +10,18 @@ public class CombinationsFirstSolverTests
     {
         // Arrange
         var playerSet = new Set([
-        
             new Tile(10),
             new Tile(10, TileColor.Red),
             new Tile(10, TileColor.Black),
-            
         ]);
 
         var solver = CombinationsFirstSolver.Create(playerSet);
 
         // Act
-        solver.SearchSolution();
-        var solution = solver.BestSolution;
-        var tilesToPlay = solver.TilesToPlay.ToList();
-        var won = solver.Won;
+        var result = solver.SearchSolution();
+        var solution = result.BestSolution;
+        var tilesToPlay = result.TilesToPlay.ToList();
+        var won = result.Won;
 
         // Assert
         Assert.True(solution.IsValid);
@@ -36,35 +34,31 @@ public class CombinationsFirstSolverTests
             Assert.Contains(tile, tilesToPlay);
         }
     }
-    
+
     [Fact]
     public void SearchSolution_ValidNoWon()
     {
         // Arrange
         var playerSet = new Set([
             new Tile(1),
-        
+
             new Tile(10),
             new Tile(10, TileColor.Red),
             new Tile(10, TileColor.Black),
-            
         ]);
 
         var solver = CombinationsFirstSolver.Create(playerSet);
 
         // Act
-        solver.SearchSolution();
-        var solution = solver.BestSolution;
-        var tilesToPlay = solver.TilesToPlay.ToList();
-        var won = solver.Won;
-        
+        var result = solver.SearchSolution();
+        var solution = result.BestSolution;
+        var tilesToPlay = result.TilesToPlay.ToList();
+        var won = result.Won;
+
         // Assert
         Assert.True(solution.IsValid);
         Assert.False(won);
 
         Assert.Equal(3, tilesToPlay.Count);
-        
     }
-    
-    
 }

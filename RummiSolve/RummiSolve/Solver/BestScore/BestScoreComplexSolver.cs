@@ -1,3 +1,4 @@
+using RummiSolve.Results;
 using RummiSolve.Solver.Abstract;
 using RummiSolve.Solver.Interfaces;
 
@@ -5,21 +6,35 @@ namespace RummiSolve.Solver.BestScore;
 
 public class BestScoreComplexSolver : ComplexSolver, ISolver
 {
-    private readonly int _boardJokers;
     private readonly int _availableJokers;
+    private readonly int _boardJokers;
     private int _bestSolutionScore;
 
-    public bool Found { get; private set; }
-    public Solution BestSolution { get; private set; } = new();
-    public IEnumerable<Tile> TilesToPlay { get; private set; } = [];
-    public int JokerToPlay { get; private set; }
-    public bool Won { get; private set; }
 
     private BestScoreComplexSolver(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardJokers) :
         base(tiles, jokers, isPlayerTile)
     {
         _availableJokers = jokers;
         _boardJokers = boardJokers;
+    }
+
+    public SolverResult SearchSolution()
+    {
+        var scoreSolver = new ComplexScoreSolver(Tiles, Jokers, IsPlayerTile);
+
+        var canPlay = scoreSolver.SearchBestScore();
+
+        if (!canPlay) return new SolverResult(GetType().Name);
+        ;
+
+        _bestSolutionScore = scoreSolver.BestScore;
+
+        var bestSolution = FindSolution(new Solution(), 0, 0);
+        var tilesToPlay = Tiles.Where((_, i) => IsPlayerTile[i] && UsedTiles[i]);
+        var jokerToPlay = _availableJokers - Jokers - _boardJokers;
+        var won = UsedTiles.All(b => b);
+
+        return new SolverResult(GetType().Name, bestSolution, tilesToPlay, jokerToPlay, won);
     }
 
 
@@ -52,28 +67,11 @@ public class BestScoreComplexSolver : ComplexSolver, ISolver
         );
     }
 
-    public void SearchSolution()
-    {
-        var scoreSolver = new ComplexScoreSolver(Tiles, Jokers, IsPlayerTile);
-
-        var canPlay = scoreSolver.SearchBestScore();
-
-        if (!canPlay) return;
-
-        Found = true;
-
-        _bestSolutionScore = scoreSolver.BestScore;
-        BestSolution = FindSolution(new Solution(), 0, 0);
-        Won = UsedTiles.All(b => b);
-        TilesToPlay = Tiles.Where((_, i) => IsPlayerTile[i] && UsedTiles[i]);
-        JokerToPlay = _availableJokers - Jokers - _boardJokers;
-    }
-
 
     private bool ValidateCondition(int solutionScore)
     {
         if (solutionScore != _bestSolutionScore) return false;
-        
+
         // ReSharper disable once LoopCanBeConvertedToQuery
         for (var i = 0; i < UsedTiles.Length; i++)
         {

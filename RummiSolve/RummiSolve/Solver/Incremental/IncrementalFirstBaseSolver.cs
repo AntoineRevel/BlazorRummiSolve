@@ -1,3 +1,4 @@
+using RummiSolve.Results;
 using RummiSolve.Solver.Abstract;
 using RummiSolve.Solver.Interfaces;
 
@@ -6,22 +7,41 @@ namespace RummiSolve.Solver.Incremental;
 public sealed class IncrementalFirstBaseSolver : BaseSolver, ISolver
 {
     private readonly int _availableJokers;
+    private int _bestSolutionScore;
 
     private bool[] _bestUsedTiles;
     private int _remainingJoker;
-    private int _bestSolutionScore;
-
-    public bool Found => BestSolution.IsValid;
-    public Solution BestSolution { get; private set; } = new();
-    public IEnumerable<Tile> TilesToPlay => Tiles.Where((_, i) => _bestUsedTiles[i]);
-    public bool Won { get; private set; }
-    public int JokerToPlay => _availableJokers - _remainingJoker;
 
     private IncrementalFirstBaseSolver(Tile[] tiles, int jokers) : base(tiles, jokers)
     {
         _availableJokers = jokers;
         _bestUsedTiles = UsedTiles;
         _bestSolutionScore = MinScore;
+    }
+
+    public Solution BestSolution { get; private set; } = new();
+    public IEnumerable<Tile> TilesToPlay => Tiles.Where((_, i) => _bestUsedTiles[i]);
+    public int JokerToPlay => _availableJokers - _remainingJoker;
+
+    public SolverResult SearchSolution()
+    {
+        if (Tiles.Length + Jokers <= 2) return new SolverResult(GetType().Name);
+        ;
+
+        while (true)
+        {
+            var newSolution = FindSolution(new Solution(), 0, 0);
+
+            if (!newSolution.IsValid) return new SolverResult(GetType().Name, BestSolution, TilesToPlay, JokerToPlay);
+            BestSolution = newSolution;
+            _bestUsedTiles = UsedTiles.ToArray();
+            _remainingJoker = Jokers;
+            if (UsedTiles.All(b => b))
+                return new SolverResult(GetType().Name, BestSolution, TilesToPlay, JokerToPlay, true);
+
+            Array.Fill(UsedTiles, false);
+            Jokers = _availableJokers;
+        }
     }
 
     public static IncrementalFirstBaseSolver Create(in Set playerSet)
@@ -36,29 +56,6 @@ public sealed class IncrementalFirstBaseSolver : BaseSolver, ISolver
             tiles.ToArray(),
             playerSet.Jokers
         );
-    }
-
-    public void SearchSolution()
-    {
-        if (Tiles.Length + Jokers <= 2) return;
-
-        while (true)
-        {
-            var newSolution = FindSolution(new Solution(), 0, 0);
-
-            if (!newSolution.IsValid) return;
-            BestSolution = newSolution;
-            _bestUsedTiles = UsedTiles.ToArray();
-            _remainingJoker = Jokers;
-            if (UsedTiles.All(b => b))
-            {
-                Won = true;
-                return;
-            }
-
-            Array.Fill(UsedTiles, false);
-            Jokers = _availableJokers;
-        }
     }
 
     private bool ValidateCondition(int solutionScore)

@@ -1,3 +1,4 @@
+using RummiSolve.Results;
 using RummiSolve.Solver.Abstract;
 using RummiSolve.Solver.Interfaces;
 
@@ -6,22 +7,14 @@ namespace RummiSolve.Solver.Combinations.First;
 public class CombinationsFirstSolver : ISolver
 {
     private readonly List<Tile> _tiles;
-    public bool Found { get; private set; }
-    public Solution BestSolution { get; private set; } = new();
-    public IEnumerable<Tile> TilesToPlay { get; private set; } = [];
-    public int JokerToPlay { get; private set; }
-    public bool Won { get; private set; }
+
 
     private CombinationsFirstSolver(List<Tile> tiles)
     {
         _tiles = tiles;
     }
-    public static CombinationsFirstSolver Create(Set playerSet)
-    {
-        return new CombinationsFirstSolver(playerSet.Tiles);
-    }
 
-    public void SearchSolution()
+    public SolverResult SearchSolution()
     {
         _tiles.Sort();
 
@@ -33,37 +26,36 @@ public class CombinationsFirstSolver : ISolver
 
         var firstBinarySolver = new BinaryFirstBaseSolver(tilesFirstTry.ToArray(), playerJokers);
 
-        Found = firstBinarySolver.SearchSolution();
+        var found = firstBinarySolver.SearchSolution();
 
-        if (Found)
-        {
-            BestSolution = firstBinarySolver.BinarySolution;
-            TilesToPlay = tilesFirstTry;
-            JokerToPlay = playerJokers;
-            Won = true;
-            return;
-        }
+        if (found)
+            return new SolverResult(GetType().Name, firstBinarySolver.BinarySolution, tilesFirstTry, playerJokers,
+                true);
 
         _tiles.Reverse();
 
         for (var tileTry = _tiles.Count - 1; tileTry > 2; tileTry--)
         {
-            
             foreach (
                 var combi in
-                     BaseSolver.GetCombinations(_tiles, tileTry)
-                         .OrderByDescending(l => l.Sum(t => t.Value)))
+                BaseSolver.GetCombinations(_tiles, tileTry)
+                    .OrderByDescending(l => l.Sum(t => t.Value)))
             {
                 var joker = combi.Count(tile => tile.IsJoker);
                 if (joker > 0) combi.RemoveRange(tileTry - joker, joker);
                 var solver = new BinaryFirstBaseSolver(combi.ToArray(), joker);
-                Found = solver.SearchSolution();
-                if (!Found) continue;
-                BestSolution = solver.BinarySolution;
-                TilesToPlay = solver.TilesToPlay;
-                JokerToPlay = solver.JokerToPlay;
-                return;
+                found = solver.SearchSolution();
+                if (!found) continue;
+                return new SolverResult(GetType().Name, solver.BinarySolution, solver.TilesToPlay, solver.JokerToPlay);
             }
         }
+
+        return new SolverResult(GetType().Name);
+        ;
+    }
+
+    public static CombinationsFirstSolver Create(Set playerSet)
+    {
+        return new CombinationsFirstSolver(playerSet.Tiles);
     }
 }

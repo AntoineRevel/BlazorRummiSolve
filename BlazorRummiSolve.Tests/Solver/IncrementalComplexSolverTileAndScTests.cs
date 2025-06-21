@@ -30,11 +30,11 @@ public class IncrementalComplexSolverTileAndScTests
         var solver = IncrementalComplexSolverTileAndSc.Create(boardSet, playerSet);
 
         // Act
-        solver.SearchSolution();
-        var won = solver.Won;
-        var solution = solver.BestSolution;
-        var tilesToPlay = solver.TilesToPlay.ToList();
-        var jokerToPlay = solver.JokerToPlay;
+        var result = solver.SearchSolution();
+        var won = result.Won;
+        var solution = result.BestSolution;
+        var tilesToPlay = result.TilesToPlay.ToList();
+        var jokerToPlay = result.JokerToPlay;
 
         // Assert
         Assert.False(won);

@@ -1,3 +1,4 @@
+using RummiSolve.Strategy;
 using static System.Console;
 
 namespace RummiSolve;
@@ -32,10 +33,10 @@ public class Game(Guid id)
         DistributeTiles(tiles, playerNames);
     }
 
-    public void Play()
+    public async Task PlayAsync()
     {
         var player = Players[PlayerIndex];
-        var playerSolution = player.Solve(Board);
+        var playerSolution = await player.SolveAsync(Board);
 
         if (playerSolution.IsValid)
         {
@@ -84,7 +85,7 @@ public class Game(Guid id)
             var startIndex = i * tilesPerPlayer;
             var playerTiles = new Tile[tilesPerPlayer];
             Array.Copy(tiles, startIndex, playerTiles, 0, tilesPerPlayer);
-            Players.Add(new Player(playerNames[i], playerTiles.ToList()));
+            Players.Add(new Player(playerNames[i], playerTiles.ToList(), new ParallelSolverStrategy()));
         }
 
         _tilePool.Clear();

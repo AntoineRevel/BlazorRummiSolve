@@ -2,15 +2,10 @@ namespace RummiSolve;
 
 public class Solution
 {
-    private static readonly Solution InvalidSolution = new() { IsValid = false };
+    public static readonly Solution InvalidSolution = new() { IsValid = false };
     public readonly List<Group> Groups = [];
     public readonly List<Run> Runs = [];
     public bool IsValid;
-
-    public static Solution GetInvalidSolution()
-    {
-        return InvalidSolution;
-    }
 
     public Solution AddSolution(Solution solution)
     {

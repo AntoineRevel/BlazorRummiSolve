@@ -2,8 +2,10 @@
 
 public static class Program
 {
-    private static void Main()
+    private static async Task Main()
     {
         //BenchmarkRunner.Run<RummiBench>();
+
+        await RummiBench.RunGamesUntilErrorAsync();
     }
 }

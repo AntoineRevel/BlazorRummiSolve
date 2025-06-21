@@ -1,11 +1,12 @@
 using RummiSolve;
+using RummiSolve.Strategy;
 
 namespace BlazorRummiSolve.Components.Pages;
 
 public partial class GamePage
 {
     private Solution _board = new();
-    private Game _currentGame = new();
+    private Game _currentGame = new(); //Guid.Parse("69712dba-65cb-4942-bdd7-88a26f38daad"));
 
     private ActionState _currentState;
     private bool _isGameOver;
@@ -15,7 +16,7 @@ public partial class GamePage
 
     private Set _playerRack = new();
 
-    private Player CurrentPlayer { get; set; } = new("Default", []);
+    private Player CurrentPlayer { get; set; } = new("Default", [], new ParallelSolverStrategy());
     private List<Player> OtherPlayers => _currentGame.Players.Where(p => p != CurrentPlayer).ToList();
     private int TurnNumber => _currentGame.Turn;
     private Guid Id => _currentGame.Id;
@@ -47,7 +48,7 @@ public partial class GamePage
                 _playerRack = new Set(_currentGame.Players[_currentGame.PlayerIndex].Rack);
                 _lastPlayerRack = new Set(_playerRack);
                 _lastBoard = _board;
-                await Play();
+                await PlayAsync();
                 _currentState = ActionState.ShowHint;
                 break;
             default:
@@ -61,7 +62,6 @@ public partial class GamePage
         {
             case ActionState.ShowSolution:
                 ShowHint = false;
-                Console.WriteLine("caca");
                 _currentState = ActionState.ShowHint;
                 break;
 
@@ -101,20 +101,16 @@ public partial class GamePage
         _playerRack = new Set(CurrentPlayer.Rack);
         _lastPlayerRack = new Set(CurrentPlayer.Rack);
 
-        await Play();
+        await PlayAsync();
     }
 
-    private async Task Play()
+    private async Task PlayAsync()
     {
         IsLoading = true;
-        try
-        {
-            await Task.Run(() => _currentGame.Play());
-        }
-        finally
-        {
-            IsLoading = false;
-        }
+
+        await _currentGame.PlayAsync();
+
+        IsLoading = false;
     }
 
     private async Task ResetGameAsync()
