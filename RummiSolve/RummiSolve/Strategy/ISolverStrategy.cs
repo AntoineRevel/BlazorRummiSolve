@@ -1,8 +1,9 @@
-using RummiSolve.Solver;
+using RummiSolve.Results;
 
 namespace RummiSolve.Strategy;
 
 public interface ISolverStrategy
 {
-    SolverResult GetSolverResult(Solution boardSolution, Set rack, bool hasPlayed, CancellationToken cancellationToken);
+    Task<SolverResult> GetSolverResult(Solution boardSolution, Set rack, bool hasPlayed,
+        CancellationToken cancellationToken);
 }

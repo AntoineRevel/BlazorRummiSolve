@@ -1,3 +1,4 @@
+using RummiSolve.Results;
 using RummiSolve.Solver.Abstract;
 using RummiSolve.Solver.Interfaces;
 
@@ -26,18 +27,20 @@ public sealed class IncrementalComplexSolver : ComplexSolver, ISolver
 
     public SolverResult SearchSolution()
     {
-        if (Tiles.Length + Jokers <= 2) return SolverResult.Invalid;
+        if (Tiles.Length + Jokers <= 2) return new SolverResult(GetType().Name);
+        ;
 
         while (true)
         {
             var newSolution = FindSolution(new Solution(), 0, 0);
 
-            if (!newSolution.IsValid) return new SolverResult(BestSolution, TilesToPlay, JokerToPlay);
+            if (!newSolution.IsValid) return new SolverResult(GetType().Name, BestSolution, TilesToPlay, JokerToPlay);
 
             BestSolution = newSolution;
             _bestUsedTiles = UsedTiles.ToArray();
             _remainingJoker = Jokers;
-            if (UsedTiles.All(b => b)) return new SolverResult(BestSolution, TilesToPlay, JokerToPlay, true);
+            if (UsedTiles.All(b => b))
+                return new SolverResult(GetType().Name, BestSolution, TilesToPlay, JokerToPlay, true);
 
             Array.Fill(UsedTiles, false);
             Jokers = _availableJokers;

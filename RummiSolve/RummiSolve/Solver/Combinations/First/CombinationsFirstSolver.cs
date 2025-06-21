@@ -1,3 +1,4 @@
+using RummiSolve.Results;
 using RummiSolve.Solver.Abstract;
 using RummiSolve.Solver.Interfaces;
 
@@ -27,7 +28,9 @@ public class CombinationsFirstSolver : ISolver
 
         var found = firstBinarySolver.SearchSolution();
 
-        if (found) return new SolverResult(firstBinarySolver.BinarySolution, tilesFirstTry, playerJokers, true);
+        if (found)
+            return new SolverResult(GetType().Name, firstBinarySolver.BinarySolution, tilesFirstTry, playerJokers,
+                true);
 
         _tiles.Reverse();
 
@@ -43,11 +46,12 @@ public class CombinationsFirstSolver : ISolver
                 var solver = new BinaryFirstBaseSolver(combi.ToArray(), joker);
                 found = solver.SearchSolution();
                 if (!found) continue;
-                return new SolverResult(solver.BinarySolution, solver.TilesToPlay, solver.JokerToPlay);
+                return new SolverResult(GetType().Name, solver.BinarySolution, solver.TilesToPlay, solver.JokerToPlay);
             }
         }
 
-        return SolverResult.Invalid;
+        return new SolverResult(GetType().Name);
+        ;
     }
 
     public static CombinationsFirstSolver Create(Set playerSet)

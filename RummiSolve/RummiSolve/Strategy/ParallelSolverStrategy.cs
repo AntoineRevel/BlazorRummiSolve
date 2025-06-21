@@ -1,4 +1,4 @@
-using RummiSolve.Solver;
+using RummiSolve.Results;
 using RummiSolve.Solver.Combinations;
 using RummiSolve.Solver.Combinations.First;
 using RummiSolve.Solver.Incremental;
@@ -8,7 +8,7 @@ namespace RummiSolve.Strategy;
 
 public class ParallelSolverStrategy : ISolverStrategy
 {
-    public SolverResult GetSolverResult(Solution boardSolution, Set rack, bool hasPlayed,
+    public async Task<SolverResult> GetSolverResult(Solution boardSolution, Set rack, bool hasPlayed,
         CancellationToken externalToken)
     {
         ISolver combiSolver = hasPlayed
@@ -24,12 +24,10 @@ public class ParallelSolverStrategy : ISolverStrategy
         var incrementalTask = Task.Run(() => incrementalSolver.SearchSolution(), cts.Token);
         var combiTask = Task.Run(() => combiSolver.SearchSolution(), cts.Token);
 
-        var completedTaskIndex = Task.WaitAny([incrementalTask, combiTask], externalToken);
+        var completedTask = await Task.WhenAny(incrementalTask, combiTask);
 
-        cts.Cancel();
+        await cts.CancelAsync();
 
-        return completedTaskIndex == 0
-            ? incrementalTask.Result
-            : combiTask.Result;
+        return await completedTask;
     }
 }

@@ -1,3 +1,4 @@
+using RummiSolve.Results;
 using RummiSolve.Solver.Abstract;
 using RummiSolve.Solver.Interfaces;
 
@@ -34,6 +35,7 @@ public class CombinationsSolver : ISolver
 
         if (firstBinarySolver.SearchSolution())
             return new SolverResult(
+                GetType().Name,
                 firstBinarySolver.BinarySolution,
                 firstBinarySolver.TilesToPlay,
                 firstBinarySolver.JokerToPlay, true);
@@ -58,11 +60,12 @@ public class CombinationsSolver : ISolver
 
                 if (!solver.SearchSolution()) continue;
 
-                return new SolverResult(solver.BinarySolution, solver.TilesToPlay, solver.JokerToPlay);
+                return new SolverResult(GetType().Name, solver.BinarySolution, solver.TilesToPlay, solver.JokerToPlay);
             }
         }
 
-        return SolverResult.Invalid;
+        return new SolverResult(GetType().Name);
+        ;
     }
 
     public static CombinationsSolver Create(Set boardSet, Set playerSet)

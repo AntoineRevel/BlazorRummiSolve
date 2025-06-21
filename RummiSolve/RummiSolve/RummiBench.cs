@@ -26,34 +26,34 @@ public class RummiBench
         game.InitializeGame(listNames);
         var player = game.Players[game.PlayerIndex];
 
-        Console.WriteLine(game.AllTiles());
-        player.Rack.PrintAllTiles();
-        game.Play();
-        Console.WriteLine(game.AllTiles());
-        game.Board.PrintSolution();
-
-        Console.WriteLine();
-
-        player = game.Players[game.PlayerIndex];
-        player.Rack.PrintAllTiles();
-        game.Play();
-        Console.WriteLine(game.AllTiles());
-        game.Players[game.PrevPlayerIndex].Rack.PrintAllTiles();
-        game.Board.PrintSolution();
-
-        Console.WriteLine();
-
-        player = game.Players[game.PlayerIndex];
-        Console.WriteLine(game.AllTiles());
-        player.Rack.PrintAllTiles();
-        game.Play();
-        game.Players[game.PrevPlayerIndex].Rack.PrintAllTiles();
-        Console.WriteLine(game.AllTiles());
-        game.Board.PrintSolution();
+        // Console.WriteLine(game.AllTiles());
+        // player.Rack.PrintAllTiles();
+        // _ = game.PlayAsync();
+        // Console.WriteLine(game.AllTiles());
+        // game.Board.PrintSolution();
+        //
+        // Console.WriteLine();
+        //
+        // player = game.Players[game.PlayerIndex];
+        // player.Rack.PrintAllTiles();
+        // game.Play();
+        // Console.WriteLine(game.AllTiles());
+        // game.Players[game.PrevPlayerIndex].Rack.PrintAllTiles();
+        // game.Board.PrintSolution();
+        //
+        // Console.WriteLine();
+        //
+        // player = game.Players[game.PlayerIndex];
+        // Console.WriteLine(game.AllTiles());
+        // player.Rack.PrintAllTiles();
+        // game.Play();
+        // game.Players[game.PrevPlayerIndex].Rack.PrintAllTiles();
+        // Console.WriteLine(game.AllTiles());
+        // game.Board.PrintSolution();
     }
 
 
-    public static void TestSimpleGame2()
+    public static async Task TestSimpleGame2()
     {
         var game = new Game(Guid.Parse("8f53d490-db85-4962-8886-8a49c0e2afb8"));
         var playerNames = new List<string> { "Antoine", "Matthieu", "Maguy" };
@@ -73,7 +73,7 @@ public class RummiBench
             Console.WriteLine("Main du joueur:");
             currentPlayer.Rack.PrintAllTiles();
 
-            game.Play();
+            await game.PlayAsync();
 
             Console.WriteLine("\nRésultat du tour:");
             Console.WriteLine($"Tuiles complètes: {game.AllTiles()}");

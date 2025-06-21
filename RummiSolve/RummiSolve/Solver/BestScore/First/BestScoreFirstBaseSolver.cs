@@ -1,3 +1,4 @@
+using RummiSolve.Results;
 using RummiSolve.Solver.Abstract;
 using RummiSolve.Solver.Interfaces;
 
@@ -19,7 +20,8 @@ public class BestScoreFirstBaseSolver : BaseSolver, ISolver
 
         var canPlay = scoreSolver.SearchBestScore();
 
-        if (!canPlay) return SolverResult.Invalid;
+        if (!canPlay) return new SolverResult(GetType().Name);
+        ;
 
         _bestSolutionScore = scoreSolver.BestScore;
         var bestSolution = FindSolution(new Solution(), 0, 0);
@@ -27,7 +29,7 @@ public class BestScoreFirstBaseSolver : BaseSolver, ISolver
         var jokerToPlay = _availableJokers - Jokers;
         var won = UsedTiles.All(b => b);
 
-        return new SolverResult(bestSolution, tilesToPlay, jokerToPlay, won);
+        return new SolverResult(GetType().Name, bestSolution, tilesToPlay, jokerToPlay, won);
     }
 
 

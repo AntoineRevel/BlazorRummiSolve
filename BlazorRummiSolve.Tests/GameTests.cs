@@ -5,7 +5,7 @@ namespace BlazorRummiSolve.Tests;
 public class GameTests
 {
     [Fact]
-    public void AllTiles_ShouldRemainAccountedFor_ThroughoutEntireGame()
+    public async Task AllTiles_ShouldRemainAccountedFor_ThroughoutEntireGame()
     {
         // Arrange
         var game = new Game();
@@ -18,7 +18,7 @@ public class GameTests
         while (!game.IsGameOver)
         {
             // Act
-            game.Play();
+            await game.PlayAsync();
 
             // Assert
             Assert.Equal(106, game.AllTiles());

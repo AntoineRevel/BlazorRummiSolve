@@ -1,13 +1,14 @@
-using RummiSolve.Solver;
+using RummiSolve.Results;
 using RummiSolve.Solver.Combinations;
 using RummiSolve.Solver.Combinations.First;
 using RummiSolve.Solver.Incremental;
 using RummiSolve.Solver.Interfaces;
+using RummiSolve.Strategy;
 using static System.Console;
 
 namespace RummiSolve;
 
-public class Player(string name, List<Tile> tiles) //, ISolverStrategy solverStrategy)
+public class Player(string name, List<Tile> tiles, ISolverStrategy solverStrategy)
 {
     public bool Played { get; private set; }
     public string Name { get; } = name;
@@ -16,7 +17,17 @@ public class Player(string name, List<Tile> tiles) //, ISolverStrategy solverStr
     public List<Tile> TilesToPlay { get; private set; } = [];
     public bool Won { get; private set; }
 
-    //TODO private readonly ISolverStrategy _solverStrategy =solverStrategy;
+    public async Task<Solution> SolveAsync(Solution boardSolution)
+    {
+        TilesToPlay.Clear();
+        using var cts = new CancellationTokenSource();
+
+        var solver = await solverStrategy.GetSolverResult(boardSolution, Rack, Played, cts.Token);
+
+        WriteLine($"{solver.Source} Selected");
+
+        return ProcessSolution(boardSolution, solver);
+    }
 
     public Solution Solve(Solution boardSolution)
     {
