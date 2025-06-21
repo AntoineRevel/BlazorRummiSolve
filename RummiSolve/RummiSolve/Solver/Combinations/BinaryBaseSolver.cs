@@ -5,7 +5,7 @@ namespace RummiSolve.Solver.Combinations;
 
 public sealed class BinaryBaseSolver(Tile[] tiles, int jokers) : BaseSolver(tiles, jokers), IBinarySolver
 {
-    public required int JokerToPlay  { get; init; }
+    public required int JokerToPlay { get; init; }
     public Solution BinarySolution { get; private set; } = new();
     public required IEnumerable<Tile> TilesToPlay { get; init; }
 
@@ -13,7 +13,6 @@ public sealed class BinaryBaseSolver(Tile[] tiles, int jokers) : BaseSolver(tile
     {
         BinarySolution = FindSolution(new Solution(), 0);
         return BinarySolution.IsValid;
-
     }
 
     private bool ValidateCondition()

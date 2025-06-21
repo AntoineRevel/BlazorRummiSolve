@@ -49,8 +49,12 @@ public class CombinationsSolver : ISolver
                     .OrderByDescending(l => l.Sum(t => t.Value)))
             {
                 var joker = combi.Count(tile => tile.IsJoker);
-                if (joker > 0) combi.RemoveRange(tileTry - joker, joker);
 
+                if (joker > 0)
+                {
+                    combi.Sort();
+                    combi.RemoveRange(tileTry - joker, joker);
+                }
 
                 var solver = new BinaryBaseSolver(_boardTiles.Concat(combi).Order().ToArray(), joker + _boardJokers)
                 {
