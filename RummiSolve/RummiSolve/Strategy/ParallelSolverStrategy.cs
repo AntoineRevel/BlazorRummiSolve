@@ -11,18 +11,20 @@ public class ParallelSolverStrategy : ISolverStrategy
     public async Task<SolverResult> GetSolverResult(Solution boardSolution, Set rack, bool hasPlayed,
         CancellationToken externalToken)
     {
+        var solutionSet = boardSolution.GetSet();
+
         ISolver combiSolver = hasPlayed
-            ? CombinationsSolver.Create(boardSolution.GetSet(), rack)
+            ? CombinationsSolver.Create(new Set(solutionSet), rack)
             : CombinationsFirstSolver.Create(rack);
 
         ISolver incrementalSolver = hasPlayed
-            ? IncrementalComplexSolver.Create(boardSolution.GetSet(), rack)
+            ? IncrementalComplexSolver.Create(new Set(solutionSet), rack)
             : IncrementalFirstBaseSolver.Create(rack);
 
         using var cts = CancellationTokenSource.CreateLinkedTokenSource(externalToken);
 
-        var incrementalTask = Task.Run(() => incrementalSolver.SearchSolution(), cts.Token);
-        var combiTask = Task.Run(() => combiSolver.SearchSolution(), cts.Token);
+        var incrementalTask = Task.Run(incrementalSolver.SearchSolution, cts.Token);
+        var combiTask = Task.Run(combiSolver.SearchSolution, cts.Token);
 
         var completedTask = await Task.WhenAny(incrementalTask, combiTask);
 

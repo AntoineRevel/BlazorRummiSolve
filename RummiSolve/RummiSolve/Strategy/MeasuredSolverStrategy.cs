@@ -1,5 +1,7 @@
 using System.Diagnostics;
 using RummiSolve.Results;
+using RummiSolve.Solver.BestScore;
+using RummiSolve.Solver.BestScore.First;
 using RummiSolve.Solver.Combinations;
 using RummiSolve.Solver.Combinations.First;
 using RummiSolve.Solver.Incremental;
@@ -12,55 +14,72 @@ public class MeasuredSolverStrategy : ISolverStrategy
     public async Task<SolverResult> GetSolverResult(Solution boardSolution, Set rack, bool hasPlayed,
         CancellationToken externalToken)
     {
+        var solutionSet = boardSolution.GetSet();
+
         ISolver combiSolver = hasPlayed
-            ? CombinationsSolver.Create(boardSolution.GetSet(), rack)
+            ? CombinationsSolver.Create(new Set(solutionSet), rack)
             : CombinationsFirstSolver.Create(rack);
 
+        ISolver bestScoreSolver = hasPlayed
+            ? BestScoreComplexSolver.Create(new Set(solutionSet), rack)
+            : BestScoreFirstBaseSolver.Create(rack);
+
         ISolver incrementalSolver = hasPlayed
-            ? IncrementalComplexSolver.Create(boardSolution.GetSet(), rack)
+            ? IncrementalComplexSolver.Create(new Set(solutionSet), rack)
             : IncrementalFirstBaseSolver.Create(rack);
 
+        ISolver incrementalScoreFSolver = hasPlayed
+            ? IncrementalScoreFieldComplexSolver.Create(new Set(solutionSet), rack)
+            : IncrementalFirstBaseSolver.Create(rack);
 
-        var combiTimer = Stopwatch.StartNew();
-        var combiTask = Task.Run(() =>
+        ISolver incrementalScoreTileSolver = hasPlayed
+            ? IncrementalComplexSolverTileAndSc.Create(new Set(solutionSet), rack)
+            : IncrementalFirstBaseSolver.Create(rack);
+
+        var results = new List<TimedResult>
         {
-            var result = combiSolver.SearchSolution();
-            combiTimer.Stop();
-            return result;
-        }, externalToken);
+            await RunSolverAsync("Combinations", combiSolver, externalToken),
+            await RunSolverAsync("BestScore", bestScoreSolver, externalToken),
+            await RunSolverAsync("Incremental", incrementalSolver, externalToken),
+            await RunSolverAsync("IncrementalScoreField", incrementalScoreFSolver, externalToken),
+            await RunSolverAsync("IncrementalScoreTile", incrementalScoreTileSolver, externalToken)
+        };
 
-        var incrementalTimer = Stopwatch.StartNew();
-        var incrementalTask = Task.Run(() =>
+        Console.WriteLine("\n====== Résultats des stratégies ======\n");
+
+        foreach (var res in results)
         {
-            var result = incrementalSolver.SearchSolution();
-            incrementalTimer.Stop();
-            return result;
-        }, externalToken);
+            Console.WriteLine($"🧠 {res.Name} - {res.TimeMs} ms - Found: {res.Result.Found}");
+            if (res.Result.Found)
+            {
+                Console.Write("    ➤ Tiles: ");
+                foreach (var tile in res.Result.TilesToPlay)
+                    tile.PrintTile();
+                Console.WriteLine();
+            }
+            else
+            {
+                Console.WriteLine("    ➤ Aucun coup trouvé.");
+            }
 
-        // Attendre les deux
-        await Task.WhenAll(combiTask, incrementalTask);
+            Console.WriteLine();
+        }
 
-        var combiResult = combiTask.Result;
-        var incrementalResult = incrementalTask.Result;
-
-        Console.WriteLine(
-            $"🧠 CombiSolver: {combiResult.Source} - {combiTimer.ElapsedMilliseconds} ms - Found = {combiResult.Found}");
-
-        foreach (var tile in combiResult.TilesToPlay) tile.PrintTile();
-
-        Console.WriteLine();
-        Console.WriteLine();
-        combiResult.BestSolution.PrintSolution();
-
-        Console.WriteLine(
-            $"🧠 IncrementalSolver: {incrementalResult.Source} - {incrementalTimer.ElapsedMilliseconds} ms - Found = {incrementalResult.Found}");
-        foreach (var tile in incrementalResult.TilesToPlay) tile.PrintTile();
-
-        Console.WriteLine();
-        Console.WriteLine();
-        incrementalResult.BestSolution.PrintSolution();
+        Console.WriteLine("======================================\n");
 
 
-        return incrementalResult;
+        var best = results.OrderBy(r => r.TimeMs).FirstOrDefault();
+
+        return best?.Result ?? throw new InvalidOperationException();
     }
+
+    private static async Task<TimedResult> RunSolverAsync(string name, ISolver solver, CancellationToken token)
+    {
+        var stopwatch = Stopwatch.StartNew();
+        var result = await Task.Run(solver.SearchSolution, token);
+        stopwatch.Stop();
+        return new TimedResult(name, result, stopwatch.ElapsedMilliseconds);
+    }
+
+    private record TimedResult(string Name, SolverResult Result, long TimeMs);
 }
