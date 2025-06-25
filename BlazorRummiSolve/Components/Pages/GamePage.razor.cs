@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Components.Web;
 using RummiSolve;
 using RummiSolve.Strategy;
 
@@ -117,6 +118,14 @@ public partial class GamePage
     {
         _currentGame = new Game();
         await OnInitializedAsync();
+    }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter" && !IsLoading && !_isGameOver)
+        {
+            await HandleActionAsync();
+        }
     }
 
     private enum ActionState
