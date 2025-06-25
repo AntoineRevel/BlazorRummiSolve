@@ -2,7 +2,7 @@
 @using BlazorRummiSolve.Components.Shared
 @rendermode InteractiveServer
 
-<div class="game-container">
+<div class="game-container" @onkeydown="HandleKeyDown" tabindex="0">
     <header>
         <h1>Rummikub Game</h1>
         <h3>Game ID: @Id</h3>
@@ -74,6 +74,7 @@
         background: #fff;
         border-radius: 12px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        outline: none;
     }
 
     /* Header */
