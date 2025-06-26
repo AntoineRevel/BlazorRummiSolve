@@ -1,0 +1,318 @@
+@page "/game-setup"
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<div class="setup-container">
+    <header>
+        <h1>Game Setup</h1>
+        <p>Configure your Rummikub game</p>
+    </header>
+
+    <div class="setup-form">
+        <div class="form-group">
+            <label for="gameId">Game ID (optional)</label>
+            <input id="gameId" @bind="GameId" @bind:after="ValidateGameId" type="text" 
+                   class="form-control @(HasGameIdError ? "error" : "")"
+                   placeholder="Leave empty to generate automatically" maxlength="36"
+                   @onkeydown="HandleGameIdKeyDown"/>
+            @if (HasGameIdError)
+            {
+                <div class="error-message">@GameIdErrorMessage</div>
+            }
+            <small class="form-text">If no ID is provided, one will be generated automatically. Format: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX</small>
+        </div>
+
+        <div class="form-group">
+            <label for="playerCount">Number of players</label>
+            <select id="playerCount" @bind="PlayerCount" @bind:after="OnPlayerCountChanged" class="form-control">
+                <option value="2">2 players</option>
+                <option value="3" selected>3 players</option>
+                <option value="4">4 players</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Player names (optional)</label>
+            <small class="form-text">Leave empty to use default names</small>
+            @for (var i = 0; i < PlayerCount; i++)
+            {
+                var index = i;
+                <div class="player-name-input">
+                    <label for="player@(i + 1)">Player @(i + 1)</label>
+                    <input id="player@(i + 1)" @bind="PlayerNames[index]" type="text" class="form-control"
+                           placeholder="@GetDefaultPlayerName(i)" maxlength="20"
+                           @onkeydown="@(e => HandlePlayerNameKeyDown(e, index))"/>
+                </div>
+            }
+        </div>
+
+        <div class="form-actions">
+            <button @onclick="NavigateToHome" class="btn-secondary">
+                Back
+            </button>
+            <button @onclick="StartGame" class="btn-primary" disabled="@HasGameIdError">
+                Start Game
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .setup-container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 30px;
+        font-family: Arial, sans-serif;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    header h1 {
+        font-size: 2.2rem;
+        color: #3a3a3a;
+        margin: 0 0 10px 0;
+    }
+
+    header p {
+        color: #777;
+        font-size: 1.1rem;
+        margin: 0;
+    }
+
+    .setup-form {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group label {
+        font-weight: 600;
+        color: #3a3a3a;
+        margin-bottom: 8px;
+        font-size: 1.1rem;
+    }
+
+    .form-control {
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s, box-shadow 0.3s;
+        background-color: #fff;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #2196f3;
+        box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+    }
+
+    .form-control.error {
+        border-color: #f44336;
+        box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.1);
+    }
+
+    .error-message {
+        color: #f44336;
+        font-size: 0.9rem;
+        margin-top: 5px;
+        font-weight: 500;
+    }
+
+    .btn-primary:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .btn-primary:disabled:hover {
+        background-color: #ccc;
+        transform: none;
+    }
+
+    .form-text {
+        margin-top: 5px;
+        color: #777;
+        font-size: 0.9rem;
+        font-style: italic;
+    }
+
+    .player-name-input {
+        margin-bottom: 15px;
+    }
+
+    .player-name-input label {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #555;
+        margin-bottom: 5px;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .btn-primary, .btn-secondary {
+        padding: 12px 30px;
+        font-size: 1.1rem;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.1s;
+        font-weight: 600;
+        min-width: 150px;
+    }
+
+    .btn-primary {
+        background-color: #2196f3;
+    }
+
+    .btn-primary:hover {
+        background-color: #1976d2;
+        transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+        background-color: #757575;
+    }
+
+    .btn-secondary:hover {
+        background-color: #616161;
+        transform: translateY(-1px);
+    }
+
+    .btn-primary:active, .btn-secondary:active {
+        transform: translateY(0);
+    }
+
+    @@media (max-width: 768px) {
+        .setup-container {
+            margin: 20px;
+            padding: 20px;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn-primary, .btn-secondary {
+            width: 100%;
+        }
+    }
+</style>
+
+@code {
+    private string GameId { get; set; } = string.Empty;
+    private int PlayerCount { get; set; } = 3;
+    private List<string> PlayerNames { get; } = ["", "", "", ""];
+    private bool HasGameIdError { get; set; } = false;
+    private string GameIdErrorMessage { get; set; } = string.Empty;
+
+    private void NavigateToHome()
+    {
+        Navigation.NavigateTo("/");
+    }
+
+    private void OnPlayerCountChanged()
+    {
+        StateHasChanged();
+    }
+
+    private string GetDefaultPlayerName(int index)
+    {
+        var defaultNames = new[] { "Alice", "Bob", "Charlie", "Diana" };
+        return index < defaultNames.Length ? defaultNames[index] : $"Player {index + 1}";
+    }
+
+    private void HandleGameIdKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            // On Game ID field, Enter should just move to next field naturally
+            // No action needed - browser handles tab order
+        }
+    }
+
+    private void HandlePlayerNameKeyDown(KeyboardEventArgs e, int playerIndex)
+    {
+        if (e.Key == "Enter")
+        {
+            if (playerIndex == PlayerCount - 1)
+            {
+                // Only start game when Enter is pressed on the LAST player name input
+                if (!HasGameIdError)
+                {
+                    StartGame();
+                }
+            }
+            // For other player inputs, Enter naturally moves to next field
+        }
+    }
+
+    private void ValidateGameId()
+    {
+        if (string.IsNullOrWhiteSpace(GameId))
+        {
+            HasGameIdError = false;
+            GameIdErrorMessage = string.Empty;
+            return;
+        }
+
+        var trimmedId = GameId.Trim();
+        if (!Guid.TryParse(trimmedId, out _))
+        {
+            HasGameIdError = true;
+            GameIdErrorMessage = "Invalid GUID format. Expected format: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX";
+        }
+        else
+        {
+            HasGameIdError = false;
+            GameIdErrorMessage = string.Empty;
+        }
+    }
+
+    private void StartGame()
+    {
+        if (HasGameIdError)
+        {
+            return;
+        }
+
+        var queryString = $"?playerCount={PlayerCount}";
+
+        if (!string.IsNullOrWhiteSpace(GameId))
+        {
+            queryString += $"&gameId={Uri.EscapeDataString(GameId.Trim())}";
+        }
+
+        // Add player names if any are provided
+        var providedNames = new List<string>();
+        for (var i = 0; i < PlayerCount; i++)
+        {
+            providedNames.Add(!string.IsNullOrWhiteSpace(PlayerNames[i]) ? Uri.EscapeDataString(PlayerNames[i].Trim()) : ""); // Empty for default name
+        }
+
+        if (providedNames.Any(name => !string.IsNullOrEmpty(name)))
+        {
+            queryString += $"&playerNames={string.Join(",", providedNames)}";
+        }
+
+        Navigation.NavigateTo($"/game{queryString}");
+    }
+
+}
