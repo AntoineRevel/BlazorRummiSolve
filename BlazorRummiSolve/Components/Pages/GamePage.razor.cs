@@ -26,6 +26,10 @@ public partial class GamePage
     [SupplyParameterFromQuery(Name = "gameId")]
     public string? GameId { get; set; }
 
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "playerNames")]
+    public string? PlayerNamesQuery { get; set; }
+
     private Player CurrentPlayer { get; set; } = new("Default", [], new ParallelSolverStrategy());
     private List<Player> OtherPlayers => _currentGame.Players.Where(p => p != CurrentPlayer).ToList();
     private int TurnNumber => _currentGame.Turn;
@@ -108,7 +112,7 @@ public partial class GamePage
         if (playerCount < 2 || playerCount > 4) playerCount = 3;
 
         // Generate player names
-        var listNames = GeneratePlayerNames(playerCount);
+        var listNames = ParsePlayerNames(playerCount);
 
         // Create game with custom ID if provided
         if (!string.IsNullOrWhiteSpace(GameId) && Guid.TryParse(GameId, out var parsedId))
@@ -148,10 +152,22 @@ public partial class GamePage
         }
     }
 
-    private static List<string> GeneratePlayerNames(int count)
+    private List<string> ParsePlayerNames(int count)
     {
-        var names = new List<string> { "Alice", "Bob", "Charlie", "Diana" };
-        return names.Take(count).ToList();
+        var defaultNames = new List<string> { "Alice", "Bob", "Charlie", "Diana" };
+
+        if (string.IsNullOrWhiteSpace(PlayerNamesQuery)) return defaultNames.Take(count).ToList();
+
+        var providedNames = PlayerNamesQuery.Split(',').Select(Uri.UnescapeDataString).ToList();
+        var finalNames = new List<string>();
+
+        for (var i = 0; i < count; i++)
+            if (i < providedNames.Count && !string.IsNullOrWhiteSpace(providedNames[i]))
+                finalNames.Add(providedNames[i].Trim());
+            else
+                finalNames.Add(i < defaultNames.Count ? defaultNames[i] : $"Player {i + 1}");
+
+        return finalNames;
     }
 
     private enum ActionState

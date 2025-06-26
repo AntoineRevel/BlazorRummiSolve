@@ -18,11 +18,25 @@
 
         <div class="form-group">
             <label for="playerCount">Number of players</label>
-            <select id="playerCount" @bind="PlayerCount" class="form-control">
+            <select id="playerCount" @bind="PlayerCount" @bind:after="OnPlayerCountChanged" class="form-control">
                 <option value="2">2 players</option>
                 <option value="3" selected>3 players</option>
                 <option value="4">4 players</option>
             </select>
+        </div>
+
+        <div class="form-group">
+            <label>Player names (optional)</label>
+            <small class="form-text">Leave empty to use default names</small>
+            @for (var i = 0; i < PlayerCount; i++)
+            {
+                var index = i;
+                <div class="player-name-input">
+                    <label for="player@(i + 1)">Player @(i + 1)</label>
+                    <input id="player@(i + 1)" @bind="PlayerNames[index]" type="text" class="form-control"
+                           placeholder="@GetDefaultPlayerName(i)" maxlength="20"/>
+                </div>
+            }
         </div>
 
         <div class="form-actions">
@@ -104,6 +118,17 @@
         font-style: italic;
     }
 
+    .player-name-input {
+        margin-bottom: 15px;
+    }
+
+    .player-name-input label {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #555;
+        margin-bottom: 5px;
+    }
+
     .form-actions {
         display: flex;
         gap: 15px;
@@ -164,10 +189,22 @@
 @code {
     private string GameId { get; set; } = string.Empty;
     private int PlayerCount { get; set; } = 3;
+    private List<string> PlayerNames { get; } = ["", "", "", ""];
 
     private void NavigateToHome()
     {
         Navigation.NavigateTo("/");
+    }
+
+    private void OnPlayerCountChanged()
+    {
+        StateHasChanged();
+    }
+
+    private string GetDefaultPlayerName(int index)
+    {
+        var defaultNames = new[] { "Alice", "Bob", "Charlie", "Diana" };
+        return index < defaultNames.Length ? defaultNames[index] : $"Player {index + 1}";
     }
 
     private void StartGame()
@@ -177,6 +214,18 @@
         if (!string.IsNullOrWhiteSpace(GameId))
         {
             queryString += $"&gameId={Uri.EscapeDataString(GameId.Trim())}";
+        }
+
+        // Add player names if any are provided
+        var providedNames = new List<string>();
+        for (var i = 0; i < PlayerCount; i++)
+        {
+            providedNames.Add(!string.IsNullOrWhiteSpace(PlayerNames[i]) ? Uri.EscapeDataString(PlayerNames[i].Trim()) : ""); // Empty for default name
+        }
+
+        if (providedNames.Any(name => !string.IsNullOrEmpty(name)))
+        {
+            queryString += $"&playerNames={string.Join(",", providedNames)}";
         }
 
         Navigation.NavigateTo($"/game{queryString}");
