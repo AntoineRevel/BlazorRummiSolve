@@ -1,0 +1,185 @@
+@page "/game-setup"
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<div class="setup-container">
+    <header>
+        <h1>Game Setup</h1>
+        <p>Configure your Rummikub game</p>
+    </header>
+
+    <div class="setup-form">
+        <div class="form-group">
+            <label for="gameId">Game ID (optional)</label>
+            <input id="gameId" @bind="GameId" type="text" class="form-control"
+                   placeholder="Leave empty to generate automatically" maxlength="36"/>
+            <small class="form-text">If no ID is provided, one will be generated automatically</small>
+        </div>
+
+        <div class="form-group">
+            <label for="playerCount">Number of players</label>
+            <select id="playerCount" @bind="PlayerCount" class="form-control">
+                <option value="2">2 players</option>
+                <option value="3" selected>3 players</option>
+                <option value="4">4 players</option>
+            </select>
+        </div>
+
+        <div class="form-actions">
+            <button @onclick="NavigateToHome" class="btn-secondary">
+                Back
+            </button>
+            <button @onclick="StartGame" class="btn-primary">
+                Start Game
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .setup-container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 30px;
+        font-family: Arial, sans-serif;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    header h1 {
+        font-size: 2.2rem;
+        color: #3a3a3a;
+        margin: 0 0 10px 0;
+    }
+
+    header p {
+        color: #777;
+        font-size: 1.1rem;
+        margin: 0;
+    }
+
+    .setup-form {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group label {
+        font-weight: 600;
+        color: #3a3a3a;
+        margin-bottom: 8px;
+        font-size: 1.1rem;
+    }
+
+    .form-control {
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s, box-shadow 0.3s;
+        background-color: #fff;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #2196f3;
+        box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+    }
+
+    .form-text {
+        margin-top: 5px;
+        color: #777;
+        font-size: 0.9rem;
+        font-style: italic;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .btn-primary, .btn-secondary {
+        padding: 12px 30px;
+        font-size: 1.1rem;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.1s;
+        font-weight: 600;
+        min-width: 150px;
+    }
+
+    .btn-primary {
+        background-color: #2196f3;
+    }
+
+    .btn-primary:hover {
+        background-color: #1976d2;
+        transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+        background-color: #757575;
+    }
+
+    .btn-secondary:hover {
+        background-color: #616161;
+        transform: translateY(-1px);
+    }
+
+    .btn-primary:active, .btn-secondary:active {
+        transform: translateY(0);
+    }
+
+    @@media (max-width: 768px) {
+        .setup-container {
+            margin: 20px;
+            padding: 20px;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .btn-primary, .btn-secondary {
+            width: 100%;
+        }
+    }
+</style>
+
+@code {
+    private string GameId { get; set; } = string.Empty;
+    private int PlayerCount { get; set; } = 3;
+
+    private void NavigateToHome()
+    {
+        Navigation.NavigateTo("/");
+    }
+
+    private void StartGame()
+    {
+        var queryString = $"?playerCount={PlayerCount}";
+
+        if (!string.IsNullOrWhiteSpace(GameId))
+        {
+            queryString += $"&gameId={Uri.EscapeDataString(GameId.Trim())}";
+        }
+
+        Navigation.NavigateTo($"/game{queryString}");
+    }
+
+}
