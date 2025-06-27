@@ -16,8 +16,8 @@ public class Player(string name, List<Tile> tiles, ISolverStrategy solverStrateg
     {
         TilesToPlay.Clear();
         using var cts = new CancellationTokenSource();
-
-        var solver = await solverStrategy.GetSolverResult(boardSolution, Rack, Played, cts.Token);
+        
+        var solver = await solverStrategy.GetSolverResult(boardSolution, new Set(Rack), Played, cts.Token);
 
         WriteLine($"{solver.Source} Selected");
 

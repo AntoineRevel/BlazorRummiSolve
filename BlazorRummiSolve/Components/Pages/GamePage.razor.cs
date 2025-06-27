@@ -109,12 +109,12 @@ public partial class GamePage
     {
         // Parse and validate player count
         var playerCount = PlayerCount ?? 3;
-        if (playerCount < 2 || playerCount > 4) playerCount = 3;
+        if (playerCount is < 2 or > 4) playerCount = 3;
 
         // Generate player names
         var listNames = ParsePlayerNames(playerCount);
 
-        // Create game with custom ID if provided
+        // Create a game with custom ID if provided
         if (!string.IsNullOrWhiteSpace(GameId) && Guid.TryParse(GameId, out var parsedId))
             _currentGame = new Game(parsedId);
         else
