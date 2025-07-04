@@ -9,9 +9,9 @@ public sealed class BinaryFirstBaseSolver(Tile[] tiles, int jokers) : BaseSolver
     public int JokerToPlay { get; } = jokers;
     public Solution BinarySolution { get; private set; } = new();
 
-    public bool SearchSolution()
+    public bool SearchSolution(CancellationToken cancellationToken = default)
     {
-        BinarySolution = FindSolution(new Solution(), 0, 0);
+        BinarySolution = FindSolution(new Solution(), 0, 0, cancellationToken);
         return BinarySolution.IsValid;
     }
 
@@ -22,37 +22,43 @@ public sealed class BinaryFirstBaseSolver(Tile[] tiles, int jokers) : BaseSolver
         return solutionScore > MinScore && Jokers == 0;
     }
 
-    private Solution FindSolution(Solution solution, int solutionScore, int startIndex)
+    private Solution FindSolution(Solution solution, int solutionScore, int startIndex, CancellationToken cancellationToken = default)
     {
+        if (cancellationToken.IsCancellationRequested)
+            return solution;
+            
         startIndex = Array.FindIndex(UsedTiles, startIndex, used => !used);
 
         if (startIndex == -1) return solution;
 
-        var solRun = TrySet(GetRuns(startIndex), solution, solutionScore, startIndex,
-            (sol, run) => sol.AddRun(run));
+        var solRun = TrySet(GetRuns(startIndex, cancellationToken), solution, solutionScore, startIndex,
+            (sol, run) => sol.AddRun(run), cancellationToken);
 
         if (solRun.IsValid) return solRun;
 
-        var solGroup = TrySet(GetGroups(startIndex), solution, solutionScore, startIndex,
-            (sol, group) => sol.AddGroup(group));
+        var solGroup = TrySet(GetGroups(startIndex, cancellationToken), solution, solutionScore, startIndex,
+            (sol, group) => sol.AddGroup(group), cancellationToken);
 
         return solGroup;
     }
 
     private Solution TrySet<TS>(IEnumerable<TS> sets, Solution solution, int solutionScore, int firstUnusedTileIndex,
-        Action<Solution, TS> addSetToSolution)
+        Action<Solution, TS> addSetToSolution, CancellationToken cancellationToken = default)
         where TS : ValidSet
     {
         UsedTiles[firstUnusedTileIndex] = true;
         foreach (var set in sets)
         {
+            if (cancellationToken.IsCancellationRequested)
+                break;
+                
             MarkTilesAsUsed(set, firstUnusedTileIndex);
             var newSolution = solution;
 
             var newSolutionScore = solutionScore + set.GetScore();
 
             if (ValidateCondition(newSolutionScore)) solution.IsValid = true;
-            else newSolution = FindSolution(solution, newSolutionScore, firstUnusedTileIndex);
+            else newSolution = FindSolution(solution, newSolutionScore, firstUnusedTileIndex, cancellationToken);
 
             if (newSolution.IsValid)
             {

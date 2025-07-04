@@ -22,9 +22,10 @@ public class ParallelSolverStrategy : ISolverStrategy
             : IncrementalFirstBaseSolver.Create(rack);
 
         using var cts = CancellationTokenSource.CreateLinkedTokenSource(externalToken);
+        var token = cts.Token;
 
-        var incrementalTask = Task.Run(incrementalSolver.SearchSolution, cts.Token);
-        var combiTask = Task.Run(combiSolver.SearchSolution, cts.Token);
+        var incrementalTask = Task.Run(() => incrementalSolver.SearchSolution(token), token);
+        var combiTask = Task.Run(() => combiSolver.SearchSolution(token), token);
 
         var completedTask = await Task.WhenAny(incrementalTask, combiTask);
 

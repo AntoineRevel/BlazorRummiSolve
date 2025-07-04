@@ -14,7 +14,7 @@ public class CombinationsFirstSolver : ISolver
         _tiles = tiles;
     }
 
-    public SolverResult SearchSolution()
+    public SolverResult SearchSolution(CancellationToken cancellationToken = default)
     {
         _tiles.Sort();
 
@@ -36,11 +36,17 @@ public class CombinationsFirstSolver : ISolver
 
         for (var tileTry = _tiles.Count - 1; tileTry > 2; tileTry--)
         {
+            if (cancellationToken.IsCancellationRequested)
+                return new SolverResult(GetType().Name);
+                
             foreach (
                 var combi in
-                BaseSolver.GetCombinations(_tiles, tileTry)
+                BaseSolver.GetCombinations(_tiles, tileTry, cancellationToken)
                     .OrderByDescending(l => l.Sum(t => t.Value)))
             {
+                if (cancellationToken.IsCancellationRequested)
+                    return new SolverResult(GetType().Name);
+                    
                 var joker = combi.Count(tile => tile.IsJoker);
                 if (joker > 0) combi.RemoveRange(tileTry - joker, joker);
                 var solver = new BinaryFirstBaseSolver(combi.ToArray(), joker);

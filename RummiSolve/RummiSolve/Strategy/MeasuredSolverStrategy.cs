@@ -76,7 +76,7 @@ public class MeasuredSolverStrategy : ISolverStrategy
     private static async Task<TimedResult> RunSolverAsync(string name, ISolver solver, CancellationToken token)
     {
         var stopwatch = Stopwatch.StartNew();
-        var result = await Task.Run(solver.SearchSolution, token);
+        var result = await Task.Run(() => solver.SearchSolution(token), token);
         stopwatch.Stop();
         return new TimedResult(name, result, stopwatch.ElapsedMilliseconds);
     }

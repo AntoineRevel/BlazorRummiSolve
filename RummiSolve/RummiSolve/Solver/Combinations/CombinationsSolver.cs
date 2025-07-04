@@ -17,7 +17,7 @@ public class CombinationsSolver : ISolver
         _playerTilesJ = playerTiles;
     }
 
-    public SolverResult SearchSolution()
+    public SolverResult SearchSolution(CancellationToken cancellationToken = default)
     {
         var playerJokers = _playerTilesJ.Count(tile => tile.IsJoker);
         var playerTiles = new List<Tile>(_playerTilesJ);
@@ -33,7 +33,8 @@ public class CombinationsSolver : ISolver
             JokerToPlay = playerJokers
         };
 
-        if (firstBinarySolver.SearchSolution())
+        var result = firstBinarySolver.SearchSolution(cancellationToken);
+        if (result.Found)
             return new SolverResult(
                 GetType().Name,
                 firstBinarySolver.BinarySolution,
@@ -43,11 +44,17 @@ public class CombinationsSolver : ISolver
 
         for (var tileTry = _playerTilesJ.Count - 1; tileTry > 0; tileTry--)
         {
+            if (cancellationToken.IsCancellationRequested)
+                break;
+                
             foreach (
                 var combi in
-                BaseSolver.GetCombinations(_playerTilesJ, tileTry)
+                BaseSolver.GetCombinations(_playerTilesJ, tileTry, cancellationToken)
                     .OrderByDescending(l => l.Sum(t => t.Value)))
             {
+                if (cancellationToken.IsCancellationRequested)
+                    break;
+                    
                 var joker = combi.Count(tile => tile.IsJoker);
 
                 if (joker > 0)
@@ -62,14 +69,14 @@ public class CombinationsSolver : ISolver
                     JokerToPlay = joker
                 };
 
-                if (!solver.SearchSolution()) continue;
+                var solverResult = solver.SearchSolution(cancellationToken);
+                if (!solverResult.Found) continue;
 
                 return new SolverResult(GetType().Name, solver.BinarySolution, solver.TilesToPlay, solver.JokerToPlay);
             }
         }
 
         return new SolverResult(GetType().Name);
-        ;
     }
 
     public static CombinationsSolver Create(Set boardSet, Set playerSet)

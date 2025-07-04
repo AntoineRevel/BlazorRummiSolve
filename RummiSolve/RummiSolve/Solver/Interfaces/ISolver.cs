@@ -4,5 +4,5 @@ namespace RummiSolve.Solver.Interfaces;
 
 public interface ISolver
 {
-    SolverResult SearchSolution();
+    SolverResult SearchSolution(CancellationToken cancellationToken = default);
 }

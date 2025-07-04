@@ -4,52 +4,21 @@ using RummiSolve.Solver.Incremental;
 
 namespace RummiSolve;
 
-[MemoryDiagnoser]
 public class RummiBench
 {
     private readonly List<string> _playerNames = ["Antoine", "Matthieu", "Maguy"];
     private Game _game;
 
-    [IterationSetup]
-    public void IterationSetup()
-    {
-        _game = new Game(Guid.Parse("74cdccda-9261-460c-9414-31d7270ad2a1"));
-        _game.InitializeGame(_playerNames);
-    }
 
 
-    public static void TestSimpleGame()
+    public static async Task TestSimpleGame()
     {
-        Game game = new(Guid.Parse("8f53d490-db85-4962-8886-8a49c0e2afb8"));
+        Game game = new(Guid.Parse("32ba6c8d-3bb2-41f6-8292-655f9459d53c"));
 
         var listNames = new List<string> { "Antoine", "Matthieu", "Maguy" };
         game.InitializeGame(listNames);
-        var player = game.Players[game.PlayerIndex];
-
-        // Console.WriteLine(game.AllTiles());
-        // player.Rack.PrintAllTiles();
-        // _ = game.PlayAsync();
-        // Console.WriteLine(game.AllTiles());
-        // game.Board.PrintSolution();
-        //
-        // Console.WriteLine();
-        //
-        // player = game.Players[game.PlayerIndex];
-        // player.Rack.PrintAllTiles();
-        // game.Play();
-        // Console.WriteLine(game.AllTiles());
-        // game.Players[game.PrevPlayerIndex].Rack.PrintAllTiles();
-        // game.Board.PrintSolution();
-        //
-        // Console.WriteLine();
-        //
-        // player = game.Players[game.PlayerIndex];
-        // Console.WriteLine(game.AllTiles());
-        // player.Rack.PrintAllTiles();
-        // game.Play();
-        // game.Players[game.PrevPlayerIndex].Rack.PrintAllTiles();
-        // Console.WriteLine(game.AllTiles());
-        // game.Board.PrintSolution();
+        while (!game.IsGameOver) await game.PlayAsync();
+        
     }
 
 

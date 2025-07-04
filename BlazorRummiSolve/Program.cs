@@ -1,10 +1,14 @@
 using BlazorRummiSolve.Components;
+using BlazorRummiSolve.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+// Add custom services
+builder.Services.AddScoped<CancellationService>();
 
 var app = builder.Build();
 
