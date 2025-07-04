@@ -13,6 +13,6 @@ public class CombiOnlyStrategy : ISolverStrategy
             ? CombinationsSolver.Create(boardSolution.GetSet(), rack)
             : CombinationsFirstSolver.Create(rack);
 
-        return Task.Run(() => combiSolver.SearchSolution(), token);
+        return Task.Run(() => combiSolver.SearchSolution(token), token);
     }
 }

@@ -81,7 +81,7 @@ public abstract class BaseSolver(Tile[] tiles, int jokers)
         }
     }
 
-    protected IEnumerable<Run> GetRuns(int tileIndex)
+    protected IEnumerable<Run> GetRuns(int tileIndex, CancellationToken cancellationToken = default)
     {
         var availableJokers = Jokers;
         var color = Tiles[tileIndex].Color;
@@ -90,6 +90,9 @@ public abstract class BaseSolver(Tile[] tiles, int jokers)
 
         while (true)
         {
+            if (cancellationToken.IsCancellationRequested)
+                yield break;
+            
             for (; i < Tiles.Length; i++)
             {
                 if (Tiles[i].Color != color)
@@ -133,7 +136,7 @@ public abstract class BaseSolver(Tile[] tiles, int jokers)
         }
     }
 
-    protected IEnumerable<Group> GetGroups(int firstTileIndex)
+    protected IEnumerable<Group> GetGroups(int firstTileIndex, CancellationToken cancellationToken = default)
     {
         var sameNumberTiles = new HashSet<Tile>();
 
@@ -165,6 +168,9 @@ public abstract class BaseSolver(Tile[] tiles, int jokers)
             for (var i = 0; i < sameNumberTiles.Count; i++)
             for (var j = i + 1; j < sameNumberTiles.Count; j++)
             {
+                if (cancellationToken.IsCancellationRequested)
+                    yield break;
+                    
                 yield return new Group
                 {
                     Tiles = [Tiles[firstTileIndex], uniqueTilesList[i], uniqueTilesList[j]]
@@ -177,10 +183,13 @@ public abstract class BaseSolver(Tile[] tiles, int jokers)
             for (var jokersUsed = 0; jokersUsed <= Jokers; jokersUsed++)
             for (var tilesUsed = 2; tilesUsed <= size + 1; tilesUsed++)
             {
+                if (cancellationToken.IsCancellationRequested)
+                    yield break;
+                    
                 var totalTiles = tilesUsed + jokersUsed;
                 if (totalTiles is < 3 or > 4) continue;
 
-                var combinations = GetCombinations(uniqueTilesList, tilesUsed - 1);
+                var combinations = GetCombinations(uniqueTilesList, tilesUsed - 1, cancellationToken);
 
                 foreach (var tiles in combinations)
                 {
@@ -206,14 +215,20 @@ public abstract class BaseSolver(Tile[] tiles, int jokers)
         }
     }
 
-    internal static IEnumerable<List<Tile>> GetCombinations(List<Tile> list, int length)
+    internal static IEnumerable<List<Tile>> GetCombinations(List<Tile> list, int length, CancellationToken cancellationToken = default)
     {
+        if (cancellationToken.IsCancellationRequested)
+            yield break;
+            
         if (length == 0) yield return [];
 
         for (var i = 0; i < list.Count; i++)
         {
+            if (cancellationToken.IsCancellationRequested)
+                yield break;
+                
             var element = list[i];
-            foreach (var combination in GetCombinations(list.Skip(i + 1).ToList(), length - 1))
+            foreach (var combination in GetCombinations(list.Skip(i + 1).ToList(), length - 1, cancellationToken))
             {
                 combination.Add(element);
                 yield return combination;

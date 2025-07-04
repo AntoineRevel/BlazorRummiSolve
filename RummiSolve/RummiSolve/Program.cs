@@ -8,6 +8,7 @@ public static class Program
     {
         BenchmarkRunner.Run<ParallelSolverBenchmark>();
 
-        // await RummiBench.RunGamesUntilErrorAsync();
+
+        //await RummiBench.TestSimpleGame();
     }
 }

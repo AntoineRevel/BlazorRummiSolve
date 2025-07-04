@@ -26,7 +26,7 @@ public sealed class IncrementalScoreFieldComplexSolver : ComplexSolver, ISolver
     private IEnumerable<Tile> TilesToPlay => Tiles.Where((_, i) => IsPlayerTile[i] && _bestUsedTiles[i]);
     private int JokerToPlay => _availableJokers - _remainingJoker - _boardJokers;
 
-    public SolverResult SearchSolution()
+    public SolverResult SearchSolution(CancellationToken cancellationToken = default)
     {
         if (Tiles.Length + Jokers <= 2) return new SolverResult(GetType().Name);
         ;
@@ -35,7 +35,10 @@ public sealed class IncrementalScoreFieldComplexSolver : ComplexSolver, ISolver
 
         while (true)
         {
-            var newSolution = FindSolution(new Solution(), 0);
+            if (cancellationToken.IsCancellationRequested)
+                return new SolverResult(GetType().Name, bestSolution, TilesToPlay, JokerToPlay);
+                
+            var newSolution = FindSolution(new Solution(), 0, cancellationToken);
 
             if (!newSolution.IsValid) return new SolverResult(GetType().Name, bestSolution, TilesToPlay, JokerToPlay);
 
@@ -97,21 +100,24 @@ public sealed class IncrementalScoreFieldComplexSolver : ComplexSolver, ISolver
     }
 
 
-    private Solution FindSolution(Solution solution, int startIndex)
+    private Solution FindSolution(Solution solution, int startIndex, CancellationToken cancellationToken = default)
     {
         while (startIndex < UsedTiles.Length - 1)
         {
+            if (cancellationToken.IsCancellationRequested)
+                return solution;
+                
             startIndex = Array.FindIndex(UsedTiles, startIndex, used => !used);
 
             if (startIndex == -1) return solution;
 
-            var solRun = TrySet(GetRuns(startIndex), solution, startIndex,
-                (sol, run) => sol.AddRun(run));
+            var solRun = TrySet(GetRuns(startIndex, cancellationToken), solution, startIndex,
+                (sol, run) => sol.AddRun(run), cancellationToken);
 
             if (solRun.IsValid) return solRun;
 
-            var solGroup = TrySet(GetGroups(startIndex), solution, startIndex,
-                (sol, group) => sol.AddGroup(group));
+            var solGroup = TrySet(GetGroups(startIndex, cancellationToken), solution, startIndex,
+                (sol, group) => sol.AddGroup(group), cancellationToken);
 
             if (solGroup.IsValid) return solGroup;
 
@@ -123,13 +129,16 @@ public sealed class IncrementalScoreFieldComplexSolver : ComplexSolver, ISolver
     }
 
     private Solution TrySet<TS>(IEnumerable<TS> sets, Solution solution, int firstUnusedTileIndex,
-        Action<Solution, TS> addSetToSolution)
+        Action<Solution, TS> addSetToSolution, CancellationToken cancellationToken = default)
         where TS : ValidSet
     {
         UsedTiles[firstUnusedTileIndex] = true;
         _solutionScore += IsPlayerTile[firstUnusedTileIndex] ? Tiles[firstUnusedTileIndex].Value : 0;
         foreach (var set in sets)
         {
+            if (cancellationToken.IsCancellationRequested)
+                break;
+                
             MarkTilesAsUsed(set, firstUnusedTileIndex);
 
             // var normal = Tiles.Where((_, i) => _isPlayerTile[i] && UsedTiles[i]).Sum(t => t.Value);
@@ -137,7 +146,7 @@ public sealed class IncrementalScoreFieldComplexSolver : ComplexSolver, ISolver
 
             if (ValidateCondition()) solution.IsValid = true;
 
-            else solution = FindSolution(solution, firstUnusedTileIndex);
+            else solution = FindSolution(solution, firstUnusedTileIndex, cancellationToken);
 
             if (solution.IsValid)
             {

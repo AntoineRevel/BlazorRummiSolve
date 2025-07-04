@@ -23,11 +23,11 @@ public class ScoreFirstBaseSolver : BaseSolver, IScoreSolver
         return new ScoreFirstBaseSolver(tiles.ToArray(), playerSet.Jokers);
     }
 
-    public bool SearchBestScore()
+    public bool SearchBestScore(CancellationToken cancellationToken = default)
     {
         if (Tiles.Length + Jokers <= 2) return false;
 
-        FindBestScore(new Solution(), 0, 0);
+        FindBestScore(new Solution(), 0, 0, cancellationToken);
 
         return BestScore != 0;
     }
@@ -37,36 +37,42 @@ public class ScoreFirstBaseSolver : BaseSolver, IScoreSolver
         return solutionScore >= 30;
     }
 
-    private void FindBestScore(Solution solution, int solutionScore, int startIndex)
+    private void FindBestScore(Solution solution, int solutionScore, int startIndex, CancellationToken cancellationToken = default)
     {
         while (startIndex < UsedTiles.Length - 1)
         {
+            if (cancellationToken.IsCancellationRequested)
+                return;
+                
             startIndex = Array.FindIndex(UsedTiles, startIndex, used => !used);
 
             if (startIndex == -1) return;
 
-            TrySet(GetRuns(startIndex), solution, solutionScore, startIndex);
+            TrySet(GetRuns(startIndex, cancellationToken), solution, solutionScore, startIndex, cancellationToken);
 
-            TrySet(GetGroups(startIndex), solution, solutionScore, startIndex);
+            TrySet(GetGroups(startIndex, cancellationToken), solution, solutionScore, startIndex, cancellationToken);
 
             startIndex++;
         }
     }
 
-    private void TrySet<TS>(IEnumerable<TS> sets, Solution solution, int solutionScore, int firstUnusedTileIndex)
+    private void TrySet<TS>(IEnumerable<TS> sets, Solution solution, int solutionScore, int firstUnusedTileIndex, CancellationToken cancellationToken = default)
         where TS : ValidSet
     {
         UsedTiles[firstUnusedTileIndex] = true;
         var firstTileScore = Tiles[firstUnusedTileIndex].Value;
         foreach (var set in sets)
         {
+            if (cancellationToken.IsCancellationRequested)
+                break;
+                
             MarkTilesAsUsedOut(set, firstUnusedTileIndex, out var playerSetScore);
 
             var newSolutionScore = solutionScore + firstTileScore + playerSetScore;
 
             if (ValidateCondition(newSolutionScore) && newSolutionScore > BestScore) BestScore = newSolutionScore;
 
-            FindBestScore(solution, newSolutionScore, firstUnusedTileIndex);
+            FindBestScore(solution, newSolutionScore, firstUnusedTileIndex, cancellationToken);
 
             MarkTilesAsUnused(set, firstUnusedTileIndex);
         }

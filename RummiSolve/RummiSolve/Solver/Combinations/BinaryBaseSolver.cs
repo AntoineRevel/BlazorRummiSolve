@@ -1,3 +1,4 @@
+using RummiSolve.Results;
 using RummiSolve.Solver.Abstract;
 using RummiSolve.Solver.Interfaces;
 
@@ -9,10 +10,10 @@ public sealed class BinaryBaseSolver(Tile[] tiles, int jokers) : BaseSolver(tile
     public Solution BinarySolution { get; private set; } = new();
     public required IEnumerable<Tile> TilesToPlay { get; init; }
 
-    public bool SearchSolution()
+    public SolverResult SearchSolution(CancellationToken cancellationToken = default)
     {
-        BinarySolution = FindSolution(new Solution(), 0);
-        return BinarySolution.IsValid;
+        BinarySolution = FindSolution(new Solution(), 0, cancellationToken);
+        return new SolverResult(GetType().Name, BinarySolution, TilesToPlay, JokerToPlay, BinarySolution.IsValid);
     }
 
     private bool ValidateCondition()
@@ -22,36 +23,42 @@ public sealed class BinaryBaseSolver(Tile[] tiles, int jokers) : BaseSolver(tile
         return Jokers == 0;
     }
 
-    private Solution FindSolution(Solution solution, int startIndex)
+    private Solution FindSolution(Solution solution, int startIndex, CancellationToken cancellationToken)
     {
+        if (cancellationToken.IsCancellationRequested)
+            return solution;
+            
         startIndex = Array.FindIndex(UsedTiles, startIndex, used => !used);
 
         if (startIndex == -1) return solution;
 
-        var solRun = TrySet(GetRuns(startIndex), solution, startIndex,
-            (sol, run) => sol.AddRun(run));
+        var solRun = TrySet(GetRuns(startIndex, cancellationToken), solution, startIndex,
+            (sol, run) => sol.AddRun(run), cancellationToken);
 
         if (solRun.IsValid) return solRun;
 
-        var solGroup = TrySet(GetGroups(startIndex), solution, startIndex,
-            (sol, group) => sol.AddGroup(group));
+        var solGroup = TrySet(GetGroups(startIndex, cancellationToken), solution, startIndex,
+            (sol, group) => sol.AddGroup(group), cancellationToken);
 
         return solGroup;
     }
 
     private Solution TrySet<TS>(IEnumerable<TS> sets, Solution solution, int firstUnusedTileIndex,
-        Action<Solution, TS> addSetToSolution)
+        Action<Solution, TS> addSetToSolution, CancellationToken cancellationToken)
         where TS : ValidSet
     {
         UsedTiles[firstUnusedTileIndex] = true;
         foreach (var set in sets)
         {
+            if (cancellationToken.IsCancellationRequested)
+                break;
+                
             MarkTilesAsUsed(set, firstUnusedTileIndex);
 
             var newSolution = solution;
 
             if (ValidateCondition()) solution.IsValid = true;
-            else newSolution = FindSolution(solution, firstUnusedTileIndex);
+            else newSolution = FindSolution(solution, firstUnusedTileIndex, cancellationToken);
 
             if (newSolution.IsValid)
             {

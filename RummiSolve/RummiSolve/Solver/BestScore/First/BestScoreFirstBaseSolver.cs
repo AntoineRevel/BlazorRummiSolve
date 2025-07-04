@@ -14,17 +14,17 @@ public class BestScoreFirstBaseSolver : BaseSolver, ISolver
         _availableJokers = jokers;
     }
 
-    public SolverResult SearchSolution()
+    public SolverResult SearchSolution(CancellationToken cancellationToken = default)
     {
         var scoreSolver = new ScoreFirstBaseSolver(Tiles, Jokers);
 
-        var canPlay = scoreSolver.SearchBestScore();
+        var canPlay = scoreSolver.SearchBestScore(cancellationToken);
 
         if (!canPlay) return new SolverResult(GetType().Name);
         ;
 
         _bestSolutionScore = scoreSolver.BestScore;
-        var bestSolution = FindSolution(new Solution(), 0, 0);
+        var bestSolution = FindSolution(new Solution(), 0, 0, cancellationToken);
         var tilesToPlay = Tiles.Where((_, i) => UsedTiles[i]);
         var jokerToPlay = _availableJokers - Jokers;
         var won = UsedTiles.All(b => b);
@@ -55,21 +55,24 @@ public class BestScoreFirstBaseSolver : BaseSolver, ISolver
     }
 
 
-    private Solution FindSolution(Solution solution, int solutionScore, int startIndex)
+    private Solution FindSolution(Solution solution, int solutionScore, int startIndex, CancellationToken cancellationToken = default)
     {
         while (startIndex < UsedTiles.Length - 1)
         {
+            if (cancellationToken.IsCancellationRequested)
+                return solution;
+                
             startIndex = Array.FindIndex(UsedTiles, startIndex, used => !used);
 
             if (startIndex == -1) return solution;
 
-            var solRun = TrySet(GetRuns(startIndex), solution, solutionScore, startIndex,
-                (sol, run) => sol.AddRun(run));
+            var solRun = TrySet(GetRuns(startIndex, cancellationToken), solution, solutionScore, startIndex,
+                (sol, run) => sol.AddRun(run), cancellationToken);
 
             if (solRun.IsValid) return solRun;
 
-            var solGroup = TrySet(GetGroups(startIndex), solution, solutionScore, startIndex,
-                (sol, group) => sol.AddGroup(group));
+            var solGroup = TrySet(GetGroups(startIndex, cancellationToken), solution, solutionScore, startIndex,
+                (sol, group) => sol.AddGroup(group), cancellationToken);
 
             if (solGroup.IsValid) return solGroup;
 
@@ -80,20 +83,23 @@ public class BestScoreFirstBaseSolver : BaseSolver, ISolver
     }
 
     private Solution TrySet<TS>(IEnumerable<TS> sets, Solution solution, int solutionScore, int firstUnusedTileIndex,
-        Action<Solution, TS> addSetToSolution)
+        Action<Solution, TS> addSetToSolution, CancellationToken cancellationToken = default)
         where TS : ValidSet
     {
         UsedTiles[firstUnusedTileIndex] = true;
         var firstTileScore = Tiles[firstUnusedTileIndex].Value;
         foreach (var set in sets)
         {
+            if (cancellationToken.IsCancellationRequested)
+                break;
+                
             MarkTilesAsUsedOut(set, firstUnusedTileIndex, out var playerSetScore);
 
             var newSolutionScore = solutionScore + firstTileScore + playerSetScore;
 
             if (ValidateCondition(newSolutionScore)) solution.IsValid = true;
 
-            else solution = FindSolution(solution, newSolutionScore, firstUnusedTileIndex);
+            else solution = FindSolution(solution, newSolutionScore, firstUnusedTileIndex, cancellationToken);
 
             if (solution.IsValid)
             {
