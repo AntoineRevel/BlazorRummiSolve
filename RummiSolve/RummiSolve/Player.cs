@@ -12,12 +12,11 @@ public class Player(string name, List<Tile> tiles, ISolverStrategy solverStrateg
     public List<Tile> TilesToPlay { get; private set; } = [];
     public bool Won { get; private set; }
 
-    public async Task<Solution> SolveAsync(Solution boardSolution)
+    public async Task<Solution> SolveAsync(Solution boardSolution, CancellationToken externalCancellationToken = default)
     {
         TilesToPlay.Clear();
-        using var cts = new CancellationTokenSource();
         
-        var solver = await solverStrategy.GetSolverResult(boardSolution, new Set(Rack), Played, cts.Token);
+        var solver = await solverStrategy.GetSolverResult(boardSolution, new Set(Rack), Played, externalCancellationToken);
 
         WriteLine($"{solver.Source} Selected");
 

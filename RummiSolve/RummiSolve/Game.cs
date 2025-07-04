@@ -33,10 +33,10 @@ public class Game(Guid id)
         DistributeTiles(tiles, playerNames);
     }
 
-    public async Task PlayAsync()
+    public async Task PlayAsync(CancellationToken cancellationToken = default)
     {
         var player = Players[PlayerIndex];
-        var playerSolution = await player.SolveAsync(Board);
+        var playerSolution = await player.SolveAsync(Board, cancellationToken);
 
         if (playerSolution.IsValid)
         {

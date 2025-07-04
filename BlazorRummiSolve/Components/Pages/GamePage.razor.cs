@@ -1,3 +1,4 @@
+using BlazorRummiSolve.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using RummiSolve;
@@ -17,6 +18,8 @@ public partial class GamePage
 
 
     private Set _playerRack = new();
+
+    [Inject] private CancellationService CancellationService { get; set; } = null!;
 
     [Parameter]
     [SupplyParameterFromQuery(Name = "playerCount")]
@@ -133,9 +136,19 @@ public partial class GamePage
     {
         IsLoading = true;
 
-        await _currentGame.PlayAsync();
-
-        IsLoading = false;
+        try
+        {
+            var cancellationToken = await CancellationService.CreateTokenAsync();
+            await _currentGame.PlayAsync(cancellationToken);
+        }
+        catch (OperationCanceledException)
+        {
+            Console.WriteLine("Game operation was cancelled");
+        }
+        finally
+        {
+            IsLoading = false;
+        }
     }
 
     private async Task ResetGameAsync()
