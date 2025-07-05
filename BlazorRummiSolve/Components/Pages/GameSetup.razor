@@ -13,7 +13,7 @@
             <label for="gameId">Game ID (optional)</label>
             <input id="gameId" @bind="GameId" @bind:after="ValidateGameId" type="text" 
                    class="form-control @(HasGameIdError ? "error" : "")"
-                   placeholder="Leave empty to generate automatically" maxlength="36"
+                   placeholder="Leave empty to generate automatically" maxlength="50"
                    @onkeydown="HandleGameIdKeyDown"/>
             @if (HasGameIdError)
             {
@@ -295,10 +295,9 @@
 
         var queryString = $"?playerCount={PlayerCount}";
 
-        if (!string.IsNullOrWhiteSpace(GameId))
-        {
-            queryString += $"&gameId={Uri.EscapeDataString(GameId.Trim())}";
-        }
+        // Always include game ID in URL - generate one if not provided
+        var gameIdToUse = !string.IsNullOrWhiteSpace(GameId) ? GameId.Trim() : Guid.NewGuid().ToString();
+        queryString += $"&gameId={Uri.EscapeDataString(gameIdToUse)}";
 
         // Add player names if any are provided
         var providedNames = new List<string>();
