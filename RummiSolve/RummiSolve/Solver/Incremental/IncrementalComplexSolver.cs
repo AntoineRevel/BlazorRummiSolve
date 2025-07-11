@@ -33,10 +33,12 @@ public sealed class IncrementalComplexSolver : ComplexSolver, ISolver
         {
             if (cancellationToken.IsCancellationRequested)
                 return new SolverResult(GetType().Name, BestSolution, TilesToPlay, JokerToPlay);
-                
+
             var newSolution = FindSolution(new Solution(), 0, 0, cancellationToken);
 
             if (!newSolution.IsValid) return new SolverResult(GetType().Name, BestSolution, TilesToPlay, JokerToPlay);
+
+            Console.WriteLine(_bestSolutionScore);
 
             BestSolution = newSolution;
             _bestUsedTiles = UsedTiles.ToArray();
@@ -93,13 +95,14 @@ public sealed class IncrementalComplexSolver : ComplexSolver, ISolver
     }
 
 
-    private Solution FindSolution(Solution solution, int solutionScore, int startIndex, CancellationToken cancellationToken)
+    private Solution FindSolution(Solution solution, int solutionScore, int startIndex,
+        CancellationToken cancellationToken)
     {
         while (startIndex < UsedTiles.Length - 1)
         {
             if (cancellationToken.IsCancellationRequested)
                 return solution;
-                
+
             startIndex = Array.FindIndex(UsedTiles, startIndex, used => !used);
 
             if (startIndex == -1) return solution;
@@ -131,7 +134,7 @@ public sealed class IncrementalComplexSolver : ComplexSolver, ISolver
         {
             if (cancellationToken.IsCancellationRequested)
                 break;
-                
+
             MarkTilesAsUsedOut(set, firstUnusedTileIndex, out var playerSetScore);
 
             var newSolutionScore = solutionScore + firstTileScore + playerSetScore;

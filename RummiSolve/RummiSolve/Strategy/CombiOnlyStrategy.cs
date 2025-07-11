@@ -7,10 +7,10 @@ namespace RummiSolve.Strategy;
 
 public class CombiOnlyStrategy : ISolverStrategy
 {
-    public Task<SolverResult> GetSolverResult(Solution boardSolution, Set rack, bool hasPlayed, CancellationToken token)
+    public Task<SolverResult> GetSolverResult(Set boardSet, Set rack, bool hasPlayed, CancellationToken token = default)
     {
         ISolver combiSolver = hasPlayed
-            ? CombinationsSolver.Create(boardSolution.GetSet(), rack)
+            ? CombinationsSolver.Create(boardSet, rack)
             : CombinationsFirstSolver.Create(rack);
 
         return Task.Run(() => combiSolver.SearchSolution(token), token);

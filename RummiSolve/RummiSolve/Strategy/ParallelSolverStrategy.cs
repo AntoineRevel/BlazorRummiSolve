@@ -8,17 +8,15 @@ namespace RummiSolve.Strategy;
 
 public class ParallelSolverStrategy : ISolverStrategy
 {
-    public async Task<SolverResult> GetSolverResult(Solution boardSolution, Set rack, bool hasPlayed,
-        CancellationToken externalToken)
+    public async Task<SolverResult> GetSolverResult(Set boardSet, Set rack, bool hasPlayed,
+        CancellationToken externalToken = default)
     {
-        var solutionSet = boardSolution.GetSet();
-
         ISolver combiSolver = hasPlayed
-            ? CombinationsSolver.Create(new Set(solutionSet), rack)
+            ? CombinationsSolver.Create(new Set(boardSet), rack)
             : CombinationsFirstSolver.Create(rack);
 
         ISolver incrementalSolver = hasPlayed
-            ? IncrementalComplexSolver.Create(new Set(solutionSet), rack)
+            ? IncrementalComplexSolver.Create(new Set(boardSet), rack)
             : IncrementalFirstBaseSolver.Create(rack);
 
         using var cts = CancellationTokenSource.CreateLinkedTokenSource(externalToken);

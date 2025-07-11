@@ -1,6 +1,7 @@
-using BenchmarkDotNet.Attributes;
+using RummiSolve.Solver.Combinations;
 using RummiSolve.Solver.Combinations.First;
 using RummiSolve.Solver.Incremental;
+using RummiSolve.Strategy;
 
 namespace RummiSolve;
 
@@ -10,7 +11,6 @@ public class RummiBench
     private Game _game;
 
 
-
     public static async Task TestSimpleGame()
     {
         Game game = new(Guid.Parse("32ba6c8d-3bb2-41f6-8292-655f9459d53c"));
@@ -18,7 +18,6 @@ public class RummiBench
         var listNames = new List<string> { "Antoine", "Matthieu", "Maguy" };
         game.InitializeGame(listNames);
         while (!game.IsGameOver) await game.PlayAsync();
-        
     }
 
 
@@ -60,7 +59,6 @@ public class RummiBench
 
         Console.WriteLine("=== FIN DE LA PARTIE ===");
     }
-
 
     public static void DontGetError2()
     {
@@ -310,6 +308,279 @@ public class RummiBench
         catch
         {
             Console.WriteLine("❌ Une erreur a été détectée, arrêt des tests.");
+        }
+    }
+
+
+    public static async Task Test_CharlieTurn15_ParallelSolverStrategy()
+    {
+        // Arrange - État du tour 15 de Charlie
+        var boardTiles = new List<Tile>
+        {
+            new(10, TileColor.Black),
+            new(11, TileColor.Black),
+            new(12, TileColor.Black),
+            new(8, TileColor.Black),
+            new(9, TileColor.Black),
+            new(10, TileColor.Black),
+            new(5, TileColor.Black),
+            new(6, TileColor.Black),
+            new(7, TileColor.Black),
+            new(1, TileColor.Mango),
+            new(2, TileColor.Mango),
+            new(3, TileColor.Mango),
+            new(7),
+            new(8),
+            new(9),
+            new(true),
+            new(11),
+            new(6),
+            new(7),
+            new(8),
+            new(2),
+            new(3),
+            new(4),
+            new(13, TileColor.Red),
+            new(13, TileColor.Mango),
+            new(13, TileColor.Black),
+            new(8, TileColor.Red),
+            new(8, TileColor.Mango),
+            new(8, TileColor.Black),
+            new(13),
+            new(13, TileColor.Mango),
+            new(13, TileColor.Black),
+            new(12),
+            new(12, TileColor.Red),
+            new(12, TileColor.Mango),
+            new(5),
+            new(5, TileColor.Mango),
+            new(5, TileColor.Black),
+            new(4),
+            new(4, TileColor.Red),
+            new(4, TileColor.Black),
+            new(2),
+            new(2, TileColor.Red),
+            new(2, TileColor.Mango),
+            new(2, TileColor.Black),
+            new(1),
+            new(1, TileColor.Red),
+            new(1, TileColor.Black)
+        };
+        var rackTiles = new List<Tile>
+        {
+            new(13),
+            new(7, TileColor.Mango),
+            new(4, TileColor.Mango),
+            new(12, TileColor.Black),
+            new(12),
+            new(3, TileColor.Black),
+            new(10),
+            new(11, TileColor.Red),
+            new(5, TileColor.Red),
+            new(3, TileColor.Red),
+            new(3, TileColor.Red),
+            new(7, TileColor.Mango),
+            new(6),
+            new(9, TileColor.Red),
+            new(5),
+            new(10),
+            new(8, TileColor.Red),
+            new(11, TileColor.Black)
+        };
+
+
+        var strategy = new TimeoutTestGeneratorStrategy();
+
+        // Act
+        var result = await strategy.GetSolverResult(new Set(boardTiles), new Set(rackTiles), true);
+
+        Console.WriteLine(result.Source);
+
+        result.BestSolution.PrintSolution();
+    }
+
+    public static void Test15Binary()
+    {
+        // Arrange - État du tour 15 de Charlie
+        var boardTiles = new List<Tile>
+        {
+            new(10, TileColor.Black),
+            new(11, TileColor.Black),
+            new(12, TileColor.Black),
+            new(8, TileColor.Black),
+            new(9, TileColor.Black),
+            new(10, TileColor.Black),
+            new(5, TileColor.Black),
+            new(6, TileColor.Black),
+            new(7, TileColor.Black),
+            new(1, TileColor.Mango),
+            new(2, TileColor.Mango),
+            new(3, TileColor.Mango),
+            new(7),
+            new(8),
+            new(9),
+            new(11),
+            new(6),
+            new(7),
+            new(8),
+            new(2),
+            new(3),
+            new(4),
+            new(13, TileColor.Red),
+            new(13, TileColor.Mango),
+            new(13, TileColor.Black),
+            new(8, TileColor.Red),
+            new(8, TileColor.Mango),
+            new(8, TileColor.Black),
+            new(13),
+            new(13, TileColor.Mango),
+            new(13, TileColor.Black),
+            new(12),
+            new(12, TileColor.Red),
+            new(12, TileColor.Mango),
+            new(5),
+            new(5, TileColor.Mango),
+            new(5, TileColor.Black),
+            new(4),
+            new(4, TileColor.Red),
+            new(4, TileColor.Black),
+            new(2),
+            new(2, TileColor.Red),
+            new(2, TileColor.Mango),
+            new(2, TileColor.Black),
+            new(1),
+            new(1, TileColor.Red),
+            new(1, TileColor.Black)
+        };
+        var rackTiles = new List<Tile>
+        {
+            new(13),
+            new(7, TileColor.Mango),
+            new(4, TileColor.Mango),
+            new(12, TileColor.Black),
+            new(12),
+            new(3, TileColor.Black),
+            new(10),
+            new(11, TileColor.Red),
+            new(5, TileColor.Red),
+            new(3, TileColor.Red),
+            new(3, TileColor.Red),
+            new(7, TileColor.Mango),
+            new(6),
+            new(9, TileColor.Red),
+            new(5),
+            new(10),
+            new(8, TileColor.Red),
+            new(11, TileColor.Black)
+        };
+
+        var binarysolver = new BinaryBaseSolver(boardTiles.Concat(rackTiles).Order().ToArray(), 1)
+        {
+            JokerToPlay = 0,
+            TilesToPlay = rackTiles
+        };
+
+        var result = binarysolver.SearchSolution();
+
+        if (result.Found)
+        {
+            Console.WriteLine("Solution:");
+            binarysolver.BinarySolution.PrintSolution();
+        }
+        else
+        {
+            Console.WriteLine("Aucune solution trouvée ");
+        }
+    }
+
+    public static void Test15BinaryIncr()
+    {
+        // Arrange - État du tour 15 de Charlie
+        var boardTiles = new List<Tile>
+        {
+            new(10, TileColor.Black),
+            new(11, TileColor.Black),
+            new(12, TileColor.Black),
+            new(8, TileColor.Black),
+            new(9, TileColor.Black),
+            new(10, TileColor.Black),
+            new(5, TileColor.Black),
+            new(6, TileColor.Black),
+            new(7, TileColor.Black),
+            new(1, TileColor.Mango),
+            new(2, TileColor.Mango),
+            new(3, TileColor.Mango),
+            new(7),
+            new(8),
+            new(9),
+            new(11),
+            new(6),
+            new(7),
+            new(8),
+            new(2),
+            new(3),
+            new(4),
+            new(13, TileColor.Red),
+            new(13, TileColor.Mango),
+            new(13, TileColor.Black),
+            new(8, TileColor.Red),
+            new(8, TileColor.Mango),
+            new(8, TileColor.Black),
+            new(13),
+            new(13, TileColor.Mango),
+            new(13, TileColor.Black),
+            new(12),
+            new(12, TileColor.Red),
+            new(12, TileColor.Mango),
+            new(5),
+            new(5, TileColor.Mango),
+            new(5, TileColor.Black),
+            new(4),
+            new(4, TileColor.Red),
+            new(4, TileColor.Black),
+            new(2),
+            new(2, TileColor.Red),
+            new(2, TileColor.Mango),
+            new(2, TileColor.Black),
+            new(1),
+            new(1, TileColor.Red),
+            new(1, TileColor.Black)
+        };
+        var rackTiles = new List<Tile>
+        {
+            new(13),
+            new(7, TileColor.Mango),
+            new(4, TileColor.Mango),
+            new(12, TileColor.Black),
+            new(12),
+            new(3, TileColor.Black),
+            new(10),
+            new(11, TileColor.Red),
+            new(5, TileColor.Red),
+            new(3, TileColor.Red),
+            new(3, TileColor.Red),
+            new(7, TileColor.Mango),
+            new(6),
+            new(9, TileColor.Red),
+            new(5),
+            new(10),
+            new(8, TileColor.Red),
+            new(11, TileColor.Black)
+        };
+
+
+        var solveur = IncrementalComplexSolver.Create(new Set(boardTiles), new Set(rackTiles));
+
+        var result = solveur.SearchSolution();
+
+        if (result.Found)
+        {
+            Console.WriteLine("Solution:");
+            solveur.BestSolution.PrintSolution();
+        }
+        else
+        {
+            Console.WriteLine("Aucune solution trouvée ");
         }
     }
 }

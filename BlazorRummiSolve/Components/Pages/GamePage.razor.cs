@@ -33,7 +33,7 @@ public partial class GamePage
     [SupplyParameterFromQuery(Name = "playerNames")]
     public string? PlayerNamesQuery { get; set; }
 
-    private Player CurrentPlayer { get; set; } = new("Default", [], new ParallelSolverStrategy());
+    private Player CurrentPlayer { get; set; } = new("Default", [], new TimeoutTestGeneratorStrategy());
     private List<Player> OtherPlayers => _currentGame.Players.Where(p => p != CurrentPlayer).ToList();
     private int TurnNumber => _currentGame.Turn;
     private Guid Id => _currentGame.Id;

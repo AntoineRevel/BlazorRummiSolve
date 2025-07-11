@@ -11,29 +11,27 @@ namespace RummiSolve.Strategy;
 
 public class MeasuredSolverStrategy : ISolverStrategy
 {
-    public async Task<SolverResult> GetSolverResult(Solution boardSolution, Set rack, bool hasPlayed,
+    public async Task<SolverResult> GetSolverResult(Set boardSet, Set rack, bool hasPlayed,
         CancellationToken externalToken)
     {
-        var solutionSet = boardSolution.GetSet();
-
         ISolver combiSolver = hasPlayed
-            ? CombinationsSolver.Create(new Set(solutionSet), rack)
+            ? CombinationsSolver.Create(new Set(boardSet), rack)
             : CombinationsFirstSolver.Create(rack);
 
         ISolver bestScoreSolver = hasPlayed
-            ? BestScoreComplexSolver.Create(new Set(solutionSet), rack)
+            ? BestScoreComplexSolver.Create(new Set(boardSet), rack)
             : BestScoreFirstBaseSolver.Create(rack);
 
         ISolver incrementalSolver = hasPlayed
-            ? IncrementalComplexSolver.Create(new Set(solutionSet), rack)
+            ? IncrementalComplexSolver.Create(new Set(boardSet), rack)
             : IncrementalFirstBaseSolver.Create(rack);
 
         ISolver incrementalScoreFSolver = hasPlayed
-            ? IncrementalScoreFieldComplexSolver.Create(new Set(solutionSet), rack)
+            ? IncrementalScoreFieldComplexSolver.Create(new Set(boardSet), rack)
             : IncrementalFirstBaseSolver.Create(rack);
 
         ISolver incrementalScoreTileSolver = hasPlayed
-            ? IncrementalComplexSolverTileAndSc.Create(new Set(solutionSet), rack)
+            ? IncrementalComplexSolverTileAndSc.Create(new Set(boardSet), rack)
             : IncrementalFirstBaseSolver.Create(rack);
 
         var results = new List<TimedResult>
