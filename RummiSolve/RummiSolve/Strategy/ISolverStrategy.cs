@@ -4,6 +4,6 @@ namespace RummiSolve.Strategy;
 
 public interface ISolverStrategy
 {
-    Task<SolverResult> GetSolverResult(Solution boardSolution, Set rack, bool hasPlayed,
-        CancellationToken cancellationToken);
+    Task<SolverResult> GetSolverResult(Set board, Set rack, bool hasPlayed,
+        CancellationToken cancellationToken = default);
 }
