@@ -46,7 +46,7 @@ public class CombinationsSolver : ISolver
         {
             if (cancellationToken.IsCancellationRequested)
                 break;
-                
+
             foreach (
                 var combi in
                 BaseSolver.GetCombinations(_playerTilesJ, tileTry, cancellationToken)
@@ -54,16 +54,19 @@ public class CombinationsSolver : ISolver
             {
                 if (cancellationToken.IsCancellationRequested)
                     break;
-                    
-                var joker = combi.Count(tile => tile.IsJoker);
 
-                if (joker > 0)
+                var joker = 0;
+                var nonJokerCombi = new List<Tile>(tileTry);
+                foreach (var tile in combi)
                 {
-                    combi.Sort();
-                    combi.RemoveRange(tileTry - joker, joker);
+                    if (tile.IsJoker)
+                        joker++;
+                    else
+                        nonJokerCombi.Add(tile);
                 }
 
-                var solver = new BinaryBaseSolver(_boardTiles.Concat(combi).Order().ToArray(), joker + _boardJokers)
+                var solver = new BinaryBaseSolver(_boardTiles.Concat(nonJokerCombi).Order().ToArray(),
+                    joker + _boardJokers)
                 {
                     TilesToPlay = combi,
                     JokerToPlay = joker
