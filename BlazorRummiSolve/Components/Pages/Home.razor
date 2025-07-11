@@ -2,22 +2,152 @@
 @inject NavigationManager Navigation
 @rendermode InteractiveServer
 
-<h1>Welcome to the Rummikub Solver</h1>
-<p>
-    This site helps you solve your Rummikub games. Click "Play" to start.
-</p>
+<div class="hero-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <div class="hero-content">
+                    <h1 class="display-4 fw-bold mb-4">Rummikub Solver</h1>
+                    <p class="lead mb-5">
+                        Unlock the perfect strategy for your Rummikub games with our advanced solver.
+                        Get instant solutions and improve your gameplay.
+                    </p>
 
-<button class="btn btn-primary" @onclick="NavigateToGame">Play</button>
+                    <div class="d-flex gap-3 justify-content-center flex-wrap mb-5">
+                        <button class="btn btn-primary btn-lg px-4 py-2" @onclick="NavigateToGame">
+                            Start Playing
+                        </button>
+                        <button class="btn btn-outline-secondary btn-lg px-4 py-2" @onclick="IncrementCount">
+                            Test Counter
+                        </button>
+                    </div>
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+                    <div class="counter-display mb-5">
+                        <p class="text-muted">Demo Counter: <span class="fw-bold">@_currentCount</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-<p role="status">Current count: @_currentCount</p>
+<div class="features-section py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 text-center mb-4">
+                <div class="feature-item">
+                    <div class="feature-icon mb-3">⚡</div>
+                    <h4>Smart Algorithm</h4>
+                    <p class="text-muted">Advanced algorithms analyze your tiles and find optimal solutions</p>
+                </div>
+            </div>
+            <div class="col-md-4 text-center mb-4">
+                <div class="feature-item">
+                    <div class="feature-icon mb-3">🚀</div>
+                    <h4>Lightning Fast</h4>
+                    <p class="text-muted">Get instant solutions with multiple solving strategies</p>
+                </div>
+            </div>
+            <div class="col-md-4 text-center mb-4">
+                <div class="feature-item">
+                    <div class="feature-icon mb-3">👁️</div>
+                    <h4>Visual Interface</h4>
+                    <p class="text-muted">Interactive game board with step-by-step solution visualization</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-<p>
-    This project is open source, and your feedback is highly appreciated! Feel free to check out the code on
-    <a href="https://github.com/AntoineRevel/BlazorRummiSolve" target="_blank">GitHub</a>.
-    If you have any suggestions or improvements, please open an issue or submit a pull request.
-</p>
+<div class="open-source-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h3 class="mb-4">Open Source & Community Driven</h3>
+                <p class="text-muted mb-4">
+                    This project is open source and your feedback is highly appreciated!
+                    Join our community and help make it even better.
+                </p>
+                <a href="https://github.com/AntoineRevel/BlazorRummiSolve" target="_blank" class="btn btn-outline-dark">
+                    View on GitHub
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        color: #333;
+        padding: 80px 0;
+        min-height: 70vh;
+        display: flex;
+        align-items: center;
+    }
+
+    .hero-content {
+        animation: fadeInUp 1s ease-out;
+    }
+
+    .features-section {
+        background: #ffffff;
+        border-top: 1px solid #e9ecef;
+    }
+
+    .feature-item {
+        padding: 30px 20px;
+        border-radius: 8px;
+        transition: transform 0.2s ease;
+    }
+
+    .feature-item:hover {
+        transform: translateY(-2px);
+    }
+
+    .feature-icon {
+        font-size: 2.5rem;
+        opacity: 0.8;
+    }
+
+    .btn {
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        border-width: 1px;
+    }
+
+    .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary {
+        background-color: #495057;
+        border-color: #495057;
+    }
+
+    .btn-primary:hover {
+        background-color: #343a40;
+        border-color: #343a40;
+    }
+
+    .open-source-section {
+        background: #f8f9fa;
+        border-top: 1px solid #e9ecef;
+    }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
 
 @code {
 
