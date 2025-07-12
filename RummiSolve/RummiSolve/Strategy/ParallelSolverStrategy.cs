@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using RummiSolve.Results;
 using RummiSolve.Solver.Combinations;
 using RummiSolve.Solver.Combinations.First;
@@ -11,8 +12,10 @@ public class ParallelSolverStrategy : ISolverStrategy
     public async Task<SolverResult> GetSolverResult(Set board, Set rack, bool hasPlayed,
         CancellationToken externalToken = default)
     {
+        var stopwatch = Stopwatch.StartNew();
+
         ISolver combiSolver = hasPlayed
-            ? CombinationsSolver.Create(new Set(board), rack)
+            ? ParallelCombinationSolver.Create(new Set(board), rack)
             : CombinationsFirstSolver.Create(rack);
 
         ISolver incrementalSolver = hasPlayed
@@ -29,6 +32,10 @@ public class ParallelSolverStrategy : ISolverStrategy
 
         await cts.CancelAsync();
 
-        return await completedTask;
+        var result = await completedTask;
+        stopwatch.Stop();
+        Console.WriteLine($"ParallelSolverStrategy executed in {stopwatch.ElapsedMilliseconds}ms");
+
+        return result;
     }
 }

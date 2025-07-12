@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using RummiSolve.Results;
 using RummiSolve.Solver.Abstract;
 using RummiSolve.Solver.Interfaces;
@@ -33,50 +34,89 @@ public class ParallelCombinationSolver : ISolver
         var parallelOptions = new ParallelOptions
         {
             CancellationToken = cancellationToken,
-            MaxDegreeOfParallelism = Environment.ProcessorCount
+            MaxDegreeOfParallelism = Environment.ProcessorCount + 4
         };
 
-        var result = new SolverResult[combinations.Count];
-
-        Parallel.ForEach(combinations, parallelOptions, (combi, loopState, index) =>
+        var results = new ConcurrentBag<(long index, SolverResult result)>();
+        var foundSolutionIndex = long.MaxValue;
+        var lockObject = new Lock();
+        var cancellationTokenSources = new ConcurrentDictionary<long, CancellationTokenSource>();
+        try
         {
-            if (cancellationToken.IsCancellationRequested)
+            Parallel.ForEach(combinations, parallelOptions, (combi, loopState, index) =>
             {
-                loopState.Stop();
-                return;
-            }
+                if (cancellationToken.IsCancellationRequested) loopState.Stop();
 
-            var joker = 0;
-            var nonJokerCombi = new List<Tile>();
-            foreach (var tile in combi)
-                if (tile.IsJoker)
-                    joker++;
-                else
-                    nonJokerCombi.Add(tile);
+                if (index >= foundSolutionIndex) return;
 
-            var solver = new BinaryBaseSolver(_boardTiles.Concat(nonJokerCombi).Order().ToArray(),
-                joker + _boardJokers)
-            {
-                TilesToPlay = nonJokerCombi,
-                JokerToPlay = joker
-            };
+                // Create a combined cancellation token for this specific task
+                var taskCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                cancellationTokenSources.TryAdd(index, taskCts);
 
-            result[index] = solver.SearchSolution(cancellationToken);
-        });
+                var joker = 0;
+                var nonJokerCombi = new List<Tile>();
+                foreach (var tile in combi)
+                    if (tile.IsJoker)
+                        joker++;
+                    else
+                        nonJokerCombi.Add(tile);
 
-        var firstResult = result[0];
-        if (firstResult.Found)
+                var solver = new BinaryBaseSolver(_boardTiles.Concat(nonJokerCombi).Order().ToArray(),
+                    joker + _boardJokers)
+                {
+                    TilesToPlay = nonJokerCombi,
+                    JokerToPlay = joker
+                };
+
+                Console.WriteLine("run : " + index);
+
+                var result = solver.SearchSolution(taskCts.Token);
+
+                if (!result.Found) return;
+
+                results.Add((index, result));
+
+                Console.WriteLine("Find for " + index);
+                lock (lockObject)
+                {
+                    if (index >= foundSolutionIndex) return;
+
+                    foundSolutionIndex = index;
+
+                    // Cancel all tasks with higher indices
+                    foreach (var kvp in cancellationTokenSources.Where(kvp => kvp.Key > index))
+                    {
+                        kvp.Value.Cancel();
+                        Console.WriteLine("cancel : " + kvp.Key);
+                    }
+                }
+            });
+        }
+        catch (OperationCanceledException)
         {
-            firstResult.Won = true;
-            return firstResult;
+        }
+        finally
+        {
+            // Dispose all cancellation token sources
+            foreach (var kvp in cancellationTokenSources)
+                kvp.Value.Dispose();
         }
 
-        foreach (var solverResult in result)
-            if (solverResult.Found)
-                return solverResult;
-
-        return new SolverResult(GetType().Name);
+        return GetBestResult(results);
     }
+
+
+    private SolverResult GetBestResult(ConcurrentBag<(long Index, SolverResult Result)> results)
+    {
+        if (results.IsEmpty) return new SolverResult(GetType().Name);
+
+        var bestResult = results.MinBy(r => r.Index);
+
+        if (bestResult.Index == 0) bestResult.Result.Won = true;
+
+        return bestResult.Result;
+    }
+
 
     public static ParallelCombinationSolver Create(Set boardSet, Set playerSet)
     {

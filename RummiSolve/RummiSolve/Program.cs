@@ -7,6 +7,6 @@ public static class Program
         //BenchmarkRunner.Run<ParallelSolverBenchmark>();
 
 
-        await RummiBench.Test_CharlieTurn15_ParallelSolverStrategy();
+        await RummiBench.TestSimpleGame2();
     }
 }
