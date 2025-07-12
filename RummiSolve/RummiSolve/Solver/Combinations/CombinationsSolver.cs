@@ -37,9 +37,9 @@ public class CombinationsSolver : ISolver
         if (result.Found)
             return new SolverResult(
                 GetType().Name,
-                firstBinarySolver.BinarySolution,
-                firstBinarySolver.TilesToPlay,
-                firstBinarySolver.JokerToPlay, true);
+                result.BestSolution,
+                result.TilesToPlay,
+                result.JokerToPlay, true);
 
 
         for (var tileTry = _playerTilesJ.Count - 1; tileTry > 0; tileTry--)
@@ -68,14 +68,14 @@ public class CombinationsSolver : ISolver
                 var solver = new BinaryBaseSolver(_boardTiles.Concat(nonJokerCombi).Order().ToArray(),
                     joker + _boardJokers)
                 {
-                    TilesToPlay = combi,
+                    TilesToPlay = nonJokerCombi,
                     JokerToPlay = joker
                 };
 
-                var solverResult = solver.SearchSolution(cancellationToken);
-                if (!solverResult.Found) continue;
+                result = solver.SearchSolution(cancellationToken);
+                if (!result.Found) continue;
 
-                return new SolverResult(GetType().Name, solver.BinarySolution, solver.TilesToPlay, solver.JokerToPlay);
+                return result;
             }
         }
 

@@ -1,6 +1,6 @@
+using RummiSolve.Solver.Combinations;
 using RummiSolve.Solver.Combinations.First;
 using RummiSolve.Solver.Incremental;
-using RummiSolve.Strategy;
 
 namespace RummiSolve;
 
@@ -80,10 +80,10 @@ public class RummiBench
         var solver = IncrementalFirstBaseSolver.Create(playerSet);
 
         // Act
-        solver.SearchSolution();
-        var solution = solver.BestSolution;
-        var tilesToPlay = solver.TilesToPlay.ToList();
-        var jokerToPlay = solver.JokerToPlay;
+        var result = solver.SearchSolution();
+        var solution = result.BestSolution;
+        var tilesToPlay = result.TilesToPlay.ToList();
+        var jokerToPlay = result.JokerToPlay;
 
         solution.PrintSolution();
 
@@ -146,10 +146,10 @@ public class RummiBench
         var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
 
         // Act
-        solver.SearchSolution();
-        var solution = solver.BestSolution;
-        var tilesToPlay = solver.TilesToPlay.ToList();
-        var jokerToPlay = solver.JokerToPlay;
+        var result = solver.SearchSolution();
+        var solution = result.BestSolution;
+        var tilesToPlay = result.TilesToPlay.ToList();
+        var jokerToPlay = result.JokerToPlay;
 
         playerSet.PrintAllTiles();
         Console.WriteLine();
@@ -217,10 +217,10 @@ public class RummiBench
 
         // Act
 
-        solver.SearchSolution();
-        var solution = solver.BestSolution;
-        var tilesToPlay = solver.TilesToPlay.ToList();
-        var jokerToPlay = solver.JokerToPlay;
+        var result = solver.SearchSolution();
+        var solution = result.BestSolution;
+        var tilesToPlay = result.TilesToPlay.ToList();
+        var jokerToPlay = result.JokerToPlay;
 
         playerSet.PrintAllTiles();
         Console.WriteLine();
@@ -388,10 +388,15 @@ public class RummiBench
         };
 
 
-        var strategy = new ParallelSolverStrategy();
+        // var strategy = new ParallelSolverStrategy();
+        //
+        // // Act
+        // var result = await strategy.GetSolverResult(new Set(boardTiles), new Set(rackTiles), true);
 
-        // Act
-        var result = await strategy.GetSolverResult(new Set(boardTiles), new Set(rackTiles), true);
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+
+        var result = ParallelCombinationSolver.Create(new Set(boardTiles), new Set(rackTiles))
+            .SearchSolution(cts.Token);
 
         Console.WriteLine(result.Source);
 

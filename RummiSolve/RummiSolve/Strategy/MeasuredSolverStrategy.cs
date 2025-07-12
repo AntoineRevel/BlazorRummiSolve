@@ -34,13 +34,18 @@ public class MeasuredSolverStrategy : ISolverStrategy
             ? IncrementalComplexSolverTileAndSc.Create(new Set(board), rack)
             : IncrementalFirstBaseSolver.Create(rack);
 
+        ISolver parraleleCombiSolver = hasPlayed
+            ? ParallelCombinationSolver.Create(new Set(board), rack)
+            : CombinationsFirstSolver.Create(rack);
+
         var results = new List<TimedResult>
         {
             await RunSolverAsync("Combinations", combiSolver, externalToken),
             await RunSolverAsync("BestScore", bestScoreSolver, externalToken),
             await RunSolverAsync("Incremental", incrementalSolver, externalToken),
             await RunSolverAsync("IncrementalScoreField", incrementalScoreFSolver, externalToken),
-            await RunSolverAsync("IncrementalScoreTile", incrementalScoreTileSolver, externalToken)
+            await RunSolverAsync("IncrementalScoreTile", incrementalScoreTileSolver, externalToken),
+            await RunSolverAsync("ParallelCombination", parraleleCombiSolver, externalToken)
         };
 
         Console.WriteLine("\n====== Résultats des stratégies ======\n");
