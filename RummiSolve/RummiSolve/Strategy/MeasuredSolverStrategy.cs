@@ -35,7 +35,7 @@ public class MeasuredSolverStrategy : ISolverStrategy
             : IncrementalFirstBaseSolver.Create(rack);
 
         ISolver parraleleCombiSolver = hasPlayed
-            ? ParallelCombinationSolver.Create(new Set(board), rack)
+            ? ParallelCombinationsSolver.Create(new Set(board), rack)
             : CombinationsFirstSolver.Create(rack);
 
         var results = new List<TimedResult>

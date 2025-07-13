@@ -5,13 +5,13 @@ using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Solver.Combinations;
 
-public class ParallelCombinationSolver : ISolver
+public class ParallelCombinationsSolver : ISolver
 {
     private readonly int _boardJokers;
     private readonly List<Tile> _boardTiles;
     private readonly List<Tile> _playerTilesJ;
 
-    private ParallelCombinationSolver(List<Tile> boardTiles, int boardJokers, List<Tile> playerTiles)
+    private ParallelCombinationsSolver(List<Tile> boardTiles, int boardJokers, List<Tile> playerTiles)
     {
         _boardTiles = boardTiles;
         _boardJokers = boardJokers;
@@ -34,7 +34,6 @@ public class ParallelCombinationSolver : ISolver
         var parallelOptions = new ParallelOptions
         {
             CancellationToken = cancellationToken,
-            MaxDegreeOfParallelism = Environment.ProcessorCount + 4
         };
 
         var results = new ConcurrentBag<(long index, SolverResult result)>();
@@ -68,15 +67,12 @@ public class ParallelCombinationSolver : ISolver
                     JokerToPlay = joker
                 };
 
-                Console.WriteLine("run : " + index);
-
                 var result = solver.SearchSolution(taskCts.Token);
 
                 if (!result.Found) return;
 
                 results.Add((index, result));
 
-                Console.WriteLine("Find for " + index);
                 lock (lockObject)
                 {
                     if (index >= foundSolutionIndex) return;
@@ -87,7 +83,6 @@ public class ParallelCombinationSolver : ISolver
                     foreach (var kvp in cancellationTokenSources.Where(kvp => kvp.Key > index))
                     {
                         kvp.Value.Cancel();
-                        Console.WriteLine("cancel : " + kvp.Key);
                     }
                 }
             });
@@ -118,12 +113,12 @@ public class ParallelCombinationSolver : ISolver
     }
 
 
-    public static ParallelCombinationSolver Create(Set boardSet, Set playerSet)
+    public static ParallelCombinationsSolver Create(Set boardSet, Set playerSet)
     {
         boardSet.Tiles.Sort();
 
         if (boardSet.Jokers > 0) boardSet.Tiles.RemoveRange(boardSet.Tiles.Count - boardSet.Jokers, boardSet.Jokers);
 
-        return new ParallelCombinationSolver(boardSet.Tiles, boardSet.Jokers, playerSet.Tiles);
+        return new ParallelCombinationsSolver(boardSet.Tiles, boardSet.Jokers, playerSet.Tiles);
     }
 }

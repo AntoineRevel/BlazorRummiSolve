@@ -15,7 +15,7 @@ public class ParallelSolverStrategy : ISolverStrategy
         var stopwatch = Stopwatch.StartNew();
 
         ISolver combiSolver = hasPlayed
-            ? ParallelCombinationSolver.Create(new Set(board), rack)
+            ? CombinationsSolver.Create(new Set(board), rack)
             : CombinationsFirstSolver.Create(rack);
 
         ISolver incrementalSolver = hasPlayed

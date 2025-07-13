@@ -392,7 +392,7 @@ public class RummiBench
 
         using var cts = new CancellationTokenSource(TimeSpan.FromMinutes(10));
 
-        var result = ParallelCombinationSolver.Create(new Set(boardTiles), new Set(rackTiles))
+        var result = ParallelCombinationsSolver.Create(new Set(boardTiles), new Set(rackTiles))
             .SearchSolution(cts.Token);
 
         Console.WriteLine(result.Source);
@@ -548,7 +548,7 @@ public class RummiBench
         };
 
 
-        var result = ParallelCombinationSolver.Create(new Set(boardTiles), new Set(rackTiles))
+        var result = ParallelCombinationsSolver.Create(new Set(boardTiles), new Set(rackTiles))
             .SearchSolution();
 
         Console.WriteLine(result.Source);

@@ -22,7 +22,7 @@ public class ParallelCombinationsSolverTests
             new Tile(10, TileColor.Black)
         ]);
 
-        var solver = ParallelCombinationSolver.Create(boardSet, playerSet);
+        var solver = ParallelCombinationsSolver.Create(boardSet, playerSet);
 
         // Act
         var result = solver.SearchSolution();
@@ -52,7 +52,7 @@ public class ParallelCombinationsSolverTests
             new Tile(1, TileColor.Red)
         ]);
 
-        var solver = ParallelCombinationSolver.Create(boardSet, playerSet);
+        var solver = ParallelCombinationsSolver.Create(boardSet, playerSet);
 
         // Act
         var result = solver.SearchSolution();
@@ -84,7 +84,7 @@ public class ParallelCombinationsSolverTests
             new Tile(10, TileColor.Red)
         ]);
 
-        var solver = ParallelCombinationSolver.Create(boardSet, playerSet);
+        var solver = ParallelCombinationsSolver.Create(boardSet, playerSet);
 
         // Act
         var result = solver.SearchSolution();
@@ -114,7 +114,7 @@ public class ParallelCombinationsSolverTests
             new Tile(4, TileColor.Red)
         ]);
 
-        var solver = ParallelCombinationSolver.Create(boardSet, playerSet);
+        var solver = ParallelCombinationsSolver.Create(boardSet, playerSet);
 
         // Act
         var result = solver.SearchSolution();
@@ -145,7 +145,7 @@ public class ParallelCombinationsSolverTests
             new Tile(true)
         ]);
 
-        var solver = ParallelCombinationSolver.Create(boardSet, playerSet);
+        var solver = ParallelCombinationsSolver.Create(boardSet, playerSet);
 
         // Act
         var result = solver.SearchSolution();
@@ -184,7 +184,7 @@ public class ParallelCombinationsSolverTests
             new Tile(3, TileColor.Red)
         ]);
 
-        var solver = ParallelCombinationSolver.Create(boardSet, playerSet);
+        var solver = ParallelCombinationsSolver.Create(boardSet, playerSet);
 
         // Act
         var result = solver.SearchSolution();
@@ -218,7 +218,7 @@ public class ParallelCombinationsSolverTests
             new Tile(1)
         ]);
 
-        var solver = ParallelCombinationSolver.Create(boardSet, playerSet);
+        var solver = ParallelCombinationsSolver.Create(boardSet, playerSet);
 
         // Act
         var result = solver.SearchSolution();
@@ -255,7 +255,7 @@ public class ParallelCombinationsSolverTests
             new Tile(13)
         ]);
 
-        var solver = ParallelCombinationSolver.Create(boardSet, playerSet);
+        var solver = ParallelCombinationsSolver.Create(boardSet, playerSet);
 
         // Act
         var result = solver.SearchSolution();
@@ -290,7 +290,7 @@ public class ParallelCombinationsSolverTests
             new Tile(true)
         ]);
 
-        var solver = ParallelCombinationSolver.Create(boardSet, playerSet);
+        var solver = ParallelCombinationsSolver.Create(boardSet, playerSet);
 
         // Act
         var result = solver.SearchSolution();
@@ -319,7 +319,7 @@ public class ParallelCombinationsSolverTests
         var playerSet = new Set([
             new Tile(true)
         ]);
-        var solver = ParallelCombinationSolver.Create(boardSet, playerSet);
+        var solver = ParallelCombinationsSolver.Create(boardSet, playerSet);
 
         // Act
         var result = solver.SearchSolution();
@@ -349,7 +349,7 @@ public class ParallelCombinationsSolverTests
             new Tile(5)
         ]);
 
-        var solver = ParallelCombinationSolver.Create(boardSet, playerSet);
+        var solver = ParallelCombinationsSolver.Create(boardSet, playerSet);
 
         // Act
         var result = solver.SearchSolution();
@@ -383,7 +383,7 @@ public class ParallelCombinationsSolverTests
             new Tile(12, TileColor.Black)
         ]);
 
-        var solver = ParallelCombinationSolver.Create(boardSet, playerSet);
+        var solver = ParallelCombinationsSolver.Create(boardSet, playerSet);
 
         using var cts = new CancellationTokenSource(TimeSpan.FromMilliseconds(50));
 
