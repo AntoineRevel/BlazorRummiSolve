@@ -85,7 +85,7 @@ public class Game(Guid id)
             var startIndex = i * tilesPerPlayer;
             var playerTiles = new Tile[tilesPerPlayer];
             Array.Copy(tiles, startIndex, playerTiles, 0, tilesPerPlayer);
-            Players.Add(new Player(playerNames[i], playerTiles.ToList(), new ParallelSolverStrategy()));
+            Players.Add(new Player(playerNames[i], playerTiles.ToList(), new IncrementalSolverStrategy()));
         }
 
         _tilePool.Clear();

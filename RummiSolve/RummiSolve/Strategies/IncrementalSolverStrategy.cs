@@ -7,20 +7,20 @@ namespace RummiSolve.Strategies;
 
 public class IncrementalSolverStrategy : ISolverStrategy
 {
-    public async Task<SolverResult> GetSolverResult(Set board, Set rack, bool hasPlayed,
+    public Task<SolverResult> GetSolverResult(Set board, Set rack, bool hasPlayed,
         CancellationToken cancellationToken = default)
     {
         var stopwatch = Stopwatch.StartNew();
 
         ISolver solver = hasPlayed
-            ? IncrementalComplexSolver.Create(new Set(board), rack)
+            ? IncrementalComplexSolver.Create(board, rack)
             : IncrementalFirstBaseSolver.Create(rack);
 
-        var result = await Task.Run(() => solver.SearchSolution(cancellationToken), cancellationToken);
+        var result = solver.SearchSolution(cancellationToken);
 
         stopwatch.Stop();
         Console.WriteLine($"IncrementalSolverStrategy executed in {stopwatch.ElapsedMilliseconds}ms");
 
-        return result;
+        return Task.FromResult(result);
     }
 }
