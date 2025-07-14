@@ -5,7 +5,7 @@ using RummiSolve.Solver.Combinations.First;
 using RummiSolve.Solver.Incremental;
 using RummiSolve.Solver.Interfaces;
 
-namespace RummiSolve.Strategy;
+namespace RummiSolve.Strategies;
 
 public class ParallelSolverStrategy : ISolverStrategy
 {
@@ -15,7 +15,7 @@ public class ParallelSolverStrategy : ISolverStrategy
         var stopwatch = Stopwatch.StartNew();
 
         ISolver combiSolver = hasPlayed
-            ? CombinationsSolver.Create(new Set(board), rack)
+            ? ParallelCombinationsSolver.Create(new Set(board), rack)
             : CombinationsFirstSolver.Create(rack);
 
         ISolver incrementalSolver = hasPlayed

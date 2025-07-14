@@ -3,7 +3,7 @@ using RummiSolve.Solver.Combinations;
 using RummiSolve.Solver.Combinations.First;
 using RummiSolve.Solver.Interfaces;
 
-namespace RummiSolve.Strategy;
+namespace RummiSolve.Strategies;
 
 public class CombiOnlyStrategy : ISolverStrategy
 {

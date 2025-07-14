@@ -1,6 +1,6 @@
 using RummiSolve.Results;
 
-namespace RummiSolve.Strategy;
+namespace RummiSolve.Strategies;
 
 public interface ISolverStrategy
 {

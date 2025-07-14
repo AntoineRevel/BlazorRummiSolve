@@ -6,7 +6,6 @@ public static class Program
     {
         //BenchmarkRunner.Run<ParallelSolverBenchmark>();
 
-
         await RummiBench.TestSimpleGame2();
     }
 }

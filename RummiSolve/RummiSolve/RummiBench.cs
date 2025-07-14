@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using RummiSolve.Solver.Combinations;
 using RummiSolve.Solver.Combinations.First;
 using RummiSolve.Solver.Incremental;
@@ -22,10 +23,12 @@ public class RummiBench
 
     public static async Task TestSimpleGame2()
     {
-        var game = new Game(Guid.Parse("94496174-ea5e-4703-bf25-635956cac765"));
+        var game = new Game(Guid.Parse("3425c323-1536-41ab-b3e0-fd76812cd137"));
         var playerNames = new List<string> { "Antoine", "Matthieu", "Maguy" };
 
         game.InitializeGame(playerNames);
+
+        var stopwatch = Stopwatch.StartNew();
 
         Console.WriteLine("=== DÉBUT DE LA PARTIE ===");
         while (!game.IsGameOver)
@@ -52,6 +55,9 @@ public class RummiBench
 
             Console.WriteLine("\n--------------------------------\n");
         }
+
+        stopwatch.Stop();
+        Console.WriteLine($"Game executed in {stopwatch.ElapsedMilliseconds}ms");
 
         Console.WriteLine("=== FIN DE LA PARTIE ===");
     }

@@ -1,4 +1,4 @@
-using RummiSolve.Strategy;
+using RummiSolve.Strategies;
 using static System.Console;
 
 namespace RummiSolve;
