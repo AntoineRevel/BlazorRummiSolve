@@ -35,9 +35,9 @@ public class BinaryBaseSolverTests
         };
 
         // Act
-        solver.SearchSolution();
-        var solution = solver.BinarySolution;
-        var tilesToPlay = solver.TilesToPlay.ToList();
+        var result = solver.SearchSolution();
+        var solution = result.BestSolution;
+        var tilesToPlay = result.TilesToPlay.ToList();
 
         // Assert
         Assert.True(solution.IsValid);
@@ -79,9 +79,9 @@ public class BinaryBaseSolverTests
         };
 
         // Act
-        solver.SearchSolution();
-        var solution = solver.BinarySolution;
-        var tilesToPlay = solver.TilesToPlay.ToList();
+        var result = solver.SearchSolution();
+        var solution = result.BestSolution;
+        var tilesToPlay = result.TilesToPlay.ToList();
 
         // Assert
         Assert.True(solution.IsValid);
@@ -121,9 +121,9 @@ public class BinaryBaseSolverTests
         };
 
         // Act
-        solver.SearchSolution();
-        var solution = solver.BinarySolution;
-        var tilesToPlay = solver.TilesToPlay.ToList();
+        var result = solver.SearchSolution();
+        var solution = result.BestSolution;
+        var tilesToPlay = result.TilesToPlay.ToList();
 
         // Assert
         Assert.True(solution.IsValid);
@@ -163,14 +163,14 @@ public class BinaryBaseSolverTests
         };
 
         // Act
-        solver.SearchSolution();
-        var solution = solver.BinarySolution;
-        var tilesToPlay = solver.TilesToPlay.ToList();
+        var result = solver.SearchSolution();
+        var solution = result.BestSolution;
+        var tilesToPlay = result.TilesToPlay.ToList();
 
         // Assert
         Assert.True(solution.IsValid);
 
-        Assert.Equal(2, tilesToPlay.Count + solver.JokerToPlay);
+        Assert.Equal(2, tilesToPlay.Count + result.JokerToPlay);
 
         foreach (var tile in playerTiles)
         {
@@ -212,8 +212,8 @@ public class BinaryBaseSolverTests
         };
 
         // Act
-        solver.SearchSolution();
-        var solution = solver.BinarySolution;
+        var result = solver.SearchSolution();
+        var solution = result.BestSolution;
 
         // Assert
         Assert.False(solution.IsValid);

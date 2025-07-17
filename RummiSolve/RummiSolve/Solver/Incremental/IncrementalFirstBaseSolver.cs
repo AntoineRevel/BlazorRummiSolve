@@ -19,9 +19,9 @@ public sealed class IncrementalFirstBaseSolver : BaseSolver, ISolver
         _bestSolutionScore = MinScore;
     }
 
-    public Solution BestSolution { get; private set; } = new();
-    public IEnumerable<Tile> TilesToPlay => Tiles.Where((_, i) => _bestUsedTiles[i]);
-    public int JokerToPlay => _availableJokers - _remainingJoker;
+    private Solution BestSolution { get; set; } = new();
+    private IEnumerable<Tile> TilesToPlay => Tiles.Where((_, i) => _bestUsedTiles[i]);
+    private int JokerToPlay => _availableJokers - _remainingJoker;
 
     public SolverResult SearchSolution(CancellationToken cancellationToken = default)
     {
@@ -32,7 +32,7 @@ public sealed class IncrementalFirstBaseSolver : BaseSolver, ISolver
         {
             if (cancellationToken.IsCancellationRequested)
                 return new SolverResult(GetType().Name, BestSolution, TilesToPlay, JokerToPlay);
-                
+
             var newSolution = FindSolution(new Solution(), 0, 0, cancellationToken);
 
             if (!newSolution.IsValid) return new SolverResult(GetType().Name, BestSolution, TilesToPlay, JokerToPlay);
@@ -69,13 +69,14 @@ public sealed class IncrementalFirstBaseSolver : BaseSolver, ISolver
         return true;
     }
 
-    private Solution FindSolution(Solution solution, int solutionScore, int startIndex, CancellationToken cancellationToken = default)
+    private Solution FindSolution(Solution solution, int solutionScore, int startIndex,
+        CancellationToken cancellationToken = default)
     {
         while (startIndex < UsedTiles.Length - 1)
         {
             if (cancellationToken.IsCancellationRequested)
                 return solution;
-                
+
             startIndex = Array.FindIndex(UsedTiles, startIndex, used => !used);
 
             if (startIndex == -1) return solution;
@@ -105,7 +106,7 @@ public sealed class IncrementalFirstBaseSolver : BaseSolver, ISolver
         {
             if (cancellationToken.IsCancellationRequested)
                 break;
-                
+
             MarkTilesAsUsed(set, firstUnusedTileIndex);
 
             var newSolutionScore = solutionScore + set.GetScore();

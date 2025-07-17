@@ -1,14 +1,11 @@
-using BenchmarkDotNet.Running;
-
 namespace RummiSolve;
 
 public static class Program
 {
-    private static void Main()
+    private static async Task Main()
     {
-        BenchmarkRunner.Run<ParallelSolverBenchmark>();
+        //BenchmarkRunner.Run<ParallelSolverBenchmark>();
 
-
-        //await RummiBench.TestSimpleGame();
+        await RummiBench.TestSimpleGame2();
     }
 }

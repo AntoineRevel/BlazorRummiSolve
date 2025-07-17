@@ -7,34 +7,36 @@ using RummiSolve.Solver.Combinations.First;
 using RummiSolve.Solver.Incremental;
 using RummiSolve.Solver.Interfaces;
 
-namespace RummiSolve.Strategy;
+namespace RummiSolve.Strategies;
 
 public class MeasuredSolverStrategy : ISolverStrategy
 {
-    public async Task<SolverResult> GetSolverResult(Solution boardSolution, Set rack, bool hasPlayed,
+    public async Task<SolverResult> GetSolverResult(Set board, Set rack, bool hasPlayed,
         CancellationToken externalToken)
     {
-        var solutionSet = boardSolution.GetSet();
-
         ISolver combiSolver = hasPlayed
-            ? CombinationsSolver.Create(new Set(solutionSet), rack)
+            ? CombinationsSolver.Create(new Set(board), rack)
             : CombinationsFirstSolver.Create(rack);
 
         ISolver bestScoreSolver = hasPlayed
-            ? BestScoreComplexSolver.Create(new Set(solutionSet), rack)
+            ? BestScoreComplexSolver.Create(new Set(board), rack)
             : BestScoreFirstBaseSolver.Create(rack);
 
         ISolver incrementalSolver = hasPlayed
-            ? IncrementalComplexSolver.Create(new Set(solutionSet), rack)
+            ? IncrementalComplexSolver.Create(new Set(board), rack)
             : IncrementalFirstBaseSolver.Create(rack);
 
         ISolver incrementalScoreFSolver = hasPlayed
-            ? IncrementalScoreFieldComplexSolver.Create(new Set(solutionSet), rack)
+            ? IncrementalScoreFieldComplexSolver.Create(new Set(board), rack)
             : IncrementalFirstBaseSolver.Create(rack);
 
         ISolver incrementalScoreTileSolver = hasPlayed
-            ? IncrementalComplexSolverTileAndSc.Create(new Set(solutionSet), rack)
+            ? IncrementalComplexSolverTileAndSc.Create(new Set(board), rack)
             : IncrementalFirstBaseSolver.Create(rack);
+
+        ISolver parraleleCombiSolver = hasPlayed
+            ? ParallelCombinationsSolver.Create(new Set(board), rack)
+            : CombinationsFirstSolver.Create(rack);
 
         var results = new List<TimedResult>
         {
@@ -42,7 +44,8 @@ public class MeasuredSolverStrategy : ISolverStrategy
             await RunSolverAsync("BestScore", bestScoreSolver, externalToken),
             await RunSolverAsync("Incremental", incrementalSolver, externalToken),
             await RunSolverAsync("IncrementalScoreField", incrementalScoreFSolver, externalToken),
-            await RunSolverAsync("IncrementalScoreTile", incrementalScoreTileSolver, externalToken)
+            await RunSolverAsync("IncrementalScoreTile", incrementalScoreTileSolver, externalToken),
+            await RunSolverAsync("ParallelCombination", parraleleCombiSolver, externalToken)
         };
 
         Console.WriteLine("\n====== Résultats des stratégies ======\n");

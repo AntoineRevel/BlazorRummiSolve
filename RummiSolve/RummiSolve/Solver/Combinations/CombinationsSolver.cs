@@ -37,16 +37,16 @@ public class CombinationsSolver : ISolver
         if (result.Found)
             return new SolverResult(
                 GetType().Name,
-                firstBinarySolver.BinarySolution,
-                firstBinarySolver.TilesToPlay,
-                firstBinarySolver.JokerToPlay, true);
+                result.BestSolution,
+                result.TilesToPlay,
+                result.JokerToPlay, true);
 
 
         for (var tileTry = _playerTilesJ.Count - 1; tileTry > 0; tileTry--)
         {
             if (cancellationToken.IsCancellationRequested)
                 break;
-                
+
             foreach (
                 var combi in
                 BaseSolver.GetCombinations(_playerTilesJ, tileTry, cancellationToken)
@@ -54,25 +54,28 @@ public class CombinationsSolver : ISolver
             {
                 if (cancellationToken.IsCancellationRequested)
                     break;
-                    
-                var joker = combi.Count(tile => tile.IsJoker);
 
-                if (joker > 0)
+                var joker = 0;
+                var nonJokerCombi = new List<Tile>(tileTry);
+                foreach (var tile in combi)
                 {
-                    combi.Sort();
-                    combi.RemoveRange(tileTry - joker, joker);
+                    if (tile.IsJoker)
+                        joker++;
+                    else
+                        nonJokerCombi.Add(tile);
                 }
 
-                var solver = new BinaryBaseSolver(_boardTiles.Concat(combi).Order().ToArray(), joker + _boardJokers)
+                var solver = new BinaryBaseSolver(_boardTiles.Concat(nonJokerCombi).Order().ToArray(),
+                    joker + _boardJokers)
                 {
-                    TilesToPlay = combi,
+                    TilesToPlay = nonJokerCombi,
                     JokerToPlay = joker
                 };
 
-                var solverResult = solver.SearchSolution(cancellationToken);
-                if (!solverResult.Found) continue;
+                result = solver.SearchSolution(cancellationToken);
+                if (!result.Found) continue;
 
-                return new SolverResult(GetType().Name, solver.BinarySolution, solver.TilesToPlay, solver.JokerToPlay);
+                return result;
             }
         }
 

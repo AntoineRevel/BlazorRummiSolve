@@ -26,5 +26,5 @@ public class SolverResult
     public Solution BestSolution { get; }
     public IEnumerable<Tile> TilesToPlay { get; }
     public int JokerToPlay { get; }
-    public bool Won { get; }
+    public bool Won { get; set; }
 }

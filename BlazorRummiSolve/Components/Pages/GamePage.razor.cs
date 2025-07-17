@@ -2,7 +2,7 @@ using BlazorRummiSolve.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using RummiSolve;
-using RummiSolve.Strategy;
+using RummiSolve.Strategies;
 
 namespace BlazorRummiSolve.Components.Pages;
 
