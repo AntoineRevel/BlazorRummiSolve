@@ -1,24 +1,25 @@
+using System.Diagnostics;
 using RummiSolve.Results;
 using RummiSolve.Solver.Combinations;
 using RummiSolve.Solver.Combinations.First;
 using RummiSolve.Solver.Incremental;
 using RummiSolve.Solver.Interfaces;
 
-namespace RummiSolve.Strategy;
+namespace RummiSolve.Strategies;
 
 public class ParallelSolverStrategy : ISolverStrategy
 {
-    public async Task<SolverResult> GetSolverResult(Solution boardSolution, Set rack, bool hasPlayed,
-        CancellationToken externalToken)
+    public async Task<SolverResult> GetSolverResult(Set board, Set rack, bool hasPlayed,
+        CancellationToken externalToken = default)
     {
-        var solutionSet = boardSolution.GetSet();
+        var stopwatch = Stopwatch.StartNew();
 
         ISolver combiSolver = hasPlayed
-            ? CombinationsSolver.Create(new Set(solutionSet), rack)
+            ? ParallelCombinationsSolver.Create(new Set(board), rack)
             : CombinationsFirstSolver.Create(rack);
 
         ISolver incrementalSolver = hasPlayed
-            ? IncrementalComplexSolver.Create(new Set(solutionSet), rack)
+            ? IncrementalComplexSolver.Create(new Set(board), rack)
             : IncrementalFirstBaseSolver.Create(rack);
 
         using var cts = CancellationTokenSource.CreateLinkedTokenSource(externalToken);
@@ -31,6 +32,10 @@ public class ParallelSolverStrategy : ISolverStrategy
 
         await cts.CancelAsync();
 
-        return await completedTask;
+        var result = await completedTask;
+        stopwatch.Stop();
+        Console.WriteLine($"ParallelSolverStrategy executed in {stopwatch.ElapsedMilliseconds}ms");
+
+        return result;
     }
 }
