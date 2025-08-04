@@ -1,0 +1,355 @@
+@using RummiSolve
+<div class="popup-overlay @(IsVisible ? "visible" : "")" @onclick="OnOverlayClick">
+    <div class="popup-content" @onclick:stopPropagation="true">
+        <div class="popup-header">
+            <h3>Select Tiles</h3>
+            <button class="close-button" @onclick="OnClose">×</button>
+        </div>
+
+        @if (SelectedTiles.Any())
+        {
+            <div class="selected-tiles-section">
+                <h4>Selected Tiles (@SelectedTiles.Count)</h4>
+                <div class="selected-tiles-display">
+                    @foreach (var selectedTile in SelectedTiles)
+                    {
+                        <div class="selected-tile-wrapper" @onclick="() => OnTileClick(selectedTile)">
+                            <TileComponent Tile="selectedTile" ShouldHighlight="false"/>
+                            <div class="remove-indicator">×</div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        <div class="available-tiles-section">
+            <h4>Available Tiles</h4>
+            <div class="tiles-container">
+                @foreach (var tileGroup in GetGroupedTiles())
+                {
+                    <div class="tile-stack" @onclick="() => OnTileClick(tileGroup.Key)">
+                        @for (var i = 0; i < tileGroup.Count(); i++)
+                        {
+                            var tile = tileGroup.First();
+                            var isSelected = SelectedTiles.Contains(tile);
+                            var stackOffset = i * 3;
+
+                            <div class="stacked-tile"
+                                 style="z-index: @(100 - i); transform: translate(@(stackOffset)px, @(-stackOffset)px);">
+                                <TileComponent Tile="tile" ShouldHighlight="@isSelected"/>
+                            </div>
+                        }
+                        @if (tileGroup.Count() > 1)
+                        {
+                            <div class="count-indicator">@tileGroup.Count()</div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="popup-footer">
+            <div class="selected-count">Selected: @SelectedTiles.Count</div>
+            <div class="action-buttons">
+                <button class="btn btn-secondary" @onclick="OnClearSelection">Clear</button>
+                <button class="btn btn-primary" @onclick="OnConfirm">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public bool IsVisible { get; set; }
+    [Parameter] public List<Tile> AvailableTiles { get; set; } = new();
+    [Parameter] public List<Tile> SelectedTiles { get; set; } = new();
+    [Parameter] public EventCallback<List<Tile>> OnSelectionChanged { get; set; }
+    [Parameter] public EventCallback OnClosePopup { get; set; }
+
+    private async Task OnTileClick(Tile tile)
+    {
+        if (SelectedTiles.Contains(tile))
+        {
+            SelectedTiles.Remove(tile);
+        }
+        else
+        {
+            SelectedTiles.Add(tile);
+        }
+
+        await OnSelectionChanged.InvokeAsync(SelectedTiles);
+        StateHasChanged();
+    }
+
+    private async Task OnClearSelection()
+    {
+        SelectedTiles.Clear();
+        await OnSelectionChanged.InvokeAsync(SelectedTiles);
+        StateHasChanged();
+    }
+
+    private async Task OnConfirm()
+    {
+        await OnClosePopup.InvokeAsync();
+    }
+
+    private async Task OnClose()
+    {
+        SelectedTiles.Clear();
+        await OnSelectionChanged.InvokeAsync(SelectedTiles);
+        await OnClosePopup.InvokeAsync();
+    }
+
+    private async Task OnOverlayClick()
+    {
+        await OnClose();
+    }
+
+    private IEnumerable<IGrouping<Tile, Tile>> GetGroupedTiles()
+    {
+        return GetSortedTiles()
+            .GroupBy(tile => tile)
+            .OrderBy(g => g.Key.IsJoker ? 1 : 0)
+            .ThenBy(g => g.Key.Color)
+            .ThenBy(g => g.Key.Value);
+    }
+
+    private List<Tile> GetSortedTiles()
+    {
+        return AvailableTiles
+            .OrderBy(tile => tile.IsJoker ? 1 : 0)
+            .ThenBy(tile => tile.Color)
+            .ThenBy(tile => tile.Value)
+            .ToList();
+    }
+
+}
+
+<style>
+    .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .popup-overlay.visible {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .popup-content {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        max-width: 80vw;
+        max-height: 80vh;
+        width: 600px;
+        display: flex;
+        flex-direction: column;
+        transform: scale(0.9);
+        transition: transform 0.3s ease;
+    }
+
+    .popup-overlay.visible .popup-content {
+        transform: scale(1);
+    }
+
+    .popup-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .popup-header h3 {
+        margin: 0;
+        color: #333;
+    }
+
+    .close-button {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #666;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .close-button:hover {
+        background-color: #f0f0f0;
+        color: #333;
+    }
+
+    .selected-tiles-section {
+        padding: 15px 20px;
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #eee;
+    }
+
+    .selected-tiles-section h4 {
+        margin: 0 0 15px 0;
+        color: #495057;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .selected-tiles-display {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        min-height: 40px;
+    }
+
+    .selected-tile-wrapper {
+        position: relative;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+    }
+
+    .selected-tile-wrapper:hover {
+        transform: scale(1.05);
+    }
+
+    .selected-tile-wrapper:hover .remove-indicator {
+        opacity: 1;
+    }
+
+    .remove-indicator {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background-color: #dc3545;
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: bold;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        z-index: 10;
+    }
+
+    .available-tiles-section {
+        padding: 0 20px 20px 20px;
+    }
+
+    .available-tiles-section h4 {
+        margin: 0 0 15px 0;
+        color: #495057;
+        font-size: 16px;
+        font-weight: 600;
+        padding-top: 15px;
+    }
+
+    .tiles-container {
+        overflow-y: auto;
+        flex-grow: 1;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: flex-start;
+        align-items: flex-start;
+    }
+
+    .tile-stack {
+        position: relative;
+        cursor: pointer;
+        margin: 15px;
+        min-width: 60px;
+        min-height: 80px;
+    }
+
+    .stacked-tile {
+        position: absolute;
+        top: 0;
+        left: 0;
+        transition: transform 0.2s ease;
+    }
+
+    .tile-stack:hover .stacked-tile {
+        transform: translate(0, 0) !important;
+    }
+
+    .count-indicator {
+        position: absolute;
+        bottom: -5px;
+        right: -5px;
+        background-color: #007bff;
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+        z-index: 200;
+    }
+
+    .popup-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+        border-top: 1px solid #eee;
+        background-color: #f8f9fa;
+        border-radius: 0 0 10px 10px;
+    }
+
+    .selected-count {
+        font-weight: bold;
+        color: #666;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background-color 0.2s ease;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background-color: #545b62;
+    }
+</style>

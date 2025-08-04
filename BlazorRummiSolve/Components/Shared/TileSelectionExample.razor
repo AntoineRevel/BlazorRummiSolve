@@ -1,0 +1,109 @@
+@using RummiSolve
+<div class="example-container">
+    <h4>Tile Selection Example</h4>
+
+    <button class="btn btn-primary" @onclick="OpenPopup">Select Tiles</button>
+
+    @if (selectedTiles.Any())
+    {
+        <div class="selected-tiles-display">
+            <h5>Selected Tiles:</h5>
+            <div class="tiles-row">
+                @foreach (var tile in selectedTiles)
+                {
+                    <TileComponent Tile="tile" ShouldHighlight="false"/>
+                }
+            </div>
+        </div>
+    }
+
+    <TileSelectionPopup
+        IsVisible="showPopup"
+        AvailableTiles="availableTiles"
+        SelectedTiles="selectedTiles"
+        OnSelectionChanged="OnSelectionChanged"
+        OnClosePopup="ClosePopup"/>
+</div>
+
+@code {
+    private bool showPopup;
+    private List<Tile> selectedTiles = new();
+    private List<Tile> availableTiles = new();
+
+    protected override void OnInitialized()
+    {
+        // Create sample tiles with duplicates for demonstration
+        availableTiles = new List<Tile>
+        {
+            new(1, TileColor.Red),
+            new(1, TileColor.Red), // Duplicate
+            new(2),
+            new(3),
+            new(3), // Duplicate
+            new(3), // Another duplicate
+            new(5, TileColor.Mango),
+            new(7, TileColor.Black),
+            new(10, TileColor.Red),
+            new(true),
+            new(true) // Duplicate joker
+        };
+    }
+
+    private void OpenPopup()
+    {
+        showPopup = true;
+    }
+
+    private void ClosePopup()
+    {
+        showPopup = false;
+    }
+
+    private void OnSelectionChanged(List<Tile> newSelection)
+    {
+        selectedTiles = new List<Tile>(newSelection);
+        StateHasChanged();
+    }
+
+}
+
+<style>
+    .example-container {
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin: 20px;
+    }
+
+    .selected-tiles-display {
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+    }
+
+    .tiles-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin-top: 10px;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background-color 0.2s ease;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+</style>
