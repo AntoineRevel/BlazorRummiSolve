@@ -27,21 +27,36 @@
             <div class="tiles-container">
                 @foreach (var tileGroup in GetGroupedTiles())
                 {
-                    <div class="tile-stack" @onclick="() => OnTileClick(tileGroup.Key)">
-                        @for (var i = 0; i < tileGroup.Count(); i++)
-                        {
-                            var tile = tileGroup.First();
-                            var isSelected = SelectedTiles.Contains(tile);
-                            var stackOffset = i * 3;
+                    var tileType = tileGroup.Key;
+                    var totalCount = tileGroup.Count();
+                    var selectedCount = GetSelectedCountForTile(tileType);
+                    var remainingCount = totalCount - selectedCount;
+                    var isFullySelected = remainingCount == 0;
 
-                            <div class="stacked-tile"
-                                 style="z-index: @(100 - i); transform: translate(@(stackOffset)px, @(-stackOffset)px);">
-                                <TileComponent Tile="tile" ShouldHighlight="@isSelected"/>
-                            </div>
-                        }
-                        @if (tileGroup.Count() > 1)
+                    <div class="tile-stack @(isFullySelected ? "fully-selected" : "")"
+                         @onclick="() => OnTileStackClick(tileType)">
+                        @if (remainingCount > 0)
                         {
-                            <div class="count-indicator">@tileGroup.Count()</div>
+                            @for (var i = 0; i < remainingCount; i++)
+                            {
+                                var stackOffset = i * 3;
+
+                                <div class="stacked-tile"
+                                     style="z-index: @(100 - i); transform: translate(@(stackOffset)px, @(-stackOffset)px);">
+                                    <TileComponent Tile="tileType" ShouldHighlight="false"/>
+                                </div>
+                            }
+
+                            @if (remainingCount > 1)
+                            {
+                                <div class="count-indicator">@remainingCount</div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="stacked-tile greyed-out">
+                                <TileComponent Tile="tileType" ShouldHighlight="false"/>
+                            </div>
                         }
                     </div>
                 }
@@ -49,7 +64,6 @@
         </div>
 
         <div class="popup-footer">
-            <div class="selected-count">Selected: @SelectedTiles.Count</div>
             <div class="action-buttons">
                 <button class="btn btn-secondary" @onclick="OnClearSelection">Clear</button>
                 <button class="btn btn-primary" @onclick="OnConfirm">Confirm</button>
@@ -78,6 +92,32 @@
 
         await OnSelectionChanged.InvokeAsync(SelectedTiles);
         StateHasChanged();
+    }
+
+    private async Task OnTileStackClick(Tile tileType)
+    {
+        var totalAvailable = AvailableTiles.Count(t => t.Equals(tileType));
+        var currentSelectedCount = GetSelectedCountForTile(tileType);
+
+        // Cycle: 0 → 1 → 2 → ... → max → 0
+        var newSelectedCount = (currentSelectedCount + 1) % (totalAvailable + 1);
+
+        // Remove all instances of this tile type from selection
+        SelectedTiles.RemoveAll(t => t.Equals(tileType));
+
+        // Add the new count of this tile type
+        for (var i = 0; i < newSelectedCount; i++)
+        {
+            SelectedTiles.Add(tileType);
+        }
+
+        await OnSelectionChanged.InvokeAsync(SelectedTiles);
+        StateHasChanged();
+    }
+
+    private int GetSelectedCountForTile(Tile tileType)
+    {
+        return SelectedTiles.Count(t => t.Equals(tileType));
     }
 
     private async Task OnClearSelection()
@@ -150,13 +190,14 @@
         background: white;
         border-radius: 10px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        max-width: 80vw;
-        max-height: 80vh;
-        width: 600px;
+        max-width: 95vw;
+        max-height: 90vh;
+        width: min(1000px, 95vw);
         display: flex;
         flex-direction: column;
         transform: scale(0.9);
         transition: transform 0.3s ease;
+        overflow: hidden;
     }
 
     .popup-overlay.visible .popup-content {
@@ -211,8 +252,10 @@
     .selected-tiles-display {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 5px;
         min-height: 40px;
+        max-height: 150px;
+        overflow-y: auto;
     }
 
     .selected-tile-wrapper {
@@ -249,33 +292,42 @@
     }
 
     .available-tiles-section {
-        padding: 0 20px 20px 20px;
+        padding: 0 15px 15px 15px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
     }
 
     .available-tiles-section h4 {
-        margin: 0 0 15px 0;
+        margin: 0 0 10px 0;
         color: #495057;
         font-size: 16px;
         font-weight: 600;
-        padding-top: 15px;
+        padding: 15px 0 5px 0;
+        flex-shrink: 0;
     }
 
     .tiles-container {
         overflow-y: auto;
+        overflow-x: hidden;
         flex-grow: 1;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        justify-content: flex-start;
-        align-items: flex-start;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+        gap: 8px;
+        padding: 5px;
+        align-content: start;
+        max-height: calc(90vh - 300px);
     }
 
     .tile-stack {
         position: relative;
         cursor: pointer;
-        margin: 15px;
-        min-width: 60px;
-        min-height: 80px;
+        min-width: 50px;
+        min-height: 70px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     .stacked-tile {
@@ -289,36 +341,57 @@
         transform: translate(0, 0) !important;
     }
 
+    .tile-stack.fully-selected {
+        opacity: 0.5;
+        cursor: pointer;
+    }
+
+    .tile-stack.fully-selected:hover {
+        opacity: 0.7;
+    }
+
+    .stacked-tile.greyed-out {
+        opacity: 0.4;
+        filter: grayscale(80%);
+        pointer-events: none;
+    }
+
+    .stacked-tile.greyed-out .tile {
+        background-color: #e9ecef !important;
+        border-color: #ced4da !important;
+        color: #6c757d !important;
+    }
+
+    .stacked-tile.greyed-out .tile-number {
+        color: #6c757d !important;
+    }
+
     .count-indicator {
         position: absolute;
-        bottom: -5px;
-        right: -5px;
+        bottom: -3px;
+        right: -3px;
         background-color: #007bff;
         color: white;
         border-radius: 50%;
-        width: 20px;
-        height: 20px;
+        width: 18px;
+        height: 18px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 12px;
+        font-size: 10px;
         font-weight: bold;
         z-index: 200;
     }
 
+
     .popup-footer {
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
         align-items: center;
         padding: 20px;
         border-top: 1px solid #eee;
         background-color: #f8f9fa;
         border-radius: 0 0 10px 10px;
-    }
-
-    .selected-count {
-        font-weight: bold;
-        color: #666;
     }
 
     .action-buttons {
