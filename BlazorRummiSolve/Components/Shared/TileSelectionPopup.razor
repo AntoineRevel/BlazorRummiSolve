@@ -13,7 +13,9 @@
                 <div class="selected-tiles-display">
                     @foreach (var selectedTile in SelectedTiles)
                     {
-                        <div class="selected-tile-wrapper" @onclick="() => OnTileClick(selectedTile)">
+                        <div
+                            class="selected-tile-wrapper @(_removingTiles.Contains(selectedTile) ? "removing" : "") @(_newTiles.Contains(selectedTile) ? "new-tile" : "")"
+                            @onclick="() => OnTileClick(selectedTile)">
                             <TileComponent Tile="selectedTile" ShouldHighlight="false"/>
                         </div>
                     }
@@ -73,20 +75,38 @@
 
 @code {
     [Parameter] public bool IsVisible { get; set; }
-    [Parameter] public List<Tile> AvailableTiles { get; set; } = new();
-    [Parameter] public List<Tile> SelectedTiles { get; set; } = new();
+    [Parameter] public List<Tile> AvailableTiles { get; set; } = [];
+    [Parameter] public List<Tile> SelectedTiles { get; set; } = [];
     [Parameter] public EventCallback<List<Tile>> OnSelectionChanged { get; set; }
     [Parameter] public EventCallback OnClosePopup { get; set; }
+
+    private readonly HashSet<Tile> _removingTiles = [];
+    private readonly HashSet<Tile> _newTiles = [];
 
     private async Task OnTileClick(Tile tile)
     {
         if (SelectedTiles.Contains(tile))
         {
+            // Ajouter la tuile à la liste des tuiles en cours de suppression
+            _removingTiles.Add(tile);
+            StateHasChanged();
+
+            // Attendre la fin de l'animation (300ms)
+            await Task.Delay(300);
+
+            // Supprimer la tuile après l'animation
             SelectedTiles.Remove(tile);
+            _removingTiles.Remove(tile);
         }
         else
         {
             SelectedTiles.Add(tile);
+            _newTiles.Add(tile);
+            StateHasChanged();
+
+            // Retirer la classe new-tile après l'animation
+            await Task.Delay(300);
+            _newTiles.Remove(tile);
         }
 
         await OnSelectionChanged.InvokeAsync(SelectedTiles);
@@ -101,17 +121,31 @@
         // Cycle: 0 → 1 → 2 → ... → max → 0
         var newSelectedCount = (currentSelectedCount + 1) % (totalAvailable + 1);
 
-        // Remove all instances of this tile type from selection
+        // Remove all instances of this tile type from selection and tracking
         SelectedTiles.RemoveAll(t => t.Equals(tileType));
+        _newTiles.RemoveWhere(t => t.Equals(tileType));
 
         // Add the new count of this tile type
         for (var i = 0; i < newSelectedCount; i++)
         {
-            SelectedTiles.Add(tileType);
+            var tile = tileType;
+            SelectedTiles.Add(tile);
+            if (newSelectedCount > currentSelectedCount)
+            {
+                _newTiles.Add(tile);
+            }
         }
 
         await OnSelectionChanged.InvokeAsync(SelectedTiles);
         StateHasChanged();
+
+        // Nettoyer les nouvelles tuiles après l'animation
+        if (newSelectedCount > currentSelectedCount)
+        {
+            await Task.Delay(300);
+            _newTiles.RemoveWhere(t => t.Equals(tileType));
+            StateHasChanged();
+        }
     }
 
     private int GetSelectedCountForTile(Tile tileType)
@@ -122,6 +156,8 @@
     private async Task OnClearSelection()
     {
         SelectedTiles.Clear();
+        _removingTiles.Clear();
+        _newTiles.Clear();
         await OnSelectionChanged.InvokeAsync(SelectedTiles);
         StateHasChanged();
     }
@@ -134,6 +170,8 @@
     private async Task OnClose()
     {
         SelectedTiles.Clear();
+        _removingTiles.Clear();
+        _newTiles.Clear();
         await OnSelectionChanged.InvokeAsync(SelectedTiles);
         await OnClosePopup.InvokeAsync();
     }
@@ -255,6 +293,7 @@
         min-height: 40px;
         max-height: 150px;
         overflow-y: auto;
+        transition: all 0.3s ease;
     }
 
     .selected-tile-wrapper {
@@ -263,9 +302,43 @@
         transition: opacity 0.2s ease, filter 0.2s ease;
     }
 
+    .selected-tile-wrapper.new-tile {
+        animation: slideIn 0.3s ease-out;
+    }
+
     .selected-tile-wrapper:hover {
         opacity: 0.5;
         filter: grayscale(70%);
+    }
+
+    .selected-tile-wrapper.removing {
+        animation: slideOut 0.3s ease-in forwards;
+    }
+
+    @@keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: scale(0.8) translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+
+    @@keyframes slideOut {
+        from {
+            opacity: 1;
+            transform: scale(1);
+            max-width: 100px;
+            margin-right: 5px;
+        }
+        to {
+            opacity: 0;
+            transform: scale(0.8);
+            max-width: 0;
+            margin-right: 0;
+        }
     }
 
     .available-tiles-section {
