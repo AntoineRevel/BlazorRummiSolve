@@ -15,7 +15,6 @@
                     {
                         <div class="selected-tile-wrapper" @onclick="() => OnTileClick(selectedTile)">
                             <TileComponent Tile="selectedTile" ShouldHighlight="false"/>
-                            <div class="remove-indicator">×</div>
                         </div>
                     }
                 </div>
@@ -261,34 +260,12 @@
     .selected-tile-wrapper {
         position: relative;
         cursor: pointer;
-        transition: transform 0.2s ease;
+        transition: opacity 0.2s ease, filter 0.2s ease;
     }
 
     .selected-tile-wrapper:hover {
-        transform: scale(1.05);
-    }
-
-    .selected-tile-wrapper:hover .remove-indicator {
-        opacity: 1;
-    }
-
-    .remove-indicator {
-        position: absolute;
-        top: -8px;
-        right: -8px;
-        background-color: #dc3545;
-        color: white;
-        border-radius: 50%;
-        width: 20px;
-        height: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 14px;
-        font-weight: bold;
-        opacity: 0;
-        transition: opacity 0.2s ease;
-        z-index: 10;
+        opacity: 0.5;
+        filter: grayscale(70%);
     }
 
     .available-tiles-section {
