@@ -11,12 +11,12 @@
             <div class="selected-tiles-section">
                 <h4>Selected Tiles (@SelectedTiles.Count)</h4>
                 <div class="selected-tiles-display">
-                    @foreach (var selectedTile in SelectedTiles)
+                    @foreach (var tileInstance in _selectedTileInstances)
                     {
                         <div
-                            class="selected-tile-wrapper @(_removingTiles.Contains(selectedTile) ? "removing" : "") @(_newTiles.Contains(selectedTile) ? "new-tile" : "")"
-                            @onclick="() => OnTileClick(selectedTile)">
-                            <TileComponent Tile="selectedTile" ShouldHighlight="false"/>
+                            class="selected-tile-wrapper @(_removingTiles.Contains(tileInstance.Id) ? "removing" : "") @(_newTiles.Contains(tileInstance.Id) ? "new-tile" : "")"
+                            @onclick="() => OnTileInstanceClick(tileInstance)">
+                            <TileComponent Tile="tileInstance.Tile" ShouldHighlight="false"/>
                         </div>
                     }
                 </div>
@@ -80,37 +80,40 @@
     [Parameter] public EventCallback<List<Tile>> OnSelectionChanged { get; set; }
     [Parameter] public EventCallback OnClosePopup { get; set; }
 
-    private readonly HashSet<Tile> _removingTiles = [];
-    private readonly HashSet<Tile> _newTiles = [];
-
-    private async Task OnTileClick(Tile tile)
+    private readonly  record struct TileInstance(Tile Tile)
     {
-        if (SelectedTiles.Contains(tile))
-        {
-            // Ajouter la tuile à la liste des tuiles en cours de suppression
-            _removingTiles.Add(tile);
-            StateHasChanged();
+        public Tile Tile { get; } = Tile;
+        public Guid Id { get; } = Guid.NewGuid();
+    }
 
-            // Attendre la fin de l'animation (300ms)
-            await Task.Delay(300);
+    private readonly List<TileInstance> _selectedTileInstances = [];
+    private readonly HashSet<Guid> _removingTiles = [];
+    private readonly HashSet<Guid> _newTiles = [];
 
-            // Supprimer la tuile après l'animation
-            SelectedTiles.Remove(tile);
-            _removingTiles.Remove(tile);
-        }
-        else
-        {
-            SelectedTiles.Add(tile);
-            _newTiles.Add(tile);
-            StateHasChanged();
+    private async Task OnTileInstanceClick(TileInstance tileInstance)
+    {
+        // Ajouter la tuile à la liste des tuiles en cours de suppression
+        _removingTiles.Add(tileInstance.Id);
+        StateHasChanged();
 
-            // Retirer la classe new-tile après l'animation
-            await Task.Delay(300);
-            _newTiles.Remove(tile);
-        }
+        // Attendre la fin de l'animation (300ms)
+        await Task.Delay(300);
+
+        // Supprimer l'instance de tuile après l'animation
+        _selectedTileInstances.Remove(tileInstance);
+        _removingTiles.Remove(tileInstance.Id);
+        
+        // Synchroniser avec la liste SelectedTiles
+        SyncSelectedTiles();
 
         await OnSelectionChanged.InvokeAsync(SelectedTiles);
         StateHasChanged();
+    }
+
+    private void SyncSelectedTiles()
+    {
+        SelectedTiles.Clear();
+        SelectedTiles.AddRange(_selectedTileInstances.Select(ti => ti.Tile));
     }
 
     private async Task OnTileStackClick(Tile tileType)
@@ -118,43 +121,75 @@
         var totalAvailable = AvailableTiles.Count(t => t.Equals(tileType));
         var currentSelectedCount = GetSelectedCountForTile(tileType);
 
-        // Cycle: 0 → 1 → 2 → ... → max → 0
+        // Cycle : 0 → 1 → 2 → ... → max → 0
         var newSelectedCount = (currentSelectedCount + 1) % (totalAvailable + 1);
 
-        // Remove all instances of this tile type from selection and tracking
-        SelectedTiles.RemoveAll(t => t.Equals(tileType));
-        _newTiles.RemoveWhere(t => t.Equals(tileType));
-
-        // Add the new count of this tile type
-        for (var i = 0; i < newSelectedCount; i++)
+        if (newSelectedCount > currentSelectedCount)
         {
-            var tile = tileType;
-            SelectedTiles.Add(tile);
-            if (newSelectedCount > currentSelectedCount)
+            // Ajouter seulement les nouvelles tuiles
+            var tilesToAdd = newSelectedCount - currentSelectedCount;
+            for (var i = 0; i < tilesToAdd; i++)
             {
-                _newTiles.Add(tile);
+                var newInstance = new TileInstance(tileType);
+                _selectedTileInstances.Add(newInstance);
+                _newTiles.Add(newInstance.Id);
             }
         }
+        else if (newSelectedCount < currentSelectedCount)
+        {
+            // Supprimer les tuiles en trop en partant de la fin
+            var tilesToRemove = currentSelectedCount - newSelectedCount;
+            for (var i = 0; i < tilesToRemove; i++)
+            {
+                // Trouver la dernière occurrence de ce type de tuile
+                for (var j = _selectedTileInstances.Count - 1; j >= 0; j--)
+                {
+                    if (!_selectedTileInstances[j].Tile.Equals(tileType)) continue;
+                    var instanceToRemove = _selectedTileInstances[j];
+                    _selectedTileInstances.RemoveAt(j);
+                    _newTiles.Remove(instanceToRemove.Id);
+                    break;
+                }
+            }
+        }
+        else
+        {
+            // newSelectedCount == 0, supprimer toutes les instances
+            var instancesToRemove = _selectedTileInstances.Where(ti => ti.Tile.Equals(tileType)).ToList();
+            foreach (var instance in instancesToRemove)
+            {
+                _selectedTileInstances.Remove(instance);
+                _newTiles.Remove(instance.Id);
+            }
+        }
+
+        // Synchroniser avec la liste SelectedTiles
+        SyncSelectedTiles();
 
         await OnSelectionChanged.InvokeAsync(SelectedTiles);
         StateHasChanged();
 
-        // Nettoyer les nouvelles tuiles après l'animation
+        // Nettoyer les nouvelles tuiles après l'animation seulement si on a ajouté des tuiles
         if (newSelectedCount > currentSelectedCount)
         {
             await Task.Delay(300);
-            _newTiles.RemoveWhere(t => t.Equals(tileType));
+            var instancesToClean = _selectedTileInstances.Where(ti => ti.Tile.Equals(tileType) && _newTiles.Contains(ti.Id)).ToList();
+            foreach (var instance in instancesToClean)
+            {
+                _newTiles.Remove(instance.Id);
+            }
             StateHasChanged();
         }
     }
 
     private int GetSelectedCountForTile(Tile tileType)
     {
-        return SelectedTiles.Count(t => t.Equals(tileType));
+        return _selectedTileInstances.Count(ti => ti.Tile.Equals(tileType));
     }
 
     private async Task OnClearSelection()
     {
+        _selectedTileInstances.Clear();
         SelectedTiles.Clear();
         _removingTiles.Clear();
         _newTiles.Clear();
@@ -169,6 +204,7 @@
 
     private async Task OnClose()
     {
+        _selectedTileInstances.Clear();
         SelectedTiles.Clear();
         _removingTiles.Clear();
         _newTiles.Clear();
@@ -197,6 +233,23 @@
             .ThenBy(tile => tile.Color)
             .ThenBy(tile => tile.Value)
             .ToList();
+    }
+
+    protected override void OnParametersSet()
+    {
+        // Synchroniser les instances avec les tuiles sélectionnées passées depuis l'extérieur
+        if (SelectedTiles.Count != _selectedTileInstances.Count ||
+            !SelectedTiles.SequenceEqual(_selectedTileInstances.Select(ti => ti.Tile)))
+        {
+            _selectedTileInstances.Clear();
+            _removingTiles.Clear();
+            _newTiles.Clear();
+            
+            foreach (var tile in SelectedTiles)
+            {
+                _selectedTileInstances.Add(new TileInstance(tile));
+            }
+        }
     }
 
 }
