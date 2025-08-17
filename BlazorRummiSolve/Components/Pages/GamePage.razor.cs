@@ -33,6 +33,10 @@ public partial class GamePage
     [SupplyParameterFromQuery(Name = "playerNames")]
     public string? PlayerNamesQuery { get; set; }
 
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "playerTypes")]
+    public string? PlayerTypesQuery { get; set; }
+
     private Player CurrentPlayer { get; set; } = new("Default", [], new ParallelSolverStrategy());
     private List<Player> OtherPlayers => _currentGame.Players.Where(p => p != CurrentPlayer).ToList();
     private int TurnNumber => _currentGame.Turn;
@@ -114,8 +118,9 @@ public partial class GamePage
         var playerCount = PlayerCount ?? 3;
         if (playerCount is < 2 or > 4) playerCount = 3;
 
-        // Generate player names
+        // Generate player names and types
         var listNames = ParsePlayerNames(playerCount);
+        var playerTypes = ParsePlayerTypes(playerCount);
 
         // Create a game with custom ID if provided
         if (!string.IsNullOrWhiteSpace(GameId) && Guid.TryParse(GameId, out var parsedId))
@@ -124,6 +129,9 @@ public partial class GamePage
             _currentGame = new Game();
 
         _currentGame.InitializeGame(listNames);
+
+        // Store player types for future use (if needed for game logic)
+        // For now, we just parse and validate them, but don't use them yet
         _currentState = ActionState.ShowHint;
         CurrentPlayer = _currentGame.Players[0];
         _playerRack = new Set(CurrentPlayer.Rack);
@@ -181,6 +189,30 @@ public partial class GamePage
                 finalNames.Add(i < defaultNames.Count ? defaultNames[i] : $"Player {i + 1}");
 
         return finalNames;
+    }
+
+    private List<bool> ParsePlayerTypes(int count)
+    {
+        // Default: all players are Real (true)
+        var defaultTypes = Enumerable.Repeat(true, count).ToList();
+
+        if (string.IsNullOrWhiteSpace(PlayerTypesQuery)) return defaultTypes;
+
+        var providedTypes = PlayerTypesQuery.Split(',').ToList();
+        var finalTypes = new List<bool>();
+
+        for (var i = 0; i < count; i++)
+            if (i < providedTypes.Count && !string.IsNullOrWhiteSpace(providedTypes[i]))
+            {
+                var typeChar = providedTypes[i].Trim().ToUpper();
+                finalTypes.Add(typeChar == "R"); // R = Real (true), A = AI (false)
+            }
+            else
+            {
+                finalTypes.Add(true); // Default to Real
+            }
+
+        return finalTypes;
     }
 
     private enum ActionState
