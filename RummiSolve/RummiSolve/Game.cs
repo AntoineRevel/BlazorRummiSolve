@@ -1,3 +1,4 @@
+using RummiSolve.Results;
 using RummiSolve.Strategies;
 using static System.Console;
 
@@ -19,7 +20,8 @@ public class Game(Guid id)
     public Solution Board { get; private set; } = new();
     public bool IsGameOver { get; private set; }
 
-    public void InitializeGame(List<string> playerNames)
+    public void InitializeGame(List<string> playerNames, List<bool>? playerTypes = null,
+        Func<Set, bool, CancellationToken, Task<SolverResult>>? humanPlayerCallback = null)
     {
         if (playerNames == null || playerNames.Count == 0)
             throw new ArgumentException("Player names cannot be null or empty", nameof(playerNames));
@@ -30,7 +32,7 @@ public class Game(Guid id)
 
         Shuffle(tiles, new Random(Id.GetHashCode()));
 
-        DistributeTiles(tiles, playerNames);
+        DistributeTiles(tiles, playerNames, playerTypes, humanPlayerCallback);
     }
 
     public async Task PlayAsync(CancellationToken cancellationToken = default)
@@ -72,7 +74,8 @@ public class Game(Guid id)
         return tiles;
     }
 
-    private void DistributeTiles(Tile[] tiles, List<string> playerNames)
+    private void DistributeTiles(Tile[] tiles, List<string> playerNames, List<bool>? playerTypes = null,
+        Func<Set, bool, CancellationToken, Task<SolverResult>>? humanPlayerCallback = null)
     {
         const int tilesPerPlayer = 14;
         var totalDistributed = playerNames.Count * tilesPerPlayer;
@@ -85,7 +88,17 @@ public class Game(Guid id)
             var startIndex = i * tilesPerPlayer;
             var playerTiles = new Tile[tilesPerPlayer];
             Array.Copy(tiles, startIndex, playerTiles, 0, tilesPerPlayer);
-            Players.Add(new Player(playerNames[i], playerTiles.ToList(), new IncrementalSolverStrategy()));
+
+            // Determine strategy based on player type
+            ISolverStrategy strategy;
+            var isRealPlayer = playerTypes?[i] ?? false; // Default to AI if not specified
+
+            if (isRealPlayer && humanPlayerCallback != null)
+                strategy = new HumanPlayerStrategy(humanPlayerCallback);
+            else
+                strategy = new IncrementalSolverStrategy();
+
+            Players.Add(new Player(playerNames[i], playerTiles.ToList(), strategy));
         }
 
         _tilePool.Clear();

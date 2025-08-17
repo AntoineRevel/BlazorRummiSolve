@@ -80,7 +80,7 @@
     [Parameter] public EventCallback<List<Tile>> OnSelectionChanged { get; set; }
     [Parameter] public EventCallback OnClosePopup { get; set; }
 
-    private readonly  record struct TileInstance(Tile Tile)
+    private readonly record struct TileInstance(Tile Tile)
     {
         public Tile Tile { get; } = Tile;
         public Guid Id { get; } = Guid.NewGuid();

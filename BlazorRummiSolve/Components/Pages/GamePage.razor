@@ -1,5 +1,4 @@
 @page "/game"
-@using BlazorRummiSolve.Components.Shared
 @rendermode InteractiveServer
 
 <div class="game-container" @onkeydown="HandleKeyDown" tabindex="0">
@@ -25,43 +24,83 @@
             <SolutionComponent Solution="_board"/>
         </div>
 
-        <div class="actions">
-            <div class="reset-container">
-                <button @onclick="ResetGameAsync" class="btn-secondary">
-                    Reset Game
-                </button>
+        @if (IsWaitingForHumanPlayer && IsCurrentPlayerHuman)
+        {
+            <div class="human-player-actions">
+                <div class="human-player-header">
+                    <h3>@CurrentPlayer.Name's Turn</h3>
+                    <p>Choose your action:</p>
+                </div>
+                <div class="human-actions-buttons">
+                    <button @onclick="OnDrawTile" class="btn-draw">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                        </svg>
+                        Draw Tile
+                    </button>
+                    <button @onclick="OnSelectTilesToPlay" class="btn-play">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polygon points="10,8 16,12 10,16 10,8"/>
+                        </svg>
+                        Play Tiles
+                    </button>
+                </div>
             </div>
-            <div class="main-actions">
-                @if (!_isGameOver)
-                {
-                    @if (_currentState != ActionState.ShowHint && !IsLoading && !_isGameOver)
+        }
+        else
+        {
+            <div class="actions">
+                <div class="reset-container">
+                    <button @onclick="ResetGameAsync" class="btn-secondary">
+                        Reset Game
+                    </button>
+                </div>
+                <div class="main-actions">
+                    @if (!_isGameOver)
                     {
-                        <button @onclick="HandleActionBack" class="btn-secondary">
-                            Back
+                        @if (_currentState != ActionState.ShowHint && !IsLoading && !_isGameOver)
+                        {
+                            <button @onclick="HandleActionBack" class="btn-secondary">
+                                Back
+                            </button>
+                        }
+
+                        <button @onclick="HandleActionAsync" disabled="@(IsLoading)" class="btn-primary">
+                            @if (IsLoading)
+                            {
+                                <span class="spinner"></span>
+                                <span style="margin-left: 10px;">Loading...</span>
+                            }
+                            else
+                            {
+                                @GetButtonLabel()
+                            }
                         </button>
                     }
 
-                    <button @onclick="HandleActionAsync" disabled="@(IsLoading)" class="btn-primary">
-                        @if (IsLoading)
-                        {
-                            <span class="spinner"></span>
-                            <span style="margin-left: 10px;">Loading...</span>
-                        }
-                        else
-                        {
-                            @GetButtonLabel()
-                        }
-                    </button>
-                }
-
+                </div>
             </div>
-        </div>
+        }
         <div class="players-section">
             <h2>Players</h2>
             <PlayersContainerComponent CurrentPlayer="CurrentPlayer" OtherPlayers="OtherPlayers" ShowHint="ShowHint"
                                        CurrentPlayerRack="_playerRack"/>
         </div>
     </section>
+
+    <!-- Tile Selection Popup for Human Players -->
+    @if (ShowTileSelection)
+    {
+        <TileSelectionPopup
+            IsVisible="ShowTileSelection"
+            AvailableTiles="CurrentPlayer.Rack.Tiles"
+            SelectedTiles="SelectedTilesForPlay"
+            OnSelectionChanged="OnTileSelectionChanged"
+            OnClosePopup="OnTileSelectionConfirmed"/>
+    }
 </div>
 
 <style>
@@ -224,6 +263,90 @@
         animation: spin 0.8s linear infinite;
         display: inline-block;
         vertical-align: middle;
+    }
+
+    /* Human Player Actions */
+    .human-player-actions {
+        background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+        border: 2px solid #2196f3;
+        border-radius: 15px;
+        padding: 25px;
+        margin: 20px 0;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(33, 150, 243, 0.2);
+    }
+
+    .human-player-header h3 {
+        color: #1976d2;
+        margin: 0 0 10px 0;
+        font-size: 1.4rem;
+    }
+
+    .human-player-header p {
+        color: #555;
+        margin: 0 0 20px 0;
+        font-size: 1rem;
+    }
+
+    .human-actions-buttons {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-draw, .btn-play {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 15px 25px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 150px;
+        justify-content: center;
+    }
+
+    .btn-draw {
+        background: linear-gradient(135deg, #ff9800, #f57c00);
+        color: white;
+        box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+    }
+
+    .btn-draw:hover {
+        background: linear-gradient(135deg, #f57c00, #ef6c00);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(255, 152, 0, 0.4);
+    }
+
+    .btn-play {
+        background: linear-gradient(135deg, #4caf50, #388e3c);
+        color: white;
+        box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    }
+
+    .btn-play:hover {
+        background: linear-gradient(135deg, #388e3c, #2e7d32);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+    }
+
+    .btn-draw:active, .btn-play:active {
+        transform: translateY(0);
+    }
+
+    @@media (max-width: 768px) {
+        .human-actions-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .btn-draw, .btn-play {
+            min-width: 200px;
+        }
     }
 
 

@@ -20,6 +20,7 @@ public partial class GamePage
     private Set _playerRack = new();
 
     [Inject] private CancellationService CancellationService { get; set; } = null!;
+    [Inject] private HumanPlayerService HumanPlayerService { get; set; } = null!;
 
     [Parameter]
     [SupplyParameterFromQuery(Name = "playerCount")]
@@ -43,6 +44,15 @@ public partial class GamePage
     private Guid Id => _currentGame.Id;
     private bool IsLoading { get; set; }
     private bool ShowHint { get; set; }
+    private bool IsWaitingForHumanPlayer { get; set; }
+    private bool ShowTileSelection { get; set; }
+    private List<bool> PlayerTypes { get; set; } = [];
+    private List<Tile> SelectedTilesForPlay { get; set; } = [];
+
+    private bool IsCurrentPlayerHuman =>
+        _currentGame.Players.Count > 0 &&
+        _currentGame.PlayerIndex < PlayerTypes.Count &&
+        PlayerTypes[_currentGame.PlayerIndex];
 
 
     private async Task HandleActionAsync()
@@ -120,7 +130,7 @@ public partial class GamePage
 
         // Generate player names and types
         var listNames = ParsePlayerNames(playerCount);
-        var playerTypes = ParsePlayerTypes(playerCount);
+        PlayerTypes = ParsePlayerTypes(playerCount);
 
         // Create a game with custom ID if provided
         if (!string.IsNullOrWhiteSpace(GameId) && Guid.TryParse(GameId, out var parsedId))
@@ -128,10 +138,11 @@ public partial class GamePage
         else
             _currentGame = new Game();
 
-        _currentGame.InitializeGame(listNames);
+        // Setup human player service events
+        HumanPlayerService.PlayerTurnStarted += OnPlayerTurnStarted;
+        HumanPlayerService.PlayerTurnCompleted += OnPlayerTurnCompleted;
 
-        // Store player types for future use (if needed for game logic)
-        // For now, we just parse and validate them, but don't use them yet
+        _currentGame.InitializeGame(listNames, PlayerTypes, HumanPlayerService.WaitForPlayerChoice);
         _currentState = ActionState.ShowHint;
         CurrentPlayer = _currentGame.Players[0];
         _playerRack = new Set(CurrentPlayer.Rack);
@@ -213,6 +224,55 @@ public partial class GamePage
             }
 
         return finalTypes;
+    }
+
+    private void OnPlayerTurnStarted(object? sender, EventArgs e)
+    {
+        IsWaitingForHumanPlayer = true;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void OnPlayerTurnCompleted(object? sender, EventArgs e)
+    {
+        IsWaitingForHumanPlayer = false;
+        ShowTileSelection = false;
+        InvokeAsync(StateHasChanged);
+    }
+
+    // Methods for human player actions
+    private void OnDrawTile()
+    {
+        HumanPlayerService.PlayerChooseDraw();
+    }
+
+    private void OnSelectTilesToPlay()
+    {
+        SelectedTilesForPlay.Clear();
+        ShowTileSelection = true;
+        StateHasChanged();
+    }
+
+    private void OnTileSelectionChanged(List<Tile> selectedTiles)
+    {
+        // Just update the selected tiles, don't confirm yet
+        SelectedTilesForPlay = selectedTiles;
+        StateHasChanged();
+    }
+
+    private void OnTileSelectionConfirmed()
+    {
+        // User clicked "Confirm" button
+        ShowTileSelection = false;
+        if (SelectedTilesForPlay.Count > 0) HumanPlayerService.PlayerChoosePlay(SelectedTilesForPlay);
+
+        StateHasChanged();
+    }
+
+    private void OnTileSelectionCancelled()
+    {
+        ShowTileSelection = false;
+        SelectedTilesForPlay.Clear();
+        StateHasChanged();
     }
 
     private enum ActionState
