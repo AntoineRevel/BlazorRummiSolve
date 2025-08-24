@@ -29,24 +29,95 @@
             <div class="human-player-actions">
                 <div class="human-player-header">
                     <h3>@CurrentPlayer.Name's Turn</h3>
-                    <p>Choose your action:</p>
+                    <p>Select tiles to play or draw a tile:</p>
                 </div>
+
+                @if (SelectedTilesForPlay.Any())
+                {
+                    <div class="selected-tiles-section">
+                        <h4>Selected Tiles (@SelectedTilesForPlay.Count)</h4>
+                        <div class="selected-tiles-display">
+                            @foreach (var tileInstance in _selectedTileInstances)
+                            {
+                                <div class="selected-tile-wrapper @(_removingTiles.Contains(tileInstance.Id) ? "removing" : "") @(_newTiles.Contains(tileInstance.Id) ? "new-tile" : "")"
+                                     @onclick="() => OnTileInstanceClick(tileInstance)">
+                                    <TileComponent Tile="tileInstance.Tile" ShouldHighlight="false"/>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <div class="available-tiles-section">
+                    <h4>Available Tiles</h4>
+                    <div class="tiles-container">
+                        @foreach (var tileGroup in GetGroupedTiles())
+                        {
+                            var tileType = tileGroup.Key;
+                            var totalCount = tileGroup.Count();
+                            var selectedCount = GetSelectedCountForTile(tileType);
+                            var remainingCount = totalCount - selectedCount;
+                            var isFullySelected = remainingCount == 0;
+
+                            <div class="tile-stack @(isFullySelected ? "fully-selected" : "")"
+                                 @onclick="() => OnTileStackClick(tileType)">
+                                @if (remainingCount > 0)
+                                {
+                                    @for (var i = 0; i < remainingCount; i++)
+                                    {
+                                        var stackOffset = i * 3;
+
+                                        <div class="stacked-tile"
+                                             style="z-index: @(100 - i); transform: translate(@(stackOffset)px, @(-stackOffset)px);">
+                                            <TileComponent Tile="tileType" ShouldHighlight="false"/>
+                                        </div>
+                                    }
+
+                                    @if (remainingCount > 1)
+                                    {
+                                        <div class="count-indicator">@remainingCount</div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="stacked-tile greyed-out">
+                                        <TileComponent Tile="tileType" ShouldHighlight="false"/>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+
                 <div class="human-actions-buttons">
-                    <button @onclick="OnDrawTile" class="btn-draw">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                             stroke-width="2">
-                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                        </svg>
-                        Draw Tile
-                    </button>
-                    <button @onclick="OnSelectTilesToPlay" class="btn-play">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                             stroke-width="2">
-                            <circle cx="12" cy="12" r="10"/>
-                            <polygon points="10,8 16,12 10,16 10,8"/>
-                        </svg>
-                        Play Tiles
-                    </button>
+                    @if (SelectedTilesForPlay.Any())
+                    {
+                        <button @onclick="OnClearSelection" class="btn-clear">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                 stroke-width="2">
+                                <path d="M18 6L6 18M6 6l12 12"/>
+                            </svg>
+                            Clear
+                        </button>
+                        <button @onclick="OnPlaySelection" class="btn-play">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                 stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polygon points="10,8 16,12 10,16 10,8"/>
+                            </svg>
+                            Play Selection
+                        </button>
+                    }
+                    else
+                    {
+                        <button @onclick="OnDrawTile" class="btn-draw">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                 stroke-width="2">
+                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                            </svg>
+                            Draw Tile
+                        </button>
+                    }
                 </div>
             </div>
         }
@@ -91,16 +162,6 @@
         </div>
     </section>
 
-    <!-- Tile Selection Popup for Human Players -->
-    @if (ShowTileSelection)
-    {
-        <TileSelectionPopup
-            IsVisible="ShowTileSelection"
-            AvailableTiles="CurrentPlayer.Rack.Tiles"
-            SelectedTiles="SelectedTilesForPlay"
-            OnSelectionChanged="OnTileSelectionChanged"
-            OnClosePopup="OnTileSelectionConfirmed"/>
-    }
 </div>
 
 <style>
@@ -295,7 +356,7 @@
         flex-wrap: wrap;
     }
 
-    .btn-draw, .btn-play {
+    .btn-draw, .btn-play, .btn-clear {
         display: flex;
         align-items: center;
         gap: 10px;
@@ -334,7 +395,19 @@
         box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
     }
 
-    .btn-draw:active, .btn-play:active {
+    .btn-clear {
+        background: linear-gradient(135deg, #6c757d, #545b62);
+        color: white;
+        box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+    }
+
+    .btn-clear:hover {
+        background: linear-gradient(135deg, #545b62, #495057);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(108, 117, 125, 0.4);
+    }
+
+    .btn-draw:active, .btn-play:active, .btn-clear:active {
         transform: translateY(0);
     }
 
@@ -344,9 +417,157 @@
             align-items: center;
         }
 
-        .btn-draw, .btn-play {
+        .btn-draw, .btn-play, .btn-clear {
             min-width: 200px;
         }
+    }
+
+    /* Tile Selection Styles */
+    .selected-tiles-section {
+        padding: 15px;
+        background-color: #f8f9fa;
+        border: 2px solid #e3f2fd;
+        border-radius: 10px;
+        margin: 15px 0;
+    }
+
+    .selected-tiles-section h4 {
+        margin: 0 0 15px 0;
+        color: #495057;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .selected-tiles-display {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        min-height: 40px;
+        max-height: 150px;
+        overflow-y: auto;
+        transition: all 0.3s ease;
+    }
+
+    .selected-tile-wrapper {
+        position: relative;
+        cursor: pointer;
+        transition: opacity 0.2s ease, filter 0.2s ease;
+    }
+
+    .selected-tile-wrapper.new-tile {
+        animation: slideIn 0.3s ease-out;
+    }
+
+    .selected-tile-wrapper:hover {
+        opacity: 0.5;
+        filter: grayscale(70%);
+    }
+
+    .selected-tile-wrapper.removing {
+        animation: slideOut 0.3s ease-in forwards;
+    }
+
+    @@keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: scale(0.8) translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+
+    @@keyframes slideOut {
+        from {
+            opacity: 1;
+            transform: scale(1);
+            max-width: 100px;
+            margin-right: 5px;
+        }
+        to {
+            opacity: 0;
+            transform: scale(0.8);
+            max-width: 0;
+            margin-right: 0;
+        }
+    }
+
+    .available-tiles-section {
+        margin: 15px 0;
+    }
+
+    .available-tiles-section h4 {
+        margin: 0 0 10px 0;
+        color: #495057;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .tiles-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+        gap: 8px;
+        padding: 15px;
+        background-color: #f8f9fa;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        max-height: 300px;
+        overflow-y: auto;
+        align-content: start;
+    }
+
+    .tile-stack {
+        position: relative;
+        cursor: pointer;
+        min-width: 50px;
+        min-height: 70px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .stacked-tile {
+        position: absolute;
+        top: 0;
+        left: 0;
+        transition: transform 0.2s ease;
+    }
+
+    .tile-stack:hover .stacked-tile {
+        transform: translate(0, 0) !important;
+    }
+
+    .tile-stack.fully-selected {
+        opacity: 0.5;
+        cursor: pointer;
+    }
+
+    .tile-stack.fully-selected:hover {
+        opacity: 0.7;
+    }
+
+    .stacked-tile.greyed-out {
+        opacity: 0.4;
+        filter: grayscale(80%);
+        pointer-events: none;
+    }
+
+    .count-indicator {
+        position: absolute;
+        bottom: -3px;
+        right: -3px;
+        background-color: #007bff;
+        color: white;
+        border-radius: 50%;
+        width: 18px;
+        height: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: bold;
+        z-index: 200;
     }
 
 

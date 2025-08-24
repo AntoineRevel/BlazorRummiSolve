@@ -8,6 +8,10 @@ namespace BlazorRummiSolve.Components.Pages;
 
 public partial class GamePage
 {
+    private readonly HashSet<Guid> _newTiles = [];
+    private readonly HashSet<Guid> _removingTiles = [];
+
+    private readonly List<TileInstance> _selectedTileInstances = [];
     private Solution _board = new();
     private Game _currentGame = new();
 
@@ -45,7 +49,6 @@ public partial class GamePage
     private bool IsLoading { get; set; }
     private bool ShowHint { get; set; }
     private bool IsWaitingForHumanPlayer { get; set; }
-    private bool ShowTileSelection { get; set; }
     private List<bool> PlayerTypes { get; set; } = [];
     private List<Tile> SelectedTilesForPlay { get; set; } = [];
 
@@ -235,7 +238,7 @@ public partial class GamePage
     private void OnPlayerTurnCompleted(object? sender, EventArgs e)
     {
         IsWaitingForHumanPlayer = false;
-        ShowTileSelection = false;
+        OnClearSelection();
         InvokeAsync(StateHasChanged);
     }
 
@@ -245,34 +248,133 @@ public partial class GamePage
         HumanPlayerService.PlayerChooseDraw();
     }
 
-    private void OnSelectTilesToPlay()
+    private void OnPlaySelection()
+    {
+        if (SelectedTilesForPlay.Count > 0)
+        {
+            // Skip directly to the post-hint step by modifying the game state
+            HumanPlayerService.PlayerChoosePlay(SelectedTilesForPlay);
+
+            // Instead of waiting for normal flow, directly advance to showing the solution
+            _currentState = ActionState.ShowSolution;
+            ShowHint = true;
+        }
+
+        StateHasChanged();
+    }
+
+    private void OnClearSelection()
+    {
+        _selectedTileInstances.Clear();
+        SelectedTilesForPlay.Clear();
+        _removingTiles.Clear();
+        _newTiles.Clear();
+        StateHasChanged();
+    }
+
+    // Tile selection logic from popup
+    private async Task OnTileInstanceClick(TileInstance tileInstance)
+    {
+        _removingTiles.Add(tileInstance.Id);
+        StateHasChanged();
+
+        await Task.Delay(300);
+
+        _selectedTileInstances.Remove(tileInstance);
+        _removingTiles.Remove(tileInstance.Id);
+
+        SyncSelectedTiles();
+        StateHasChanged();
+    }
+
+    private void SyncSelectedTiles()
     {
         SelectedTilesForPlay.Clear();
-        ShowTileSelection = true;
-        StateHasChanged();
+        SelectedTilesForPlay.AddRange(_selectedTileInstances.Select(ti => ti.Tile));
     }
 
-    private void OnTileSelectionChanged(List<Tile> selectedTiles)
+    private async Task OnTileStackClick(Tile tileType)
     {
-        // Just update the selected tiles, don't confirm yet
-        SelectedTilesForPlay = selectedTiles;
+        var totalAvailable = CurrentPlayer.Rack.Tiles.Count(t => t.Equals(tileType));
+        var currentSelectedCount = GetSelectedCountForTile(tileType);
+
+        var newSelectedCount = (currentSelectedCount + 1) % (totalAvailable + 1);
+
+        if (newSelectedCount > currentSelectedCount)
+        {
+            var tilesToAdd = newSelectedCount - currentSelectedCount;
+            for (var i = 0; i < tilesToAdd; i++)
+            {
+                var newInstance = new TileInstance(tileType);
+                _selectedTileInstances.Add(newInstance);
+                _newTiles.Add(newInstance.Id);
+            }
+        }
+        else if (newSelectedCount < currentSelectedCount)
+        {
+            var tilesToRemove = currentSelectedCount - newSelectedCount;
+            for (var i = 0; i < tilesToRemove; i++)
+            for (var j = _selectedTileInstances.Count - 1; j >= 0; j--)
+            {
+                if (!_selectedTileInstances[j].Tile.Equals(tileType)) continue;
+                var instanceToRemove = _selectedTileInstances[j];
+                _selectedTileInstances.RemoveAt(j);
+                _newTiles.Remove(instanceToRemove.Id);
+                break;
+            }
+        }
+        else
+        {
+            var instancesToRemove = _selectedTileInstances.Where(ti => ti.Tile.Equals(tileType)).ToList();
+            foreach (var instance in instancesToRemove)
+            {
+                _selectedTileInstances.Remove(instance);
+                _newTiles.Remove(instance.Id);
+            }
+        }
+
+        SyncSelectedTiles();
         StateHasChanged();
+
+        if (newSelectedCount > currentSelectedCount)
+        {
+            await Task.Delay(300);
+            var instancesToClean = _selectedTileInstances
+                .Where(ti => ti.Tile.Equals(tileType) && _newTiles.Contains(ti.Id)).ToList();
+            foreach (var instance in instancesToClean) _newTiles.Remove(instance.Id);
+
+            StateHasChanged();
+        }
     }
 
-    private void OnTileSelectionConfirmed()
+    private int GetSelectedCountForTile(Tile tileType)
     {
-        // User clicked "Confirm" button
-        ShowTileSelection = false;
-        if (SelectedTilesForPlay.Count > 0) HumanPlayerService.PlayerChoosePlay(SelectedTilesForPlay);
-
-        StateHasChanged();
+        return _selectedTileInstances.Count(ti => ti.Tile.Equals(tileType));
     }
 
-    private void OnTileSelectionCancelled()
+    private IEnumerable<IGrouping<Tile, Tile>> GetGroupedTiles()
     {
-        ShowTileSelection = false;
-        SelectedTilesForPlay.Clear();
-        StateHasChanged();
+        return GetSortedTiles()
+            .GroupBy(tile => tile)
+            .OrderBy(g => g.Key.IsJoker ? 1 : 0)
+            .ThenBy(g => g.Key.Color)
+            .ThenBy(g => g.Key.Value);
+    }
+
+    private List<Tile> GetSortedTiles()
+    {
+        return CurrentPlayer.Rack.Tiles
+            .OrderBy(tile => tile.IsJoker ? 1 : 0)
+            .ThenBy(tile => tile.Color)
+            .ThenBy(tile => tile.Value)
+            .ToList();
+    }
+
+    // Tile selection management
+    private readonly record struct TileInstance(Tile Tile)
+    {
+        public Tile Tile { get; } = Tile;
+        public Guid Id { get; } = Guid.NewGuid();
     }
 
     private enum ActionState
