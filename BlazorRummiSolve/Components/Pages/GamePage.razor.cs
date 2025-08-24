@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using RummiSolve;
 using RummiSolve.Strategies;
+using Timer = System.Timers.Timer;
 
 namespace BlazorRummiSolve.Components.Pages;
 
@@ -22,6 +23,7 @@ public partial class GamePage
 
 
     private Set _playerRack = new();
+    private Timer? _toastTimer;
 
     [Inject] private CancellationService CancellationService { get; set; } = null!;
     [Inject] private HumanPlayerService HumanPlayerService { get; set; } = null!;
@@ -51,6 +53,10 @@ public partial class GamePage
     private bool IsWaitingForHumanPlayer { get; set; }
     private List<bool> PlayerTypes { get; set; } = [];
     private List<Tile> SelectedTilesForPlay { get; set; } = [];
+
+    // Drawn tile toast notification properties
+    private Tile? DrawnTile { get; set; }
+    private bool ShowDrawnTileToast { get; set; }
 
     private bool IsCurrentPlayerHuman =>
         _currentGame.Players.Count > 0 &&
@@ -239,13 +245,37 @@ public partial class GamePage
     {
         IsWaitingForHumanPlayer = false;
         OnClearSelection();
+
+        // Hide any active toast notification when turn completes
+        ShowDrawnTileToast = false;
+        DrawnTile = null;
+        _toastTimer?.Stop();
+        _toastTimer?.Dispose();
+        _toastTimer = null;
+
         InvokeAsync(StateHasChanged);
     }
 
     // Methods for human player actions
-    private void OnDrawTile()
+    private async Task OnDrawTile()
     {
+        // Capture current rack to identify drawn tile later
+        var currentRackTiles = CurrentPlayer.Rack.Tiles.ToList();
+
         HumanPlayerService.PlayerChooseDraw();
+
+        // Wait for the game state to update and capture the drawn tile
+        await Task.Delay(200); // Give time for game state to update
+
+        // Capture and show the drawn tile
+        CaptureAndShowDrawnTile(currentRackTiles);
+
+        // Update the board and player rack to reflect the draw
+        _board = _currentGame.Board;
+        _playerRack = CurrentPlayer.Rack;
+
+        // Automatically proceed to next player
+        await AutoProceedToNextPlayer();
     }
 
     private void OnPlaySelection()
@@ -368,6 +398,56 @@ public partial class GamePage
             .ThenBy(tile => tile.Color)
             .ThenBy(tile => tile.Value)
             .ToList();
+    }
+
+    // Auto-proceed to next player method
+    private async Task AutoProceedToNextPlayer()
+    {
+        // Set the current player and update racks
+        CurrentPlayer = _currentGame.Players[_currentGame.PlayerIndex];
+        _playerRack = new Set(_currentGame.Players[_currentGame.PlayerIndex].Rack);
+        _lastPlayerRack = new Set(_playerRack);
+        _lastBoard = _board;
+
+        // Start the next player's turn
+        await PlayAsync();
+        _currentState = ActionState.ShowHint;
+
+        StateHasChanged();
+    }
+
+    // Drawn tile methods
+    private void CaptureAndShowDrawnTile(List<Tile> previousRackTiles)
+    {
+        var currentRackTiles = CurrentPlayer.Rack.Tiles.ToList();
+
+        // Find the newly drawn tile by comparing current rack with previous rack
+        var drawnTiles = currentRackTiles.Except(previousRackTiles).ToList();
+
+        if (drawnTiles.Count == 1)
+        {
+            DrawnTile = drawnTiles.First();
+            ShowDrawnTileToast = true;
+
+            // Set up timer to hide toast after 3 seconds
+            _toastTimer?.Stop();
+            _toastTimer = new Timer(3000);
+            _toastTimer.Elapsed += (_, _) =>
+            {
+                InvokeAsync(() =>
+                {
+                    ShowDrawnTileToast = false;
+                    DrawnTile = null;
+                    _toastTimer?.Stop();
+                    _toastTimer?.Dispose();
+                    _toastTimer = null;
+                    StateHasChanged();
+                });
+            };
+            _toastTimer.Start();
+
+            StateHasChanged();
+        }
     }
 
     // Tile selection management
