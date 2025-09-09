@@ -16,7 +16,6 @@ public class Game(Guid id)
     public List<Player> Players { get; } = [];
     public int Turn { get; private set; }
     public int PlayerIndex { get; private set; }
-    public int PrevPlayerIndex { get; private set; }
     public Solution Board { get; private set; } = new();
     public bool IsGameOver { get; private set; }
 
@@ -89,7 +88,7 @@ public class Game(Guid id)
             var playerTiles = new Tile[tilesPerPlayer];
             Array.Copy(tiles, startIndex, playerTiles, 0, tilesPerPlayer);
 
-            // Determine strategy based on player type
+            // Determine strategy based on player types
             ISolverStrategy strategy;
             var isRealPlayer = playerTypes?[i] ?? false; // Default to AI if not specified
 
@@ -116,7 +115,6 @@ public class Game(Guid id)
 
     private void NextPlayer()
     {
-        PrevPlayerIndex = PlayerIndex;
         PlayerIndex = (PlayerIndex + 1) % Players.Count;
         if (PlayerIndex == 0) Turn++;
     }
