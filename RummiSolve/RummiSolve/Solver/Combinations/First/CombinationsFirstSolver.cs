@@ -26,7 +26,8 @@ public class CombinationsFirstSolver : ISolver
 
         var firstBinarySolver = new BinaryFirstBaseSolver(tilesFirstTry.ToArray(), playerJokers);
 
-        var found = firstBinarySolver.SearchSolution();
+        var result = firstBinarySolver.SearchSolution();
+        var found = result.Found;
 
         if (found)
             return new SolverResult(GetType().Name, firstBinarySolver.BinarySolution, tilesFirstTry, playerJokers,
@@ -38,7 +39,7 @@ public class CombinationsFirstSolver : ISolver
         {
             if (cancellationToken.IsCancellationRequested)
                 return new SolverResult(GetType().Name);
-                
+
             foreach (
                 var combi in
                 BaseSolver.GetCombinations(_tiles, tileTry, cancellationToken)
@@ -46,11 +47,12 @@ public class CombinationsFirstSolver : ISolver
             {
                 if (cancellationToken.IsCancellationRequested)
                     return new SolverResult(GetType().Name);
-                    
+
                 var joker = combi.Count(tile => tile.IsJoker);
                 if (joker > 0) combi.RemoveRange(tileTry - joker, joker);
                 var solver = new BinaryFirstBaseSolver(combi.ToArray(), joker);
-                found = solver.SearchSolution();
+                var solverResult = solver.SearchSolution();
+                found = solverResult.Found;
                 if (!found) continue;
                 return new SolverResult(GetType().Name, solver.BinarySolution, solver.TilesToPlay, solver.JokerToPlay);
             }

@@ -1,5 +1,4 @@
 @page "/game"
-@using BlazorRummiSolve.Components.Shared
 @rendermode InteractiveServer
 
 <div class="game-container" @onkeydown="HandleKeyDown" tabindex="0">
@@ -25,43 +24,160 @@
             <SolutionComponent Solution="_board"/>
         </div>
 
-        <div class="actions">
-            <div class="reset-container">
-                <button @onclick="ResetGameAsync" class="btn-secondary">
-                    Reset Game
-                </button>
-            </div>
-            <div class="main-actions">
-                @if (!_isGameOver)
+        @if (IsWaitingForHumanPlayer && IsCurrentPlayerHuman)
+        {
+            <div class="human-player-actions">
+                <div class="human-player-header">
+                    <h3>@CurrentPlayer.Name's Turn</h3>
+                    <p>Select tiles to play or draw a tile:</p>
+                </div>
+
+                @if (SelectedTilesForPlay.Any())
                 {
-                    @if (_currentState != ActionState.ShowHint && !IsLoading && !_isGameOver)
+                    <div class="selected-tiles-section">
+                        <h4>Selected Tiles (@SelectedTilesForPlay.Count)</h4>
+                        <div class="selected-tiles-display">
+                            @foreach (var tileInstance in _selectedTileInstances)
+                            {
+                                <div class="selected-tile-wrapper @(_removingTiles.Contains(tileInstance.Id) ? "removing" : "") @(_newTiles.Contains(tileInstance.Id) ? "new-tile" : "")"
+                                     @onclick="() => OnTileInstanceClick(tileInstance)">
+                                    <TileComponent Tile="tileInstance.Tile" ShouldHighlight="false"/>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <div class="available-tiles-section">
+                    <h4>Available Tiles</h4>
+                    <div class="tiles-container">
+                        @foreach (var tileGroup in GetGroupedTiles())
+                        {
+                            var tileType = tileGroup.Key;
+                            var totalCount = tileGroup.Count();
+                            var selectedCount = GetSelectedCountForTile(tileType);
+                            var remainingCount = totalCount - selectedCount;
+                            var isFullySelected = remainingCount == 0;
+
+                            <div class="tile-stack @(isFullySelected ? "fully-selected" : "")"
+                                 @onclick="() => OnTileStackClick(tileType)">
+                                @if (remainingCount > 0)
+                                {
+                                    @for (var i = 0; i < remainingCount; i++)
+                                    {
+                                        var stackOffset = i * 3;
+
+                                        <div class="stacked-tile"
+                                             style="z-index: @(100 - i); transform: translate(@(stackOffset)px, @(-stackOffset)px);">
+                                            <TileComponent Tile="tileType" ShouldHighlight="false"/>
+                                        </div>
+                                    }
+
+                                    @if (remainingCount > 1)
+                                    {
+                                        <div class="count-indicator">@remainingCount</div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="stacked-tile greyed-out">
+                                        <TileComponent Tile="tileType" ShouldHighlight="false"/>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="human-actions-buttons">
+                    @if (SelectedTilesForPlay.Any())
                     {
-                        <button @onclick="HandleActionBack" class="btn-secondary">
-                            Back
+                        <button @onclick="OnClearSelection" class="btn-clear">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                 stroke-width="2">
+                                <path d="M18 6L6 18M6 6l12 12"/>
+                            </svg>
+                            Clear
+                        </button>
+                        <button @onclick="OnPlaySelection" class="btn-play">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                 stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polygon points="10,8 16,12 10,16 10,8"/>
+                            </svg>
+                            Play Selection
+                        </button>
+                    }
+                    else
+                    {
+                        <button @onclick="OnDrawTile" class="btn-draw">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                 stroke-width="2">
+                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                            </svg>
+                            Draw Tile
+                        </button>
+                    }
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="actions">
+                <div class="reset-container">
+                    <button @onclick="ResetGameAsync" class="btn-secondary">
+                        Reset Game
+                    </button>
+                </div>
+                <div class="main-actions">
+                    @if (!_isGameOver)
+                    {
+                        @if (_currentState != ActionState.ShowHint && !IsLoading && !_isGameOver)
+                        {
+                            <button @onclick="HandleActionBack" class="btn-secondary">
+                                Back
+                            </button>
+                        }
+
+                        <button @onclick="HandleActionAsync" disabled="@(IsLoading)" class="btn-primary">
+                            @if (IsLoading)
+                            {
+                                <span class="spinner"></span>
+                                <span style="margin-left: 10px;">Loading...</span>
+                            }
+                            else
+                            {
+                                @GetButtonLabel()
+                            }
                         </button>
                     }
 
-                    <button @onclick="HandleActionAsync" disabled="@(IsLoading)" class="btn-primary">
-                        @if (IsLoading)
-                        {
-                            <span class="spinner"></span>
-                            <span style="margin-left: 10px;">Loading...</span>
-                        }
-                        else
-                        {
-                            @GetButtonLabel()
-                        }
-                    </button>
-                }
-
+                </div>
             </div>
-        </div>
+        }
         <div class="players-section">
             <h2>Players</h2>
             <PlayersContainerComponent CurrentPlayer="CurrentPlayer" OtherPlayers="OtherPlayers" ShowHint="ShowHint"
                                        CurrentPlayerRack="_playerRack"/>
         </div>
     </section>
+
+    <!-- Toast Notification for Drawn Tile -->
+    @if (ShowDrawnTileToast && DrawnTile != null)
+    {
+        <div class="toast-notification drawn-tile-toast">
+            <div class="toast-header">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                </svg>
+                <span>Tile Drawn!</span>
+            </div>
+            <div class="toast-content">
+                <TileComponent Tile="DrawnTile.Value" ShouldHighlight="false"/>
+            </div>
+        </div>
+    }
+
 </div>
 
 <style>
@@ -224,6 +340,333 @@
         animation: spin 0.8s linear infinite;
         display: inline-block;
         vertical-align: middle;
+    }
+
+    /* Human Player Actions */
+    .human-player-actions {
+        background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+        border: 2px solid #2196f3;
+        border-radius: 15px;
+        padding: 25px;
+        margin: 20px 0;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(33, 150, 243, 0.2);
+    }
+
+    .human-player-header h3 {
+        color: #1976d2;
+        margin: 0 0 10px 0;
+        font-size: 1.4rem;
+    }
+
+    .human-player-header p {
+        color: #555;
+        margin: 0 0 20px 0;
+        font-size: 1rem;
+    }
+
+    .human-actions-buttons {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-draw, .btn-play, .btn-clear {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 15px 25px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 150px;
+        justify-content: center;
+    }
+
+    .btn-draw {
+        background: linear-gradient(135deg, #ff9800, #f57c00);
+        color: white;
+        box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+    }
+
+    .btn-draw:hover {
+        background: linear-gradient(135deg, #f57c00, #ef6c00);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(255, 152, 0, 0.4);
+    }
+
+    .btn-play {
+        background: linear-gradient(135deg, #4caf50, #388e3c);
+        color: white;
+        box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    }
+
+    .btn-play:hover {
+        background: linear-gradient(135deg, #388e3c, #2e7d32);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+    }
+
+    .btn-clear {
+        background: linear-gradient(135deg, #6c757d, #545b62);
+        color: white;
+        box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+    }
+
+    .btn-clear:hover {
+        background: linear-gradient(135deg, #545b62, #495057);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(108, 117, 125, 0.4);
+    }
+
+    .btn-draw:active, .btn-play:active, .btn-clear:active {
+        transform: translateY(0);
+    }
+
+    @@media (max-width: 768px) {
+        .human-actions-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .btn-draw, .btn-play, .btn-clear {
+            min-width: 200px;
+        }
+    }
+
+    /* Tile Selection Styles */
+    .selected-tiles-section {
+        padding: 25px 15px 15px 15px;
+        background-color: #f8f9fa;
+        border: 2px solid #e3f2fd;
+        border-radius: 10px;
+        margin: 15px 0;
+    }
+
+    .selected-tiles-section h4 {
+        margin: 0 0 15px 0;
+        color: #495057;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .selected-tiles-display {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        min-height: 40px;
+        max-height: 150px;
+        overflow-y: auto;
+        transition: all 0.3s ease;
+        padding: 10px 5px 5px 5px;
+    }
+
+    .selected-tile-wrapper {
+        position: relative;
+        cursor: pointer;
+        transition: opacity 0.2s ease, filter 0.2s ease;
+    }
+
+    .selected-tile-wrapper.new-tile {
+        animation: slideIn 0.3s ease-out;
+    }
+
+    .selected-tile-wrapper:hover {
+        opacity: 0.5;
+        filter: grayscale(70%);
+    }
+
+    .selected-tile-wrapper.removing {
+        animation: slideOut 0.3s ease-in forwards;
+    }
+
+    @@keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: scale(0.8) translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+    }
+
+    @@keyframes slideOut {
+        from {
+            opacity: 1;
+            transform: scale(1);
+            max-width: 100px;
+            margin-right: 5px;
+        }
+        to {
+            opacity: 0;
+            transform: scale(0.8);
+            max-width: 0;
+            margin-right: 0;
+        }
+    }
+
+    .available-tiles-section {
+        margin: 15px 0;
+    }
+
+    .available-tiles-section h4 {
+        margin: 0 0 10px 0;
+        color: #495057;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .tiles-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+        gap: 8px;
+        padding: 15px;
+        background-color: #f8f9fa;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        max-height: 300px;
+        overflow-y: auto;
+        align-content: start;
+    }
+
+    .tile-stack {
+        position: relative;
+        cursor: pointer;
+        min-width: 50px;
+        min-height: 70px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .stacked-tile {
+        position: absolute;
+        top: 0;
+        left: 0;
+        transition: transform 0.2s ease;
+    }
+
+    .tile-stack:hover .stacked-tile {
+        transform: translate(0, 0) !important;
+    }
+
+    .tile-stack.fully-selected {
+        opacity: 0.5;
+        cursor: pointer;
+    }
+
+    .tile-stack.fully-selected:hover {
+        opacity: 0.7;
+    }
+
+    .stacked-tile.greyed-out {
+        opacity: 0.4;
+        filter: grayscale(80%);
+        pointer-events: none;
+    }
+
+    .count-indicator {
+        position: absolute;
+        bottom: -3px;
+        right: -3px;
+        background-color: #007bff;
+        color: white;
+        border-radius: 50%;
+        width: 18px;
+        height: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: bold;
+        z-index: 200;
+    }
+
+    /* Toast Notification Styles */
+    .toast-notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #4caf50, #66bb6a);
+        color: white;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(76, 175, 80, 0.4);
+        padding: 16px;
+        min-width: 280px;
+        max-width: 400px;
+        z-index: 9999;
+        animation: slideInToast 0.3s ease-out;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(8px);
+    }
+
+    .toast-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .toast-header svg {
+        flex-shrink: 0;
+        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+    }
+
+    .toast-content {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 8px;
+        padding: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    @@keyframes slideInToast {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    /* Mobile responsive positioning */
+    @@media (max-width: 768px) {
+        .toast-notification {
+            top: 10px;
+            right: 10px;
+            left: 10px;
+            min-width: auto;
+            max-width: none;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .toast-notification {
+            top: 10px;
+            right: 5px;
+            left: 5px;
+            padding: 12px;
+        }
+
+        .toast-header {
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .toast-content {
+            padding: 8px;
+        }
     }
 
 

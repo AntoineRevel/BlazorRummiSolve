@@ -9,6 +9,7 @@ builder.Services.AddRazorComponents()
 
 // Add custom services
 builder.Services.AddScoped<CancellationService>();
+builder.Services.AddScoped<HumanPlayerService>();
 
 var app = builder.Build();
 

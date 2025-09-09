@@ -1,3 +1,4 @@
+using RummiSolve.Results;
 using RummiSolve.Solver.Abstract;
 using RummiSolve.Solver.Interfaces;
 
@@ -9,10 +10,10 @@ public sealed class BinaryFirstBaseSolver(Tile[] tiles, int jokers) : BaseSolver
     public int JokerToPlay { get; } = jokers;
     public Solution BinarySolution { get; private set; } = new();
 
-    public bool SearchSolution(CancellationToken cancellationToken = default)
+    public SolverResult SearchSolution(CancellationToken cancellationToken = default)
     {
         BinarySolution = FindSolution(new Solution(), 0, 0, cancellationToken);
-        return BinarySolution.IsValid;
+        return new SolverResult(GetType().Name, BinarySolution, TilesToPlay, JokerToPlay);
     }
 
     private bool ValidateCondition(int solutionScore)
@@ -22,11 +23,12 @@ public sealed class BinaryFirstBaseSolver(Tile[] tiles, int jokers) : BaseSolver
         return solutionScore > MinScore && Jokers == 0;
     }
 
-    private Solution FindSolution(Solution solution, int solutionScore, int startIndex, CancellationToken cancellationToken = default)
+    private Solution FindSolution(Solution solution, int solutionScore, int startIndex,
+        CancellationToken cancellationToken = default)
     {
         if (cancellationToken.IsCancellationRequested)
             return solution;
-            
+
         startIndex = Array.FindIndex(UsedTiles, startIndex, used => !used);
 
         if (startIndex == -1) return solution;
@@ -51,7 +53,7 @@ public sealed class BinaryFirstBaseSolver(Tile[] tiles, int jokers) : BaseSolver
         {
             if (cancellationToken.IsCancellationRequested)
                 break;
-                
+
             MarkTilesAsUsed(set, firstUnusedTileIndex);
             var newSolution = solution;
 
