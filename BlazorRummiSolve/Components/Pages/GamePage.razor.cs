@@ -58,6 +58,10 @@ public partial class GamePage
     private Tile? DrawnTile { get; set; }
     private bool ShowDrawnTileToast { get; set; }
 
+    // Error message properties
+    private string? ErrorMessage { get; set; }
+    private bool ShowErrorMessage { get; set; }
+
     private bool IsCurrentPlayerHuman =>
         _currentGame.Players.Count > 0 &&
         _currentGame.PlayerIndex < PlayerTypes.Count &&
@@ -150,6 +154,7 @@ public partial class GamePage
         // Setup human player service events
         HumanPlayerService.PlayerTurnStarted += OnPlayerTurnStarted;
         HumanPlayerService.PlayerTurnCompleted += OnPlayerTurnCompleted;
+        HumanPlayerService.InvalidPlayAttempted += OnInvalidPlayAttempted;
 
         _currentGame.InitializeGame(listNames, PlayerTypes, HumanPlayerService.WaitForPlayerChoice);
         _currentState = ActionState.ShowHint;
@@ -255,6 +260,17 @@ public partial class GamePage
         _toastTimer?.Dispose();
         _toastTimer = null;
 
+        // Clear error message when turn completes
+        ShowErrorMessage = false;
+        ErrorMessage = null;
+
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void OnInvalidPlayAttempted(object? sender, string errorMessage)
+    {
+        ErrorMessage = errorMessage;
+        ShowErrorMessage = true;
         InvokeAsync(StateHasChanged);
     }
 

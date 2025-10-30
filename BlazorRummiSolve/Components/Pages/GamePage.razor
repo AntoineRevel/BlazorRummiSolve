@@ -32,6 +32,19 @@
                     <p>Select tiles to play or draw a tile:</p>
                 </div>
 
+                @if (ShowErrorMessage && !string.IsNullOrEmpty(ErrorMessage))
+                {
+                    <div class="error-message">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="8" x2="12" y2="12"/>
+                            <line x1="12" y1="16" x2="12.01" y2="16"/>
+                        </svg>
+                        <span>@ErrorMessage</span>
+                    </div>
+                }
+
                 @if (SelectedTilesForPlay.Any())
                 {
                     <div class="selected-tiles-section">
@@ -363,6 +376,44 @@
         color: #555;
         margin: 0 0 20px 0;
         font-size: 1rem;
+    }
+
+    /* Error Message */
+    .error-message {
+        background: linear-gradient(135deg, #ffebee, #ffcdd2);
+        border: 2px solid #f44336;
+        border-radius: 10px;
+        padding: 15px;
+        margin: 15px 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #c62828;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(244, 67, 54, 0.2);
+        animation: shake 0.5s ease-in-out;
+    }
+
+    .error-message svg {
+        flex-shrink: 0;
+        stroke: #c62828;
+    }
+
+    .error-message span {
+        flex: 1;
+        text-align: left;
+    }
+
+    @@keyframes shake {
+        0%, 100% {
+            transform: translateX(0);
+        }
+        10%, 30%, 50%, 70%, 90% {
+            transform: translateX(-5px);
+        }
+        20%, 40%, 60%, 80% {
+            transform: translateX(5px);
+        }
     }
 
     .human-actions-buttons {
