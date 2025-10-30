@@ -157,7 +157,9 @@ public partial class GamePage
         _playerRack = new Set(CurrentPlayer.Rack);
         _lastPlayerRack = new Set(CurrentPlayer.Rack);
 
-        await PlayAsync();
+        // If the first player is human, trigger PlayAsync to show the human player interface
+        // Don't await to avoid blocking the UI initialization
+        if (IsCurrentPlayerHuman) _ = PlayAsync();
     }
 
     private async Task PlayAsync()
