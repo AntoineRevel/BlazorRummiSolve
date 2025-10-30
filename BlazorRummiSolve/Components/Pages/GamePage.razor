@@ -9,8 +9,7 @@
 
     <!-- Players Section - Always at the top -->
     <div class="players-section-top">
-        <PlayersContainerComponent CurrentPlayer="CurrentPlayer" OtherPlayers="OtherPlayers" ShowHint="ShowHint"
-                                   CurrentPlayerRack="_playerRack" ShowAllPlayerTiles="ShowAllPlayerTiles"
+        <PlayersContainerComponent CurrentPlayer="CurrentPlayer" OtherPlayers="OtherPlayers"
                                    AllPlayers="_currentGame.Players"/>
     </div>
 
@@ -176,6 +175,15 @@
             </div>
         }
     </section>
+
+    <!-- AI Player Rack Section - Only shown for AI players during their turn -->
+    @if (ShouldShowAIRack())
+    {
+        <section class="ai-rack-section">
+            <h3 class="ai-rack-title">@CurrentPlayer.Name's Rack</h3>
+            <SetComponent Set="_playerRack" ShowHint="ShowHint" HighlightTiles="CurrentPlayer.TilesToPlay"/>
+        </section>
+    }
 
     <!-- Toast Notification for Drawn Tile -->
     @if (ShowDrawnTileToast && DrawnTile != null)
@@ -728,5 +736,23 @@
         }
     }
 
+    /* AI Rack Section */
+    .ai-rack-section {
+        max-width: 1300px;
+        margin: 20px auto;
+        padding: 20px;
+        background: linear-gradient(to right, #fff7e6, #fffde6);
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border: 2px solid #ff9800;
+    }
+
+    .ai-rack-title {
+        font-size: 1.5em;
+        color: #f57c00;
+        margin: 0 0 15px 0;
+        font-weight: 600;
+        text-align: center;
+    }
 
 </style>

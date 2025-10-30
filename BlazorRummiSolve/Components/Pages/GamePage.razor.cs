@@ -44,12 +44,7 @@ public partial class GamePage
     [SupplyParameterFromQuery(Name = "playerTypes")]
     public string? PlayerTypesQuery { get; set; }
 
-    [Parameter]
-    [SupplyParameterFromQuery(Name = "showAllTiles")]
-    public bool? ShowAllTiles { get; set; }
-
     private Player CurrentPlayer { get; set; } = new("Default", [], new ParallelSolverStrategy());
-    private bool ShowAllPlayerTiles { get; set; } = true;
     private List<Player> OtherPlayers => _currentGame.Players.Where(p => p != CurrentPlayer).ToList();
     private int TurnNumber => _currentGame.Turn;
     private Guid Id => _currentGame.Id;
@@ -72,6 +67,27 @@ public partial class GamePage
         _currentGame.PlayerIndex < PlayerTypes.Count &&
         PlayerTypes[_currentGame.PlayerIndex];
 
+    private bool ShouldShowAIRack()
+    {
+        // Show AI rack only when:
+        // 1. It's not game over
+        // 2. Current player is AI (not human)
+        // 3. Not waiting for human player input
+        if (_isGameOver || IsWaitingForHumanPlayer)
+            return false;
+
+        // Find the actual index of CurrentPlayer in the game
+        var actualPlayerIndex = _currentGame.Players.IndexOf(CurrentPlayer);
+
+        if (actualPlayerIndex >= 0 && actualPlayerIndex < PlayerTypes.Count)
+        {
+            var isHuman = PlayerTypes[actualPlayerIndex];
+            // Show rack only if current player is AI (not human)
+            return !isHuman;
+        }
+
+        return false;
+    }
 
     private async Task HandleActionAsync()
     {
@@ -149,9 +165,6 @@ public partial class GamePage
         // Generate player names and types
         var listNames = ParsePlayerNames(playerCount);
         PlayerTypes = ParsePlayerTypes(playerCount);
-
-        // Parse show all tiles option (default to true)
-        ShowAllPlayerTiles = ShowAllTiles ?? true;
 
         // Create a game with custom ID if provided
         if (!string.IsNullOrWhiteSpace(GameId) && Guid.TryParse(GameId, out var parsedId))

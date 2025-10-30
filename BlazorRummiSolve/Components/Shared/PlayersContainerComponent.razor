@@ -1,46 +1,23 @@
 @using RummiSolve
-<div class="players-container @(ShowAllPlayerTiles ? "" : "compact")">
-    @if (ShowAllPlayerTiles)
-    {
-        <div class="current-player">
-            <PlayerComponent Player="CurrentPlayer" ShowHint="ShowHint" CurrentPlayerRack="CurrentPlayerRack"
-                             ShowTiles="true"/>
-        </div>
-
-        <hr/>
-
-        @foreach (var player in OtherPlayers)
+<div class="players-container">
+    <!-- Compact player list at top - always visible -->
+    <div class="compact-players">
+        @foreach (var player in AllPlayers.Count > 0 ? AllPlayers : new[] { CurrentPlayer }.Concat(OtherPlayers).ToList())
         {
-            <div class="other-players">
-                <PlayerComponent Player="player" ShowHint="false" CurrentPlayerRack="player.Rack" ShowTiles="true"/>
+            var isCurrent = player == CurrentPlayer;
+            <div class="compact-player @(isCurrent ? "current" : "")">
+                <span class="player-name">@player.Name</span>
+                <span class="tile-count">@player.Rack.Tiles.Count</span>
             </div>
         }
-    }
-    else
-    {
-        <div class="compact-players">
-            @foreach (var player in AllPlayers.Count > 0 ? AllPlayers : new[] { CurrentPlayer }.Concat(OtherPlayers).ToList())
-            {
-                var isCurrent = player == CurrentPlayer;
-                <div class="compact-player @(isCurrent ? "current" : "")">
-                    <span class="player-name">@player.Name</span>
-                    <span class="tile-count">@player.Rack.Tiles.Count</span>
-                </div>
-            }
-        </div>
-    }
+    </div>
+
 </div>
 
 @code {
     [Parameter] public required Player CurrentPlayer { get; set; }
 
     [Parameter] public required List<Player> OtherPlayers { get; set; }
-
-    [Parameter] public bool ShowHint { get; set; }
-
-    [Parameter] public required Set CurrentPlayerRack { get; set; }
-
-    [Parameter] public bool ShowAllPlayerTiles { get; set; } = true;
 
     [Parameter] public List<Player> AllPlayers { get; set; } = new();
 
@@ -53,46 +30,7 @@
         padding: 20px;
     }
 
-    .players-container.compact {
-        padding: 10px 20px;
-    }
-
-    .current-player {
-        margin-bottom: 30px;
-    }
-
-    .current-player > .player-container {
-        /* Specific styles for the current player */
-        border: 2px solid #4CAF50; /* Subtle green border */
-        background: linear-gradient(to right, #f9f9f9, #e8f5e9); /* Light gray to pale green */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
-    }
-
-    .other-players {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-
-    .other-players > .player-container {
-        border: 1px solid #ccc; /* Neutral gray border */
-        background: #f5f5f5; /* Light gray background */
-        border-radius: 10px; /* Subtle rounding */
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Minimal shadow for depth */
-    }
-
-    .other-players > * {
-        flex: 1 1 300px;
-        margin: 10px;
-    }
-
-    hr {
-        border: none;
-        border-top: 2px solid #ddd; /* Lighter gray line for subtle separation */
-        margin: 20px 0;
-    }
-
-    /* Compact mode styles */
+    /* Compact players list */
     .compact-players {
         display: flex;
         gap: 12px;
@@ -160,5 +98,28 @@
     .compact-player.current .tile-count {
         background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
         color: #2e7d32;
+    }
+
+    hr {
+        border: none;
+        border-top: 2px solid #ddd;
+        margin: 20px 0;
+    }
+
+    /* Detailed rack section */
+    .detailed-rack-section {
+        background: linear-gradient(to right, #fff7e6, #fffde6);
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border: 2px solid #4CAF50;
+    }
+
+    .rack-title {
+        font-size: 1.5em;
+        color: #2e7d32;
+        margin: 0 0 15px 0;
+        font-weight: 600;
     }
 </style>
