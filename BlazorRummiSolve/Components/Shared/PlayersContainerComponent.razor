@@ -1,19 +1,34 @@
 @using RummiSolve
-<div class="players-container">
-    <div class="current-player">
-        <PlayerComponent Player="CurrentPlayer" ShowHint="ShowHint" CurrentPlayerRack="CurrentPlayerRack"/>
-    </div>
-
-    <hr/>
-
-
-    @foreach (var player in OtherPlayers)
+<div class="players-container @(ShowAllPlayerTiles ? "" : "compact")">
+    @if (ShowAllPlayerTiles)
     {
-        <div class="other-players">
-            <PlayerComponent Player="player" ShowHint="false" CurrentPlayerRack="player.Rack"/>
+        <div class="current-player">
+            <PlayerComponent Player="CurrentPlayer" ShowHint="ShowHint" CurrentPlayerRack="CurrentPlayerRack"
+                             ShowTiles="true"/>
+        </div>
+
+        <hr/>
+
+        @foreach (var player in OtherPlayers)
+        {
+            <div class="other-players">
+                <PlayerComponent Player="player" ShowHint="false" CurrentPlayerRack="player.Rack" ShowTiles="true"/>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="compact-players">
+            @foreach (var player in AllPlayers.Count > 0 ? AllPlayers : new[] { CurrentPlayer }.Concat(OtherPlayers).ToList())
+            {
+                var isCurrent = player == CurrentPlayer;
+                <div class="compact-player @(isCurrent ? "current" : "")">
+                    <span class="player-name">@player.Name</span>
+                    <span class="tile-count">@player.Rack.Tiles.Count</span>
+                </div>
+            }
         </div>
     }
-
 </div>
 
 @code {
@@ -25,6 +40,10 @@
 
     [Parameter] public required Set CurrentPlayerRack { get; set; }
 
+    [Parameter] public bool ShowAllPlayerTiles { get; set; } = true;
+
+    [Parameter] public List<Player> AllPlayers { get; set; } = new();
+
 }
 
 <style>
@@ -32,6 +51,10 @@
         max-width: 1200px;
         margin: 0 auto;
         padding: 20px;
+    }
+
+    .players-container.compact {
+        padding: 10px 20px;
     }
 
     .current-player {
@@ -67,5 +90,75 @@
         border: none;
         border-top: 2px solid #ddd; /* Lighter gray line for subtle separation */
         margin: 20px 0;
+    }
+
+    /* Compact mode styles */
+    .compact-players {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 12px;
+        background: linear-gradient(135deg, #f8f9fa, #ffffff);
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .compact-player {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 16px;
+        background: #ffffff;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        min-width: 140px;
+    }
+
+    .compact-player:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-color: #2196f3;
+    }
+
+    .compact-player.current {
+        background: linear-gradient(135deg, #e8f5e9, #f1f8f4);
+        border: 2px solid #4caf50;
+        box-shadow: 0 3px 10px rgba(76, 175, 80, 0.2);
+    }
+
+    .compact-player.current:hover {
+        border-color: #388e3c;
+    }
+
+    .player-name {
+        flex: 1;
+        font-weight: 600;
+        color: #333;
+        font-size: 1rem;
+    }
+
+    .compact-player.current .player-name {
+        color: #2e7d32;
+    }
+
+    .tile-count {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+        color: #1565c0;
+        font-weight: 700;
+        font-size: 0.95rem;
+        border-radius: 6px;
+        padding: 0 8px;
+    }
+
+    .compact-player.current .tile-count {
+        background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
+        color: #2e7d32;
     }
 </style>

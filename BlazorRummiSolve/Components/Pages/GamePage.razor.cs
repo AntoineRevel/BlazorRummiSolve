@@ -44,7 +44,12 @@ public partial class GamePage
     [SupplyParameterFromQuery(Name = "playerTypes")]
     public string? PlayerTypesQuery { get; set; }
 
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "showAllTiles")]
+    public bool? ShowAllTiles { get; set; }
+
     private Player CurrentPlayer { get; set; } = new("Default", [], new ParallelSolverStrategy());
+    private bool ShowAllPlayerTiles { get; set; } = true;
     private List<Player> OtherPlayers => _currentGame.Players.Where(p => p != CurrentPlayer).ToList();
     private int TurnNumber => _currentGame.Turn;
     private Guid Id => _currentGame.Id;
@@ -144,6 +149,9 @@ public partial class GamePage
         // Generate player names and types
         var listNames = ParsePlayerNames(playerCount);
         PlayerTypes = ParsePlayerTypes(playerCount);
+
+        // Parse show all tiles option (default to true)
+        ShowAllPlayerTiles = ShowAllTiles ?? true;
 
         // Create a game with custom ID if provided
         if (!string.IsNullOrWhiteSpace(GameId) && Guid.TryParse(GameId, out var parsedId))

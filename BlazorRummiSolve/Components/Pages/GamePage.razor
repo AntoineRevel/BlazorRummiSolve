@@ -7,6 +7,13 @@
         <h3>Game ID: @Id</h3>
     </header>
 
+    <!-- Players Section - Always at the top -->
+    <div class="players-section-top">
+        <PlayersContainerComponent CurrentPlayer="CurrentPlayer" OtherPlayers="OtherPlayers" ShowHint="ShowHint"
+                                   CurrentPlayerRack="_playerRack" ShowAllPlayerTiles="ShowAllPlayerTiles"
+                                   AllPlayers="_currentGame.Players"/>
+    </div>
+
     @if (_isGameOver)
     {
         <div class="game-over">
@@ -168,11 +175,6 @@
                 </div>
             </div>
         }
-        <div class="players-section">
-            <h2>Players</h2>
-            <PlayersContainerComponent CurrentPlayer="CurrentPlayer" OtherPlayers="OtherPlayers" ShowHint="ShowHint"
-                                       CurrentPlayerRack="_playerRack"/>
-        </div>
     </section>
 
     <!-- Toast Notification for Drawn Tile -->
@@ -209,7 +211,13 @@
     /* Header */
     header {
         text-align: center;
-        margin-bottom: 30px;
+        margin-bottom: 20px;
+    }
+
+    /* Players Section Top */
+    .players-section-top {
+        margin-bottom: 20px;
+        padding: 0;
     }
 
     header h1 {

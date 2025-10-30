@@ -5,13 +5,17 @@
         <span
             class="tile-count @(Player.Played ? "played" : "not-played")">@CurrentPlayerRack.Tiles.Count</span>
     </div>
-    <SetComponent Set="CurrentPlayerRack" ShowHint="ShowHint" HighlightTiles="Player.TilesToPlay"/>
+    @if (ShowTiles)
+    {
+        <SetComponent Set="CurrentPlayerRack" ShowHint="ShowHint" HighlightTiles="Player.TilesToPlay"/>
+    }
 </div>
 
 @code {
     [Parameter] public required Player Player { get; set; }
     [Parameter] public bool ShowHint { get; set; }
     [Parameter] public required Set CurrentPlayerRack { get; set; }
+    [Parameter] public bool ShowTiles { get; set; } = true;
 }
 
 <style>
@@ -60,5 +64,24 @@
     .tile-count.not-played {
         background-color: rgba(255, 19, 248, 0.58);
         color: #000000;
+    }
+
+    .tiles-hidden {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 30px;
+        background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
+        border: 2px dashed #bdbdbd;
+        border-radius: 8px;
+        color: #757575;
+        font-size: 1.1rem;
+        font-weight: 500;
+    }
+
+    .tiles-hidden span {
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
 </style>
