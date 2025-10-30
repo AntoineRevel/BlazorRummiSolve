@@ -7,6 +7,12 @@
         <h3>Game ID: @Id</h3>
     </header>
 
+    <!-- Players Section - Always at the top -->
+    <div class="players-section-top">
+        <PlayersContainerComponent CurrentPlayer="CurrentPlayer" OtherPlayers="OtherPlayers"
+                                   AllPlayers="_currentGame.Players"/>
+    </div>
+
     @if (_isGameOver)
     {
         <div class="game-over">
@@ -31,6 +37,19 @@
                     <h3>@CurrentPlayer.Name's Turn</h3>
                     <p>Select tiles to play or draw a tile:</p>
                 </div>
+
+                @if (ShowErrorMessage && !string.IsNullOrEmpty(ErrorMessage))
+                {
+                    <div class="error-message">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="8" x2="12" y2="12"/>
+                            <line x1="12" y1="16" x2="12.01" y2="16"/>
+                        </svg>
+                        <span>@ErrorMessage</span>
+                    </div>
+                }
 
                 @if (SelectedTilesForPlay.Any())
                 {
@@ -155,12 +174,16 @@
                 </div>
             </div>
         }
-        <div class="players-section">
-            <h2>Players</h2>
-            <PlayersContainerComponent CurrentPlayer="CurrentPlayer" OtherPlayers="OtherPlayers" ShowHint="ShowHint"
-                                       CurrentPlayerRack="_playerRack"/>
-        </div>
     </section>
+
+    <!-- AI Player Rack Section - Only shown for AI players during their turn -->
+    @if (ShouldShowAIRack())
+    {
+        <section class="ai-rack-section">
+            <h3 class="ai-rack-title">@CurrentPlayer.Name's Rack</h3>
+            <SetComponent Set="_playerRack" ShowHint="ShowHint" HighlightTiles="CurrentPlayer.TilesToPlay"/>
+        </section>
+    }
 
     <!-- Toast Notification for Drawn Tile -->
     @if (ShowDrawnTileToast && DrawnTile != null)
@@ -196,7 +219,13 @@
     /* Header */
     header {
         text-align: center;
-        margin-bottom: 30px;
+        margin-bottom: 20px;
+    }
+
+    /* Players Section Top */
+    .players-section-top {
+        margin-bottom: 20px;
+        padding: 0;
     }
 
     header h1 {
@@ -363,6 +392,44 @@
         color: #555;
         margin: 0 0 20px 0;
         font-size: 1rem;
+    }
+
+    /* Error Message */
+    .error-message {
+        background: linear-gradient(135deg, #ffebee, #ffcdd2);
+        border: 2px solid #f44336;
+        border-radius: 10px;
+        padding: 15px;
+        margin: 15px 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #c62828;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(244, 67, 54, 0.2);
+        animation: shake 0.5s ease-in-out;
+    }
+
+    .error-message svg {
+        flex-shrink: 0;
+        stroke: #c62828;
+    }
+
+    .error-message span {
+        flex: 1;
+        text-align: left;
+    }
+
+    @@keyframes shake {
+        0%, 100% {
+            transform: translateX(0);
+        }
+        10%, 30%, 50%, 70%, 90% {
+            transform: translateX(-5px);
+        }
+        20%, 40%, 60%, 80% {
+            transform: translateX(5px);
+        }
     }
 
     .human-actions-buttons {
@@ -669,5 +736,23 @@
         }
     }
 
+    /* AI Rack Section */
+    .ai-rack-section {
+        max-width: 1300px;
+        margin: 20px auto;
+        padding: 20px;
+        background: linear-gradient(to right, #fff7e6, #fffde6);
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border: 2px solid #ff9800;
+    }
+
+    .ai-rack-title {
+        font-size: 1.5em;
+        color: #f57c00;
+        margin: 0 0 15px 0;
+        font-weight: 600;
+        text-align: center;
+    }
 
 </style>

@@ -1,18 +1,16 @@
 @using RummiSolve
 <div class="players-container">
-    <div class="current-player">
-        <PlayerComponent Player="CurrentPlayer" ShowHint="ShowHint" CurrentPlayerRack="CurrentPlayerRack"/>
+    <!-- Compact player list at top - always visible -->
+    <div class="compact-players">
+        @foreach (var player in AllPlayers.Count > 0 ? AllPlayers : new[] { CurrentPlayer }.Concat(OtherPlayers).ToList())
+        {
+            var isCurrent = player == CurrentPlayer;
+            <div class="compact-player @(isCurrent ? "current" : "")">
+                <span class="player-name">@player.Name</span>
+                <span class="tile-count">@player.Rack.Tiles.Count</span>
+            </div>
+        }
     </div>
-
-    <hr/>
-
-
-    @foreach (var player in OtherPlayers)
-    {
-        <div class="other-players">
-            <PlayerComponent Player="player" ShowHint="false" CurrentPlayerRack="player.Rack"/>
-        </div>
-    }
 
 </div>
 
@@ -21,9 +19,7 @@
 
     [Parameter] public required List<Player> OtherPlayers { get; set; }
 
-    [Parameter] public bool ShowHint { get; set; }
-
-    [Parameter] public required Set CurrentPlayerRack { get; set; }
+    [Parameter] public List<Player> AllPlayers { get; set; } = new();
 
 }
 
@@ -34,38 +30,96 @@
         padding: 20px;
     }
 
-    .current-player {
-        margin-bottom: 30px;
-    }
-
-    .current-player > .player-container {
-        /* Specific styles for the current player */
-        border: 2px solid #4CAF50; /* Subtle green border */
-        background: linear-gradient(to right, #f9f9f9, #e8f5e9); /* Light gray to pale green */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
-    }
-
-    .other-players {
+    /* Compact players list */
+    .compact-players {
         display: flex;
+        gap: 12px;
         flex-wrap: wrap;
         justify-content: center;
+        padding: 12px;
+        background: linear-gradient(135deg, #f8f9fa, #ffffff);
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     }
 
-    .other-players > .player-container {
-        border: 1px solid #ccc; /* Neutral gray border */
-        background: #f5f5f5; /* Light gray background */
-        border-radius: 10px; /* Subtle rounding */
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Minimal shadow for depth */
+    .compact-player {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 16px;
+        background: #ffffff;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        min-width: 140px;
     }
 
-    .other-players > * {
-        flex: 1 1 300px;
-        margin: 10px;
+    .compact-player:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-color: #2196f3;
+    }
+
+    .compact-player.current {
+        background: linear-gradient(135deg, #e8f5e9, #f1f8f4);
+        border: 2px solid #4caf50;
+        box-shadow: 0 3px 10px rgba(76, 175, 80, 0.2);
+    }
+
+    .compact-player.current:hover {
+        border-color: #388e3c;
+    }
+
+    .player-name {
+        flex: 1;
+        font-weight: 600;
+        color: #333;
+        font-size: 1rem;
+    }
+
+    .compact-player.current .player-name {
+        color: #2e7d32;
+    }
+
+    .tile-count {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+        color: #1565c0;
+        font-weight: 700;
+        font-size: 0.95rem;
+        border-radius: 6px;
+        padding: 0 8px;
+    }
+
+    .compact-player.current .tile-count {
+        background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
+        color: #2e7d32;
     }
 
     hr {
         border: none;
-        border-top: 2px solid #ddd; /* Lighter gray line for subtle separation */
+        border-top: 2px solid #ddd;
         margin: 20px 0;
+    }
+
+    /* Detailed rack section */
+    .detailed-rack-section {
+        background: linear-gradient(to right, #fff7e6, #fffde6);
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border: 2px solid #4CAF50;
+    }
+
+    .rack-title {
+        font-size: 1.5em;
+        color: #2e7d32;
+        margin: 0 0 15px 0;
+        font-weight: 600;
     }
 </style>

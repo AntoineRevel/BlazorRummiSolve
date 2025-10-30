@@ -58,11 +58,36 @@ public partial class GamePage
     private Tile? DrawnTile { get; set; }
     private bool ShowDrawnTileToast { get; set; }
 
+    // Error message properties
+    private string? ErrorMessage { get; set; }
+    private bool ShowErrorMessage { get; set; }
+
     private bool IsCurrentPlayerHuman =>
         _currentGame.Players.Count > 0 &&
         _currentGame.PlayerIndex < PlayerTypes.Count &&
         PlayerTypes[_currentGame.PlayerIndex];
 
+    private bool ShouldShowAIRack()
+    {
+        // Show AI rack only when:
+        // 1. It's not game over
+        // 2. Current player is AI (not human)
+        // 3. Not waiting for human player input
+        if (_isGameOver || IsWaitingForHumanPlayer)
+            return false;
+
+        // Find the actual index of CurrentPlayer in the game
+        var actualPlayerIndex = _currentGame.Players.IndexOf(CurrentPlayer);
+
+        if (actualPlayerIndex >= 0 && actualPlayerIndex < PlayerTypes.Count)
+        {
+            var isHuman = PlayerTypes[actualPlayerIndex];
+            // Show rack only if current player is AI (not human)
+            return !isHuman;
+        }
+
+        return false;
+    }
 
     private async Task HandleActionAsync()
     {
@@ -150,6 +175,7 @@ public partial class GamePage
         // Setup human player service events
         HumanPlayerService.PlayerTurnStarted += OnPlayerTurnStarted;
         HumanPlayerService.PlayerTurnCompleted += OnPlayerTurnCompleted;
+        HumanPlayerService.InvalidPlayAttempted += OnInvalidPlayAttempted;
 
         _currentGame.InitializeGame(listNames, PlayerTypes, HumanPlayerService.WaitForPlayerChoice);
         _currentState = ActionState.ShowHint;
@@ -157,7 +183,9 @@ public partial class GamePage
         _playerRack = new Set(CurrentPlayer.Rack);
         _lastPlayerRack = new Set(CurrentPlayer.Rack);
 
-        await PlayAsync();
+        // If the first player is human, trigger PlayAsync to show the human player interface
+        // Don't await to avoid blocking the UI initialization
+        if (IsCurrentPlayerHuman) _ = PlayAsync();
     }
 
     private async Task PlayAsync()
@@ -253,6 +281,17 @@ public partial class GamePage
         _toastTimer?.Dispose();
         _toastTimer = null;
 
+        // Clear error message when turn completes
+        ShowErrorMessage = false;
+        ErrorMessage = null;
+
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void OnInvalidPlayAttempted(object? sender, string errorMessage)
+    {
+        ErrorMessage = errorMessage;
+        ShowErrorMessage = true;
         InvokeAsync(StateHasChanged);
     }
 

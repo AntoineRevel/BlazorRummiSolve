@@ -11,8 +11,11 @@ public class HumanPlayerService
     private TaskCompletionSource<SolverResult>? _currentPlayerChoice;
     private bool _hasPlayed;
 
+    public string? LastErrorMessage { get; private set; }
+
     public event EventHandler? PlayerTurnStarted;
     public event EventHandler? PlayerTurnCompleted;
+    public event EventHandler<string>? InvalidPlayAttempted;
 
     // Called by HumanPlayerStrategy to wait for player input
     public async Task<SolverResult> WaitForPlayerChoice(Set board, bool hasPlayed, CancellationToken cancellationToken)
@@ -59,6 +62,7 @@ public class HumanPlayerService
         var nonJokerTiles = selectedTiles.Where(t => !t.IsJoker).ToArray();
 
         SolverResult result;
+        string errorMessage;
 
         if (_hasPlayed)
         {
@@ -76,15 +80,30 @@ public class HumanPlayerService
             };
 
             result = combiSolver.SearchSolution();
+            errorMessage = "Invalid combination with current board.";
         }
         else
         {
             // First play validation
             var combiSolver = new BinaryFirstBaseSolver(nonJokerTiles, jokerCount);
             result = combiSolver.SearchSolution();
+
+            // Calculate the score of selected tiles
+            var totalScore = nonJokerTiles.Sum(t => t.Value);
+            errorMessage = totalScore < 30
+                ? $"First play must be at least 30 points. Current: {totalScore}."
+                : "Invalid combination.";
         }
 
-        if (result.Found) _currentPlayerChoice.TrySetResult(result);
-        //todo afficher solution incorrect ui
+        if (result.Found)
+        {
+            LastErrorMessage = null;
+            _currentPlayerChoice.TrySetResult(result);
+        }
+        else
+        {
+            LastErrorMessage = errorMessage;
+            InvalidPlayAttempted?.Invoke(this, errorMessage);
+        }
     }
 }
