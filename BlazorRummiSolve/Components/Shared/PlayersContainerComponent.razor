@@ -5,7 +5,9 @@
         @foreach (var player in AllPlayers.Count > 0 ? AllPlayers : new[] { CurrentPlayer }.Concat(OtherPlayers).ToList())
         {
             var isCurrent = player == CurrentPlayer;
-            <div class="compact-player @(isCurrent ? "current" : "")">
+            var playerIndex = AllPlayers.IndexOf(player);
+            var isHuman = playerIndex >= 0 && playerIndex < PlayerTypes.Count && PlayerTypes[playerIndex];
+            <div class="compact-player @(isCurrent ? "current" : "") @(isHuman ? "human" : "ai")">
                 <span class="player-name">@player.Name</span>
                 <span class="tile-count">@player.Rack.Tiles.Count</span>
             </div>
@@ -20,6 +22,8 @@
     [Parameter] public required List<Player> OtherPlayers { get; set; }
 
     [Parameter] public List<Player> AllPlayers { get; set; } = new();
+
+    [Parameter] public List<bool> PlayerTypes { get; set; } = new();
 
 }
 
@@ -77,6 +81,35 @@
         font-size: 1rem;
     }
 
+    /* Human players - Blue theme */
+    .compact-player.human .player-name {
+        color: #1565c0;
+    }
+
+    .compact-player.human {
+        border-color: #2196f3;
+    }
+
+    .compact-player.human:hover {
+        border-color: #1976d2;
+        background: linear-gradient(135deg, #e3f2fd, #ffffff);
+    }
+
+    /* AI players - Orange/Grey theme */
+    .compact-player.ai .player-name {
+        color: #f57c00;
+    }
+
+    .compact-player.ai {
+        border-color: #ff9800;
+    }
+
+    .compact-player.ai:hover {
+        border-color: #f57c00;
+        background: linear-gradient(135deg, #fff3e0, #ffffff);
+    }
+
+    /* Current player overrides */
     .compact-player.current .player-name {
         color: #2e7d32;
     }
