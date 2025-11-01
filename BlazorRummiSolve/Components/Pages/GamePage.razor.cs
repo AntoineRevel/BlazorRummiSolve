@@ -78,10 +78,23 @@ public partial class GamePage
 
     private double ProgressDashOffset => 125.66 * RemainingSeconds / 4.0;
 
+    // For Full AI mode: store displayed tile counts
+    private Dictionary<Player, int> DisplayedTileCounts { get; } = new();
+
     private bool IsCurrentPlayerHuman =>
         _currentGame.Players.Count > 0 &&
         _currentGame.PlayerIndex < PlayerTypes.Count &&
         PlayerTypes[_currentGame.PlayerIndex];
+
+    private int GetDisplayedTileCount(Player player)
+    {
+        // In Full AI mode, use cached counts if available (before showing solution)
+        if (CurrentGameMode == GameMode.FullAI && DisplayedTileCounts.ContainsKey(player))
+            return DisplayedTileCounts[player];
+
+        // Otherwise, return actual count
+        return player.Rack.Tiles.Count;
+    }
 
     private bool ShouldShowAIRack()
     {
@@ -120,6 +133,9 @@ public partial class GamePage
                 _board = _currentGame.Board;
                 _playerRack = CurrentPlayer.Rack;
 
+                // In Full AI mode, clear displayed tile counts to show actual counts
+                if (CurrentGameMode == GameMode.FullAI) DisplayedTileCounts.Clear();
+
                 _isGameOver = _currentGame.IsGameOver;
 
                 if (!_isGameOver) _currentState = ActionState.NextPlayer;
@@ -131,6 +147,14 @@ public partial class GamePage
                 _playerRack = new Set(_currentGame.Players[_currentGame.PlayerIndex].Rack);
                 _lastPlayerRack = new Set(_playerRack);
                 _lastBoard = _board;
+
+                // In Full AI mode, save current tile counts before playing
+                if (CurrentGameMode == GameMode.FullAI)
+                {
+                    DisplayedTileCounts.Clear();
+                    foreach (var player in _currentGame.Players) DisplayedTileCounts[player] = player.Rack.Tiles.Count;
+                }
+
                 await PlayAsync();
                 _currentState = ActionState.ShowHint;
                 break;
