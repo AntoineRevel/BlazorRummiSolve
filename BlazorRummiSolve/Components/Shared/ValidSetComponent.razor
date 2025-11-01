@@ -3,13 +3,22 @@
     <div class="valid-tiles">
         @foreach (var tile in ValidSet.Tiles)
         {
-            <TileComponent Tile="tile"/>
+            <TileComponent Tile="tile" ShouldHighlight="@ShouldHighlightTile(tile)"/>
         }
     </div>
 </div>
 
 @code {
     [Parameter] public required ValidSet ValidSet { get; set; }
+    [Parameter] public List<Tile>? HighlightTiles { get; set; }
+
+    private bool ShouldHighlightTile(Tile tile)
+    {
+        if (HighlightTiles == null || HighlightTiles.Count == 0)
+            return false;
+
+        return HighlightTiles.Contains(tile);
+    }
 }
 
 <style>

@@ -74,6 +74,8 @@ public partial class GamePage
 
     private bool AIPlayerDrew { get; set; }
 
+    private List<Tile>? AIPlayedTiles { get; set; }
+
     private double ProgressDashOffset => 125.66 * RemainingSeconds / 4.0;
 
     private bool IsCurrentPlayerHuman =>
@@ -271,22 +273,25 @@ public partial class GamePage
                 var turnCompleted = await _currentGame.ExecuteTurnAsync(await CancellationService.CreateTokenAsync());
                 AIPlayerDrew = !turnCompleted;
 
+                // Capture tiles played by AI before updating board
+                AIPlayedTiles = turnCompleted ? CurrentPlayer.TilesToPlay.ToList() : null;
+
                 // Update the board and rack to show AI's move
                 _board = _currentGame.Board;
                 _playerRack = CurrentPlayer.Rack;
 
                 StateHasChanged();
 
-                // Show countdown button for 4 seconds
+                // Show countdown button for 8 seconds
                 IsWaitingAfterAITurn = true;
-                RemainingSeconds = 4;
+                RemainingSeconds = 8;
                 StateHasChanged();
 
-                // Start 4-second countdown
+                // Start 8-second countdown
                 _aiTurnTimerCts = new CancellationTokenSource();
                 try
                 {
-                    for (var i = 4; i > 0; i--)
+                    for (var i = 8; i > 0; i--)
                     {
                         RemainingSeconds = i;
                         await InvokeAsync(StateHasChanged);
@@ -300,6 +305,7 @@ public partial class GamePage
                 finally
                 {
                     IsWaitingAfterAITurn = false;
+                    AIPlayedTiles = null; // Clear highlighted tiles
                     _aiTurnTimerCts?.Dispose();
                     _aiTurnTimerCts = null;
                 }
