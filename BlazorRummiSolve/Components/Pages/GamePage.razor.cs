@@ -18,6 +18,7 @@ public partial class GamePage
     private Game _currentGame = new();
 
     private ActionState _currentState;
+    private bool _isFirstTurn = true;
     private bool _isGameOver;
     private Solution _lastBoard = new();
     private Set _lastPlayerRack = new();
@@ -121,6 +122,7 @@ public partial class GamePage
                 break;
 
             case ActionState.NextPlayer:
+                _isFirstTurn = false;
                 CurrentPlayer = _currentGame.Players[_currentGame.PlayerIndex];
                 _playerRack = new Set(_currentGame.Players[_currentGame.PlayerIndex].Rack);
                 _lastPlayerRack = new Set(_playerRack);
@@ -163,7 +165,7 @@ public partial class GamePage
         {
             ActionState.ShowHint => $"Show hint for {CurrentPlayer.Name}'s turn",
             ActionState.ShowSolution => $"Play {CurrentPlayer.Name}'s turn",
-            ActionState.NextPlayer => "Next Player",
+            ActionState.NextPlayer => _isFirstTurn ? "Start" : $"Play {CurrentPlayer.Name}'s turn",
             _ => "Action"
         };
     }
@@ -193,7 +195,6 @@ public partial class GamePage
         HumanPlayerService.InvalidPlayAttempted += OnInvalidPlayAttempted;
 
         _currentGame.InitializeGame(listNames, PlayerTypes, HumanPlayerService.WaitForPlayerChoice);
-        _currentState = ActionState.ShowHint;
         CurrentPlayer = _currentGame.Players[0];
         _playerRack = new Set(CurrentPlayer.Rack);
         _lastPlayerRack = new Set(CurrentPlayer.Rack);
@@ -202,13 +203,13 @@ public partial class GamePage
         if (CurrentGameMode == GameMode.Interactive)
         {
             // In Interactive mode, start the automatic flow
+            _currentState = ActionState.ShowHint;
             _ = PlayInteractiveModeAsync();
         }
-        else
+        else // Full AI mode
         {
-            // In Full AI mode, if the first player is human (shouldn't happen but just in case)
-            // trigger PlayAsync to show the human player interface
-            if (IsCurrentPlayerHuman) _ = PlayAsync();
+            // In Full AI mode, start at NextPlayer state so the first click triggers PlayAsync() directly
+            _currentState = ActionState.NextPlayer;
         }
     }
 
@@ -278,6 +279,7 @@ public partial class GamePage
     private async Task ResetGameAsync()
     {
         _currentGame = new Game();
+        _isFirstTurn = true;
         await OnInitializedAsync();
     }
 
