@@ -14,15 +14,17 @@ public partial class GamePage
     private readonly HashSet<Guid> _removingTiles = [];
 
     private readonly List<TileInstance> _selectedTileInstances = [];
+    private CancellationTokenSource? _aiTurnTimerCts;
     private Solution _board = new();
     private Game _currentGame = new();
 
     private ActionState _currentState;
     private bool _isFirstTurn = true;
     private bool _isGameOver;
+
+    // AI turn countdown states
     private Solution _lastBoard = new();
     private Set _lastPlayerRack = new();
-
 
     private Set _playerRack = new();
     private Timer? _toastTimer;
@@ -65,6 +67,15 @@ public partial class GamePage
     private string? ErrorMessage { get; set; }
     private bool ShowErrorMessage { get; set; }
 
+    // AI turn countdown properties
+    private bool IsWaitingAfterAITurn { get; set; }
+
+    private int RemainingSeconds { get; set; }
+
+    private bool AIPlayerDrew { get; set; }
+
+    private double ProgressDashOffset => 125.66 * RemainingSeconds / 4.0;
+
     private bool IsCurrentPlayerHuman =>
         _currentGame.Players.Count > 0 &&
         _currentGame.PlayerIndex < PlayerTypes.Count &&
@@ -76,27 +87,18 @@ public partial class GamePage
         if (_isGameOver || IsWaitingForHumanPlayer)
             return false;
 
-        // In Interactive mode, always show AI rack when it's an AI's turn
-        // In Full AI mode, show rack based on current state
+        // In Interactive mode, NEVER show AI rack (only show what they play on the board)
         if (CurrentGameMode == GameMode.Interactive)
         {
-            // In Interactive mode, show the AI rack during their turn (including the 1-second delay)
-            var actualPlayerIndex = _currentGame.Players.IndexOf(CurrentPlayer);
-            if (actualPlayerIndex >= 0 && actualPlayerIndex < PlayerTypes.Count)
-            {
-                var isHuman = PlayerTypes[actualPlayerIndex];
-                return !isHuman; // Show if current player is AI
-            }
+            return false;
         }
-        else // Full AI mode
+
+        // In Full AI mode, show rack when it's an AI's turn
+        var actualPlayerIndex = _currentGame.Players.IndexOf(CurrentPlayer);
+        if (actualPlayerIndex >= 0 && actualPlayerIndex < PlayerTypes.Count)
         {
-            // In Full AI mode, use the original logic
-            var actualPlayerIndex = _currentGame.Players.IndexOf(CurrentPlayer);
-            if (actualPlayerIndex >= 0 && actualPlayerIndex < PlayerTypes.Count)
-            {
-                var isHuman = PlayerTypes[actualPlayerIndex];
-                return !isHuman; // Show if current player is AI
-            }
+            var isHuman = PlayerTypes[actualPlayerIndex];
+            return !isHuman; // Show if current player is AI
         }
 
         return false;
@@ -265,7 +267,9 @@ public partial class GamePage
             }
             else
             {
-                await _currentGame.ExecuteTurnAsync(await CancellationService.CreateTokenAsync());
+                // Execute AI turn and check if they drew a tile
+                var turnCompleted = await _currentGame.ExecuteTurnAsync(await CancellationService.CreateTokenAsync());
+                AIPlayerDrew = !turnCompleted;
 
                 // Update the board and rack to show AI's move
                 _board = _currentGame.Board;
@@ -273,8 +277,32 @@ public partial class GamePage
 
                 StateHasChanged();
 
-                // Brief delay to see AI action
-                await Task.Delay(500);
+                // Show countdown button for 4 seconds
+                IsWaitingAfterAITurn = true;
+                RemainingSeconds = 4;
+                StateHasChanged();
+
+                // Start 4-second countdown
+                _aiTurnTimerCts = new CancellationTokenSource();
+                try
+                {
+                    for (var i = 4; i > 0; i--)
+                    {
+                        RemainingSeconds = i;
+                        await InvokeAsync(StateHasChanged);
+                        await Task.Delay(1000, _aiTurnTimerCts.Token);
+                    }
+                }
+                catch (TaskCanceledException)
+                {
+                    // User clicked "Next" before timer finished - that's fine
+                }
+                finally
+                {
+                    IsWaitingAfterAITurn = false;
+                    _aiTurnTimerCts?.Dispose();
+                    _aiTurnTimerCts = null;
+                }
 
                 // Advance to next player
                 _currentGame.AdvanceToNextPlayer();
@@ -416,6 +444,14 @@ public partial class GamePage
     private void OnNextAfterDraw()
     {
         HumanPlayerService.PlayerConfirmNext();
+        StateHasChanged();
+    }
+
+    // Called by UI when player clicks "Next" to skip AI turn countdown
+    private void OnSkipAIWait()
+    {
+        // Cancel the countdown timer
+        _aiTurnTimerCts?.Cancel();
         StateHasChanged();
     }
 
