@@ -56,11 +56,12 @@
                 {
                     <div class="selected-tiles-section">
                         <h4>Selected Tiles (@SelectedTilesForPlay.Count)</h4>
-                        <div class="selected-tiles-display">
+                        <div
+                            class="selected-tiles-display @(HumanPlayerService.IsWaitingForNextAfterDraw ? "disabled" : "")">
                             @foreach (var tileInstance in _selectedTileInstances)
                             {
                                 <div class="selected-tile-wrapper @(_removingTiles.Contains(tileInstance.Id) ? "removing" : "") @(_newTiles.Contains(tileInstance.Id) ? "new-tile" : "")"
-                                     @onclick="() => OnTileInstanceClick(tileInstance)">
+                                     @onclick="async () => { if (!HumanPlayerService.IsWaitingForNextAfterDraw) await OnTileInstanceClick(tileInstance); }">
                                     <TileComponent Tile="tileInstance.Tile" ShouldHighlight="false"/>
                                 </div>
                             }
@@ -70,7 +71,7 @@
 
                 <div class="available-tiles-section">
                     <h4>Available Tiles</h4>
-                    <div class="tiles-container">
+                    <div class="tiles-container @(HumanPlayerService.IsWaitingForNextAfterDraw ? "disabled" : "")">
                         @foreach (var tileGroup in GetGroupedTiles())
                         {
                             var tileType = tileGroup.Key;
@@ -80,7 +81,7 @@
                             var isFullySelected = remainingCount == 0;
 
                             <div class="tile-stack @(isFullySelected ? "fully-selected" : "")"
-                                 @onclick="() => OnTileStackClick(tileType)">
+                                 @onclick="async () => { if (!HumanPlayerService.IsWaitingForNextAfterDraw) await OnTileStackClick(tileType); }">
                                 @if (remainingCount > 0)
                                 {
                                     @for (var i = 0; i < remainingCount; i++)
@@ -110,7 +111,7 @@
                 </div>
 
                 <div class="human-actions-buttons">
-                    @if (SelectedTilesForPlay.Any())
+                    @if (SelectedTilesForPlay.Any() && !HumanPlayerService.IsWaitingForNextAfterDraw)
                     {
                         <button @onclick="OnClearSelection" class="btn-clear">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -130,13 +131,26 @@
                     }
                     else
                     {
-                        <button @onclick="OnDrawTile" class="btn-draw">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                 stroke-width="2">
-                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                            </svg>
-                            Draw Tile
-                        </button>
+                        @if (HumanPlayerService.IsWaitingForNextAfterDraw)
+                        {
+                            <button @onclick="OnNextAfterDraw" class="btn-next">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                     stroke-width="2">
+                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                </svg>
+                                Next
+                            </button>
+                        }
+                        else
+                        {
+                            <button @onclick="OnDrawTile" class="btn-draw">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                     stroke-width="2">
+                                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                                </svg>
+                                Draw Tile
+                            </button>
+                        }
                     }
                 </div>
             </div>
@@ -451,7 +465,7 @@
         flex-wrap: wrap;
     }
 
-    .btn-draw, .btn-play, .btn-clear {
+    .btn-draw, .btn-play, .btn-clear, .btn-next {
         display: flex;
         align-items: center;
         gap: 10px;
@@ -502,7 +516,19 @@
         box-shadow: 0 6px 16px rgba(108, 117, 125, 0.4);
     }
 
-    .btn-draw:active, .btn-play:active, .btn-clear:active {
+    .btn-next {
+        background: linear-gradient(135deg, #2196f3, #1976d2);
+        color: white;
+        box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+    }
+
+    .btn-next:hover {
+        background: linear-gradient(135deg, #1976d2, #1565c0);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(33, 150, 243, 0.4);
+    }
+
+    .btn-draw:active, .btn-play:active, .btn-clear:active, .btn-next:active {
         transform: translateY(0);
     }
 
@@ -512,7 +538,7 @@
             align-items: center;
         }
 
-        .btn-draw, .btn-play, .btn-clear {
+        .btn-draw, .btn-play, .btn-clear, .btn-next {
             min-width: 200px;
         }
     }
@@ -542,6 +568,13 @@
         overflow-y: auto;
         transition: all 0.3s ease;
         padding: 10px 5px 5px 5px;
+    }
+
+    .selected-tiles-display.disabled,
+    .tiles-container.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+        filter: grayscale(50%);
     }
 
     .selected-tile-wrapper {

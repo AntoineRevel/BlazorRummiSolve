@@ -12,6 +12,7 @@ public class HumanPlayerService
     private bool _hasPlayed;
 
     public string? LastErrorMessage { get; private set; }
+    public bool IsWaitingForNextAfterDraw { get; private set; }
 
     public event EventHandler? PlayerTurnStarted;
     public event EventHandler? PlayerTurnCompleted;
@@ -38,7 +39,9 @@ public class HumanPlayerService
         }
         finally
         {
-            PlayerTurnCompleted?.Invoke(this, EventArgs.Empty);
+            // Only trigger PlayerTurnCompleted if not waiting for "Next" after draw
+            if (!IsWaitingForNextAfterDraw) PlayerTurnCompleted?.Invoke(this, EventArgs.Empty);
+
             _currentPlayerChoice = null;
         }
     }
@@ -48,8 +51,17 @@ public class HumanPlayerService
     {
         if (_currentPlayerChoice == null) return;
 
+        IsWaitingForNextAfterDraw = true;
         var result = new SolverResult("Human Player - Draw");
         _currentPlayerChoice.TrySetResult(result);
+    }
+
+    // Called by UI when player clicks "Next" after drawing a tile
+    public void PlayerConfirmNext()
+    {
+        IsWaitingForNextAfterDraw = false;
+        // Now trigger PlayerTurnCompleted to close the human player interface
+        PlayerTurnCompleted?.Invoke(this, EventArgs.Empty);
     }
 
     // Called by UI when player selects tiles to play

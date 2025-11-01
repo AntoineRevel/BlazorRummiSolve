@@ -244,26 +244,40 @@ public partial class GamePage
             // Check if current player is human
             if (IsCurrentPlayerHuman)
             {
-                // For human players, PlayAsync will wait for their input via HumanPlayerService
-                await PlayAsync();
+                // Execute the turn (might draw tile or play)
+                var turnCompleted = await _currentGame.ExecuteTurnAsync(await CancellationService.CreateTokenAsync());
 
                 // Update the board and rack after human plays
                 _board = _currentGame.Board;
                 _playerRack = CurrentPlayer.Rack;
+
+                if (!turnCompleted && HumanPlayerService.IsWaitingForNextAfterDraw)
+                {
+                    // Player drew a tile, wait for them to click "Next"
+                    StateHasChanged();
+
+                    while (HumanPlayerService
+                           .IsWaitingForNextAfterDraw) await Task.Delay(100); // Wait for user to click "Next"
+                }
+
+                // Advance to next player
+                _currentGame.AdvanceToNextPlayer();
             }
             else
             {
-                await PlayAsync();
-
-                // For AI players, add a visual delay then play automatically
-                await Task.Delay(2000); // 1 second delay to visualize AI turn
+                await _currentGame.ExecuteTurnAsync(await CancellationService.CreateTokenAsync());
 
                 // Update the board and rack to show AI's move
                 _board = _currentGame.Board;
                 _playerRack = CurrentPlayer.Rack;
 
                 StateHasChanged();
-                await Task.Delay(2000); // 1 secon
+
+                // Brief delay to see AI action
+                await Task.Delay(500);
+
+                // Advance to next player
+                _currentGame.AdvanceToNextPlayer();
             }
 
             // Check if game ended after this turn
@@ -390,9 +404,19 @@ public partial class GamePage
         _board = _currentGame.Board;
         _playerRack = CurrentPlayer.Rack;
 
+        // Force UI update to show the new tile in the rack
+        StateHasChanged();
+
         // In Full AI mode, automatically proceed to next player
-        // In Interactive mode, the PlayInteractiveModeAsync loop handles progression
+        // In Interactive mode, the PlayInteractiveModeAsync loop handles progression and delay
         if (CurrentGameMode == GameMode.FullAI) await AutoProceedToNextPlayer();
+    }
+
+    // Called by UI when player clicks "Next" after drawing a tile
+    private void OnNextAfterDraw()
+    {
+        HumanPlayerService.PlayerConfirmNext();
+        StateHasChanged();
     }
 
     private void OnPlaySelection()

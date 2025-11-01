@@ -36,6 +36,12 @@ public class Game(Guid id)
 
     public async Task PlayAsync(CancellationToken cancellationToken = default)
     {
+        await ExecuteTurnAsync(cancellationToken);
+        AdvanceToNextPlayer();
+    }
+
+    public async Task<bool> ExecuteTurnAsync(CancellationToken cancellationToken = default)
+    {
         var player = Players[PlayerIndex];
         var playerSolution = await player.SolveAsync(Board, cancellationToken);
 
@@ -44,13 +50,17 @@ public class Game(Guid id)
             Board = playerSolution;
             player.Play();
             if (player.Won) IsGameOver = true;
+            return true; // Turn completed successfully
         }
         else
         {
             player.Drew(_tilePool.Dequeue());
+            return false; // Drew a tile, waiting for next action
         }
+    }
 
-
+    public void AdvanceToNextPlayer()
+    {
         NextPlayer();
     }
 
