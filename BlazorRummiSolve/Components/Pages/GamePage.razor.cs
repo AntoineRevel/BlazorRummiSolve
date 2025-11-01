@@ -1,3 +1,4 @@
+using BlazorRummiSolve.Models;
 using BlazorRummiSolve.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -53,6 +54,7 @@ public partial class GamePage
     private bool IsWaitingForHumanPlayer { get; set; }
     private List<bool> PlayerTypes { get; set; } = [];
     private List<Tile> SelectedTilesForPlay { get; set; } = [];
+    private GameMode CurrentGameMode { get; set; }
 
     // Drawn tile toast notification properties
     private Tile? DrawnTile { get; set; }
@@ -69,21 +71,31 @@ public partial class GamePage
 
     private bool ShouldShowAIRack()
     {
-        // Show AI rack only when:
-        // 1. It's not game over
-        // 2. Current player is AI (not human)
-        // 3. Not waiting for human player input
+        // Don't show rack if game is over or waiting for human player
         if (_isGameOver || IsWaitingForHumanPlayer)
             return false;
 
-        // Find the actual index of CurrentPlayer in the game
-        var actualPlayerIndex = _currentGame.Players.IndexOf(CurrentPlayer);
-
-        if (actualPlayerIndex >= 0 && actualPlayerIndex < PlayerTypes.Count)
+        // In Interactive mode, always show AI rack when it's an AI's turn
+        // In Full AI mode, show rack based on current state
+        if (CurrentGameMode == GameMode.Interactive)
         {
-            var isHuman = PlayerTypes[actualPlayerIndex];
-            // Show rack only if current player is AI (not human)
-            return !isHuman;
+            // In Interactive mode, show the AI rack during their turn (including the 1-second delay)
+            var actualPlayerIndex = _currentGame.Players.IndexOf(CurrentPlayer);
+            if (actualPlayerIndex >= 0 && actualPlayerIndex < PlayerTypes.Count)
+            {
+                var isHuman = PlayerTypes[actualPlayerIndex];
+                return !isHuman; // Show if current player is AI
+            }
+        }
+        else // Full AI mode
+        {
+            // In Full AI mode, use the original logic
+            var actualPlayerIndex = _currentGame.Players.IndexOf(CurrentPlayer);
+            if (actualPlayerIndex >= 0 && actualPlayerIndex < PlayerTypes.Count)
+            {
+                var isHuman = PlayerTypes[actualPlayerIndex];
+                return !isHuman; // Show if current player is AI
+            }
         }
 
         return false;
@@ -166,6 +178,9 @@ public partial class GamePage
         var listNames = ParsePlayerNames(playerCount);
         PlayerTypes = ParsePlayerTypes(playerCount);
 
+        // Detect game mode automatically based on player types
+        CurrentGameMode = DetectGameMode();
+
         // Create a game with custom ID if provided
         if (!string.IsNullOrWhiteSpace(GameId) && Guid.TryParse(GameId, out var parsedId))
             _currentGame = new Game(parsedId);
@@ -183,9 +198,18 @@ public partial class GamePage
         _playerRack = new Set(CurrentPlayer.Rack);
         _lastPlayerRack = new Set(CurrentPlayer.Rack);
 
-        // If the first player is human, trigger PlayAsync to show the human player interface
-        // Don't await to avoid blocking the UI initialization
-        if (IsCurrentPlayerHuman) _ = PlayAsync();
+        // Start the game flow based on the mode
+        if (CurrentGameMode == GameMode.Interactive)
+        {
+            // In Interactive mode, start the automatic flow
+            _ = PlayInteractiveModeAsync();
+        }
+        else
+        {
+            // In Full AI mode, if the first player is human (shouldn't happen but just in case)
+            // trigger PlayAsync to show the human player interface
+            if (IsCurrentPlayerHuman) _ = PlayAsync();
+        }
     }
 
     private async Task PlayAsync()
@@ -204,6 +228,50 @@ public partial class GamePage
         finally
         {
             IsLoading = false;
+        }
+    }
+
+    private async Task PlayInteractiveModeAsync()
+    {
+        while (!_currentGame.IsGameOver)
+        {
+            CurrentPlayer = _currentGame.Players[_currentGame.PlayerIndex];
+            _playerRack = new Set(CurrentPlayer.Rack);
+            _lastPlayerRack = new Set(_playerRack);
+            _lastBoard = _board;
+
+            // Check if current player is human
+            if (IsCurrentPlayerHuman)
+            {
+                // For human players, PlayAsync will wait for their input via HumanPlayerService
+                await PlayAsync();
+
+                // Update the board and rack after human plays
+                _board = _currentGame.Board;
+                _playerRack = CurrentPlayer.Rack;
+            }
+            else
+            {
+                await PlayAsync();
+
+                // For AI players, add a visual delay then play automatically
+                await Task.Delay(2000); // 1 second delay to visualize AI turn
+
+                // Update the board and rack to show AI's move
+                _board = _currentGame.Board;
+                _playerRack = CurrentPlayer.Rack;
+
+                StateHasChanged();
+                await Task.Delay(2000); // 1 secon
+            }
+
+            // Check if game ended after this turn
+            _isGameOver = _currentGame.IsGameOver;
+            if (_isGameOver)
+            {
+                StateHasChanged();
+                break;
+            }
         }
     }
 
@@ -263,6 +331,13 @@ public partial class GamePage
         return finalTypes;
     }
 
+    private GameMode DetectGameMode()
+    {
+        // Full AI mode if all players are AI (all false)
+        // Interactive mode if at least one player is real (at least one true)
+        return PlayerTypes.Any(isReal => isReal) ? GameMode.Interactive : GameMode.FullAI;
+    }
+
     private void OnPlayerTurnStarted(object? sender, EventArgs e)
     {
         IsWaitingForHumanPlayer = true;
@@ -313,8 +388,9 @@ public partial class GamePage
         _board = _currentGame.Board;
         _playerRack = CurrentPlayer.Rack;
 
-        // Automatically proceed to next player
-        await AutoProceedToNextPlayer();
+        // In Full AI mode, automatically proceed to next player
+        // In Interactive mode, the PlayInteractiveModeAsync loop handles progression
+        if (CurrentGameMode == GameMode.FullAI) await AutoProceedToNextPlayer();
     }
 
     private void OnPlaySelection()
