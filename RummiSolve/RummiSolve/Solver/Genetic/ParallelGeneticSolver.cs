@@ -205,9 +205,288 @@ public class ParallelGeneticSolver : ISolver
     {
         var population = new List<Individual>(_config.PopulationSize);
 
-        for (var i = 0; i < _config.PopulationSize; i++) population.Add(CreateRandomIndividual());
+        // Stratégie mixte pour plus de diversité:
+        // - 50% d'individus qui commencent avec le plateau existant (pour favoriser les réorganisations)
+        // - 50% d'individus complètement aléatoires (pour l'exploration)
+        var boardBasedCount = (int)(_config.PopulationSize * 0.5);
+
+        for (var i = 0; i < boardBasedCount; i++) population.Add(CreateBoardBasedIndividual());
+
+        for (var i = boardBasedCount; i < _config.PopulationSize; i++) population.Add(CreateRandomIndividual());
 
         return population;
+    }
+
+    /// <summary>
+    ///     Crée un individu qui commence avec le plateau existant
+    ///     et essaie d'ajouter des tuiles du joueur en cassant/réorganisant
+    /// </summary>
+    private Individual CreateBoardBasedIndividual()
+    {
+        // Clone le plateau comme base
+        var solution = CloneBoardAsSolution();
+
+        // Essaye d'ajouter des tuiles du joueur en réorganisant
+        TryAddPlayerTilesWithReorganization(solution);
+
+        return new Individual { Solution = solution, Fitness = 0 };
+    }
+
+    /// <summary>
+    ///     Clone le plateau existant comme point de départ
+    /// </summary>
+    private Solution CloneBoardAsSolution()
+    {
+        var solution = new Solution { IsValid = true };
+
+        // Reconstruit les runs et groups du plateau
+        var allBoardTiles = new List<Tile>(_boardTiles);
+        var boardJokers = _boardJokers;
+
+        // Essaye de reconstruire le plateau en utilisant InternalSolver
+        var solver = new InternalSolver(_boardTiles, _boardJokers);
+
+        // Génère une solution qui utilise toutes les tuiles du plateau
+        var boardSolution = solver.GenerateSolutionUsingAllTiles(_random);
+
+        return boardSolution;
+    }
+
+    /// <summary>
+    ///     Essaye d'ajouter des tuiles du joueur en réorganisant le plateau
+    /// </summary>
+    private void TryAddPlayerTilesWithReorganization(Solution solution)
+    {
+        // Essaye TOUTES les tuiles du joueur de manière plus systématique
+        var playerTilesToTry = _playerTiles.OrderBy(_ => _random.Next()).ToList();
+        var tilesAdded = 0;
+        var maxTilesToAdd = Math.Min(_playerTiles.Length, _random.Next(3, 8)); // Essaye d'ajouter 3-7 tuiles
+
+        foreach (var playerTile in playerTilesToTry)
+        {
+            if (tilesAdded >= maxTilesToAdd) break;
+
+            // Essaye d'ajouter la tuile à un run existant
+            if (TryAddTileToExistingRun(solution, playerTile))
+            {
+                tilesAdded++;
+                continue;
+            }
+
+            // Essaye d'ajouter la tuile à un groupe existant
+            if (TryAddTileToExistingGroup(solution, playerTile))
+            {
+                tilesAdded++;
+                continue;
+            }
+
+            // Essaye de casser un groupe/run pour créer de nouvelles combinaisons
+            // Plus agressif: 70% de chance de casser et réorganiser
+            if (_random.NextDouble() < 0.7)
+            {
+                TryBreakAndReorganize(solution, playerTile);
+                tilesAdded++; // Compte comme tenté même si ça n'a pas fonctionné
+            }
+        }
+
+        // Essaye également des réorganisations plus complexes impliquant plusieurs groupes
+        if (_random.NextDouble() < 0.5) // 50% de chance
+            TryComplexReorganization(solution);
+    }
+
+    /// <summary>
+    ///     Essaye des réorganisations complexes impliquant plusieurs groupes/runs
+    ///     Par exemple: prendre des tuiles de 2 groupes pour former un run
+    /// </summary>
+    private void TryComplexReorganization(Solution solution)
+    {
+        // Essaye de former des runs en prenant des tuiles de groupes existants
+        if (solution.Groups.Count >= 2)
+        {
+            // Prend 2 groupes aléatoires
+            var group1Index = _random.Next(solution.Groups.Count);
+            var group2Index = _random.Next(solution.Groups.Count);
+            if (group1Index == group2Index && solution.Groups.Count > 1)
+                group2Index = (group2Index + 1) % solution.Groups.Count;
+
+            var group1 = solution.Groups[group1Index];
+            var group2 = solution.Groups[group2Index];
+
+            // Essaye de former un run avec une tuile de chaque groupe + tuiles du joueur
+            var tiles1 = group1.Tiles.Where(t => !t.IsJoker).ToArray();
+            var tiles2 = group2.Tiles.Where(t => !t.IsJoker).ToArray();
+
+            if (tiles1.Length > 0 && tiles2.Length > 0)
+            {
+                // Prend une tuile de chaque groupe
+                var tile1 = tiles1[_random.Next(tiles1.Length)];
+                var tile2 = tiles2[_random.Next(tiles2.Length)];
+
+                // Essaye de former un run avec ces tuiles + des tuiles du joueur
+                var candidateTiles = new List<Tile> { tile1, tile2 };
+                candidateTiles.AddRange(_playerTiles.OrderBy(_ => _random.Next()).Take(3));
+
+                // Trie par couleur puis valeur pour voir si on peut former un run
+                var sameColorGroups = candidateTiles.GroupBy(t => t.Color).ToList();
+                foreach (var colorGroup in sameColorGroups)
+                {
+                    var sortedTiles = colorGroup.OrderBy(t => t.Value).ToList();
+                    if (sortedTiles.Count >= 3)
+                    {
+                        // Vérifie si on peut former un run
+                        var runTiles = new List<Tile> { sortedTiles[0] };
+                        for (var i = 1; i < sortedTiles.Count; i++)
+                            if (sortedTiles[i].Value == runTiles[^1].Value + 1)
+                            {
+                                runTiles.Add(sortedTiles[i]);
+                            }
+                            else
+                            {
+                                if (runTiles.Count >= 3) break;
+                                runTiles.Clear();
+                                runTiles.Add(sortedTiles[i]);
+                            }
+
+                        if (runTiles.Count >= 3)
+                        {
+                            // On a trouvé un run valide! Réorganise les groupes
+                            solution.Groups.RemoveAt(Math.Max(group1Index, group2Index));
+                            solution.Groups.RemoveAt(Math.Min(group1Index, group2Index));
+
+                            // Ajoute le nouveau run
+                            solution.AddRun(new Run { Tiles = runTiles.ToArray(), Jokers = 0 });
+
+                            // Reforme les groupes avec les tuiles restantes + tuiles du joueur
+                            // (simplifié: on laisse les tuiles non utilisées)
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    ///     Essaye d'ajouter une tuile à un run existant
+    /// </summary>
+    private bool TryAddTileToExistingRun(Solution solution, Tile tile)
+    {
+        for (var i = 0; i < solution.Runs.Count; i++)
+        {
+            var run = solution.Runs[i];
+            var runTiles = run.Tiles.Where(t => !t.IsJoker).ToList();
+
+            if (runTiles.Count == 0) continue;
+
+            // Vérifie si la tuile peut être ajoutée au début ou à la fin du run
+            var firstTile = runTiles.First();
+            var lastTile = runTiles.Last();
+
+            if (tile.Color == firstTile.Color && tile.Value == firstTile.Value - 1)
+            {
+                // Peut ajouter au début
+                var newTiles = new List<Tile> { tile };
+                newTiles.AddRange(run.Tiles);
+                solution.Runs[i] = new Run { Tiles = newTiles.ToArray(), Jokers = run.Jokers };
+                return true;
+            }
+
+            if (tile.Color == lastTile.Color && tile.Value == lastTile.Value + 1)
+            {
+                // Peut ajouter à la fin
+                var newTiles = run.Tiles.ToList();
+                newTiles.Add(tile);
+                solution.Runs[i] = new Run { Tiles = newTiles.ToArray(), Jokers = run.Jokers };
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    ///     Essaye d'ajouter une tuile à un groupe existant
+    /// </summary>
+    private bool TryAddTileToExistingGroup(Solution solution, Tile tile)
+    {
+        for (var i = 0; i < solution.Groups.Count; i++)
+        {
+            var group = solution.Groups[i];
+            var groupTiles = group.Tiles.Where(t => !t.IsJoker).ToList();
+
+            if (groupTiles.Count == 0) continue;
+
+            var groupValue = groupTiles.First().Value;
+
+            // Vérifie si la tuile a la même valeur et une couleur différente
+            if (tile.Value == groupValue && !groupTiles.Any(t => t.Color == tile.Color))
+            {
+                var newTiles = group.Tiles.ToList();
+                newTiles.Add(tile);
+                solution.Groups[i] = new Group { Tiles = newTiles.ToArray(), Jokers = group.Jokers };
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    ///     Essaye de casser un groupe/run et de réorganiser pour inclure la nouvelle tuile
+    /// </summary>
+    private void TryBreakAndReorganize(Solution solution, Tile newTile)
+    {
+        // Choisit aléatoirement un run ou un groupe à casser
+        if (_random.NextDouble() < 0.5 && solution.Runs.Count > 0)
+        {
+            // Casse un run
+            var runIndex = _random.Next(solution.Runs.Count);
+            var run = solution.Runs[runIndex];
+            solution.Runs.RemoveAt(runIndex);
+
+            // Récupère les tuiles
+            var tiles = run.Tiles.Where(t => !t.IsJoker).ToList();
+            tiles.Add(newTile);
+
+            // Essaye de créer de nouvelles combinaisons avec ces tuiles
+            TryCreateNewCombinations(solution, tiles.ToArray(), run.Jokers);
+        }
+        else if (solution.Groups.Count > 0)
+        {
+            // Casse un groupe
+            var groupIndex = _random.Next(solution.Groups.Count);
+            var group = solution.Groups[groupIndex];
+            solution.Groups.RemoveAt(groupIndex);
+
+            // Récupère les tuiles
+            var tiles = group.Tiles.Where(t => !t.IsJoker).ToList();
+            tiles.Add(newTile);
+
+            // Essaye de créer de nouvelles combinaisons avec ces tuiles
+            TryCreateNewCombinations(solution, tiles.ToArray(), group.Jokers);
+        }
+    }
+
+    /// <summary>
+    ///     Essaye de créer de nouvelles combinaisons avec un ensemble de tuiles
+    /// </summary>
+    private void TryCreateNewCombinations(Solution solution, Tile[] tiles, int jokers)
+    {
+        var solver = new InternalSolver(tiles, jokers);
+
+        // Essaye de trouver des runs
+        for (var i = 0; i < tiles.Length; i++)
+        {
+            var runs = solver.FindRunsStartingAt(i);
+            foreach (var run in runs) solution.AddRun(run);
+        }
+
+        // Essaye de trouver des groups
+        for (var i = 0; i < tiles.Length; i++)
+        {
+            var groups = solver.FindGroupsStartingAt(i);
+            foreach (var group in groups) solution.AddGroup(group);
+        }
     }
 
     private Individual CreateRandomIndividual()
@@ -637,9 +916,58 @@ public class ParallelGeneticSolver : ISolver
             return solution;
         }
 
+        /// <summary>
+        ///     Génère une solution qui essaye d'utiliser toutes les tuiles disponibles
+        ///     Utilisé pour reconstruire le plateau existant
+        /// </summary>
+        public Solution GenerateSolutionUsingAllTiles(Random random)
+        {
+            var solution = new Solution { IsValid = true };
+            var usedIndices = new bool[Tiles.Length];
+
+            // Première passe: essaye de former des runs (suites) en priorisant les plus longues
+            for (var i = 0; i < Tiles.Length; i++)
+            {
+                if (usedIndices[i]) continue;
+
+                var runs = GetRuns(i).OrderByDescending(r => r.Tiles.Length).ToList();
+                if (runs.Any())
+                {
+                    // Prend le run le plus long pour maximiser l'utilisation des tuiles
+                    var selectedRun = runs.First();
+                    solution.AddRun(selectedRun);
+                    MarkTilesAsUsed(selectedRun, i - 1);
+                    for (var j = i; j < Tiles.Length; j++) usedIndices[j] = UsedTiles[j];
+                }
+            }
+
+            // Deuxième passe: essaye de former des groupes avec les tuiles restantes
+            for (var i = 0; i < Tiles.Length; i++)
+            {
+                if (usedIndices[i]) continue;
+
+                var groups = GetGroups(i).OrderByDescending(g => g.Tiles.Length).ToList();
+                if (groups.Any())
+                {
+                    // Prend le groupe le plus grand pour maximiser l'utilisation des tuiles
+                    var selectedGroup = groups.First();
+                    solution.AddGroup(selectedGroup);
+                    MarkTilesAsUsed(selectedGroup, i - 1);
+                    for (var j = i; j < Tiles.Length; j++) usedIndices[j] = UsedTiles[j];
+                }
+            }
+
+            return solution;
+        }
+
         public List<Run> FindRunsStartingAt(int index)
         {
             return GetRuns(index).ToList();
+        }
+
+        public List<Group> FindGroupsStartingAt(int index)
+        {
+            return GetGroups(index).ToList();
         }
     }
 

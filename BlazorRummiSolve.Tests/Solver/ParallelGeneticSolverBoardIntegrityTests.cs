@@ -581,10 +581,23 @@ public class ParallelGeneticSolverBoardIntegrityTests
         var config = GeneticConfiguration.UltraAggressive;
         var solver = ParallelGeneticSolver.Create(boardSet, playerSet, false, config);
 
-        // Act - Timeout plus long pour cette situation complexe
-        var result = solver.SearchSolution();
+        // Act - utilise un timeout de 30 secondes
+        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+        var result = solver.SearchSolution(cts.Token);
 
-        Assert.True(result.Found);
+        // Assert
+        if (!result.Found)
+        {
+            Console.WriteLine("❌ Aucune solution trouvée");
+            Console.WriteLine($"Tuiles du plateau: {boardSet.Tiles.Count()}");
+            Console.WriteLine($"Tuiles du joueur: {playerSet.Tiles.Count()}");
+        }
+        else
+        {
+            Console.WriteLine($"✓ Solution trouvée avec {result.TilesToPlay.Count()} tuiles jouées");
+        }
+
+        Assert.True(result.Found, "Le solver devrait trouver une solution en réorganisant le plateau");
         Assert.Equal(4, result.TilesToPlay.Count());
     }
 }
