@@ -309,4 +309,32 @@ public class IncrementalScoreFieldComplexSolverTests
         // Assert
         Assert.False(solution.IsValid);
     }
+
+    [Fact]
+    public void SearchSolution_ValidOneJ()
+    {
+        // Arrange
+        var boardSet = new Set([
+            new Tile(1),
+            new Tile(2),
+            new Tile(3)
+        ]);
+
+        var playerSet = new Set([
+            new Tile(true)
+        ]);
+
+        var solver = IncrementalScoreFieldComplexSolver.Create(boardSet, playerSet);
+
+        // Act
+        var result = solver.SearchSolution();
+        var solution = result.BestSolution;
+        var tilesToPlay = result.TilesToPlay.ToList();
+        var jokerToPlay = result.JokerToPlay;
+
+        // Assert
+        Assert.True(solution.IsValid);
+        Assert.Empty(tilesToPlay);
+        Assert.Equal(1, jokerToPlay);
+    }
 }
