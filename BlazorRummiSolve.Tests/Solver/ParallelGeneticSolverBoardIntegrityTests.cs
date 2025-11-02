@@ -535,4 +535,56 @@ public class ParallelGeneticSolverBoardIntegrityTests
         Assert.True(successCount > 0,
             $"Le solveur devrait trouver une solution dans au moins une des {iterations} itérations");
     }
+
+    [Fact]
+    public void SearchSolution_Turn7_ShouldPlayOptimalReorganization()
+    {
+        // Arrange - Configuration du tour 7 du jeu d8b42678-0068-4aa1-a087-17232f2b65fe
+
+        var boardSet = new Set([
+            // Groupe de 7
+            new Tile(7),
+            new Tile(7, TileColor.Mango),
+            new Tile(7, TileColor.Black),
+
+            // Groupe de 5
+            new Tile(5),
+            new Tile(5, TileColor.Red),
+            new Tile(5, TileColor.Mango),
+
+            // Groupe de 11 avec joker
+            new Tile(11, TileColor.Red),
+            new Tile(11, TileColor.Black),
+            new Tile(true), // Joker
+            // Groupe de 13
+            new Tile(13, TileColor.Red),
+            new Tile(13, TileColor.Mango),
+            new Tile(13, TileColor.Black)
+        ]);
+
+        var playerSet = new Set([
+            new Tile(4, TileColor.Red),
+            new Tile(7, TileColor.Black),
+            new Tile(6, TileColor.Mango), // 6 orange - OK
+            new Tile(7, TileColor.Red), // 7 rouge - OK
+            new Tile(5, TileColor.Red),
+            new Tile(5, TileColor.Black), // 5 noir - OK
+            new Tile(1, TileColor.Black),
+            new Tile(8),
+            new Tile(11, TileColor.Black),
+            new Tile(10, TileColor.Mango),
+            new Tile(8, TileColor.Mango), // 8 orange - OK
+            new Tile(13, TileColor.Red),
+            new Tile(13, TileColor.Mango)
+        ]);
+
+        var config = GeneticConfiguration.UltraAggressive;
+        var solver = ParallelGeneticSolver.Create(boardSet, playerSet, false, config);
+
+        // Act - Timeout plus long pour cette situation complexe
+        var result = solver.SearchSolution();
+
+        Assert.True(result.Found);
+        Assert.Equal(4, result.TilesToPlay.Count());
+    }
 }
