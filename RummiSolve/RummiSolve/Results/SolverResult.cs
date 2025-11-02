@@ -2,29 +2,51 @@ namespace RummiSolve.Results;
 
 public class SolverResult
 {
-    public SolverResult(string source, Solution bestSolution, IEnumerable<Tile> tilesToPlay, int jokerToPlay,
-        bool won = false)
+    // Constructeur privé pour forcer l'utilisation des factory methods
+    private SolverResult()
     {
-        Source = source ?? "Unknown";
-        Found = bestSolution.IsValid;
-        BestSolution = bestSolution;
-        TilesToPlay = tilesToPlay;
-        JokerToPlay = jokerToPlay;
-        Won = won;
-    }
-
-    public SolverResult(string source)
-    {
-        Source = source;
+        Source = string.Empty;
         Found = false;
-        BestSolution = Solution.InvalidSolution;
+        BestSolution = new Solution();
         TilesToPlay = [];
+        JokerToPlay = 0;
+        Won = false;
+        Score = 0;
     }
 
-    public string Source { get; }
-    public bool Found { get; }
-    public Solution BestSolution { get; }
-    public IEnumerable<Tile> TilesToPlay { get; }
-    public int JokerToPlay { get; }
+    public string Source { get; private init; }
+    public bool Found { get; private init; }
+    public Solution BestSolution { get; private init; }
+    public IEnumerable<Tile> TilesToPlay { get; private init; }
+    public int JokerToPlay { get; private init; }
     public bool Won { get; set; }
+    public int Score { get; private init; }
+
+    // Factory method pour les échecs
+    public static SolverResult Invalid(string source)
+    {
+        return new SolverResult
+        {
+            Source = source,
+            Found = false,
+            BestSolution = new Solution(),
+            TilesToPlay = []
+        };
+    }
+
+    // Factory method pour créer un résultat à partir d'une solution
+    public static SolverResult FromSolution(string source, Solution solution, IEnumerable<Tile> tilesToPlay,
+        int jokerToPlay = 0, bool won = false, int score = 0)
+    {
+        return new SolverResult
+        {
+            Source = source,
+            Found = solution.IsValid,
+            BestSolution = solution,
+            TilesToPlay = tilesToPlay,
+            JokerToPlay = jokerToPlay,
+            Won = won,
+            Score = score
+        };
+    }
 }

@@ -14,8 +14,8 @@ public readonly struct Tile : IComparable<Tile>, IEquatable<Tile>
 
         _data = (byte)(
             ((isJoker ? 1 : 0) << 6) | // Bit 6 for IsJoker
-            ((int)color << 4)        | // Bits 4-5 for the color
-            (value & 0x0F)             // Bits 0-3 for the value
+            ((int)color << 4) | // Bits 4-5 for the color
+            (value & 0x0F) // Bits 0-3 for the value
         );
     }
 

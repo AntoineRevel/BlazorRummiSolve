@@ -1,3 +1,4 @@
+using BlazorRummiSolve.Models;
 using BlazorRummiSolve.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -13,14 +14,17 @@ public partial class GamePage
     private readonly HashSet<Guid> _removingTiles = [];
 
     private readonly List<TileInstance> _selectedTileInstances = [];
+    private CancellationTokenSource? _aiTurnTimerCts;
     private Solution _board = new();
     private Game _currentGame = new();
 
     private ActionState _currentState;
+    private bool _isFirstTurn = true;
     private bool _isGameOver;
+
+    // AI turn countdown states
     private Solution _lastBoard = new();
     private Set _lastPlayerRack = new();
-
 
     private Set _playerRack = new();
     private Timer? _toastTimer;
@@ -52,7 +56,8 @@ public partial class GamePage
     private bool ShowHint { get; set; }
     private bool IsWaitingForHumanPlayer { get; set; }
     private List<bool> PlayerTypes { get; set; } = [];
-    private List<Tile> SelectedTilesForPlay { get; set; } = [];
+    private List<Tile> SelectedTilesForPlay { get; } = [];
+    private GameMode CurrentGameMode { get; set; }
 
     // Drawn tile toast notification properties
     private Tile? DrawnTile { get; set; }
@@ -62,28 +67,50 @@ public partial class GamePage
     private string? ErrorMessage { get; set; }
     private bool ShowErrorMessage { get; set; }
 
+    // AI turn countdown properties
+    private bool IsWaitingAfterAITurn { get; set; }
+
+    private int RemainingSeconds { get; set; }
+
+    private bool AIPlayerDrew { get; set; }
+
+    private List<Tile>? AIPlayedTiles { get; set; }
+
+    private double ProgressDashOffset => 125.66 * RemainingSeconds / 4.0;
+
+    // For Full AI mode: store displayed tile counts
+    private Dictionary<Player, int> DisplayedTileCounts { get; } = new();
+
     private bool IsCurrentPlayerHuman =>
         _currentGame.Players.Count > 0 &&
         _currentGame.PlayerIndex < PlayerTypes.Count &&
         PlayerTypes[_currentGame.PlayerIndex];
 
+    private int GetDisplayedTileCount(Player player)
+    {
+        // In Full AI mode, use cached counts if available (before showing solution)
+        if (CurrentGameMode == GameMode.FullAI && DisplayedTileCounts.ContainsKey(player))
+            return DisplayedTileCounts[player];
+
+        // Otherwise, return actual count
+        return player.Rack.Tiles.Count;
+    }
+
     private bool ShouldShowAIRack()
     {
-        // Show AI rack only when:
-        // 1. It's not game over
-        // 2. Current player is AI (not human)
-        // 3. Not waiting for human player input
+        // Don't show rack if game is over or waiting for human player
         if (_isGameOver || IsWaitingForHumanPlayer)
             return false;
 
-        // Find the actual index of CurrentPlayer in the game
-        var actualPlayerIndex = _currentGame.Players.IndexOf(CurrentPlayer);
+        // In Interactive mode, NEVER show AI rack (only show what they play on the board)
+        if (CurrentGameMode == GameMode.Interactive) return false;
 
+        // In Full AI mode, show rack when it's an AI's turn
+        var actualPlayerIndex = _currentGame.Players.IndexOf(CurrentPlayer);
         if (actualPlayerIndex >= 0 && actualPlayerIndex < PlayerTypes.Count)
         {
             var isHuman = PlayerTypes[actualPlayerIndex];
-            // Show rack only if current player is AI (not human)
-            return !isHuman;
+            return !isHuman; // Show if current player is AI
         }
 
         return false;
@@ -103,16 +130,28 @@ public partial class GamePage
                 _board = _currentGame.Board;
                 _playerRack = CurrentPlayer.Rack;
 
+                // In Full AI mode, clear displayed tile counts to show actual counts
+                if (CurrentGameMode == GameMode.FullAI) DisplayedTileCounts.Clear();
+
                 _isGameOver = _currentGame.IsGameOver;
 
                 if (!_isGameOver) _currentState = ActionState.NextPlayer;
                 break;
 
             case ActionState.NextPlayer:
+                _isFirstTurn = false;
                 CurrentPlayer = _currentGame.Players[_currentGame.PlayerIndex];
                 _playerRack = new Set(_currentGame.Players[_currentGame.PlayerIndex].Rack);
                 _lastPlayerRack = new Set(_playerRack);
                 _lastBoard = _board;
+
+                // In Full AI mode, save current tile counts before playing
+                if (CurrentGameMode == GameMode.FullAI)
+                {
+                    DisplayedTileCounts.Clear();
+                    foreach (var player in _currentGame.Players) DisplayedTileCounts[player] = player.Rack.Tiles.Count;
+                }
+
                 await PlayAsync();
                 _currentState = ActionState.ShowHint;
                 break;
@@ -151,7 +190,7 @@ public partial class GamePage
         {
             ActionState.ShowHint => $"Show hint for {CurrentPlayer.Name}'s turn",
             ActionState.ShowSolution => $"Play {CurrentPlayer.Name}'s turn",
-            ActionState.NextPlayer => "Next Player",
+            ActionState.NextPlayer => _isFirstTurn ? "Start" : $"Play {CurrentPlayer.Name}'s turn",
             _ => "Action"
         };
     }
@@ -166,6 +205,9 @@ public partial class GamePage
         var listNames = ParsePlayerNames(playerCount);
         PlayerTypes = ParsePlayerTypes(playerCount);
 
+        // Detect game mode automatically based on player types
+        CurrentGameMode = DetectGameMode();
+
         // Create a game with custom ID if provided
         if (!string.IsNullOrWhiteSpace(GameId) && Guid.TryParse(GameId, out var parsedId))
             _currentGame = new Game(parsedId);
@@ -178,14 +220,22 @@ public partial class GamePage
         HumanPlayerService.InvalidPlayAttempted += OnInvalidPlayAttempted;
 
         _currentGame.InitializeGame(listNames, PlayerTypes, HumanPlayerService.WaitForPlayerChoice);
-        _currentState = ActionState.ShowHint;
         CurrentPlayer = _currentGame.Players[0];
         _playerRack = new Set(CurrentPlayer.Rack);
         _lastPlayerRack = new Set(CurrentPlayer.Rack);
 
-        // If the first player is human, trigger PlayAsync to show the human player interface
-        // Don't await to avoid blocking the UI initialization
-        if (IsCurrentPlayerHuman) _ = PlayAsync();
+        // Start the game flow based on the mode
+        if (CurrentGameMode == GameMode.Interactive)
+        {
+            // In Interactive mode, start the automatic flow
+            _currentState = ActionState.ShowHint;
+            _ = PlayInteractiveModeAsync();
+        }
+        else // Full AI mode
+        {
+            // In Full AI mode, start at NextPlayer state so the first click triggers PlayAsync() directly
+            _currentState = ActionState.NextPlayer;
+        }
     }
 
     private async Task PlayAsync()
@@ -207,18 +257,104 @@ public partial class GamePage
         }
     }
 
+    private async Task PlayInteractiveModeAsync()
+    {
+        while (!_currentGame.IsGameOver)
+        {
+            CurrentPlayer = _currentGame.Players[_currentGame.PlayerIndex];
+            _playerRack = new Set(CurrentPlayer.Rack);
+            _lastPlayerRack = new Set(_playerRack);
+            _lastBoard = _board;
+
+            // Check if current player is human
+            if (IsCurrentPlayerHuman)
+            {
+                // Execute the turn (might draw tile or play)
+                var turnCompleted = await _currentGame.ExecuteTurnAsync(await CancellationService.CreateTokenAsync());
+
+                // Update the board and rack after human plays
+                _board = _currentGame.Board;
+                _playerRack = CurrentPlayer.Rack;
+
+                if (!turnCompleted && HumanPlayerService.IsWaitingForNextAfterDraw)
+                {
+                    // Player drew a tile, wait for them to click "Next"
+                    StateHasChanged();
+
+                    while (HumanPlayerService
+                           .IsWaitingForNextAfterDraw) await Task.Delay(100); // Wait for user to click "Next"
+                }
+
+                // Advance to next player
+                _currentGame.AdvanceToNextPlayer();
+            }
+            else
+            {
+                // Execute AI turn and check if they drew a tile
+                var turnCompleted = await _currentGame.ExecuteTurnAsync(await CancellationService.CreateTokenAsync());
+                AIPlayerDrew = !turnCompleted;
+
+                // Capture tiles played by AI before updating board
+                AIPlayedTiles = turnCompleted ? CurrentPlayer.TilesToPlay.ToList() : null;
+
+                // Update the board and rack to show AI's move
+                _board = _currentGame.Board;
+                _playerRack = CurrentPlayer.Rack;
+
+                StateHasChanged();
+
+                // Show countdown button for 8 seconds
+                IsWaitingAfterAITurn = true;
+                RemainingSeconds = 8;
+                StateHasChanged();
+
+                // Start 8-second countdown
+                _aiTurnTimerCts = new CancellationTokenSource();
+                try
+                {
+                    for (var i = 8; i > 0; i--)
+                    {
+                        RemainingSeconds = i;
+                        await InvokeAsync(StateHasChanged);
+                        await Task.Delay(1000, _aiTurnTimerCts.Token);
+                    }
+                }
+                catch (TaskCanceledException)
+                {
+                    // User clicked "Next" before timer finished - that's fine
+                }
+                finally
+                {
+                    IsWaitingAfterAITurn = false;
+                    AIPlayedTiles = null; // Clear highlighted tiles
+                    _aiTurnTimerCts?.Dispose();
+                    _aiTurnTimerCts = null;
+                }
+
+                // Advance to next player
+                _currentGame.AdvanceToNextPlayer();
+            }
+
+            // Check if game ended after this turn
+            _isGameOver = _currentGame.IsGameOver;
+            if (_isGameOver)
+            {
+                StateHasChanged();
+                break;
+            }
+        }
+    }
+
     private async Task ResetGameAsync()
     {
         _currentGame = new Game();
+        _isFirstTurn = true;
         await OnInitializedAsync();
     }
 
     private async Task HandleKeyDown(KeyboardEventArgs e)
     {
-        if (e.Key == "Enter" && !IsLoading && !_isGameOver)
-        {
-            await HandleActionAsync();
-        }
+        if (e.Key == "Enter" && !IsLoading && !_isGameOver) await HandleActionAsync();
     }
 
     private List<string> ParsePlayerNames(int count)
@@ -261,6 +397,13 @@ public partial class GamePage
             }
 
         return finalTypes;
+    }
+
+    private GameMode DetectGameMode()
+    {
+        // Full AI mode if all players are AI (all false)
+        // Interactive mode if at least one player is real (at least one true)
+        return PlayerTypes.Any(isReal => isReal) ? GameMode.Interactive : GameMode.FullAI;
     }
 
     private void OnPlayerTurnStarted(object? sender, EventArgs e)
@@ -313,8 +456,27 @@ public partial class GamePage
         _board = _currentGame.Board;
         _playerRack = CurrentPlayer.Rack;
 
-        // Automatically proceed to next player
-        await AutoProceedToNextPlayer();
+        // Force UI update to show the new tile in the rack
+        StateHasChanged();
+
+        // In Full AI mode, automatically proceed to next player
+        // In Interactive mode, the PlayInteractiveModeAsync loop handles progression and delay
+        if (CurrentGameMode == GameMode.FullAI) await AutoProceedToNextPlayer();
+    }
+
+    // Called by UI when player clicks "Next" after drawing a tile
+    private void OnNextAfterDraw()
+    {
+        HumanPlayerService.PlayerConfirmNext();
+        StateHasChanged();
+    }
+
+    // Called by UI when player clicks "Next" to skip AI turn countdown
+    private void OnSkipAIWait()
+    {
+        // Cancel the countdown timer
+        _aiTurnTimerCts?.Cancel();
+        StateHasChanged();
     }
 
     private void OnPlaySelection()

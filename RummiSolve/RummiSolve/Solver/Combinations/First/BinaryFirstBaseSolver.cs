@@ -6,6 +6,7 @@ namespace RummiSolve.Solver.Combinations.First;
 
 public sealed class BinaryFirstBaseSolver(Tile[] tiles, int jokers) : BaseSolver(tiles, jokers), IBinarySolver
 {
+    private int _finalScore;
     public IEnumerable<Tile> TilesToPlay => Tiles;
     public int JokerToPlay { get; } = jokers;
     public Solution BinarySolution { get; private set; } = new();
@@ -13,14 +14,7 @@ public sealed class BinaryFirstBaseSolver(Tile[] tiles, int jokers) : BaseSolver
     public SolverResult SearchSolution(CancellationToken cancellationToken = default)
     {
         BinarySolution = FindSolution(new Solution(), 0, 0, cancellationToken);
-        return new SolverResult(GetType().Name, BinarySolution, TilesToPlay, JokerToPlay);
-    }
-
-    private bool ValidateCondition(int solutionScore)
-    {
-        if (UsedTiles.Any(b => !b)) return false;
-
-        return solutionScore > MinScore && Jokers == 0;
+        return SolverResult.FromSolution(GetType().Name, BinarySolution, TilesToPlay, JokerToPlay, score: _finalScore);
     }
 
     private Solution FindSolution(Solution solution, int solutionScore, int startIndex,
@@ -59,8 +53,18 @@ public sealed class BinaryFirstBaseSolver(Tile[] tiles, int jokers) : BaseSolver
 
             var newSolutionScore = solutionScore + set.GetScore();
 
-            if (ValidateCondition(newSolutionScore)) solution.IsValid = true;
-            else newSolution = FindSolution(solution, newSolutionScore, firstUnusedTileIndex, cancellationToken);
+            // Vérifier une seule fois si toutes les tuiles sont utilisées et plus de jokers
+            if (UsedTiles.All(b => b) && Jokers == 0)
+            {
+                _finalScore = newSolutionScore;
+
+                // Valider la solution si le score est suffisant (>= 30)
+                if (newSolutionScore > MinScore) solution.IsValid = true;
+            }
+            else
+            {
+                newSolution = FindSolution(solution, newSolutionScore, firstUnusedTileIndex, cancellationToken);
+            }
 
             if (newSolution.IsValid)
             {

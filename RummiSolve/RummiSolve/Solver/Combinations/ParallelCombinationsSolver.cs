@@ -33,7 +33,7 @@ public class ParallelCombinationsSolver : ISolver
 
         var parallelOptions = new ParallelOptions
         {
-            CancellationToken = cancellationToken,
+            CancellationToken = cancellationToken
         };
 
         var results = new ConcurrentBag<(long index, SolverResult result)>();
@@ -80,10 +80,7 @@ public class ParallelCombinationsSolver : ISolver
                     foundSolutionIndex = index;
 
                     // Cancel all tasks with higher indices
-                    foreach (var kvp in cancellationTokenSources.Where(kvp => kvp.Key > index))
-                    {
-                        kvp.Value.Cancel();
-                    }
+                    foreach (var kvp in cancellationTokenSources.Where(kvp => kvp.Key > index)) kvp.Value.Cancel();
                 }
             });
         }
@@ -103,7 +100,7 @@ public class ParallelCombinationsSolver : ISolver
 
     private SolverResult GetBestResult(ConcurrentBag<(long Index, SolverResult Result)> results)
     {
-        if (results.IsEmpty) return new SolverResult(GetType().Name);
+        if (results.IsEmpty) return SolverResult.Invalid(GetType().Name);
 
         var bestResult = results.MinBy(r => r.Index);
 

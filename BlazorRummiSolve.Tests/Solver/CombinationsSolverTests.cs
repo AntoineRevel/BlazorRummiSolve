@@ -12,13 +12,13 @@ public class CombinationsSolverTests
         var boardSet = new Set([
             new Tile(1, TileColor.Red),
             new Tile(2, TileColor.Red),
-            new Tile(3, TileColor.Red),
+            new Tile(3, TileColor.Red)
         ]);
 
         var playerSet = new Set([
             new Tile(10),
             new Tile(10, TileColor.Red),
-            new Tile(10, TileColor.Black),
+            new Tile(10, TileColor.Black)
         ]);
 
         var solver = CombinationsSolver.Create(boardSet, playerSet);
@@ -44,7 +44,7 @@ public class CombinationsSolverTests
         var boardSet = new Set([
             new Tile(2, TileColor.Red),
             new Tile(3, TileColor.Red),
-            new Tile(4, TileColor.Red),
+            new Tile(4, TileColor.Red)
         ]);
 
         var playerSet = new Set([
@@ -80,7 +80,7 @@ public class CombinationsSolverTests
 
         var playerSet = new Set([
             new Tile(10),
-            new Tile(10, TileColor.Red),
+            new Tile(10, TileColor.Red)
         ]);
 
         var solver = CombinationsSolver.Create(boardSet, playerSet);
@@ -106,7 +106,7 @@ public class CombinationsSolverTests
         var boardSet = new Set([
             new Tile(1, TileColor.Red),
             new Tile(2, TileColor.Red),
-            new Tile(3, TileColor.Red),
+            new Tile(3, TileColor.Red)
         ]);
 
         var playerSet = new Set([
@@ -136,7 +136,7 @@ public class CombinationsSolverTests
         var boardSet = new Set([
             new Tile(1, TileColor.Red),
             new Tile(2, TileColor.Red),
-            new Tile(3, TileColor.Red),
+            new Tile(3, TileColor.Red)
         ]);
 
         var playerSet = new Set([
@@ -167,7 +167,7 @@ public class CombinationsSolverTests
         var boardSet = new Set([
             new Tile(1, TileColor.Red),
             new Tile(2, TileColor.Red),
-            new Tile(3, TileColor.Red),
+            new Tile(3, TileColor.Red)
         ]);
 
         var playerSet = new Set([
@@ -180,7 +180,7 @@ public class CombinationsSolverTests
 
             new Tile(1, TileColor.Red),
             new Tile(2, TileColor.Red),
-            new Tile(3, TileColor.Red),
+            new Tile(3, TileColor.Red)
         ]);
 
         var solver = CombinationsSolver.Create(boardSet, playerSet);
@@ -207,7 +207,7 @@ public class CombinationsSolverTests
             new Tile(8),
             new Tile(9),
             new Tile(10),
-            new Tile(11),
+            new Tile(11)
         ]);
 
         var playerSet = new Set([
@@ -245,13 +245,13 @@ public class CombinationsSolverTests
 
             new Tile(11, TileColor.Mango),
             new Tile(true),
-            new Tile(13, TileColor.Mango),
+            new Tile(13, TileColor.Mango)
         ]);
 
         var playerSet = new Set([
             new Tile(9, TileColor.Mango),
             new Tile(13, TileColor.Red),
-            new Tile(13),
+            new Tile(13)
         ]);
 
         var solver = CombinationsSolver.Create(boardSet, playerSet);
@@ -277,7 +277,7 @@ public class CombinationsSolverTests
         var boardSet = new Set([
             new Tile(1, TileColor.Red),
             new Tile(2, TileColor.Red),
-            new Tile(3, TileColor.Red),
+            new Tile(3, TileColor.Red)
         ]);
 
         var playerSet = new Set([
@@ -312,7 +312,7 @@ public class CombinationsSolverTests
         var boardSet = new Set([
             new Tile(5),
             new Tile(5, TileColor.Red),
-            new Tile(5, TileColor.Black),
+            new Tile(5, TileColor.Black)
         ]);
 
         var playerSet = new Set([
@@ -341,7 +341,7 @@ public class CombinationsSolverTests
         var boardSet = new Set([
             new Tile(1, TileColor.Red),
             new Tile(2, TileColor.Red),
-            new Tile(3, TileColor.Red),
+            new Tile(3, TileColor.Red)
         ]);
 
         var playerSet = new Set([

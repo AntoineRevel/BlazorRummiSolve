@@ -11,7 +11,7 @@
     <div class="setup-form">
         <div class="form-group">
             <label for="gameId">Game ID (optional)</label>
-            <input id="gameId" @bind="GameId" @bind:after="ValidateGameId" type="text" 
+            <input id="gameId" @bind="GameId" @bind:after="ValidateGameId" type="text"
                    class="form-control @(HasGameIdError ? "error" : "")"
                    placeholder="Leave empty to generate automatically" maxlength="50"
                    @onkeydown="HandleGameIdKeyDown"/>
@@ -19,7 +19,8 @@
             {
                 <div class="error-message">@GameIdErrorMessage</div>
             }
-            <small class="form-text">If no ID is provided, one will be generated automatically. Format: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX</small>
+            <small class="form-text">If no ID is provided, one will be generated automatically. Format:
+                XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX</small>
         </div>
 
         <div class="form-group">

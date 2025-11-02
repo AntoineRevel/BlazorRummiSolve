@@ -12,13 +12,13 @@ public class IncrementalComplexSolverTests
         var boardSet = new Set([
             new Tile(1, TileColor.Red),
             new Tile(2, TileColor.Red),
-            new Tile(3, TileColor.Red),
+            new Tile(3, TileColor.Red)
         ]);
 
         var playerSet = new Set([
             new Tile(10),
             new Tile(10, TileColor.Red),
-            new Tile(10, TileColor.Black),
+            new Tile(10, TileColor.Black)
         ]);
 
         var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
@@ -44,7 +44,7 @@ public class IncrementalComplexSolverTests
         var boardSet = new Set([
             new Tile(2, TileColor.Red),
             new Tile(3, TileColor.Red),
-            new Tile(4, TileColor.Red),
+            new Tile(4, TileColor.Red)
         ]);
 
         var playerSet = new Set([
@@ -109,7 +109,7 @@ public class IncrementalComplexSolverTests
 
         var playerSet = new Set([
             new Tile(10),
-            new Tile(10, TileColor.Red),
+            new Tile(10, TileColor.Red)
         ]);
 
         var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
@@ -136,7 +136,7 @@ public class IncrementalComplexSolverTests
         var boardSet = new Set([
             new Tile(1, TileColor.Red),
             new Tile(2, TileColor.Red),
-            new Tile(3, TileColor.Red),
+            new Tile(3, TileColor.Red)
         ]);
 
         var playerSet = new Set([
@@ -166,7 +166,7 @@ public class IncrementalComplexSolverTests
         var boardSet = new Set([
             new Tile(1, TileColor.Red),
             new Tile(2, TileColor.Red),
-            new Tile(3, TileColor.Red),
+            new Tile(3, TileColor.Red)
         ]);
 
         var playerSet = new Set([
@@ -203,7 +203,7 @@ public class IncrementalComplexSolverTests
 
         var playerSet = new Set([
             new Tile(12),
-            new Tile(13),
+            new Tile(13)
         ]);
 
         var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
@@ -229,7 +229,7 @@ public class IncrementalComplexSolverTests
         var boardSet = new Set([
             new Tile(1, TileColor.Red),
             new Tile(2, TileColor.Red),
-            new Tile(3, TileColor.Red),
+            new Tile(3, TileColor.Red)
         ]);
 
         var playerSet = new Set([
@@ -242,7 +242,7 @@ public class IncrementalComplexSolverTests
 
             new Tile(1, TileColor.Red),
             new Tile(2, TileColor.Red),
-            new Tile(3, TileColor.Red),
+            new Tile(3, TileColor.Red)
         ]);
 
         var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
@@ -273,13 +273,13 @@ public class IncrementalComplexSolverTests
 
             new Tile(11, TileColor.Mango),
             new Tile(true),
-            new Tile(13, TileColor.Mango),
+            new Tile(13, TileColor.Mango)
         ]);
 
         var playerSet = new Set([
             new Tile(9, TileColor.Mango),
             new Tile(13, TileColor.Red),
-            new Tile(13),
+            new Tile(13)
         ]);
 
         var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
@@ -305,7 +305,7 @@ public class IncrementalComplexSolverTests
         var boardSet = new Set([
             new Tile(1, TileColor.Red),
             new Tile(2, TileColor.Red),
-            new Tile(3, TileColor.Red),
+            new Tile(3, TileColor.Red)
         ]);
 
         var playerSet = new Set([
@@ -340,7 +340,7 @@ public class IncrementalComplexSolverTests
         var boardSet = new Set([
             new Tile(1, TileColor.Red),
             new Tile(2, TileColor.Red),
-            new Tile(3, TileColor.Red),
+            new Tile(3, TileColor.Red)
         ]);
 
         var playerSet = new Set([
@@ -372,7 +372,7 @@ public class IncrementalComplexSolverTests
             new Tile(6),
             new Tile(6, TileColor.Red),
             new Tile(6, TileColor.Black),
-            new Tile(6, TileColor.Mango),
+            new Tile(6, TileColor.Mango)
         ]);
 
         var playerSet = new Set([

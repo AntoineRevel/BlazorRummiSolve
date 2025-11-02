@@ -19,7 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\RummiSolve\RummiSolve\RummiSolve.csproj" />
+        <ProjectReference Include="..\RummiSolve\RummiSolve\RummiSolve.csproj"/>
     </ItemGroup>
 
 </Project>

@@ -35,11 +35,9 @@ public class CombinationsSolver : ISolver
 
         var result = firstBinarySolver.SearchSolution(cancellationToken);
         if (result.Found)
-            return new SolverResult(
-                GetType().Name,
-                result.BestSolution,
-                result.TilesToPlay,
-                result.JokerToPlay, true);
+            return SolverResult.FromSolution(GetType().Name, result.BestSolution, result.TilesToPlay,
+                result.JokerToPlay,
+                true);
 
 
         for (var tileTry = _playerTilesJ.Count - 1; tileTry > 0; tileTry--)
@@ -58,12 +56,10 @@ public class CombinationsSolver : ISolver
                 var joker = 0;
                 var nonJokerCombi = new List<Tile>(tileTry);
                 foreach (var tile in combi)
-                {
                     if (tile.IsJoker)
                         joker++;
                     else
                         nonJokerCombi.Add(tile);
-                }
 
                 var solver = new BinaryBaseSolver(_boardTiles.Concat(nonJokerCombi).Order().ToArray(),
                     joker + _boardJokers)
@@ -79,7 +75,7 @@ public class CombinationsSolver : ISolver
             }
         }
 
-        return new SolverResult(GetType().Name);
+        return SolverResult.Invalid(GetType().Name);
     }
 
     public static CombinationsSolver Create(Set boardSet, Set playerSet)

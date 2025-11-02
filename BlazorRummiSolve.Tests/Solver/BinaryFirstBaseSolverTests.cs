@@ -13,7 +13,7 @@ public class BinaryFirstBaseSolverTests
         {
             new(10),
             new(10, TileColor.Red),
-            new(10, TileColor.Black),
+            new(10, TileColor.Black)
         };
 
         var solver = new BinaryFirstBaseSolver(playerTiles, 0);
@@ -38,7 +38,7 @@ public class BinaryFirstBaseSolverTests
 
             new(1),
             new(2),
-            new(3),
+            new(3)
         };
 
         var solver = new BinaryFirstBaseSolver(playerTiles, 0);
@@ -58,7 +58,7 @@ public class BinaryFirstBaseSolverTests
         var playerTiles = new Tile[]
         {
             new(10),
-            new(10, TileColor.Red),
+            new(10, TileColor.Red)
         };
 
         var solver = new BinaryFirstBaseSolver(playerTiles, 1);
@@ -99,7 +99,7 @@ public class BinaryFirstBaseSolverTests
         var playerTiles = new Tile[]
         {
             new(9),
-            new(10),
+            new(10)
         };
 
         var solver = new BinaryFirstBaseSolver(playerTiles, 1);
@@ -119,7 +119,7 @@ public class BinaryFirstBaseSolverTests
         var playerTiles = new Tile[]
         {
             new(8),
-            new(9),
+            new(9)
         };
 
         var solver = new BinaryFirstBaseSolver(playerTiles, 1);
@@ -140,7 +140,7 @@ public class BinaryFirstBaseSolverTests
         {
             new(1),
             new(2),
-            new(3),
+            new(3)
         };
 
         var solver = new BinaryFirstBaseSolver(playerTiles, 0);
@@ -187,7 +187,7 @@ public class BinaryFirstBaseSolverTests
             new((byte)45),
             new((byte)57),
             new((byte)58),
-            new((byte)59),
+            new((byte)59)
         };
 
         var solver = new BinaryFirstBaseSolver(playerTiles, 1);

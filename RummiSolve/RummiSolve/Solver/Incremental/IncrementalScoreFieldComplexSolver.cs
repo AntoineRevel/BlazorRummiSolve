@@ -28,19 +28,19 @@ public sealed class IncrementalScoreFieldComplexSolver : ComplexSolver, ISolver
 
     public SolverResult SearchSolution(CancellationToken cancellationToken = default)
     {
-        if (Tiles.Length + Jokers <= 2) return new SolverResult(GetType().Name);
-        ;
+        if (Tiles.Length + Jokers <= 2) return SolverResult.Invalid(GetType().Name);
 
         Solution bestSolution = new();
 
         while (true)
         {
             if (cancellationToken.IsCancellationRequested)
-                return new SolverResult(GetType().Name, bestSolution, TilesToPlay, JokerToPlay);
-                
+                return SolverResult.FromSolution(GetType().Name, bestSolution, TilesToPlay, JokerToPlay);
+
             var newSolution = FindSolution(new Solution(), 0, cancellationToken);
 
-            if (!newSolution.IsValid) return new SolverResult(GetType().Name, bestSolution, TilesToPlay, JokerToPlay);
+            if (!newSolution.IsValid)
+                return SolverResult.FromSolution(GetType().Name, bestSolution, TilesToPlay, JokerToPlay);
 
             bestSolution = newSolution;
             _bestSolutionScore = _solutionScore;
@@ -48,7 +48,7 @@ public sealed class IncrementalScoreFieldComplexSolver : ComplexSolver, ISolver
             _remainingJoker = Jokers;
 
             if (UsedTiles.All(b => b))
-                return new SolverResult(GetType().Name, bestSolution, TilesToPlay, JokerToPlay, true);
+                return SolverResult.FromSolution(GetType().Name, bestSolution, TilesToPlay, JokerToPlay, true);
 
             Array.Fill(UsedTiles, false);
             Jokers = _availableJokers;
@@ -92,9 +92,8 @@ public sealed class IncrementalScoreFieldComplexSolver : ComplexSolver, ISolver
 
         // ReSharper disable once LoopCanBeConvertedToQuery
         for (var i = 0; i < UsedTiles.Length; i++)
-        {
-            if (!IsPlayerTile[i] && !UsedTiles[i]) return false;
-        }
+            if (!IsPlayerTile[i] && !UsedTiles[i])
+                return false;
 
         return Jokers == 0;
     }
@@ -106,7 +105,7 @@ public sealed class IncrementalScoreFieldComplexSolver : ComplexSolver, ISolver
         {
             if (cancellationToken.IsCancellationRequested)
                 return solution;
-                
+
             startIndex = Array.FindIndex(UsedTiles, startIndex, used => !used);
 
             if (startIndex == -1) return solution;
@@ -138,7 +137,7 @@ public sealed class IncrementalScoreFieldComplexSolver : ComplexSolver, ISolver
         {
             if (cancellationToken.IsCancellationRequested)
                 break;
-                
+
             MarkTilesAsUsed(set, firstUnusedTileIndex);
 
             // var normal = Tiles.Where((_, i) => _isPlayerTile[i] && UsedTiles[i]).Sum(t => t.Value);
@@ -181,10 +180,7 @@ public sealed class IncrementalScoreFieldComplexSolver : ComplexSolver, ISolver
 
                 UsedTiles[unusedIndex] = true;
 
-                if (IsPlayerTile[unusedIndex])
-                {
-                    _solutionScore += tile.Value;
-                }
+                if (IsPlayerTile[unusedIndex]) _solutionScore += tile.Value;
 
                 break;
             }
@@ -210,10 +206,7 @@ public sealed class IncrementalScoreFieldComplexSolver : ComplexSolver, ISolver
 
                 UsedTiles[lastIndex] = false;
 
-                if (IsPlayerTile[lastIndex])
-                {
-                    _solutionScore -= tile.Value;
-                }
+                if (IsPlayerTile[lastIndex]) _solutionScore -= tile.Value;
 
                 break;
             }

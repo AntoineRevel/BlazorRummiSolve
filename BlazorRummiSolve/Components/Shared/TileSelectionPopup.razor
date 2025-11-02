@@ -102,7 +102,7 @@
         // Supprimer l'instance de tuile après l'animation
         _selectedTileInstances.Remove(tileInstance);
         _removingTiles.Remove(tileInstance.Id);
-        
+
         // Synchroniser avec la liste SelectedTiles
         SyncSelectedTiles();
 
@@ -178,6 +178,7 @@
             {
                 _newTiles.Remove(instance.Id);
             }
+
             StateHasChanged();
         }
     }
@@ -244,7 +245,7 @@
             _selectedTileInstances.Clear();
             _removingTiles.Clear();
             _newTiles.Clear();
-            
+
             foreach (var tile in SelectedTiles)
             {
                 _selectedTileInstances.Add(new TileInstance(tile));

@@ -2,18 +2,19 @@
 <div class="solution-container">
     @foreach (var set in Solution.Runs)
     {
-        <ValidSetComponent ValidSet="set"/>
+        <ValidSetComponent ValidSet="set" HighlightTiles="HighlightTiles"/>
     }
 </div>
 <div class="solution-container">
     @foreach (var set in Solution.Groups)
     {
-        <ValidSetComponent ValidSet="set"/>
+        <ValidSetComponent ValidSet="set" HighlightTiles="HighlightTiles"/>
     }
 </div>
 
 @code {
     [Parameter] public required Solution Solution { get; set; }
+    [Parameter] public List<Tile>? HighlightTiles { get; set; }
 }
 
 <style>

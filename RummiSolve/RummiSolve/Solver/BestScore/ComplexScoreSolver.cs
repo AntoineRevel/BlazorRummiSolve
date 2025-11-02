@@ -54,13 +54,14 @@ public class ComplexScoreSolver(Tile[] tiles, int jokers, bool[] isPlayerTile)
     }
 
 
-    private void FindBestScore(Solution solution, int solutionScore, int startIndex, CancellationToken cancellationToken = default)
+    private void FindBestScore(Solution solution, int solutionScore, int startIndex,
+        CancellationToken cancellationToken = default)
     {
         while (startIndex < UsedTiles.Length - 1)
         {
             if (cancellationToken.IsCancellationRequested)
                 return;
-                
+
             startIndex = Array.FindIndex(UsedTiles, startIndex, used => !used);
 
             if (startIndex == -1) return;
@@ -74,7 +75,8 @@ public class ComplexScoreSolver(Tile[] tiles, int jokers, bool[] isPlayerTile)
         }
     }
 
-    private void TrySet<TS>(IEnumerable<TS> sets, Solution solution, int solutionScore, int firstUnusedTileIndex, CancellationToken cancellationToken = default)
+    private void TrySet<TS>(IEnumerable<TS> sets, Solution solution, int solutionScore, int firstUnusedTileIndex,
+        CancellationToken cancellationToken = default)
         where TS : ValidSet
     {
         UsedTiles[firstUnusedTileIndex] = true;
@@ -83,7 +85,7 @@ public class ComplexScoreSolver(Tile[] tiles, int jokers, bool[] isPlayerTile)
         {
             if (cancellationToken.IsCancellationRequested)
                 break;
-                
+
             MarkTilesAsUsedOut(set, firstUnusedTileIndex, out var playerSetScore);
 
             var newSolutionScore = solutionScore + firstTileScore + playerSetScore;

@@ -5,12 +5,12 @@ namespace RummiSolve.Solver.BestScore.First;
 
 public class ScoreFirstBaseSolver : BaseSolver, IScoreSolver
 {
-    public int BestScore { get; private set; }
-
     internal ScoreFirstBaseSolver(Tile[] tiles, int jokers) : base(tiles, jokers)
     {
         BestScore = 0;
     }
+
+    public int BestScore { get; private set; }
 
     public static ScoreFirstBaseSolver Create(Set playerSet)
     {
@@ -37,13 +37,14 @@ public class ScoreFirstBaseSolver : BaseSolver, IScoreSolver
         return solutionScore >= 30;
     }
 
-    private void FindBestScore(Solution solution, int solutionScore, int startIndex, CancellationToken cancellationToken = default)
+    private void FindBestScore(Solution solution, int solutionScore, int startIndex,
+        CancellationToken cancellationToken = default)
     {
         while (startIndex < UsedTiles.Length - 1)
         {
             if (cancellationToken.IsCancellationRequested)
                 return;
-                
+
             startIndex = Array.FindIndex(UsedTiles, startIndex, used => !used);
 
             if (startIndex == -1) return;
@@ -56,7 +57,8 @@ public class ScoreFirstBaseSolver : BaseSolver, IScoreSolver
         }
     }
 
-    private void TrySet<TS>(IEnumerable<TS> sets, Solution solution, int solutionScore, int firstUnusedTileIndex, CancellationToken cancellationToken = default)
+    private void TrySet<TS>(IEnumerable<TS> sets, Solution solution, int solutionScore, int firstUnusedTileIndex,
+        CancellationToken cancellationToken = default)
         where TS : ValidSet
     {
         UsedTiles[firstUnusedTileIndex] = true;
@@ -65,7 +67,7 @@ public class ScoreFirstBaseSolver : BaseSolver, IScoreSolver
         {
             if (cancellationToken.IsCancellationRequested)
                 break;
-                
+
             MarkTilesAsUsedOut(set, firstUnusedTileIndex, out var playerSetScore);
 
             var newSolutionScore = solutionScore + firstTileScore + playerSetScore;

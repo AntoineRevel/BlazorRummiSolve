@@ -12,7 +12,7 @@ public class ScoreFirstBaseSolverTests
         var playerSet = new Set([
             new Tile(10),
             new Tile(10, TileColor.Red),
-            new Tile(10, TileColor.Black),
+            new Tile(10, TileColor.Black)
         ]);
 
         var solver = ScoreFirstBaseSolver.Create(playerSet);
@@ -57,7 +57,7 @@ public class ScoreFirstBaseSolverTests
             new Tile(4, TileColor.Red),
             new Tile(5, TileColor.Red),
             new Tile(6, TileColor.Red),
-            new Tile(7, TileColor.Red),
+            new Tile(7, TileColor.Red)
         ]);
 
         var solver = ScoreFirstBaseSolver.Create(playerSet);
@@ -81,7 +81,7 @@ public class ScoreFirstBaseSolverTests
             new Tile(5, TileColor.Red),
             new Tile(6, TileColor.Red),
             new Tile(7, TileColor.Red),
-            new Tile(8, TileColor.Red),
+            new Tile(8, TileColor.Red)
         ]);
 
         var solver = ScoreFirstBaseSolver.Create(playerSet);
@@ -105,7 +105,7 @@ public class ScoreFirstBaseSolverTests
             new Tile(2, TileColor.Red),
             new Tile(true),
             new Tile(12),
-            new Tile(13),
+            new Tile(13)
         ]);
 
         var solver = ScoreFirstBaseSolver.Create(playerSet);
@@ -123,12 +123,11 @@ public class ScoreFirstBaseSolverTests
     [Fact]
     public void SearchSolution_Cantplay()
     {
-
         // Arrange
         var playerSet = new Set([
             new Tile(9, TileColor.Mango),
             new Tile(13, TileColor.Red),
-            new Tile(13),
+            new Tile(13)
         ]);
 
         var solver = ScoreFirstBaseSolver.Create(playerSet);
@@ -139,6 +138,5 @@ public class ScoreFirstBaseSolverTests
 
         // Assert
         Assert.False(canPlay);
-
     }
 }

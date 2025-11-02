@@ -12,7 +12,7 @@ public class IncrementalFirstBaseSolverTests
         var playerSet = new Set([
             new Tile(10),
             new Tile(10, TileColor.Red),
-            new Tile(10, TileColor.Black),
+            new Tile(10, TileColor.Black)
         ]);
 
         var solver = IncrementalFirstBaseSolver.Create(playerSet);
@@ -40,7 +40,7 @@ public class IncrementalFirstBaseSolverTests
 
             new Tile(1),
             new Tile(2),
-            new Tile(3),
+            new Tile(3)
         ]);
 
         var solver = IncrementalFirstBaseSolver.Create(playerSet);
@@ -97,7 +97,7 @@ public class IncrementalFirstBaseSolverTests
             new Tile(11),
             new Tile(13),
             new Tile(13, TileColor.Red),
-            new Tile(13, TileColor.Black),
+            new Tile(13, TileColor.Black)
         ]);
 
         var solver = IncrementalFirstBaseSolver.Create(playerSet);

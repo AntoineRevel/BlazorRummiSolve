@@ -12,7 +12,7 @@ public class CombinationsFirstSolverTests
         var playerSet = new Set([
             new Tile(10),
             new Tile(10, TileColor.Red),
-            new Tile(10, TileColor.Black),
+            new Tile(10, TileColor.Black)
         ]);
 
         var solver = CombinationsFirstSolver.Create(playerSet);
@@ -29,10 +29,7 @@ public class CombinationsFirstSolverTests
 
         Assert.Equal(playerSet.Tiles.Count, tilesToPlay.Count);
 
-        foreach (var tile in playerSet.Tiles)
-        {
-            Assert.Contains(tile, tilesToPlay);
-        }
+        foreach (var tile in playerSet.Tiles) Assert.Contains(tile, tilesToPlay);
     }
 
     [Fact]
@@ -44,7 +41,7 @@ public class CombinationsFirstSolverTests
 
             new Tile(10),
             new Tile(10, TileColor.Red),
-            new Tile(10, TileColor.Black),
+            new Tile(10, TileColor.Black)
         ]);
 
         var solver = CombinationsFirstSolver.Create(playerSet);
