@@ -46,8 +46,10 @@ public class AllSolversTests
         Func<Set, Set, ISolver> createSolver,
         CommonTestCases.TestCase testCase)
     {
-        // Arrange
-        var solver = createSolver(testCase.Board, testCase.Player);
+        // Arrange - Create new Set instances for each test to avoid mutation
+        var boardSet = new Set(testCase.Board);
+        var playerSet = new Set(testCase.Player);
+        var solver = createSolver(boardSet, playerSet);
 
         // Act
         var result = solver.SearchSolution();
