@@ -52,7 +52,7 @@ public class HumanPlayerService
         if (_currentPlayerChoice == null) return;
 
         IsWaitingForNextAfterDraw = true;
-        var result = new SolverResult("Human Player - Draw");
+        var result = SolverResult.Invalid("Human Player - Draw");
         _currentPlayerChoice.TrySetResult(result);
     }
 
@@ -102,8 +102,10 @@ public class HumanPlayerService
 
             // Calculate the score of selected tiles
             var totalScore = nonJokerTiles.Sum(t => t.Value);
+            result.Score = totalScore;
+
             errorMessage = totalScore < 30
-                ? $"First play must be at least 30 points. Current: {totalScore}."
+                ? $"First play must be at least 30 points. Current: {result.Score}."
                 : "Invalid combination.";
         }
 

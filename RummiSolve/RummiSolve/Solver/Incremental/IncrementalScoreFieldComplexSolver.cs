@@ -28,19 +28,18 @@ public sealed class IncrementalScoreFieldComplexSolver : ComplexSolver, ISolver
 
     public SolverResult SearchSolution(CancellationToken cancellationToken = default)
     {
-        if (Tiles.Length + Jokers <= 2) return new SolverResult(GetType().Name);
-        ;
+        if (Tiles.Length + Jokers <= 2) return SolverResult.Invalid(GetType().Name);
 
         Solution bestSolution = new();
 
         while (true)
         {
             if (cancellationToken.IsCancellationRequested)
-                return new SolverResult(GetType().Name, bestSolution, TilesToPlay, JokerToPlay);
-                
+                return SolverResult.Valid(GetType().Name, bestSolution, TilesToPlay, JokerToPlay);
+
             var newSolution = FindSolution(new Solution(), 0, cancellationToken);
 
-            if (!newSolution.IsValid) return new SolverResult(GetType().Name, bestSolution, TilesToPlay, JokerToPlay);
+            if (!newSolution.IsValid) return SolverResult.Valid(GetType().Name, bestSolution, TilesToPlay, JokerToPlay);
 
             bestSolution = newSolution;
             _bestSolutionScore = _solutionScore;
@@ -48,7 +47,7 @@ public sealed class IncrementalScoreFieldComplexSolver : ComplexSolver, ISolver
             _remainingJoker = Jokers;
 
             if (UsedTiles.All(b => b))
-                return new SolverResult(GetType().Name, bestSolution, TilesToPlay, JokerToPlay, true);
+                return SolverResult.Valid(GetType().Name, bestSolution, TilesToPlay, JokerToPlay, true);
 
             Array.Fill(UsedTiles, false);
             Jokers = _availableJokers;
@@ -106,7 +105,7 @@ public sealed class IncrementalScoreFieldComplexSolver : ComplexSolver, ISolver
         {
             if (cancellationToken.IsCancellationRequested)
                 return solution;
-                
+
             startIndex = Array.FindIndex(UsedTiles, startIndex, used => !used);
 
             if (startIndex == -1) return solution;
@@ -138,7 +137,7 @@ public sealed class IncrementalScoreFieldComplexSolver : ComplexSolver, ISolver
         {
             if (cancellationToken.IsCancellationRequested)
                 break;
-                
+
             MarkTilesAsUsed(set, firstUnusedTileIndex);
 
             // var normal = Tiles.Where((_, i) => _isPlayerTile[i] && UsedTiles[i]).Sum(t => t.Value);

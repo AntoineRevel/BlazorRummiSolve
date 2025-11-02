@@ -103,7 +103,7 @@ public class ParallelCombinationsSolver : ISolver
 
     private SolverResult GetBestResult(ConcurrentBag<(long Index, SolverResult Result)> results)
     {
-        if (results.IsEmpty) return new SolverResult(GetType().Name);
+        if (results.IsEmpty) return SolverResult.Invalid(GetType().Name);
 
         var bestResult = results.MinBy(r => r.Index);
 

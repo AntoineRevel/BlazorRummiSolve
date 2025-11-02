@@ -30,7 +30,7 @@ public class CombinationsFirstSolver : ISolver
         var found = result.Found;
 
         if (found)
-            return new SolverResult(GetType().Name, firstBinarySolver.BinarySolution, tilesFirstTry, playerJokers,
+            return SolverResult.Valid(GetType().Name, firstBinarySolver.BinarySolution, tilesFirstTry, playerJokers,
                 true);
 
         _tiles.Reverse();
@@ -38,7 +38,7 @@ public class CombinationsFirstSolver : ISolver
         for (var tileTry = _tiles.Count - 1; tileTry > 2; tileTry--)
         {
             if (cancellationToken.IsCancellationRequested)
-                return new SolverResult(GetType().Name);
+                return SolverResult.Invalid(GetType().Name);
 
             foreach (
                 var combi in
@@ -46,7 +46,7 @@ public class CombinationsFirstSolver : ISolver
                     .OrderByDescending(l => l.Sum(t => t.Value)))
             {
                 if (cancellationToken.IsCancellationRequested)
-                    return new SolverResult(GetType().Name);
+                    return SolverResult.Invalid(GetType().Name);
 
                 var joker = combi.Count(tile => tile.IsJoker);
                 if (joker > 0) combi.RemoveRange(tileTry - joker, joker);
@@ -54,12 +54,12 @@ public class CombinationsFirstSolver : ISolver
                 var solverResult = solver.SearchSolution();
                 found = solverResult.Found;
                 if (!found) continue;
-                return new SolverResult(GetType().Name, solver.BinarySolution, solver.TilesToPlay, solver.JokerToPlay);
+                return SolverResult.Valid(GetType().Name, solver.BinarySolution, solver.TilesToPlay,
+                    solver.JokerToPlay);
             }
         }
 
-        return new SolverResult(GetType().Name);
-        ;
+        return SolverResult.Invalid(GetType().Name);
     }
 
     public static CombinationsFirstSolver Create(Set playerSet)

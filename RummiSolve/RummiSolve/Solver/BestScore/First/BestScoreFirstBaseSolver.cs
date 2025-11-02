@@ -20,8 +20,7 @@ public class BestScoreFirstBaseSolver : BaseSolver, ISolver
 
         var canPlay = scoreSolver.SearchBestScore(cancellationToken);
 
-        if (!canPlay) return new SolverResult(GetType().Name);
-        ;
+        if (!canPlay) return SolverResult.Invalid(GetType().Name);
 
         _bestSolutionScore = scoreSolver.BestScore;
         var bestSolution = FindSolution(new Solution(), 0, 0, cancellationToken);
@@ -29,7 +28,7 @@ public class BestScoreFirstBaseSolver : BaseSolver, ISolver
         var jokerToPlay = _availableJokers - Jokers;
         var won = UsedTiles.All(b => b);
 
-        return new SolverResult(GetType().Name, bestSolution, tilesToPlay, jokerToPlay, won);
+        return SolverResult.Valid(GetType().Name, bestSolution, tilesToPlay, jokerToPlay, won);
     }
 
 
@@ -55,13 +54,14 @@ public class BestScoreFirstBaseSolver : BaseSolver, ISolver
     }
 
 
-    private Solution FindSolution(Solution solution, int solutionScore, int startIndex, CancellationToken cancellationToken = default)
+    private Solution FindSolution(Solution solution, int solutionScore, int startIndex,
+        CancellationToken cancellationToken = default)
     {
         while (startIndex < UsedTiles.Length - 1)
         {
             if (cancellationToken.IsCancellationRequested)
                 return solution;
-                
+
             startIndex = Array.FindIndex(UsedTiles, startIndex, used => !used);
 
             if (startIndex == -1) return solution;
@@ -92,7 +92,7 @@ public class BestScoreFirstBaseSolver : BaseSolver, ISolver
         {
             if (cancellationToken.IsCancellationRequested)
                 break;
-                
+
             MarkTilesAsUsedOut(set, firstUnusedTileIndex, out var playerSetScore);
 
             var newSolutionScore = solutionScore + firstTileScore + playerSetScore;
