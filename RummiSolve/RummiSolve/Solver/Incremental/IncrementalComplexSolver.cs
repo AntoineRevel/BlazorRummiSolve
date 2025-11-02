@@ -32,17 +32,18 @@ public sealed class IncrementalComplexSolver : ComplexSolver, ISolver
         while (true)
         {
             if (cancellationToken.IsCancellationRequested)
-                return SolverResult.Valid(GetType().Name, BestSolution, TilesToPlay, JokerToPlay);
+                return SolverResult.FromSolution(GetType().Name, BestSolution, TilesToPlay, JokerToPlay);
 
             var newSolution = FindSolution(new Solution(), 0, 0, cancellationToken);
 
-            if (!newSolution.IsValid) return SolverResult.Valid(GetType().Name, BestSolution, TilesToPlay, JokerToPlay);
+            if (!newSolution.IsValid)
+                return SolverResult.FromSolution(GetType().Name, BestSolution, TilesToPlay, JokerToPlay);
 
             BestSolution = newSolution;
             _bestUsedTiles = UsedTiles.ToArray();
             _remainingJoker = Jokers;
             if (UsedTiles.All(b => b))
-                return SolverResult.Valid(GetType().Name, BestSolution, TilesToPlay, JokerToPlay, true);
+                return SolverResult.FromSolution(GetType().Name, BestSolution, TilesToPlay, JokerToPlay, true);
 
             Array.Fill(UsedTiles, false);
             Jokers = _availableJokers;

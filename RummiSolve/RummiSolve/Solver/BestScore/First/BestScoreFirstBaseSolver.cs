@@ -28,7 +28,7 @@ public class BestScoreFirstBaseSolver : BaseSolver, ISolver
         var jokerToPlay = _availableJokers - Jokers;
         var won = UsedTiles.All(b => b);
 
-        return SolverResult.Valid(GetType().Name, bestSolution, tilesToPlay, jokerToPlay, won);
+        return SolverResult.FromSolution(GetType().Name, bestSolution, tilesToPlay, jokerToPlay, won);
     }
 
 

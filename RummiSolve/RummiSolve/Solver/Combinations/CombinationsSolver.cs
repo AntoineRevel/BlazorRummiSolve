@@ -35,7 +35,8 @@ public class CombinationsSolver : ISolver
 
         var result = firstBinarySolver.SearchSolution(cancellationToken);
         if (result.Found)
-            return SolverResult.Valid(GetType().Name, result.BestSolution, result.TilesToPlay, result.JokerToPlay,
+            return SolverResult.FromSolution(GetType().Name, result.BestSolution, result.TilesToPlay,
+                result.JokerToPlay,
                 true);
 
 

@@ -30,7 +30,8 @@ public class CombinationsFirstSolver : ISolver
         var found = result.Found;
 
         if (found)
-            return SolverResult.Valid(GetType().Name, firstBinarySolver.BinarySolution, tilesFirstTry, playerJokers,
+            return SolverResult.FromSolution(GetType().Name, firstBinarySolver.BinarySolution, tilesFirstTry,
+                playerJokers,
                 true);
 
         _tiles.Reverse();
@@ -54,7 +55,7 @@ public class CombinationsFirstSolver : ISolver
                 var solverResult = solver.SearchSolution();
                 found = solverResult.Found;
                 if (!found) continue;
-                return SolverResult.Valid(GetType().Name, solver.BinarySolution, solver.TilesToPlay,
+                return SolverResult.FromSolution(GetType().Name, solver.BinarySolution, solver.TilesToPlay,
                     solver.JokerToPlay);
             }
         }

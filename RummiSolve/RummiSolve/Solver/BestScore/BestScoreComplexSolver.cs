@@ -33,7 +33,7 @@ public class BestScoreComplexSolver : ComplexSolver, ISolver
         var jokerToPlay = _availableJokers - Jokers - _boardJokers;
         var won = UsedTiles.All(b => b);
 
-        return SolverResult.Valid(GetType().Name, bestSolution, tilesToPlay, jokerToPlay, won);
+        return SolverResult.FromSolution(GetType().Name, bestSolution, tilesToPlay, jokerToPlay, won);
     }
 
 

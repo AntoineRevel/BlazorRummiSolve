@@ -34,8 +34,8 @@ public class SolverResult
         };
     }
 
-    // Factory method pour les succès
-    public static SolverResult Valid(string source, Solution solution, IEnumerable<Tile> tilesToPlay,
+    // Factory method pour créer un résultat à partir d'une solution
+    public static SolverResult FromSolution(string source, Solution solution, IEnumerable<Tile> tilesToPlay,
         int jokerToPlay = 0, bool won = false, int score = 0)
     {
         return new SolverResult

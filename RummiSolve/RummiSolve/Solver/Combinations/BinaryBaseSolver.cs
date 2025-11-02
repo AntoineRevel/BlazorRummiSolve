@@ -13,7 +13,7 @@ public sealed class BinaryBaseSolver(Tile[] tiles, int jokers) : BaseSolver(tile
     public SolverResult SearchSolution(CancellationToken cancellationToken = default)
     {
         BinarySolution = FindSolution(new Solution(), 0, cancellationToken);
-        return SolverResult.Valid(GetType().Name, BinarySolution, TilesToPlay, JokerToPlay);
+        return SolverResult.FromSolution(GetType().Name, BinarySolution, TilesToPlay, JokerToPlay);
     }
 
     private bool ValidateCondition()
