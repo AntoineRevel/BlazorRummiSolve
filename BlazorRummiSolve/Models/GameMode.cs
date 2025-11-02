@@ -11,7 +11,7 @@ public enum GameMode
     FullAI,
 
     /// <summary>
-    ///     At least one real player. AI players play automatically with visual delay, no manual "Next Player" button needed.
+    ///     At least one real player. AI players play automatically with visual delay, no manual "Next Player" button is needed.
     /// </summary>
     Interactive
 }
