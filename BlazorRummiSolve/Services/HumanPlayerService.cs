@@ -100,11 +100,7 @@ public class HumanPlayerService
             var combiSolver = new BinaryFirstBaseSolver(nonJokerTiles, jokerCount);
             result = combiSolver.SearchSolution();
 
-            // Calculate the score of selected tiles
-            var totalScore = nonJokerTiles.Sum(t => t.Value);
-            result.Score = totalScore;
-
-            errorMessage = totalScore < 30
+            errorMessage = result.Score < 30
                 ? $"First play must be at least 30 points. Current: {result.Score}."
                 : "Invalid combination.";
         }

@@ -20,7 +20,7 @@ public class SolverResult
     public IEnumerable<Tile> TilesToPlay { get; private init; }
     public int JokerToPlay { get; private init; }
     public bool Won { get; set; }
-    public int Score { get; set; }
+    public int Score { get; private init; }
 
     // Factory method pour les échecs
     public static SolverResult Invalid(string source)
