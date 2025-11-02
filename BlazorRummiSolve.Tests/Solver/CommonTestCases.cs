@@ -27,7 +27,6 @@ public static class CommonTestCases
             ]),
             new ExpectedResult(
                 true,
-                true,
                 3,
                 0
             )
@@ -44,7 +43,6 @@ public static class CommonTestCases
                 new Tile(1, TileColor.Red)
             ]),
             new ExpectedResult(
-                true,
                 true,
                 1,
                 0
@@ -65,7 +63,6 @@ public static class CommonTestCases
             ]),
             new ExpectedResult(
                 true,
-                true,
                 2,
                 0
             )
@@ -82,7 +79,6 @@ public static class CommonTestCases
                 new Tile(4, TileColor.Red)
             ]),
             new ExpectedResult(
-                true,
                 true,
                 1,
                 0
@@ -101,7 +97,6 @@ public static class CommonTestCases
                 new Tile(true)
             ]),
             new ExpectedResult(
-                true,
                 true,
                 1,
                 1
@@ -126,7 +121,6 @@ public static class CommonTestCases
                 new Tile(3, TileColor.Red)
             ]),
             new ExpectedResult(
-                false,
                 true,
                 6,
                 0
@@ -147,7 +141,6 @@ public static class CommonTestCases
                 new Tile(1)
             ]),
             new ExpectedResult(
-                false,
                 true,
                 2,
                 0
@@ -172,7 +165,6 @@ public static class CommonTestCases
             ]),
             new ExpectedResult(
                 true,
-                true,
                 3,
                 0
             )
@@ -194,7 +186,6 @@ public static class CommonTestCases
             ]),
             new ExpectedResult(
                 true,
-                true,
                 4,
                 1
             )
@@ -211,7 +202,6 @@ public static class CommonTestCases
                 new Tile(true)
             ]),
             new ExpectedResult(
-                true,
                 true,
                 0,
                 1
@@ -230,7 +220,6 @@ public static class CommonTestCases
             ]),
             new ExpectedResult(
                 false,
-                false,
                 0,
                 0
             )
@@ -245,7 +234,6 @@ public static class CommonTestCases
     );
 
     public record ExpectedResult(
-        bool Won,
         bool IsValid,
         int TilesToPlayCount,
         int JokerToPlay

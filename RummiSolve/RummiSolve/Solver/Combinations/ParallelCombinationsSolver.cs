@@ -104,8 +104,6 @@ public class ParallelCombinationsSolver : ISolver
 
         var bestResult = results.MinBy(r => r.Index);
 
-        if (bestResult.Index == 0) bestResult.Result.Won = true;
-
         return bestResult.Result;
     }
 

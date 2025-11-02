@@ -48,7 +48,7 @@ public sealed class IncrementalScoreFieldComplexSolver : ComplexSolver, ISolver
             _remainingJoker = Jokers;
 
             if (UsedTiles.All(b => b))
-                return SolverResult.FromSolution(GetType().Name, bestSolution, TilesToPlay, JokerToPlay, true);
+                return SolverResult.FromSolution(GetType().Name, bestSolution, TilesToPlay, JokerToPlay);
 
             Array.Fill(UsedTiles, false);
             Jokers = _availableJokers;

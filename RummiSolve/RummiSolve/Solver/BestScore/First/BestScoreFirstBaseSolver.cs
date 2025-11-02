@@ -26,9 +26,8 @@ public class BestScoreFirstBaseSolver : BaseSolver, ISolver
         var bestSolution = FindSolution(new Solution(), 0, 0, cancellationToken);
         var tilesToPlay = Tiles.Where((_, i) => UsedTiles[i]);
         var jokerToPlay = _availableJokers - Jokers;
-        var won = UsedTiles.All(b => b);
 
-        return SolverResult.FromSolution(GetType().Name, bestSolution, tilesToPlay, jokerToPlay, won);
+        return SolverResult.FromSolution(GetType().Name, bestSolution, tilesToPlay, jokerToPlay);
     }
 
 

@@ -26,13 +26,12 @@ public class CombinationsFirstSolver : ISolver
 
         var firstBinarySolver = new BinaryFirstBaseSolver(tilesFirstTry.ToArray(), playerJokers);
 
-        var result = firstBinarySolver.SearchSolution();
+        var result = firstBinarySolver.SearchSolution(cancellationToken);
         var found = result.Found;
 
         if (found)
             return SolverResult.FromSolution(GetType().Name, firstBinarySolver.BinarySolution, tilesFirstTry,
-                playerJokers,
-                true);
+                playerJokers);
 
         _tiles.Reverse();
 

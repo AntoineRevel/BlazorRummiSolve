@@ -21,11 +21,9 @@ public class CombinationsFirstSolverTests
         var result = solver.SearchSolution();
         var solution = result.BestSolution;
         var tilesToPlay = result.TilesToPlay.ToList();
-        var won = result.Won;
 
         // Assert
         Assert.True(solution.IsValid);
-        Assert.True(won);
 
         Assert.Equal(playerSet.Tiles.Count, tilesToPlay.Count);
 
@@ -50,11 +48,9 @@ public class CombinationsFirstSolverTests
         var result = solver.SearchSolution();
         var solution = result.BestSolution;
         var tilesToPlay = result.TilesToPlay.ToList();
-        var won = result.Won;
 
         // Assert
         Assert.True(solution.IsValid);
-        Assert.False(won);
 
         Assert.Equal(3, tilesToPlay.Count);
     }

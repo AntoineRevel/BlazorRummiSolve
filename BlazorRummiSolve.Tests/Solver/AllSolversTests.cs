@@ -54,10 +54,6 @@ public class AllSolversTests
 
         // Assert
         Assert.True(
-            testCase.Expected.Won == result.Won,
-            $"{solverName} - {testCase.Name}: Expected Won={testCase.Expected.Won}, got {result.Won}"
-        );
-        Assert.True(
             testCase.Expected.IsValid == result.BestSolution.IsValid,
             $"{solverName} - {testCase.Name}: Expected IsValid={testCase.Expected.IsValid}, got {result.BestSolution.IsValid}"
         );

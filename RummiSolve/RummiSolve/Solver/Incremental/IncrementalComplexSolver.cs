@@ -43,7 +43,7 @@ public sealed class IncrementalComplexSolver : ComplexSolver, ISolver
             _bestUsedTiles = UsedTiles.ToArray();
             _remainingJoker = Jokers;
             if (UsedTiles.All(b => b))
-                return SolverResult.FromSolution(GetType().Name, BestSolution, TilesToPlay, JokerToPlay, true);
+                return SolverResult.FromSolution(GetType().Name, BestSolution, TilesToPlay, JokerToPlay);
 
             Array.Fill(UsedTiles, false);
             Jokers = _availableJokers;
