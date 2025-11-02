@@ -1,20 +1,91 @@
 @using RummiSolve
 <div class="solution-container">
-    @foreach (var set in Solution.Runs)
+    @foreach (var setWithIndex in GetRunsWithIndices())
     {
-        <ValidSetComponent ValidSet="set" HighlightTiles="HighlightTiles"/>
+        <ValidSetComponent ValidSet="setWithIndex.Set" StartIndex="setWithIndex.StartIndex" HighlightIndices="HighlightIndices"/>
     }
 </div>
 <div class="solution-container">
-    @foreach (var set in Solution.Groups)
+    @foreach (var setWithIndex in GetGroupsWithIndices())
     {
-        <ValidSetComponent ValidSet="set" HighlightTiles="HighlightTiles"/>
+        <ValidSetComponent ValidSet="setWithIndex.Set" StartIndex="setWithIndex.StartIndex" HighlightIndices="HighlightIndices"/>
     }
 </div>
 
 @code {
     [Parameter] public required Solution Solution { get; set; }
     [Parameter] public List<Tile>? HighlightTiles { get; set; }
+
+    private HashSet<int>? HighlightIndices => _highlightIndices ??= ComputeHighlightIndices();
+    private HashSet<int>? _highlightIndices;
+
+    private List<(ValidSet Set, int StartIndex)> GetRunsWithIndices()
+    {
+        var result = new List<(ValidSet, int)>();
+        var currentIndex = 0;
+
+        foreach (var set in Solution.Runs)
+        {
+            result.Add((set, currentIndex));
+            currentIndex += set.Tiles.Length;
+        }
+
+        return result;
+    }
+
+    private List<(ValidSet Set, int StartIndex)> GetGroupsWithIndices()
+    {
+        var result = new List<(ValidSet, int)>();
+        var currentIndex = Solution.Runs.Sum(r => r.Tiles.Length);
+
+        foreach (var set in Solution.Groups)
+        {
+            result.Add((set, currentIndex));
+            currentIndex += set.Tiles.Length;
+        }
+
+        return result;
+    }
+
+    private HashSet<int> ComputeHighlightIndices()
+    {
+        var highlightIndices = new HashSet<int>();
+
+        if (HighlightTiles == null || HighlightTiles.Count == 0)
+            return highlightIndices;
+
+        // Build a list of all tiles with their global indices
+        var allTiles = new List<Tile>();
+        foreach (var set in Solution.Runs)
+        {
+            allTiles.AddRange(set.Tiles);
+        }
+        foreach (var set in Solution.Groups)
+        {
+            allTiles.AddRange(set.Tiles);
+        }
+
+        // For each tile to highlight, find the first matching tile index that hasn't been used yet
+        foreach (var tileToHighlight in HighlightTiles)
+        {
+            for (int i = 0; i < allTiles.Count; i++)
+            {
+                if (!highlightIndices.Contains(i) && allTiles[i].Equals(tileToHighlight))
+                {
+                    highlightIndices.Add(i);
+                    break; // Only highlight one occurrence per tile in HighlightTiles
+                }
+            }
+        }
+
+        return highlightIndices;
+    }
+
+    protected override void OnParametersSet()
+    {
+        // Reset cached highlight indices when parameters change
+        _highlightIndices = null;
+    }
 }
 
 <style>
