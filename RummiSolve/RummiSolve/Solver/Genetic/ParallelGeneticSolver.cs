@@ -684,6 +684,20 @@ public record GeneticConfiguration
         EliteSize = 20
     };
 
+    /// <summary>
+    ///     Configuration ultra-agressive pour recherche exhaustive de la meilleure solution
+    ///     Attention: beaucoup plus lent (10-30 secondes par coup)
+    /// </summary>
+    public static GeneticConfiguration UltraAggressive => new()
+    {
+        PopulationSize = 300,
+        PopulationCount = 12,
+        MaxGenerations = 2000,
+        MutationRate = 0.25,
+        EliteSize = 30,
+        StagnationThreshold = 20
+    };
+
     public static GeneticConfiguration Fast => new()
     {
         PopulationSize = 50,

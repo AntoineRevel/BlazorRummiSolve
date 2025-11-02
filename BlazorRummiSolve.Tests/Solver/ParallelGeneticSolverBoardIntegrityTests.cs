@@ -429,4 +429,110 @@ public class ParallelGeneticSolverBoardIntegrityTests
         Assert.True(result.Found, "Une solution devrait être trouvée");
         Assert.Equal(3, result.TilesToPlay.Count());
     }
+
+    [Fact]
+    public void SearchSolution_Turn11_ShouldFindSolutionWithReorganization()
+    {
+        // Arrange - Configuration du tour 11 du jeu 87d8849e-8739-4b5f-871b-4ee74bc90f13
+        // Le ParallelGeneticSolver peut avoir des difficultés à trouver une solution
+        //
+        // Plateau: 11-12-13 (bleu), 1-2-3 (orange),
+        //          2-2-2 (bleu-rouge-noir), 8-8-8 (bleu-orange-noir),
+        //          9-9-9 (bleu-rouge-noir), 9-9-9 (bleu-orange-noir), 13-13-13 (rouge-orange-noir)
+        //
+        // Rack BobNew: 6 noir, 4 noir, 2 noir, 13 noir, 1 noir, 2 bleu, 10 noir, 6 rouge,
+        //              10 rouge, 8 noir, 11 rouge, 7 bleu, 5 noir, J (joker)
+        //
+        // Solutions possibles:
+        // - Jouer 10 noir + 8 noir
+        // - Jouer 2 rouge, 10 rouge, 11 rouge, 7 bleu (comme montré dans l'UI)
+
+        // Teste plusieurs fois car l'algorithme génétique est aléatoire
+        const int iterations = 5;
+        var successCount = 0;
+        var solutions = new List<string>();
+
+        for (var i = 0; i < iterations; i++)
+        {
+            var boardSet = new Set([
+                // Suite 11-12-13 (bleu)
+                new Tile(11),
+                new Tile(12),
+                new Tile(13),
+                // Suite 1-2-3 (orange)
+                new Tile(1, TileColor.Mango),
+                new Tile(2, TileColor.Mango),
+                new Tile(3, TileColor.Mango),
+                // Groupe de 2
+                new Tile(2),
+                new Tile(2, TileColor.Red),
+                new Tile(2, TileColor.Black),
+                // Groupe de 8
+                new Tile(8),
+                new Tile(8, TileColor.Mango),
+                new Tile(8, TileColor.Black),
+                // Premier groupe de 9
+                new Tile(9),
+                new Tile(9, TileColor.Red),
+                new Tile(9, TileColor.Black),
+                // Deuxième groupe de 9
+                new Tile(9),
+                new Tile(9, TileColor.Mango),
+                new Tile(9, TileColor.Black),
+                // Groupe de 13
+                new Tile(13, TileColor.Red),
+                new Tile(13, TileColor.Mango),
+                new Tile(13, TileColor.Black)
+            ]);
+
+            var playerSet = new Set([
+                new Tile(6, TileColor.Black),
+                new Tile(4, TileColor.Black),
+                new Tile(2, TileColor.Black),
+                new Tile(13, TileColor.Black),
+                new Tile(1, TileColor.Black),
+                new Tile(2),
+                new Tile(10, TileColor.Black),
+                new Tile(6, TileColor.Red),
+                new Tile(10, TileColor.Red),
+                new Tile(8, TileColor.Black),
+                new Tile(11, TileColor.Red),
+                new Tile(7),
+                new Tile(5, TileColor.Black),
+                new Tile(true) // Joker
+            ]);
+
+            // Test avec configuration Fast (comme peut-être utilisée dans l'app?)
+            var config = GeneticConfiguration.Fast;
+            var solver = ParallelGeneticSolver.Create(boardSet, playerSet, false, config);
+
+            // Act - Timeout court comme dans l'application Blazor
+            var cts = new CancellationTokenSource(TimeSpan.FromSeconds(3));
+            var result = solver.SearchSolution(cts.Token);
+
+            if (result.Found)
+            {
+                successCount++;
+                var playedTiles = result.TilesToPlay.ToList();
+                var solutionDesc =
+                    $"[{playedTiles.Count} tuiles, score {result.Score}]: {string.Join(", ", playedTiles.Select(t => t.IsJoker ? "J" : $"{t.Value}{t.Color.ToString()[0]}"))}";
+                solutions.Add(solutionDesc);
+            }
+        }
+
+        // Affiche les résultats
+        Console.WriteLine($"=== Résultat du solveur Turn 11 sur {iterations} itérations ===");
+        Console.WriteLine($"Succès: {successCount}/{iterations}");
+        Console.WriteLine("Solutions trouvées:");
+        foreach (var sol in solutions) Console.WriteLine($"  - {sol}");
+
+        _testOutputHelper.WriteLine($"=== Résultat du solveur Turn 11 sur {iterations} itérations ===");
+        _testOutputHelper.WriteLine($"Succès: {successCount}/{iterations}");
+        _testOutputHelper.WriteLine("Solutions trouvées:");
+        foreach (var sol in solutions) _testOutputHelper.WriteLine($"  - {sol}");
+
+        // Le solveur devrait trouver une solution dans au moins une itération
+        Assert.True(successCount > 0,
+            $"Le solveur devrait trouver une solution dans au moins une des {iterations} itérations");
+    }
 }

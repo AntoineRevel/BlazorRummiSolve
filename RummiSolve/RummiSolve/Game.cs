@@ -1,4 +1,5 @@
 using RummiSolve.Results;
+using RummiSolve.Solver.Genetic;
 using RummiSolve.Strategies;
 using static System.Console;
 
@@ -103,7 +104,12 @@ public class Game(Guid id)
             if (isRealPlayer && humanPlayerCallback != null)
                 strategy = new HumanPlayerStrategy(humanPlayerCallback);
             else
-                strategy = new PureGeneticStrategy();
+                // Configuration Aggressive: cherche beaucoup plus la meilleure solution
+                // - PopulationSize: 200 (vs 100 Default)
+                // - PopulationCount: 8 populations parallèles (vs 4 Default)
+                // - MaxGenerations: 1000 (vs 500 Default)
+                // - MutationRate: 0.2 (vs 0.1 Default)
+                strategy = new PureGeneticStrategy(GeneticConfiguration.UltraAggressive, false);
 
             Players.Add(new Player(playerNames[i], playerTiles.ToList(), strategy));
         }
