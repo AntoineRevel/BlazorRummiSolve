@@ -32,9 +32,10 @@
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003A_003CPrivateImplementationDetails_003E_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003F_002E_002E_003F_002E_002E_003FLibrary_003FApplication_0020Support_003FJetBrains_003FRider2024_002E3_003Fresharper_002Dhost_003FDecompilerCache_003Fdecompiler_003F9aa08d4c0d264d768fee29de4e46ad305a8a80_003F92_003Ff39b1524_003F_003CPrivateImplementationDetails_003E_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
     <s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=AI/@EntryIndexedValue">AI</s:String>
     <s:String
-			x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=a3f41cdd_002D7cd2_002D4f3c_002D9226_002Dc9a8c0ad8ec4/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from &amp;lt;BlazorRummiSolve.Tests&amp;gt;" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+            x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=7d399eed_002D95be_002D47c4_002D87c0_002D04fb54e2d565/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from &amp;lt;BlazorRummiSolve.Tests&amp;gt;" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;Project Location="/Users/antoinerevel/Documents/Projet perso/BlazorRummiSolve/BlazorRummiSolve/BlazorRummiSolve.Tests" Presentation="&amp;lt;BlazorRummiSolve.Tests&amp;gt;" /&gt;
 &lt;/SessionState&gt;</s:String>
+    
 	
     
 	

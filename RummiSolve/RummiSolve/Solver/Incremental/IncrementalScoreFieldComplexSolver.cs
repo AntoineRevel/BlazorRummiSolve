@@ -140,9 +140,6 @@ public sealed class IncrementalScoreFieldComplexSolver : ComplexSolver, ISolver
 
             MarkTilesAsUsed(set, firstUnusedTileIndex);
 
-            // var normal = Tiles.Where((_, i) => _isPlayerTile[i] && UsedTiles[i]).Sum(t => t.Value);
-            // if (_solutionScore != normal) throw new Exception();
-
             if (ValidateCondition()) solution.IsValid = true;
 
             else solution = FindSolution(solution, firstUnusedTileIndex, cancellationToken);

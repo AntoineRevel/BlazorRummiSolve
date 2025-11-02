@@ -3,7 +3,7 @@ using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Solver.BestScore;
 
-public class ComplexScoreSolver(Tile[] tiles, int jokers, bool[] isPlayerTile)
+public class ComplexScoreSolver(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardJokers)
     : ComplexSolver(tiles, jokers, isPlayerTile), IScoreSolver
 {
     public int BestScore { get; private set; }
@@ -32,7 +32,8 @@ public class ComplexScoreSolver(Tile[] tiles, int jokers, bool[] isPlayerTile)
         return new ComplexScoreSolver(
             finalTiles,
             totalJokers,
-            isPlayerTile
+            isPlayerTile,
+            boardSet.Jokers
         );
     }
 
@@ -86,7 +87,7 @@ public class ComplexScoreSolver(Tile[] tiles, int jokers, bool[] isPlayerTile)
             if (cancellationToken.IsCancellationRequested)
                 break;
 
-            MarkTilesAsUsedOut(set, firstUnusedTileIndex, out var playerSetScore);
+            MarkTilesAsUsedOut(set, firstUnusedTileIndex, boardJokers, out var playerSetScore);
 
             var newSolutionScore = solutionScore + firstTileScore + playerSetScore;
 

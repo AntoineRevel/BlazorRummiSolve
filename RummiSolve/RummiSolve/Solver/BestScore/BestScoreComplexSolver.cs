@@ -20,7 +20,7 @@ public class BestScoreComplexSolver : ComplexSolver, ISolver
 
     public SolverResult SearchSolution(CancellationToken cancellationToken = default)
     {
-        var scoreSolver = new ComplexScoreSolver(Tiles, Jokers, IsPlayerTile);
+        var scoreSolver = new ComplexScoreSolver(Tiles, Jokers, IsPlayerTile, _boardJokers);
 
         var canPlay = scoreSolver.SearchBestScore(cancellationToken);
 
@@ -118,7 +118,7 @@ public class BestScoreComplexSolver : ComplexSolver, ISolver
             if (cancellationToken.IsCancellationRequested)
                 break;
 
-            MarkTilesAsUsedOut(set, firstUnusedTileIndex, out var playerSetScore);
+            MarkTilesAsUsedOut(set, firstUnusedTileIndex, _boardJokers, out var playerSetScore);
 
             var newSolutionScore = solutionScore + firstTileScore + playerSetScore;
 

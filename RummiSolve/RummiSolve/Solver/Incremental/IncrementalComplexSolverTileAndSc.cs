@@ -147,7 +147,7 @@ public sealed class IncrementalComplexSolverTileAndSc : ComplexSolver, ISolver
             if (cancellationToken.IsCancellationRequested)
                 break;
 
-            MarkTilesAsUsedOut(set, firstUnusedTileIndex, out var playerSetScore);
+            MarkTilesAsUsedOut(set, firstUnusedTileIndex, _boardJokers, out var playerSetScore);
 
             var newSolutionScore = solutionScore + firstTileScore + playerSetScore;
 

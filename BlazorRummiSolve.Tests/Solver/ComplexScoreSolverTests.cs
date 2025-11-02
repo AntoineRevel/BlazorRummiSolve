@@ -229,7 +229,7 @@ public class ComplexScoreSolverTests
 
         // Assert
         Assert.True(canPlay);
-        Assert.Equal(35, bestScore);
+        Assert.Equal(36, bestScore);
     }
 
     [Fact]
