@@ -1,5 +1,6 @@
 using RummiSolve;
 using RummiSolve.Solver.Genetic;
+using Xunit.Abstractions;
 
 namespace BlazorRummiSolve.Tests.Solver;
 
@@ -8,6 +9,13 @@ namespace BlazorRummiSolve.Tests.Solver;
 /// </summary>
 public class ParallelGeneticSolverBoardIntegrityTests
 {
+    private readonly ITestOutputHelper _testOutputHelper;
+
+    public ParallelGeneticSolverBoardIntegrityTests(ITestOutputHelper testOutputHelper)
+    {
+        _testOutputHelper = testOutputHelper;
+    }
+
     [Fact]
     public void SearchSolution_SimpleBoardTiles_AllBoardTilesPresent()
     {
@@ -259,9 +267,9 @@ public class ParallelGeneticSolverBoardIntegrityTests
     }
 
     [Fact]
-    public void SearchSolution_BoardTilesNotReorganized_StillAllPresent()
+    public void SearchSolution_BoardTilesNotReorganized_NoSolutionFound()
     {
-        // Arrange - Cas où le joueur ne peut pas jouer toutes ses tuiles
+        // Arrange - Cas où le joueur ne peut pas jouer ses tuiles
         var boardSet = new Set([
             new Tile(1, TileColor.Red),
             new Tile(2, TileColor.Red),
@@ -272,7 +280,7 @@ public class ParallelGeneticSolverBoardIntegrityTests
         ]);
 
         var playerSet = new Set([
-            new Tile(5, TileColor.Black) // Ne peut pas être combinée facilement
+            new Tile(5, TileColor.Black) // Ne peut pas être combinée
         ]);
 
         var config = GeneticConfiguration.Fast;
@@ -281,15 +289,12 @@ public class ParallelGeneticSolverBoardIntegrityTests
         // Act
         var result = solver.SearchSolution();
 
-        // Assert - Même si aucune tuile du joueur n'est jouée, le plateau doit être intact
-        var solutionTiles = result.BestSolution.GetSet().Tiles;
-
-        Assert.True(solutionTiles.Count >= boardSet.Tiles.Count,
-            "Le plateau doit au minimum contenir toutes ses tuiles d'origine");
+        // Assert - Le joueur ne peut rien jouer, donc pas de solution
+        Assert.False(result.Found, "Aucune solution ne devrait être trouvée si le joueur ne peut rien jouer");
     }
 
     [Fact]
-    public void SearchSolution_EmptyPlayer_BoardUnmodified()
+    public void SearchSolution_EmptyPlayer_NoSolutionFound()
     {
         // Arrange - Joueur sans tuiles (cas limite)
         var boardSet = new Set([
@@ -306,13 +311,122 @@ public class ParallelGeneticSolverBoardIntegrityTests
         // Act
         var result = solver.SearchSolution();
 
+        // Assert - Sans tuiles, le joueur ne peut rien jouer
+        Assert.False(result.Found, "Aucune solution ne devrait être trouvée si le joueur n'a pas de tuiles");
+    }
+
+    [Fact]
+    public void SearchSolution_BoardWith2Groups_ShouldNotUsePlayerTileInsteadOfBoardTile()
+    {
+        // Arrange - Reproduit le bug où le solveur joue le 2 noir alors qu'il est sur le plateau
+        // Configuration exacte du jeu problématique:
+        // Plateau: 2 bleu, 2 orange, 2 noir, 13 bleu, 13 rouge, 13 noir (2 groupes)
+        // Rack joueur: 1 orange, 11 bleu, 3 noir, 4 bleu, 9 noir, 6 noir, 3 orange, 2 Noir
+        // Résultat attendu: Aucune solution trouvée (le joueur ne peut rien jouer)
+
+        var boardSet = new Set([
+            // Groupe de 2
+            new Tile(2),
+            new Tile(2, TileColor.Mango),
+            new Tile(2, TileColor.Black),
+            // Groupe de 13
+            new Tile(13),
+            new Tile(13, TileColor.Red),
+            new Tile(13, TileColor.Black)
+        ]);
+
+        var playerSet = new Set([
+            new Tile(1, TileColor.Mango),
+            new Tile(11),
+            new Tile(3, TileColor.Black),
+            new Tile(4),
+            new Tile(9, TileColor.Black),
+            new Tile(6, TileColor.Black),
+            new Tile(3, TileColor.Mango),
+            new Tile(2, TileColor.Black)
+        ]);
+
+        var config = GeneticConfiguration.Default;
+        var solver = ParallelGeneticSolver.Create(boardSet, playerSet, false, config);
+
+        // Act
+        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        var result = solver.SearchSolution(cts.Token);
+
+        // Assert - Le joueur ne devrait pas pouvoir jouer avec ces tuiles
+        if (result.Found)
+        {
+            // Debug: affiche la solution trouvée pour comprendre le bug
+            var solutionTiles = result.BestSolution.GetSet().Tiles;
+            var playedTiles = result.TilesToPlay.ToList();
+
+            var message = $"Une solution a été trouvée alors qu'elle ne devrait pas!\n" +
+                          $"Tuiles jouées: {string.Join(", ", playedTiles.Select(t => $"{t.Value} {t.Color}"))}\n" +
+                          $"Score: {result.Score}\n" +
+                          $"Runs: {result.BestSolution.Runs.Count}, Groups: {result.BestSolution.Groups.Count}";
+
+            Assert.Fail(message);
+        }
+    }
+
+    [Fact]
+    public void SearchSolution_ComplexBoardWithMultiple9s_ShouldPlayOptimalSolution()
+    {
+        // Arrange - Configuration du tour 8 du jeu 87d8849e-8739-4b5f-871b-4ee74bc90f13
+        // Plateau: 11-12-13 (bleu), 2-2-2 (bleu-orange-noir), 8-8-8 (bleu-orange-noir),
+        //          9-9-9 (bleu-rouge-noir), 13-13-13 (rouge-orange-noir)
+        // Rack: 1 orange, 11 bleu, 3 noir, 4 bleu, 9 noir, 6 noir, 3 orange, 2 noir,
+        //       7 orange, 5 bleu, 9 bleu, 5 noir, 9 orange
+        // Le solveur devrait pouvoir jouer au moins le 9 orange, idéalement optimiser davantage
+
+        var boardSet = new Set([
+            // Suite 11-12-13 (bleu? à vérifier selon les couleurs du rack)
+            new Tile(11, TileColor.Red),
+            new Tile(12, TileColor.Red),
+            new Tile(13, TileColor.Red),
+            // Groupe de 2
+            new Tile(2),
+            new Tile(2, TileColor.Mango),
+            new Tile(2, TileColor.Black),
+            // Groupe de 8
+            new Tile(8),
+            new Tile(8, TileColor.Mango),
+            new Tile(8, TileColor.Black),
+            // Groupe de 9
+            new Tile(9),
+            new Tile(9, TileColor.Red),
+            new Tile(9, TileColor.Black),
+            // Groupe de 13
+            new Tile(13, TileColor.Mango),
+            new Tile(13),
+            new Tile(13, TileColor.Black)
+        ]);
+
+        var playerSet = new Set([
+            new Tile(1, TileColor.Mango),
+            new Tile(11),
+            new Tile(3, TileColor.Black),
+            new Tile(4),
+            new Tile(9, TileColor.Black),
+            new Tile(6, TileColor.Black),
+            new Tile(3, TileColor.Mango),
+            new Tile(2, TileColor.Black),
+            new Tile(7, TileColor.Mango),
+            new Tile(5),
+            new Tile(9),
+            new Tile(5, TileColor.Black),
+            new Tile(9, TileColor.Mango)
+        ]);
+
+        var config = GeneticConfiguration.Default;
+        var solver = ParallelGeneticSolver.Create(boardSet, playerSet, false, config);
+
+        // Act
+        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+        var result = solver.SearchSolution(cts.Token);
+
         // Assert
-        var solutionTiles = result.BestSolution.GetSet().Tiles;
-
-        Assert.Equal(boardSet.Tiles.Count, solutionTiles.Count);
-
-        foreach (var boardTile in boardSet.Tiles)
-            Assert.Contains(solutionTiles, t =>
-                t.Value == boardTile.Value && t.Color == boardTile.Color);
+        Assert.True(result.Found, "Une solution devrait être trouvée");
+        Assert.Equal(3, result.TilesToPlay.Count());
     }
 }

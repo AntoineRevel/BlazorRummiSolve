@@ -58,14 +58,17 @@ public class ParallelGeneticSolver : ISolver
                 var usedPlayerTiles = GetUsedPlayerTiles(bestSolution);
                 var usedPlayerJokers = CountUsedPlayerJokers(bestSolution);
 
-                return SolverResult.FromSolution(
-                    GetType().Name,
-                    bestSolution,
-                    usedPlayerTiles,
-                    usedPlayerJokers,
-                    usedPlayerTiles.Count() == _playerTiles.Length && usedPlayerJokers == _playerJokers,
-                    usedPlayerTiles.Sum(t => t.Value)
-                );
+                // Vérifie que le joueur a effectivement joué au moins une tuile
+                // Une solution qui ne joue rien n'est pas une vraie solution
+                if (usedPlayerTiles.Any() || usedPlayerJokers > 0)
+                    return SolverResult.FromSolution(
+                        GetType().Name,
+                        bestSolution,
+                        usedPlayerTiles,
+                        usedPlayerJokers,
+                        usedPlayerTiles.Count() == _playerTiles.Length && usedPlayerJokers == _playerJokers,
+                        usedPlayerTiles.Sum(t => t.Value)
+                    );
             }
         }
         catch (OperationCanceledException)
@@ -318,23 +321,25 @@ public class ParallelGeneticSolver : ISolver
         var usedPlayerTiles = new List<Tile>();
         var remainingPlayerTiles = _playerTiles.ToList();
 
-        // Parcourt les runs et identifie les tuiles du joueur
+        // Collecte toutes les tuiles de la solution
+        var solutionTiles = new List<Tile>();
         foreach (var run in solution.Runs)
-        foreach (var tile in run.Tiles.Where(t => !t.IsJoker))
+            solutionTiles.AddRange(run.Tiles.Where(t => !t.IsJoker));
+        foreach (var group in solution.Groups)
+            solutionTiles.AddRange(group.Tiles.Where(t => !t.IsJoker));
+
+        // D'abord, retire les tuiles du plateau de la solution
+        // Cela évite de confondre les tuiles du plateau avec celles du joueur
+        foreach (var boardTile in _boardTiles)
         {
-            var index = remainingPlayerTiles.FindIndex(t => t.Equals(tile));
-            if (index >= 0)
-            {
-                usedPlayerTiles.Add(remainingPlayerTiles[index]);
-                remainingPlayerTiles.RemoveAt(index);
-            }
+            var index = solutionTiles.FindIndex(t => t.Value == boardTile.Value && t.Color == boardTile.Color);
+            if (index >= 0) solutionTiles.RemoveAt(index);
         }
 
-        // Parcourt les groupes et identifie les tuiles du joueur
-        foreach (var group in solution.Groups)
-        foreach (var tile in group.Tiles.Where(t => !t.IsJoker))
+        // Ensuite, les tuiles restantes dans solutionTiles sont celles du joueur
+        foreach (var tile in solutionTiles)
         {
-            var index = remainingPlayerTiles.FindIndex(t => t.Equals(tile));
+            var index = remainingPlayerTiles.FindIndex(t => t.Value == tile.Value && t.Color == tile.Color);
             if (index >= 0)
             {
                 usedPlayerTiles.Add(remainingPlayerTiles[index]);
