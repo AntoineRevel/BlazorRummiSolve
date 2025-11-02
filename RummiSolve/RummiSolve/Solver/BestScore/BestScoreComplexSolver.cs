@@ -73,9 +73,8 @@ public class BestScoreComplexSolver : ComplexSolver, ISolver
 
         // ReSharper disable once LoopCanBeConvertedToQuery
         for (var i = 0; i < UsedTiles.Length; i++)
-        {
-            if (!IsPlayerTile[i] && !UsedTiles[i]) return false;
-        }
+            if (!IsPlayerTile[i] && !UsedTiles[i])
+                return false;
 
         return Jokers == 0;
     }

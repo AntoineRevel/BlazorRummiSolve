@@ -4,9 +4,9 @@ namespace BlazorRummiSolve.Services;
 
 public class CancellationService
 {
+    private static CancellationService? _instance;
     private readonly IJSRuntime _jsRuntime;
     private CancellationTokenSource? _currentCts;
-    private static CancellationService? _instance;
 
     public CancellationService(IJSRuntime jsRuntime)
     {
@@ -24,14 +24,17 @@ public class CancellationService
         try
         {
             await _jsRuntime.InvokeVoidAsync("eval", """
-                if (!window.rummiCancelSetup) {
-                    window.rummiCancelSetup = true;
-                    window.addEventListener('beforeunload', () => DotNet.invokeMethodAsync('BlazorRummiSolve', 'CancelFromJS'));
-                    window.addEventListener('unload', () => DotNet.invokeMethodAsync('BlazorRummiSolve', 'CancelFromJS'));
-                }
-            """);
+                                                         if (!window.rummiCancelSetup) {
+                                                             window.rummiCancelSetup = true;
+                                                             window.addEventListener('beforeunload', () => DotNet.invokeMethodAsync('BlazorRummiSolve', 'CancelFromJS'));
+                                                             window.addEventListener('unload', () => DotNet.invokeMethodAsync('BlazorRummiSolve', 'CancelFromJS'));
+                                                         }
+                                                     """);
         }
-        catch { /* Ignore if JS not ready */ }
+        catch
+        {
+            /* Ignore if JS not ready */
+        }
 
         return _currentCts.Token;
     }

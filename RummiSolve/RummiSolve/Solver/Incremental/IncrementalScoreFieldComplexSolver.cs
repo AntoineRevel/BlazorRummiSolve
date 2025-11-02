@@ -92,9 +92,8 @@ public sealed class IncrementalScoreFieldComplexSolver : ComplexSolver, ISolver
 
         // ReSharper disable once LoopCanBeConvertedToQuery
         for (var i = 0; i < UsedTiles.Length; i++)
-        {
-            if (!IsPlayerTile[i] && !UsedTiles[i]) return false;
-        }
+            if (!IsPlayerTile[i] && !UsedTiles[i])
+                return false;
 
         return Jokers == 0;
     }
@@ -181,10 +180,7 @@ public sealed class IncrementalScoreFieldComplexSolver : ComplexSolver, ISolver
 
                 UsedTiles[unusedIndex] = true;
 
-                if (IsPlayerTile[unusedIndex])
-                {
-                    _solutionScore += tile.Value;
-                }
+                if (IsPlayerTile[unusedIndex]) _solutionScore += tile.Value;
 
                 break;
             }
@@ -210,10 +206,7 @@ public sealed class IncrementalScoreFieldComplexSolver : ComplexSolver, ISolver
 
                 UsedTiles[lastIndex] = false;
 
-                if (IsPlayerTile[lastIndex])
-                {
-                    _solutionScore -= tile.Value;
-                }
+                if (IsPlayerTile[lastIndex]) _solutionScore -= tile.Value;
 
                 break;
             }

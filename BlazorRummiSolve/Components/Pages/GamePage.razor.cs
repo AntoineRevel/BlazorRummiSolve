@@ -56,7 +56,7 @@ public partial class GamePage
     private bool ShowHint { get; set; }
     private bool IsWaitingForHumanPlayer { get; set; }
     private List<bool> PlayerTypes { get; set; } = [];
-    private List<Tile> SelectedTilesForPlay { get; set; } = [];
+    private List<Tile> SelectedTilesForPlay { get; } = [];
     private GameMode CurrentGameMode { get; set; }
 
     // Drawn tile toast notification properties
@@ -103,10 +103,7 @@ public partial class GamePage
             return false;
 
         // In Interactive mode, NEVER show AI rack (only show what they play on the board)
-        if (CurrentGameMode == GameMode.Interactive)
-        {
-            return false;
-        }
+        if (CurrentGameMode == GameMode.Interactive) return false;
 
         // In Full AI mode, show rack when it's an AI's turn
         var actualPlayerIndex = _currentGame.Players.IndexOf(CurrentPlayer);
@@ -357,10 +354,7 @@ public partial class GamePage
 
     private async Task HandleKeyDown(KeyboardEventArgs e)
     {
-        if (e.Key == "Enter" && !IsLoading && !_isGameOver)
-        {
-            await HandleActionAsync();
-        }
+        if (e.Key == "Enter" && !IsLoading && !_isGameOver) await HandleActionAsync();
     }
 
     private List<string> ParsePlayerNames(int count)

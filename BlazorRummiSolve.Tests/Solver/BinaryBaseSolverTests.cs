@@ -16,14 +16,14 @@ public class BinaryBaseSolverTests
             new(3, TileColor.Red),
             new(10),
             new(10, TileColor.Red),
-            new(10, TileColor.Black),
+            new(10, TileColor.Black)
         };
 
         var playerTiles = new List<Tile>
         {
             new(10),
             new(10, TileColor.Red),
-            new(10, TileColor.Black),
+            new(10, TileColor.Black)
         };
 
         Array.Sort(setToTry);
@@ -44,10 +44,7 @@ public class BinaryBaseSolverTests
 
         Assert.Equal(playerTiles.Count, tilesToPlay.Count);
 
-        foreach (var tile in playerTiles)
-        {
-            Assert.Contains(tile, tilesToPlay);
-        }
+        foreach (var tile in playerTiles) Assert.Contains(tile, tilesToPlay);
     }
 
     [Fact]
@@ -60,14 +57,14 @@ public class BinaryBaseSolverTests
             new(2, TileColor.Red),
             new(3, TileColor.Red),
             new(10),
-            new(10, TileColor.Red),
+            new(10, TileColor.Red)
             // new Tile(true)
         };
 
         var playerTiles = new List<Tile>
         {
             new(10),
-            new(10, TileColor.Red),
+            new(10, TileColor.Red)
         };
 
         Array.Sort(setToTry);
@@ -88,10 +85,7 @@ public class BinaryBaseSolverTests
 
         Assert.Equal(playerTiles.Count, tilesToPlay.Count);
 
-        foreach (var tile in playerTiles)
-        {
-            Assert.Contains(tile, tilesToPlay);
-        }
+        foreach (var tile in playerTiles) Assert.Contains(tile, tilesToPlay);
     }
 
 
@@ -104,12 +98,12 @@ public class BinaryBaseSolverTests
             new(1, TileColor.Red),
             new(2, TileColor.Red),
             new(3, TileColor.Red),
-            new(4, TileColor.Red),
+            new(4, TileColor.Red)
         };
 
         var playerTiles = new List<Tile>
         {
-            new(4, TileColor.Red),
+            new(4, TileColor.Red)
         };
 
         Array.Sort(setToTry);
@@ -130,10 +124,7 @@ public class BinaryBaseSolverTests
 
         Assert.Equal(playerTiles.Count, tilesToPlay.Count);
 
-        foreach (var tile in playerTiles)
-        {
-            Assert.Contains(tile, tilesToPlay);
-        }
+        foreach (var tile in playerTiles) Assert.Contains(tile, tilesToPlay);
     }
 
 
@@ -146,12 +137,12 @@ public class BinaryBaseSolverTests
             new(1, TileColor.Red),
             new(2, TileColor.Red),
             new(3, TileColor.Red),
-            new(4, TileColor.Red),
+            new(4, TileColor.Red)
         };
 
         var playerTiles = new List<Tile>
         {
-            new(4, TileColor.Red),
+            new(4, TileColor.Red)
         };
 
         Array.Sort(setToTry);
@@ -172,10 +163,7 @@ public class BinaryBaseSolverTests
 
         Assert.Equal(2, tilesToPlay.Count + result.JokerToPlay);
 
-        foreach (var tile in playerTiles)
-        {
-            Assert.Contains(tile, tilesToPlay);
-        }
+        foreach (var tile in playerTiles) Assert.Contains(tile, tilesToPlay);
     }
 
     [Fact]

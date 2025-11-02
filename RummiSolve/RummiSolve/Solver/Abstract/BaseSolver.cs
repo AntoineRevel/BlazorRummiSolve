@@ -2,11 +2,10 @@ namespace RummiSolve.Solver.Abstract;
 
 public abstract class BaseSolver(Tile[] tiles, int jokers)
 {
+    protected const int MinScore = 29;
     protected readonly Tile[] Tiles = tiles;
     protected readonly bool[] UsedTiles = new bool[tiles.Length];
     protected int Jokers = jokers;
-
-    protected const int MinScore = 29;
 
     protected void MarkTilesAsUsed(ValidSet set, int unusedIndex)
     {
@@ -92,7 +91,7 @@ public abstract class BaseSolver(Tile[] tiles, int jokers)
         {
             if (cancellationToken.IsCancellationRequested)
                 yield break;
-            
+
             for (; i < Tiles.Length; i++)
             {
                 if (Tiles[i].Color != color)
@@ -141,14 +140,10 @@ public abstract class BaseSolver(Tile[] tiles, int jokers)
         var sameNumberTiles = new HashSet<Tile>();
 
         for (var i = firstTileIndex; i < Tiles.Length; i++)
-        {
             if (!UsedTiles[i] &&
                 Tiles[i].Value == Tiles[firstTileIndex].Value &&
                 Tiles[i].Color != Tiles[firstTileIndex].Color)
-            {
                 sameNumberTiles.Add(Tiles[i]);
-            }
-        }
 
         var size = sameNumberTiles.Count;
 
@@ -170,7 +165,7 @@ public abstract class BaseSolver(Tile[] tiles, int jokers)
             {
                 if (cancellationToken.IsCancellationRequested)
                     yield break;
-                    
+
                 yield return new Group
                 {
                     Tiles = [Tiles[firstTileIndex], uniqueTilesList[i], uniqueTilesList[j]]
@@ -185,7 +180,7 @@ public abstract class BaseSolver(Tile[] tiles, int jokers)
             {
                 if (cancellationToken.IsCancellationRequested)
                     yield break;
-                    
+
                 var totalTiles = tilesUsed + jokersUsed;
                 if (totalTiles is < 3 or > 4) continue;
 
@@ -197,10 +192,7 @@ public abstract class BaseSolver(Tile[] tiles, int jokers)
 
                     groupTiles[0] = Tiles[firstTileIndex];
 
-                    for (int i = tilesUsed - 2, j = 1; i >= 0; i--, j++)
-                    {
-                        groupTiles[j] = tiles[i];
-                    }
+                    for (int i = tilesUsed - 2, j = 1; i >= 0; i--, j++) groupTiles[j] = tiles[i];
 
                     for (var k = 0; k < jokersUsed; k++)
                         groupTiles[tilesUsed + k] = new Tile(Tiles[firstTileIndex].Value, isJoker: true);
@@ -215,18 +207,19 @@ public abstract class BaseSolver(Tile[] tiles, int jokers)
         }
     }
 
-    internal static IEnumerable<List<Tile>> GetCombinations(List<Tile> list, int length, CancellationToken cancellationToken = default)
+    internal static IEnumerable<List<Tile>> GetCombinations(List<Tile> list, int length,
+        CancellationToken cancellationToken = default)
     {
         if (cancellationToken.IsCancellationRequested)
             yield break;
-            
+
         if (length == 0) yield return [];
 
         for (var i = 0; i < list.Count; i++)
         {
             if (cancellationToken.IsCancellationRequested)
                 yield break;
-                
+
             var element = list[i];
             foreach (var combination in GetCombinations(list.Skip(i + 1).ToList(), length - 1, cancellationToken))
             {

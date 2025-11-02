@@ -12,13 +12,13 @@ public class IncrementalScoreFieldComplexSolverTests
         var boardSet = new Set([
             new Tile(1, TileColor.Red),
             new Tile(2, TileColor.Red),
-            new Tile(3, TileColor.Red),
+            new Tile(3, TileColor.Red)
         ]);
 
         var playerSet = new Set([
             new Tile(10),
             new Tile(10, TileColor.Red),
-            new Tile(10, TileColor.Black),
+            new Tile(10, TileColor.Black)
         ]);
 
         var solver = IncrementalScoreFieldComplexSolver.Create(boardSet, playerSet);
@@ -44,7 +44,7 @@ public class IncrementalScoreFieldComplexSolverTests
         var boardSet = new Set([
             new Tile(2, TileColor.Red),
             new Tile(3, TileColor.Red),
-            new Tile(4, TileColor.Red),
+            new Tile(4, TileColor.Red)
         ]);
 
         var playerSet = new Set([
@@ -80,7 +80,7 @@ public class IncrementalScoreFieldComplexSolverTests
 
         var playerSet = new Set([
             new Tile(10),
-            new Tile(10, TileColor.Red),
+            new Tile(10, TileColor.Red)
         ]);
 
         var solver = IncrementalScoreFieldComplexSolver.Create(boardSet, playerSet);
@@ -107,7 +107,7 @@ public class IncrementalScoreFieldComplexSolverTests
         var boardSet = new Set([
             new Tile(1, TileColor.Red),
             new Tile(2, TileColor.Red),
-            new Tile(3, TileColor.Red),
+            new Tile(3, TileColor.Red)
         ]);
 
         var playerSet = new Set([
@@ -137,7 +137,7 @@ public class IncrementalScoreFieldComplexSolverTests
         var boardSet = new Set([
             new Tile(1, TileColor.Red),
             new Tile(2, TileColor.Red),
-            new Tile(3, TileColor.Red),
+            new Tile(3, TileColor.Red)
         ]);
 
         var playerSet = new Set([
@@ -174,7 +174,7 @@ public class IncrementalScoreFieldComplexSolverTests
 
         var playerSet = new Set([
             new Tile(12),
-            new Tile(13),
+            new Tile(13)
         ]);
 
         var solver = IncrementalScoreFieldComplexSolver.Create(boardSet, playerSet);
@@ -200,7 +200,7 @@ public class IncrementalScoreFieldComplexSolverTests
         var boardSet = new Set([
             new Tile(1, TileColor.Red),
             new Tile(2, TileColor.Red),
-            new Tile(3, TileColor.Red),
+            new Tile(3, TileColor.Red)
         ]);
 
         var playerSet = new Set([
@@ -213,7 +213,7 @@ public class IncrementalScoreFieldComplexSolverTests
 
             new Tile(1, TileColor.Red),
             new Tile(2, TileColor.Red),
-            new Tile(3, TileColor.Red),
+            new Tile(3, TileColor.Red)
         ]);
 
         var solver = IncrementalScoreFieldComplexSolver.Create(boardSet, playerSet);
@@ -244,13 +244,13 @@ public class IncrementalScoreFieldComplexSolverTests
 
             new Tile(11, TileColor.Mango),
             new Tile(true),
-            new Tile(13, TileColor.Mango),
+            new Tile(13, TileColor.Mango)
         ]);
 
         var playerSet = new Set([
             new Tile(9, TileColor.Mango),
             new Tile(13, TileColor.Red),
-            new Tile(13),
+            new Tile(13)
         ]);
 
         var solver = IncrementalScoreFieldComplexSolver.Create(boardSet, playerSet);
@@ -276,7 +276,7 @@ public class IncrementalScoreFieldComplexSolverTests
         var boardSet = new Set([
             new Tile(1, TileColor.Red),
             new Tile(2, TileColor.Red),
-            new Tile(3, TileColor.Red),
+            new Tile(3, TileColor.Red)
         ]);
 
         var playerSet = new Set([
@@ -311,7 +311,7 @@ public class IncrementalScoreFieldComplexSolverTests
         var boardSet = new Set([
             new Tile(1, TileColor.Red),
             new Tile(2, TileColor.Red),
-            new Tile(3, TileColor.Red),
+            new Tile(3, TileColor.Red)
         ]);
 
         var playerSet = new Set([

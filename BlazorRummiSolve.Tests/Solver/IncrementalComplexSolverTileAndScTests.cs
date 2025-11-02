@@ -18,7 +18,7 @@ public class IncrementalComplexSolverTileAndScTests
             new Tile(6),
             new Tile(6, TileColor.Red),
             new Tile(6, TileColor.Black),
-            new Tile(6, TileColor.Mango),
+            new Tile(6, TileColor.Mango)
         ]);
 
         var playerSet = new Set([

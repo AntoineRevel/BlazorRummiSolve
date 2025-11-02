@@ -61,8 +61,9 @@
                             class="selected-tiles-display @(HumanPlayerService.IsWaitingForNextAfterDraw ? "disabled" : "")">
                             @foreach (var tileInstance in _selectedTileInstances)
                             {
-                                <div class="selected-tile-wrapper @(_removingTiles.Contains(tileInstance.Id) ? "removing" : "") @(_newTiles.Contains(tileInstance.Id) ? "new-tile" : "")"
-                                     @onclick="async () => { if (!HumanPlayerService.IsWaitingForNextAfterDraw) await OnTileInstanceClick(tileInstance); }">
+                                <div
+                                    class="selected-tile-wrapper @(_removingTiles.Contains(tileInstance.Id) ? "removing" : "") @(_newTiles.Contains(tileInstance.Id) ? "new-tile" : "")"
+                                    @onclick="async () => { if (!HumanPlayerService.IsWaitingForNextAfterDraw) await OnTileInstanceClick(tileInstance); }">
                                     <TileComponent Tile="tileInstance.Tile" ShouldHighlight="false"/>
                                 </div>
                             }
@@ -85,7 +86,7 @@
 
                             <div
                                 class="tile-stack @(isFullySelected ? "fully-selected" : "") @(isDrawnTile ? "drawn-tile" : "")"
-                                 @onclick="async () => { if (!HumanPlayerService.IsWaitingForNextAfterDraw) await OnTileStackClick(tileType); }">
+                                @onclick="async () => { if (!HumanPlayerService.IsWaitingForNextAfterDraw) await OnTileStackClick(tileType); }">
                                 @if (remainingCount > 0)
                                 {
                                     @for (var i = 0; i < remainingCount; i++)

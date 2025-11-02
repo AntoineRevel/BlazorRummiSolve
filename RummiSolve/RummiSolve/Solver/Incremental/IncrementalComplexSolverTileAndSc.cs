@@ -158,7 +158,10 @@ public sealed class IncrementalComplexSolverTileAndSc : ComplexSolver, ISolver
                 solution.IsValid = true;
             }
 
-            else solution = FindSolution(solution, newSolutionScore, firstUnusedTileIndex, cancellationToken);
+            else
+            {
+                solution = FindSolution(solution, newSolutionScore, firstUnusedTileIndex, cancellationToken);
+            }
 
             if (solution.IsValid)
             {

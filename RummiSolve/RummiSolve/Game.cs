@@ -52,11 +52,9 @@ public class Game(Guid id)
             if (player.Won) IsGameOver = true;
             return true; // Turn completed successfully
         }
-        else
-        {
-            player.Drew(_tilePool.Dequeue());
-            return false; // Drew a tile, waiting for next action
-        }
+
+        player.Drew(_tilePool.Dequeue());
+        return false; // Drew a tile, waiting for next action
     }
 
     public void AdvanceToNextPlayer()

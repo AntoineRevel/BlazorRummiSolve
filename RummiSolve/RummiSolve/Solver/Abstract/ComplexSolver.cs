@@ -3,6 +3,7 @@ namespace RummiSolve.Solver.Abstract;
 public abstract class ComplexSolver(Tile[] tiles, int jokers, bool[] isPlayerTile) : BaseSolver(tiles, jokers)
 {
     protected readonly bool[] IsPlayerTile = isPlayerTile;
+
     protected new void MarkTilesAsUsedOut(ValidSet set, int unusedIndex, out int playerSetScore)
     {
         playerSetScore = 0;
@@ -22,10 +23,7 @@ public abstract class ComplexSolver(Tile[] tiles, int jokers, bool[] isPlayerTil
 
                 UsedTiles[unusedIndex] = true;
 
-                if (IsPlayerTile[unusedIndex])
-                {
-                    playerSetScore += tile.Value;
-                }
+                if (IsPlayerTile[unusedIndex]) playerSetScore += tile.Value;
 
                 break;
             }

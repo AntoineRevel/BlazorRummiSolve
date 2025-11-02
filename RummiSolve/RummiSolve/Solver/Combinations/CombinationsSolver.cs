@@ -56,12 +56,10 @@ public class CombinationsSolver : ISolver
                 var joker = 0;
                 var nonJokerCombi = new List<Tile>(tileTry);
                 foreach (var tile in combi)
-                {
                     if (tile.IsJoker)
                         joker++;
                     else
                         nonJokerCombi.Add(tile);
-                }
 
                 var solver = new BinaryBaseSolver(_boardTiles.Concat(nonJokerCombi).Order().ToArray(),
                     joker + _boardJokers)

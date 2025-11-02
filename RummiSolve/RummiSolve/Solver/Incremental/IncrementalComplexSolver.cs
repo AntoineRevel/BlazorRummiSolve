@@ -86,9 +86,8 @@ public sealed class IncrementalComplexSolver : ComplexSolver, ISolver
 
         // ReSharper disable once LoopCanBeConvertedToQuery
         for (var i = 0; i < UsedTiles.Length; i++)
-        {
-            if (!IsPlayerTile[i] && !UsedTiles[i]) return false;
-        }
+            if (!IsPlayerTile[i] && !UsedTiles[i])
+                return false;
 
         return Jokers == 0;
     }
@@ -144,7 +143,10 @@ public sealed class IncrementalComplexSolver : ComplexSolver, ISolver
                 solution.IsValid = true;
             }
 
-            else solution = FindSolution(solution, newSolutionScore, firstUnusedTileIndex, cancellationToken);
+            else
+            {
+                solution = FindSolution(solution, newSolutionScore, firstUnusedTileIndex, cancellationToken);
+            }
 
             if (solution.IsValid)
             {

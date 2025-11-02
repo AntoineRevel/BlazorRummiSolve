@@ -77,7 +77,7 @@ public class RummiBench
             new Tile(11),
             new Tile(13),
             new Tile(13, TileColor.Red),
-            new Tile(13, TileColor.Black),
+            new Tile(13, TileColor.Black)
         ]);
 
         var solver = IncrementalFirstBaseSolver.Create(playerSet);
@@ -90,10 +90,7 @@ public class RummiBench
 
         solution.PrintSolution();
 
-        foreach (var tile in tilesToPlay)
-        {
-            tile.PrintTile();
-        }
+        foreach (var tile in tilesToPlay) tile.PrintTile();
     }
 
     public static void SearchSolution_ValidNotWon()
@@ -134,7 +131,7 @@ public class RummiBench
 
             new Tile(2),
             new Tile(2, TileColor.Black),
-            new Tile(2, TileColor.Red),
+            new Tile(2, TileColor.Red)
         ]);
 
         var playerSet = new Set([
@@ -143,7 +140,7 @@ public class RummiBench
             new Tile(3, TileColor.Mango),
             //new Tile(2,TileColor.Red),
             new Tile(8),
-            new Tile(2, TileColor.Black),
+            new Tile(2, TileColor.Black)
         ]);
 
         var solver = IncrementalComplexSolver.Create(boardSet, playerSet);
@@ -161,10 +158,7 @@ public class RummiBench
         Console.WriteLine();
         solution.PrintSolution();
         Console.WriteLine("Tile to play :");
-        foreach (var tile in tilesToPlay)
-        {
-            tile.PrintTile();
-        }
+        foreach (var tile in tilesToPlay) tile.PrintTile();
 
         Console.WriteLine("Joker :");
         Console.WriteLine(jokerToPlay);
@@ -232,10 +226,7 @@ public class RummiBench
         Console.WriteLine();
         solution.PrintSolution();
         Console.WriteLine("Tile to play :");
-        foreach (var tile in tilesToPlay)
-        {
-            tile.PrintTile();
-        }
+        foreach (var tile in tilesToPlay) tile.PrintTile();
 
         // Console.WriteLine("Joker :");
         // Console.WriteLine(jokerToPlay);
@@ -252,7 +243,7 @@ public class RummiBench
             new((byte)45),
             new((byte)57),
             new((byte)58),
-            new((byte)59),
+            new((byte)59)
         };
 
         foreach (var tile in playerTiles) tile.PrintTile();
