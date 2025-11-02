@@ -1,25 +1,21 @@
 @using RummiSolve
 <div class="valid-set-container">
     <div class="valid-tiles">
+        @{
+            var tileIndex = StartIndex;
+        }
         @foreach (var tile in ValidSet.Tiles)
         {
-            <TileComponent Tile="tile" ShouldHighlight="@ShouldHighlightTile(tile)"/>
+            <TileComponent Tile="tile" TileIndex="tileIndex" HighlightIndices="HighlightIndices"/>
+            tileIndex++;
         }
     </div>
 </div>
 
 @code {
     [Parameter] public required ValidSet ValidSet { get; set; }
-    [Parameter] public List<Tile>? HighlightTiles { get; set; }
-
-    private bool ShouldHighlightTile(Tile tile)
-    {
-        if (HighlightTiles == null || HighlightTiles.Count == 0)
-            return false;
-
-        return HighlightTiles.Contains(tile);
-    }
-
+    [Parameter] public int StartIndex { get; set; }
+    [Parameter] public HashSet<int>? HighlightIndices { get; set; }
 }
 
 <style>
