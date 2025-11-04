@@ -255,6 +255,52 @@ public static class CommonTestCases
                 [],
                 0
             )
+        ),
+        new(
+            "ValidMultipleDuplicates",
+            new Set([
+                new Tile(1, TileColor.Red),
+                new Tile(2, TileColor.Red),
+                new Tile(4, TileColor.Red),
+                new Tile(5, TileColor.Red)
+            ]),
+            new Set([
+                new Tile(3, TileColor.Red),
+                new Tile(3, TileColor.Red)
+            ]),
+            new ExpectedResult(
+                true,
+                [
+                    new Tile(3, TileColor.Red),
+                    new Tile(3, TileColor.Red)
+                ],
+                0
+            )
+        ),
+
+        new(
+            "ValidMultipleDuplicatesGroups",
+            new Set([
+                new Tile(1, TileColor.Red),
+                new Tile(1, TileColor.Black),
+                new Tile(10, TileColor.Red),
+                new Tile(10, TileColor.Black),
+                new Tile(10)
+            ]),
+            new Set([
+                new Tile(1, TileColor.Mango),
+                new Tile(1, TileColor.Mango),
+                new Tile(10, TileColor.Mango),
+                new Tile(10, TileColor.Mango)
+            ]),
+            new ExpectedResult(
+                true,
+                [
+                    new Tile(1, TileColor.Mango),
+                    new Tile(10, TileColor.Mango)
+                ],
+                0
+            )
         )
     ];
 
