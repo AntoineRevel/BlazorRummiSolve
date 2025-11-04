@@ -16,7 +16,7 @@ public class GameTests
         game.InitializeGame(playerNames);
         Assert.Equal(106, game.AllTiles());
 
-        while (!game.IsGameOver && game.Turn < 5)
+        while (game is { IsGameOver: false, Turn: < 5 })
         {
             // Act
             await game.PlayAsync();

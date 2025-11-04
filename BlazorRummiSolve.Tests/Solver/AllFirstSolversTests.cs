@@ -1,6 +1,6 @@
 using RummiSolve;
-using RummiSolve.Solver.BestScore;
-using RummiSolve.Solver.Combinations;
+using RummiSolve.Solver.BestScore.First;
+using RummiSolve.Solver.Combinations.First;
 using RummiSolve.Solver.Incremental;
 using RummiSolve.Solver.Interfaces;
 using Xunit.Abstractions;
@@ -8,33 +8,32 @@ using Xunit.Abstractions;
 namespace BlazorRummiSolve.Tests.Solver;
 
 /// <summary>
-///     Tests all solvers with all common test cases.
+///     Tests all First-turn solvers with all common test cases.
+///     First-turn solvers have special rules: no board, higher minimum score requirements.
 ///     To add a solver, add it to the Solvers list.
 /// </summary>
-public class AllSolversTests(ITestOutputHelper output)
+public class AllFirstSolversTests(ITestOutputHelper output)
 {
     /// <summary>
-    ///     List of solvers to test. Add or remove solvers here.
+    ///     List of First-turn solvers to test. Add or remove solvers here.
+    ///     Note: ScoreFirstBaseSolver is excluded as it implements IScoreSolver, not ISolver
     /// </summary>
-    private static readonly (string Name, Func<Set, Set, ISolver> Create)[] Solvers =
+    private static readonly (string Name, Func<Set, ISolver> Create)[] Solvers =
     [
-        ("CombinationsSolver", CombinationsSolver.Create),
-        ("ParallelCombinationsSolver", ParallelCombinationsSolver.Create),
-        ("BestScoreComplexSolver", BestScoreComplexSolver.Create),
-        ("IncrementalComplexSolver", IncrementalComplexSolver.Create),
-        ("IncrementalScoreFieldComplexSolver", IncrementalScoreFieldComplexSolver.Create),
-        ("IncrementalComplexSolverTileAndSc", IncrementalComplexSolverTileAndSc.Create)
+        ("CombinationsFirstSolver", CombinationsFirstSolver.Create),
+        ("BestScoreFirstBaseSolver", BestScoreFirstBaseSolver.Create),
+        ("IncrementalFirstBaseSolver", playerSet => IncrementalFirstBaseSolver.Create(playerSet)) //TODO why
     ];
 
     /// <summary>
     ///     Generate test data: all combinations of (solver, test case)
     /// </summary>
-    public static TheoryData<string, Func<Set, Set, ISolver>, CommonTestCases.TestCase> GetTestData()
+    public static TheoryData<string, Func<Set, ISolver>, CommonTestFirstCases.TestCase> GetTestData()
     {
-        var data = new TheoryData<string, Func<Set, Set, ISolver>, CommonTestCases.TestCase>();
+        var data = new TheoryData<string, Func<Set, ISolver>, CommonTestFirstCases.TestCase>();
 
         foreach (var (solverName, solverCreate) in Solvers)
-        foreach (var testCase in CommonTestCases.All)
+        foreach (var testCase in CommonTestFirstCases.All)
             data.Add(solverName, solverCreate, testCase);
 
         return data;
@@ -42,15 +41,14 @@ public class AllSolversTests(ITestOutputHelper output)
 
     [Theory]
     [MemberData(nameof(GetTestData), DisableDiscoveryEnumeration = true)]
-    public void AllSolvers_AllTestCases_ShouldReturnExpectedResult(
+    public void AllFirstSolvers_AllTestCases_ShouldReturnExpectedResult(
         string solverName,
-        Func<Set, Set, ISolver> createSolver,
-        CommonTestCases.TestCase testCase)
+        Func<Set, ISolver> createSolver,
+        CommonTestFirstCases.TestCase testCase)
     {
-        // Arrange - Create new Set instances for each test to avoid mutation
-        var boardSet = new Set(testCase.Board);
+        // Arrange - Create a new Set instance for each test to avoid mutation
         var playerSet = new Set(testCase.Player);
-        var solver = createSolver(boardSet, playerSet);
+        var solver = createSolver(playerSet);
 
         // Act
         var result = solver.SearchSolution();
@@ -60,22 +58,22 @@ public class AllSolversTests(ITestOutputHelper output)
     }
 
     /// <summary>
-    ///     Debug method to test a single scenario against all standard solvers.
+    ///     Debug method to test a single scenario against all first-turn solvers.
     ///     Uncomment [Fact] attribute and modify the scenario name to debug a specific test case.
     /// </summary>
-    // [Fact]
-    public void DebugSingleScenario_AllSolvers()
+    [Fact]
+    public void DebugSingleScenario_AllFirstSolvers()
     {
         // Change this to the scenario you want to debug
-        const string scenarioName = "Valid";
+        const string scenarioName = "TwoTilesJokerInvalid";
 
         // Find the test case
-        var testCase = CommonTestCases.All.FirstOrDefault(tc => tc.Name == scenarioName);
+        var testCase = CommonTestFirstCases.All.FirstOrDefault(tc => tc.Name == scenarioName);
         if (testCase == null)
         {
             output.WriteLine($"❌ Scenario '{scenarioName}' not found!");
             output.WriteLine("Available scenarios:");
-            foreach (var tc in CommonTestCases.All)
+            foreach (var tc in CommonTestFirstCases.All)
                 output.WriteLine($"  - {tc.Name}");
             Assert.Fail($"Scenario '{scenarioName}' not found");
             return;
@@ -84,12 +82,11 @@ public class AllSolversTests(ITestOutputHelper output)
         output.WriteLine($"Testing scenario: {scenarioName}");
         output.WriteLine("=".PadRight(60, '='));
 
-        // Test with all solvers
+        // Test with all first-turn solvers
         foreach (var (solverName, createSolver) in Solvers)
         {
-            var boardSet = new Set(testCase.Board);
             var playerSet = new Set(testCase.Player);
-            var solver = createSolver(boardSet, playerSet);
+            var solver = createSolver(playerSet);
 
             var result = solver.SearchSolution();
 
