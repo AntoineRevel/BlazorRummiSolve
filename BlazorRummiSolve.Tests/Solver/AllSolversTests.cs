@@ -59,10 +59,46 @@ public class AllSolversTests
             testCase.Expected.IsValid == result.BestSolution.IsValid,
             $"{solverName} - {testCase.Name}: Expected IsValid={testCase.Expected.IsValid}, got {result.BestSolution.IsValid}"
         );
+
+        // Compare TilesToPlay (order-insensitive comparison with multiplicity check)
+        var expectedTiles = testCase.Expected.TilesToPlay.ToList();
+        var actualTiles = result.TilesToPlay.ToList();
+
         Assert.True(
-            testCase.Expected.TilesToPlayCount == result.TilesToPlay.Count(),
-            $"{solverName} - {testCase.Name}: Expected TilesToPlayCount={testCase.Expected.TilesToPlayCount}, got {result.TilesToPlay.Count()}"
+            expectedTiles.Count == actualTiles.Count,
+            $"{solverName} - {testCase.Name}: Expected {expectedTiles.Count} tiles to play, got {actualTiles.Count}"
         );
+
+        // Group tiles by their properties to compare multiplicities
+        var expectedGroups = expectedTiles
+            .GroupBy(t => new { t.Value, t.Color, t.IsJoker })
+            .ToDictionary(g => g.Key, g => g.Count());
+
+        var actualGroups = actualTiles
+            .GroupBy(t => new { t.Value, t.Color, t.IsJoker })
+            .ToDictionary(g => g.Key, g => g.Count());
+
+        // Check that both have the same tile groups
+        foreach (var expectedGroup in expectedGroups)
+        {
+            Assert.True(
+                actualGroups.ContainsKey(expectedGroup.Key),
+                $"{solverName} - {testCase.Name}: Expected tile [{expectedGroup.Key.Value}, {expectedGroup.Key.Color}, IsJoker={expectedGroup.Key.IsJoker}] not found in actual tiles"
+            );
+
+            Assert.True(
+                actualGroups[expectedGroup.Key] == expectedGroup.Value,
+                $"{solverName} - {testCase.Name}: Expected {expectedGroup.Value}x tile [{expectedGroup.Key.Value}, {expectedGroup.Key.Color}, IsJoker={expectedGroup.Key.IsJoker}], got {actualGroups[expectedGroup.Key]}x"
+            );
+        }
+
+        // Check for unexpected tiles in actual results
+        foreach (var actualGroup in actualGroups)
+            Assert.True(
+                expectedGroups.ContainsKey(actualGroup.Key),
+                $"{solverName} - {testCase.Name}: Unexpected tile [{actualGroup.Key.Value}, {actualGroup.Key.Color}, IsJoker={actualGroup.Key.IsJoker}] found {actualGroup.Value}x in actual tiles"
+            );
+
         Assert.True(
             testCase.Expected.JokerToPlay == result.JokerToPlay,
             $"{solverName} - {testCase.Name}: Expected JokerToPlay={testCase.Expected.JokerToPlay}, got {result.JokerToPlay}"

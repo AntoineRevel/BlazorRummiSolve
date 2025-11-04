@@ -27,7 +27,11 @@ public static class CommonTestCases
             ]),
             new ExpectedResult(
                 true,
-                3,
+                [
+                    new Tile(10),
+                    new Tile(10, TileColor.Red),
+                    new Tile(10, TileColor.Black)
+                ],
                 0
             )
         ),
@@ -44,7 +48,9 @@ public static class CommonTestCases
             ]),
             new ExpectedResult(
                 true,
-                1,
+                [
+                    new Tile(1, TileColor.Red)
+                ],
                 0
             )
         ),
@@ -63,7 +69,10 @@ public static class CommonTestCases
             ]),
             new ExpectedResult(
                 true,
-                2,
+                [
+                    new Tile(10),
+                    new Tile(10, TileColor.Red)
+                ],
                 0
             )
         ),
@@ -80,7 +89,9 @@ public static class CommonTestCases
             ]),
             new ExpectedResult(
                 true,
-                1,
+                [
+                    new Tile(4, TileColor.Red)
+                ],
                 0
             )
         ),
@@ -98,7 +109,9 @@ public static class CommonTestCases
             ]),
             new ExpectedResult(
                 true,
-                1,
+                [
+                    new Tile(4, TileColor.Red)
+                ],
                 1
             )
         ),
@@ -122,7 +135,14 @@ public static class CommonTestCases
             ]),
             new ExpectedResult(
                 true,
-                6,
+                [
+                    new Tile(10),
+                    new Tile(10, TileColor.Red),
+                    new Tile(10, TileColor.Black),
+                    new Tile(1, TileColor.Red),
+                    new Tile(2, TileColor.Red),
+                    new Tile(3, TileColor.Red)
+                ],
                 0
             )
         ),
@@ -142,7 +162,10 @@ public static class CommonTestCases
             ]),
             new ExpectedResult(
                 true,
-                2,
+                [
+                    new Tile(8, TileColor.Black),
+                    new Tile(8, TileColor.Red)
+                ],
                 0
             )
         ),
@@ -165,7 +188,11 @@ public static class CommonTestCases
             ]),
             new ExpectedResult(
                 true,
-                3,
+                [
+                    new Tile(9, TileColor.Mango),
+                    new Tile(13, TileColor.Red),
+                    new Tile(13)
+                ],
                 0
             )
         ),
@@ -186,7 +213,12 @@ public static class CommonTestCases
             ]),
             new ExpectedResult(
                 true,
-                4,
+                [
+                    new Tile(10),
+                    new Tile(10, TileColor.Red),
+                    new Tile(10, TileColor.Black),
+                    new Tile(5, TileColor.Red)
+                ],
                 1
             )
         ),
@@ -203,7 +235,7 @@ public static class CommonTestCases
             ]),
             new ExpectedResult(
                 true,
-                0,
+                [],
                 1
             )
         ),
@@ -220,7 +252,7 @@ public static class CommonTestCases
             ]),
             new ExpectedResult(
                 false,
-                0,
+                [],
                 0
             )
         )
@@ -235,7 +267,7 @@ public static class CommonTestCases
 
     public record ExpectedResult(
         bool IsValid,
-        int TilesToPlayCount,
+        IEnumerable<Tile> TilesToPlay,
         int JokerToPlay
     );
 }
