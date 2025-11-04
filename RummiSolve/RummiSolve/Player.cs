@@ -29,11 +29,12 @@ public class Player(string name, List<Tile> tiles, ISolverStrategy solverStrateg
     {
         if (!result.Found) return Solution.InvalidSolution;
 
-        Won = result.Won;
-
         TilesToPlay = result.TilesToPlay.ToList();
 
         for (var i = 0; i < result.JokerToPlay; i++) TilesToPlay.Add(new Tile(true));
+
+        // Won if all tiles from rack are played
+        Won = TilesToPlay.Count == Rack.Tiles.Count && result.BestSolution.IsValid;
 
         if (Played) return result.BestSolution;
 

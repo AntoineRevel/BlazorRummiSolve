@@ -10,7 +10,6 @@ public class SolverResult
         BestSolution = new Solution();
         TilesToPlay = [];
         JokerToPlay = 0;
-        Won = false;
         Score = 0;
     }
 
@@ -19,7 +18,6 @@ public class SolverResult
     public Solution BestSolution { get; private init; }
     public IEnumerable<Tile> TilesToPlay { get; private init; }
     public int JokerToPlay { get; private init; }
-    public bool Won { get; set; }
     public int Score { get; private init; }
 
     // Factory method pour les échecs
@@ -36,7 +34,7 @@ public class SolverResult
 
     // Factory method pour créer un résultat à partir d'une solution
     public static SolverResult FromSolution(string source, Solution solution, IEnumerable<Tile> tilesToPlay,
-        int jokerToPlay = 0, bool won = false, int score = 0)
+        int jokerToPlay = 0, int score = 0)
     {
         return new SolverResult
         {
@@ -45,7 +43,6 @@ public class SolverResult
             BestSolution = solution,
             TilesToPlay = tilesToPlay,
             JokerToPlay = jokerToPlay,
-            Won = won,
             Score = score
         };
     }

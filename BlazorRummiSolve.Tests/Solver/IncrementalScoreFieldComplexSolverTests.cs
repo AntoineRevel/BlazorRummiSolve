@@ -25,13 +25,11 @@ public class IncrementalScoreFieldComplexSolverTests
 
         // Act
         var result = solver.SearchSolution();
-        var won = result.Won;
         var solution = result.BestSolution;
         var tilesToPlay = result.TilesToPlay.ToList();
         var jokerToPlay = result.JokerToPlay;
 
         // Assert
-        Assert.True(won);
         Assert.True(solution.IsValid);
         Assert.Equal(3, tilesToPlay.Count);
         Assert.Equal(0, jokerToPlay);
@@ -55,13 +53,11 @@ public class IncrementalScoreFieldComplexSolverTests
 
         // Act
         var result = solver.SearchSolution();
-        var won = result.Won;
         var solution = result.BestSolution;
         var tilesToPlay = result.TilesToPlay.ToList();
         var jokerToPlay = result.JokerToPlay;
 
         // Assert
-        Assert.True(won);
         Assert.True(solution.IsValid);
         Assert.Single(tilesToPlay);
         Assert.Equal(0, jokerToPlay);
@@ -87,13 +83,11 @@ public class IncrementalScoreFieldComplexSolverTests
 
         // Act
         var result = solver.SearchSolution();
-        var won = result.Won;
         var solution = result.BestSolution;
         var tilesToPlay = result.TilesToPlay.ToList();
         var jokerToPlay = result.JokerToPlay;
 
         // Assert
-        Assert.True(won);
         Assert.True(solution.IsValid);
         Assert.Equal(2, tilesToPlay.Count);
         Assert.Equal(0, jokerToPlay);
@@ -118,13 +112,11 @@ public class IncrementalScoreFieldComplexSolverTests
 
         // Act
         var result = solver.SearchSolution();
-        var won = result.Won;
         var solution = result.BestSolution;
         var tilesToPlay = result.TilesToPlay.ToList();
         var jokerToPlay = result.JokerToPlay;
 
         // Assert
-        Assert.True(won);
         Assert.True(solution.IsValid);
         Assert.Single(tilesToPlay);
         Assert.Equal(0, jokerToPlay);
@@ -149,13 +141,11 @@ public class IncrementalScoreFieldComplexSolverTests
 
         // Act
         var result = solver.SearchSolution();
-        var won = result.Won;
         var solution = result.BestSolution;
         var tilesToPlay = result.TilesToPlay.ToList();
         var jokerToPlay = result.JokerToPlay;
 
         // Assert
-        Assert.True(won);
         Assert.True(solution.IsValid);
         Assert.Single(tilesToPlay);
         Assert.Equal(1, jokerToPlay);
@@ -181,13 +171,11 @@ public class IncrementalScoreFieldComplexSolverTests
 
         // Act
         var result = solver.SearchSolution();
-        var won = result.Won;
         var solution = result.BestSolution;
         var tilesToPlay = result.TilesToPlay.ToList();
         var jokerToPlay = result.JokerToPlay;
 
         // Assert
-        Assert.True(won);
         Assert.True(solution.IsValid);
         Assert.Equal(2, tilesToPlay.Count);
         Assert.Equal(0, jokerToPlay);
@@ -220,13 +208,11 @@ public class IncrementalScoreFieldComplexSolverTests
 
         // Act
         var result = solver.SearchSolution();
-        var won = result.Won;
         var solution = result.BestSolution;
         var tilesToPlay = result.TilesToPlay.ToList();
         var jokerToPlay = result.JokerToPlay;
 
         // Assert
-        Assert.False(won);
         Assert.True(solution.IsValid);
         Assert.Equal(6, tilesToPlay.Count);
         Assert.Equal(0, jokerToPlay);
@@ -257,13 +243,11 @@ public class IncrementalScoreFieldComplexSolverTests
 
         // Act
         var result = solver.SearchSolution();
-        var won = result.Won;
         var solution = result.BestSolution;
         var tilesToPlay = result.TilesToPlay.ToList();
         var jokerToPlay = result.JokerToPlay;
 
         // Assert
-        Assert.True(won);
         Assert.True(solution.IsValid);
         Assert.Equal(3, tilesToPlay.Count);
         Assert.Equal(0, jokerToPlay);
@@ -292,13 +276,11 @@ public class IncrementalScoreFieldComplexSolverTests
 
         // Act
         var result = solver.SearchSolution();
-        var won = result.Won;
         var solution = result.BestSolution;
         var tilesToPlay = result.TilesToPlay.ToList();
         var jokerToPlay = result.JokerToPlay;
 
         // Assert
-        Assert.True(won);
         Assert.True(solution.IsValid);
         Assert.Equal(4, tilesToPlay.Count);
         Assert.Equal(1, jokerToPlay);
@@ -322,11 +304,37 @@ public class IncrementalScoreFieldComplexSolverTests
 
         // Act
         var result = solver.SearchSolution();
-        var won = result.Won;
         var solution = result.BestSolution;
 
         // Assert
-        Assert.False(won);
         Assert.False(solution.IsValid);
+    }
+
+    [Fact]
+    public void SearchSolution_ValidOneJ()
+    {
+        // Arrange
+        var boardSet = new Set([
+            new Tile(1),
+            new Tile(2),
+            new Tile(3)
+        ]);
+
+        var playerSet = new Set([
+            new Tile(true)
+        ]);
+
+        var solver = IncrementalScoreFieldComplexSolver.Create(boardSet, playerSet);
+
+        // Act
+        var result = solver.SearchSolution();
+        var solution = result.BestSolution;
+        var tilesToPlay = result.TilesToPlay.ToList();
+        var jokerToPlay = result.JokerToPlay;
+
+        // Assert
+        Assert.True(solution.IsValid);
+        Assert.Empty(tilesToPlay);
+        Assert.Equal(1, jokerToPlay);
     }
 }

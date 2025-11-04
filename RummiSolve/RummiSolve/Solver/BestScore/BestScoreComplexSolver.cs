@@ -20,7 +20,7 @@ public class BestScoreComplexSolver : ComplexSolver, ISolver
 
     public SolverResult SearchSolution(CancellationToken cancellationToken = default)
     {
-        var scoreSolver = new ComplexScoreSolver(Tiles, Jokers, IsPlayerTile);
+        var scoreSolver = new ComplexScoreSolver(Tiles, Jokers, IsPlayerTile, _boardJokers);
 
         var canPlay = scoreSolver.SearchBestScore(cancellationToken);
 
@@ -31,9 +31,8 @@ public class BestScoreComplexSolver : ComplexSolver, ISolver
         var bestSolution = FindSolution(new Solution(), 0, 0, cancellationToken);
         var tilesToPlay = Tiles.Where((_, i) => IsPlayerTile[i] && UsedTiles[i]);
         var jokerToPlay = _availableJokers - Jokers - _boardJokers;
-        var won = UsedTiles.All(b => b);
 
-        return SolverResult.FromSolution(GetType().Name, bestSolution, tilesToPlay, jokerToPlay, won);
+        return SolverResult.FromSolution(GetType().Name, bestSolution, tilesToPlay, jokerToPlay);
     }
 
 
@@ -119,7 +118,7 @@ public class BestScoreComplexSolver : ComplexSolver, ISolver
             if (cancellationToken.IsCancellationRequested)
                 break;
 
-            MarkTilesAsUsedOut(set, firstUnusedTileIndex, out var playerSetScore);
+            MarkTilesAsUsedOut(set, firstUnusedTileIndex, _boardJokers, out var playerSetScore);
 
             var newSolutionScore = solutionScore + firstTileScore + playerSetScore;
 

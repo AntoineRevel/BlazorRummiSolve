@@ -26,13 +26,11 @@ public class ParallelCombinationsSolverTests
 
         // Act
         var result = solver.SearchSolution();
-        var won = result.Won;
         var solution = result.BestSolution;
         var tilesToPlay = result.TilesToPlay.ToList();
         var jokerToPlay = result.JokerToPlay;
 
         // Assert
-        Assert.True(won);
         Assert.True(solution.IsValid);
         Assert.Equal(3, tilesToPlay.Count);
         Assert.Equal(0, jokerToPlay);
@@ -56,13 +54,11 @@ public class ParallelCombinationsSolverTests
 
         // Act
         var result = solver.SearchSolution();
-        var won = result.Won;
         var solution = result.BestSolution;
         var tilesToPlay = result.TilesToPlay.ToList();
         var jokerToPlay = result.JokerToPlay;
 
         // Assert
-        Assert.True(won);
         Assert.True(solution.IsValid);
         Assert.Single(tilesToPlay);
         Assert.Equal(0, jokerToPlay);
@@ -88,13 +84,11 @@ public class ParallelCombinationsSolverTests
 
         // Act
         var result = solver.SearchSolution();
-        var won = result.Won;
         var solution = result.BestSolution;
         var tilesToPlay = result.TilesToPlay.ToList();
         var jokerToPlay = result.JokerToPlay;
 
         // Assert
-        Assert.True(won);
         Assert.True(solution.IsValid);
         Assert.Equal(2, tilesToPlay.Count);
         Assert.Equal(0, jokerToPlay);
@@ -118,13 +112,11 @@ public class ParallelCombinationsSolverTests
 
         // Act
         var result = solver.SearchSolution();
-        var won = result.Won;
         var solution = result.BestSolution;
         var tilesToPlay = result.TilesToPlay.ToList();
         var jokerToPlay = result.JokerToPlay;
 
         // Assert
-        Assert.True(won);
         Assert.True(solution.IsValid);
         Assert.Single(tilesToPlay);
         Assert.Equal(0, jokerToPlay);
@@ -149,13 +141,11 @@ public class ParallelCombinationsSolverTests
 
         // Act
         var result = solver.SearchSolution();
-        var won = result.Won;
         var solution = result.BestSolution;
         var tilesToPlay = result.TilesToPlay.ToList();
         var jokerToPlay = result.JokerToPlay;
 
         // Assert
-        Assert.True(won);
         Assert.True(solution.IsValid);
         Assert.Single(tilesToPlay);
         Assert.Equal(1, jokerToPlay);
@@ -188,13 +178,11 @@ public class ParallelCombinationsSolverTests
 
         // Act
         var result = solver.SearchSolution();
-        var won = result.Won;
         var solution = result.BestSolution;
         var tilesToPlay = result.TilesToPlay.ToList();
         var jokerToPlay = result.JokerToPlay;
 
         // Assert
-        Assert.False(won);
         Assert.True(solution.IsValid);
         Assert.Equal(6, tilesToPlay.Count);
         Assert.Equal(0, jokerToPlay);
@@ -222,13 +210,11 @@ public class ParallelCombinationsSolverTests
 
         // Act
         var result = solver.SearchSolution();
-        var won = result.Won;
         var solution = result.BestSolution;
         var tilesToPlay = result.TilesToPlay.ToList();
         var jokerToPlay = result.JokerToPlay;
 
         // Assert
-        Assert.False(won);
         Assert.True(solution.IsValid);
         Assert.Equal(2, tilesToPlay.Count);
         Assert.Equal(0, jokerToPlay);
@@ -259,13 +245,11 @@ public class ParallelCombinationsSolverTests
 
         // Act
         var result = solver.SearchSolution();
-        var won = result.Won;
         var solution = result.BestSolution;
         var tilesToPlay = result.TilesToPlay.ToList();
         var jokerToPlay = result.JokerToPlay;
 
         // Assert
-        Assert.True(won);
         Assert.True(solution.IsValid);
         Assert.Equal(3, tilesToPlay.Count);
         Assert.Equal(0, jokerToPlay);
@@ -294,13 +278,11 @@ public class ParallelCombinationsSolverTests
 
         // Act
         var result = solver.SearchSolution();
-        var won = result.Won;
         var solution = result.BestSolution;
         var tilesToPlay = result.TilesToPlay.ToList();
         var jokerToPlay = result.JokerToPlay;
 
         // Assert
-        Assert.True(won);
         Assert.True(solution.IsValid);
         Assert.Equal(4, tilesToPlay.Count);
         Assert.Equal(1, jokerToPlay);
@@ -323,13 +305,11 @@ public class ParallelCombinationsSolverTests
 
         // Act
         var result = solver.SearchSolution();
-        var won = result.Won;
         var solution = result.BestSolution;
         var tilesToPlay = result.TilesToPlay.ToList();
         var jokerToPlay = result.JokerToPlay;
 
         // Assert
-        Assert.True(won);
         Assert.True(solution.IsValid);
         Assert.Empty(tilesToPlay);
         Assert.Equal(1, jokerToPlay);
@@ -353,11 +333,9 @@ public class ParallelCombinationsSolverTests
 
         // Act
         var result = solver.SearchSolution();
-        var won = result.Won;
         var solution = result.BestSolution;
 
         // Assert
-        Assert.False(won);
         Assert.False(solution.IsValid);
     }
 

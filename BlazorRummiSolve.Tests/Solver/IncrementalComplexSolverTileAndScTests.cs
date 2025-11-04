@@ -31,13 +31,11 @@ public class IncrementalComplexSolverTileAndScTests
 
         // Act
         var result = solver.SearchSolution();
-        var won = result.Won;
         var solution = result.BestSolution;
         var tilesToPlay = result.TilesToPlay.ToList();
         var jokerToPlay = result.JokerToPlay;
 
         // Assert
-        Assert.False(won);
         Assert.True(solution.IsValid);
         Assert.Equal(2, tilesToPlay.Count);
         Assert.Equal(0, jokerToPlay);

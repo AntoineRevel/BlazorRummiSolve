@@ -48,7 +48,7 @@ public sealed class IncrementalScoreFieldComplexSolver : ComplexSolver, ISolver
             _remainingJoker = Jokers;
 
             if (UsedTiles.All(b => b))
-                return SolverResult.FromSolution(GetType().Name, bestSolution, TilesToPlay, JokerToPlay, true);
+                return SolverResult.FromSolution(GetType().Name, bestSolution, TilesToPlay, JokerToPlay);
 
             Array.Fill(UsedTiles, false);
             Jokers = _availableJokers;
@@ -138,10 +138,7 @@ public sealed class IncrementalScoreFieldComplexSolver : ComplexSolver, ISolver
             if (cancellationToken.IsCancellationRequested)
                 break;
 
-            MarkTilesAsUsed(set, firstUnusedTileIndex);
-
-            // var normal = Tiles.Where((_, i) => _isPlayerTile[i] && UsedTiles[i]).Sum(t => t.Value);
-            // if (_solutionScore != normal) throw new Exception();
+            MarkTilesAsUsed(set, firstUnusedTileIndex, _boardJokers);
 
             if (ValidateCondition()) solution.IsValid = true;
 
@@ -162,7 +159,7 @@ public sealed class IncrementalScoreFieldComplexSolver : ComplexSolver, ISolver
         return solution;
     }
 
-    private new void MarkTilesAsUsed(ValidSet set, int unusedIndex)
+    private void MarkTilesAsUsed(ValidSet set, int unusedIndex, int boardJokers)
     {
         unusedIndex++;
         for (var tIndex = 1; tIndex < set.Tiles.Length; tIndex++)
@@ -171,6 +168,8 @@ public sealed class IncrementalScoreFieldComplexSolver : ComplexSolver, ISolver
             if (tile.IsJoker)
             {
                 Jokers -= 1;
+                if (boardJokers == 0) _solutionScore++;
+                else boardJokers--;
                 continue;
             }
 

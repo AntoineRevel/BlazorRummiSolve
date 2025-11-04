@@ -36,8 +36,7 @@ public class CombinationsSolver : ISolver
         var result = firstBinarySolver.SearchSolution(cancellationToken);
         if (result.Found)
             return SolverResult.FromSolution(GetType().Name, result.BestSolution, result.TilesToPlay,
-                result.JokerToPlay,
-                true);
+                result.JokerToPlay);
 
 
         for (var tileTry = _playerTilesJ.Count - 1; tileTry > 0; tileTry--)

@@ -4,7 +4,7 @@ public abstract class ComplexSolver(Tile[] tiles, int jokers, bool[] isPlayerTil
 {
     protected readonly bool[] IsPlayerTile = isPlayerTile;
 
-    protected new void MarkTilesAsUsedOut(ValidSet set, int unusedIndex, out int playerSetScore)
+    protected void MarkTilesAsUsedOut(ValidSet set, int unusedIndex, int boardJokers, out int playerSetScore)
     {
         playerSetScore = 0;
         unusedIndex++;
@@ -14,6 +14,8 @@ public abstract class ComplexSolver(Tile[] tiles, int jokers, bool[] isPlayerTil
             if (tile.IsJoker)
             {
                 Jokers -= 1;
+                if (boardJokers == 0) playerSetScore++;
+                else boardJokers--;
                 continue;
             }
 
