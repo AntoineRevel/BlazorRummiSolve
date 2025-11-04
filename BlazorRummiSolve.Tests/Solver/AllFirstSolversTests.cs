@@ -58,14 +58,14 @@ public class AllFirstSolversTests(ITestOutputHelper output)
     }
 
     /// <summary>
-    ///     Debug method to test a single scenario against all first-turn solvers.
-    ///     Uncomment [Fact] attribute and modify the scenario name to debug a specific test case.
+    ///     Debug a method to test a single scenario against all first-turn solvers.
+    ///     Uncomment the [Fact] attribute and modify the scenario name to debug a specific test case.
     /// </summary>
     [Fact]
     public void DebugSingleScenario_AllFirstSolvers()
     {
         // Change this to the scenario you want to debug
-        const string scenarioName = "TwoTilesJokerInvalid";
+        const string scenarioName = "TwoTilesJokerValid";
 
         // Find the test case
         var testCase = CommonTestFirstCases.All.FirstOrDefault(tc => tc.Name == scenarioName);
