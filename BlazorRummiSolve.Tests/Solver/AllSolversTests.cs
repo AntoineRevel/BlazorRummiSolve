@@ -58,42 +58,4 @@ public class AllSolversTests(ITestOutputHelper output)
         // Assert - Use shared helper to validate result
         SolverTestHelpers.AssertSolverResult(solverName, testCase.Name, result, testCase.Expected, output);
     }
-
-    /// <summary>
-    ///     Debug method to test a single scenario against all standard solvers.
-    ///     Uncomment [Fact] attribute and modify the scenario name to debug a specific test case.
-    /// </summary>
-    // [Fact]
-    public void DebugSingleScenario_AllSolvers()
-    {
-        // Change this to the scenario you want to debug
-        const string scenarioName = "Valid";
-
-        // Find the test case
-        var testCase = CommonTestCases.All.FirstOrDefault(tc => tc.Name == scenarioName);
-        if (testCase == null)
-        {
-            output.WriteLine($"❌ Scenario '{scenarioName}' not found!");
-            output.WriteLine("Available scenarios:");
-            foreach (var tc in CommonTestCases.All)
-                output.WriteLine($"  - {tc.Name}");
-            Assert.Fail($"Scenario '{scenarioName}' not found");
-            return;
-        }
-
-        output.WriteLine($"Testing scenario: {scenarioName}");
-        output.WriteLine("=".PadRight(60, '='));
-
-        // Test with all solvers
-        foreach (var (solverName, createSolver) in Solvers)
-        {
-            var boardSet = new Set(testCase.Board);
-            var playerSet = new Set(testCase.Player);
-            var solver = createSolver(boardSet, playerSet);
-
-            var result = solver.SearchSolution();
-
-            SolverTestHelpers.AssertSolverResult(solverName, testCase.Name, result, testCase.Expected, output);
-        }
-    }
 }

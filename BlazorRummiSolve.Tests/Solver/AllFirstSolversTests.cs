@@ -53,44 +53,7 @@ public class AllFirstSolversTests(ITestOutputHelper output)
         // Act
         var result = solver.SearchSolution();
 
-        // Assert - Use shared helper to validate result
+        // Assert
         SolverTestHelpers.AssertSolverResult(solverName, testCase.Name, result, testCase.Expected, output);
-    }
-
-    /// <summary>
-    ///     Debug a method to test a single scenario against all first-turn solvers.
-    ///     Uncomment the [Fact] attribute and modify the scenario name to debug a specific test case.
-    /// </summary>
-    [Fact]
-    public void DebugSingleScenario_AllFirstSolvers()
-    {
-        // Change this to the scenario you want to debug
-        const string scenarioName = "TwoTilesJokerValid";
-
-        // Find the test case
-        var testCase = CommonTestFirstCases.All.FirstOrDefault(tc => tc.Name == scenarioName);
-        if (testCase == null)
-        {
-            output.WriteLine($"❌ Scenario '{scenarioName}' not found!");
-            output.WriteLine("Available scenarios:");
-            foreach (var tc in CommonTestFirstCases.All)
-                output.WriteLine($"  - {tc.Name}");
-            Assert.Fail($"Scenario '{scenarioName}' not found");
-            return;
-        }
-
-        output.WriteLine($"Testing scenario: {scenarioName}");
-        output.WriteLine("=".PadRight(60, '='));
-
-        // Test with all first-turn solvers
-        foreach (var (solverName, createSolver) in Solvers)
-        {
-            var playerSet = new Set(testCase.Player);
-            var solver = createSolver(playerSet);
-
-            var result = solver.SearchSolution();
-
-            SolverTestHelpers.AssertSolverResult(solverName, testCase.Name, result, testCase.Expected, output);
-        }
     }
 }
