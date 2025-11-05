@@ -51,7 +51,7 @@ public class CombinationsFirstSolver : ISolver
                 var joker = combi.Count(tile => tile.IsJoker);
                 if (joker > 0) combi.RemoveRange(tileTry - joker, joker);
                 var solver = new BinaryFirstBaseSolver(combi.ToArray(), joker);
-                var solverResult = solver.SearchSolution();
+                var solverResult = solver.SearchSolution(cancellationToken);
                 found = solverResult.Found;
                 if (!found) continue;
                 return SolverResult.FromSolution(GetType().Name, solver.BinarySolution, solver.TilesToPlay,
