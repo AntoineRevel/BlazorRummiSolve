@@ -70,13 +70,9 @@ public partial class GamePage
     // AI turn countdown properties
     private bool IsWaitingAfterAITurn { get; set; }
 
-    private int RemainingSeconds { get; set; }
-
     private bool AIPlayerDrew { get; set; }
 
     private List<Tile>? AIPlayedTiles { get; set; }
-
-    private double ProgressDashOffset => 125.66 * RemainingSeconds / 4.0;
 
     // For Full AI mode: store displayed tile counts
     private Dictionary<Player, int> DisplayedTileCounts { get; } = new();
@@ -196,7 +192,7 @@ public partial class GamePage
         };
     }
 
-    protected override async Task OnInitializedAsync()
+    protected override Task OnInitializedAsync()
     {
         // Parse and validate player count
         var playerCount = PlayerCount ?? 3;
@@ -237,6 +233,8 @@ public partial class GamePage
             // In Full AI mode, start at NextPlayer state so the first click triggers PlayAsync() directly
             _currentState = ActionState.NextPlayer;
         }
+
+        return Task.CompletedTask;
     }
 
     private async Task PlayAsync()
@@ -306,7 +304,6 @@ public partial class GamePage
 
                 // Show countdown button for 8 seconds
                 IsWaitingAfterAITurn = true;
-                RemainingSeconds = 8;
                 StateHasChanged();
 
                 // Start 8-second countdown
@@ -315,7 +312,6 @@ public partial class GamePage
                 {
                     for (var i = 8; i > 0; i--)
                     {
-                        RemainingSeconds = i;
                         await InvokeAsync(StateHasChanged);
                         await Task.Delay(1000, _aiTurnTimerCts.Token);
                     }
