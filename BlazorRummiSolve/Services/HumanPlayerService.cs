@@ -79,13 +79,13 @@ public class HumanPlayerService
         if (_hasPlayed)
         {
             // Player has already played, validate with board tiles
-            // Note: _currentBoard.Tiles never contains wildcards (managed by Set class)
+            // Note: _currentBoard.Tiles never contains jokers (managed by Set class)
             var boardTiles = _currentBoard.Tiles.ToArray();
             var allTiles = boardTiles.Concat(nonJokerTiles).Order().ToArray();
 
-            var boardWildcards = _currentBoard.WildcardCount;
+            var boardJokers = _currentBoard.Jokers;
 
-            var combiSolver = new BinaryBaseSolver(allTiles, boardWildcards + jokerCount)
+            var combiSolver = new BinaryBaseSolver(allTiles, boardJokers + jokerCount)
             {
                 TilesToPlay = nonJokerTiles,
                 JokerToPlay = jokerCount

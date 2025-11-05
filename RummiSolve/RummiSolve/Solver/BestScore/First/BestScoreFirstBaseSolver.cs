@@ -33,13 +33,13 @@ public class BestScoreFirstBaseSolver : BaseSolver, ISolver
 
     public static BestScoreFirstBaseSolver Create(Set playerSet)
     {
-        // Note: Set.Tiles never contains wildcards and is already managed
+        // Note: Set.Tiles never contains jokers and is already managed
         var tiles = new List<Tile>(playerSet.Tiles);
         tiles.Sort();
 
         return new BestScoreFirstBaseSolver(
             tiles.ToArray(),
-            playerSet.WildcardCount
+            playerSet.Jokers
         );
     }
 

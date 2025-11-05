@@ -1,21 +1,21 @@
 namespace RummiSolve;
 
 /// <summary>
-/// Represents a set of tiles with explicit wildcard (joker) handling.
+/// Represents a set of tiles with explicit joker handling.
 ///
 /// DESIGN RULES:
-/// - Tiles list NEVER contains wildcards (IsJoker == true tiles are excluded)
-/// - WildcardCount tracks the number of wildcards separately
-/// - Use GetAllTilesIncludingWildcards() to get all tiles with wildcards for display/validation
-/// - All mutations automatically enforce the "no wildcards in Tiles" invariant
+/// - Tiles list NEVER contains jokers (IsJoker == true tiles are excluded)
+/// - Jokers tracks the number of jokers separately
+/// - Use GetAllTilesIncludingJokers() to get all tiles with jokers for display/validation
+/// - All mutations automatically enforce the "no jokers in Tiles" invariant
 /// </summary>
 public class Set
 {
     private List<Tile> _tiles = [];
 
     /// <summary>
-    /// Gets the tiles in this set. INVARIANT: This list never contains wildcards (IsJoker == true).
-    /// Wildcards are tracked separately in WildcardCount.
+    /// Gets the tiles in this set. INVARIANT: This list never contains jokers (IsJoker == true).
+    /// Jokers are tracked separately in Jokers property.
     /// </summary>
     public List<Tile> Tiles
     {
@@ -28,15 +28,15 @@ public class Set
     }
 
     /// <summary>
-    /// Gets or sets the number of wildcards (jokers) in this set.
-    /// Wildcards are not stored in the Tiles list.
+    /// Gets or sets the number of jokers in this set.
+    /// Jokers are not stored in the Tiles list.
     /// </summary>
-    public int WildcardCount { get; set; }
+    public int Jokers { get; set; }
 
     public Set()
     {
         _tiles = [];
-        WildcardCount = 0;
+        Jokers = 0;
     }
 
     public Set(List<Tile> tiles)
@@ -48,19 +48,19 @@ public class Set
     public Set(Set set)
     {
         _tiles = [..set.Tiles];
-        WildcardCount = set.WildcardCount;
+        Jokers = set.Jokers;
     }
 
     /// <summary>
-    /// Returns all tiles including wildcards as a unified collection.
-    /// Wildcards are appended at the end. Use this for display or validation.
+    /// Returns all tiles including jokers as a unified collection.
+    /// Jokers are appended at the end. Use this for display or validation.
     /// </summary>
-    public IEnumerable<Tile> GetAllTilesIncludingWildcards()
+    public IEnumerable<Tile> GetAllTilesIncludingJokers()
     {
         foreach (var tile in Tiles)
             yield return tile;
 
-        for (int i = 0; i < WildcardCount; i++)
+        for (int i = 0; i < Jokers; i++)
             yield return new Tile(0, isJoker: true);
     }
 
@@ -73,7 +73,7 @@ public class Set
     {
         if (tile.IsJoker)
         {
-            WildcardCount++;
+            Jokers++;
         }
         else
         {
@@ -85,11 +85,11 @@ public class Set
     {
         ArgumentNullException.ThrowIfNull(set);
 
-        // ValidSet.Tiles may contain wildcards, so we filter them
+        // ValidSet.Tiles may contain jokers, so we filter them
         foreach (var tile in set.Tiles)
         {
             if (tile.IsJoker)
-                WildcardCount++;
+                Jokers++;
             else
                 _tiles.Add(tile);
         }
@@ -102,11 +102,11 @@ public class Set
         var newSet = new Set
         {
             Tiles = [..Tiles],
-            WildcardCount = WildcardCount
+            Jokers = Jokers
         };
 
         newSet.Tiles.AddRange(set.Tiles);
-        newSet.WildcardCount += set.WildcardCount;
+        newSet.Jokers += set.Jokers;
         return newSet;
     }
 
@@ -114,8 +114,8 @@ public class Set
     {
         if (tile.IsJoker)
         {
-            if (WildcardCount > 0)
-                WildcardCount--;
+            if (Jokers > 0)
+                Jokers--;
         }
         else
         {
@@ -125,22 +125,22 @@ public class Set
 
     public void PrintAllTiles()
     {
-        foreach (var tile in GetAllTilesIncludingWildcards())
+        foreach (var tile in GetAllTilesIncludingJokers())
             tile.PrintTile();
         Console.WriteLine();
     }
 
     /// <summary>
-    /// Ensures the invariant: Tiles list never contains wildcards.
-    /// Extracts any wildcards from Tiles and updates WildcardCount.
+    /// Ensures the invariant: Tiles list never contains jokers.
+    /// Extracts any jokers from Tiles and updates Jokers count.
     /// </summary>
     private void NormalizeAfterMutation()
     {
-        var wildcardCount = _tiles.Count(t => t.IsJoker);
-        if (wildcardCount > 0)
+        var jokerCount = _tiles.Count(t => t.IsJoker);
+        if (jokerCount > 0)
         {
             _tiles.RemoveAll(t => t.IsJoker);
-            WildcardCount += wildcardCount;
+            Jokers += jokerCount;
         }
     }
 }

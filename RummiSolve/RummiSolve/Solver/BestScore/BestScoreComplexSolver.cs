@@ -38,14 +38,14 @@ public class BestScoreComplexSolver : ComplexSolver, ISolver
 
     public static BestScoreComplexSolver Create(Set boardSet, Set playerSet)
     {
-        // Note: Set.Tiles never contains wildcards - they are tracked separately in WildcardCount
+        // Note: Set.Tiles never contains jokers - they are tracked separately in Jokers
         var capacity = boardSet.Tiles.Count + playerSet.Tiles.Count;
         var combined = new List<(Tile tile, bool isPlayerTile)>(capacity);
 
         combined.AddRange(boardSet.Tiles.Select(tile => (tile, false)));
         combined.AddRange(playerSet.Tiles.Select(tile => (tile, true)));
 
-        var totalJokers = boardSet.WildcardCount + playerSet.WildcardCount;
+        var totalJokers = boardSet.Jokers + playerSet.Jokers;
 
         combined.Sort((x, y) =>
         {
@@ -53,7 +53,7 @@ public class BestScoreComplexSolver : ComplexSolver, ISolver
             return tileCompare != 0 ? tileCompare : x.isPlayerTile.CompareTo(y.isPlayerTile);
         });
 
-        // No need to remove wildcards - they're not in the Tiles lists anymore
+        // No need to remove jokers - they're not in the Tiles lists anymore
 
         var finalTiles = combined.Select(pair => pair.tile).ToArray();
         var isPlayerTile = combined.Select(pair => pair.isPlayerTile).ToArray();
@@ -62,7 +62,7 @@ public class BestScoreComplexSolver : ComplexSolver, ISolver
             finalTiles,
             totalJokers,
             isPlayerTile,
-            boardSet.WildcardCount
+            boardSet.Jokers
         );
     }
 

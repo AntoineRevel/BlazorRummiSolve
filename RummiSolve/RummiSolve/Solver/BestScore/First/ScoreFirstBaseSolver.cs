@@ -14,11 +14,11 @@ public class ScoreFirstBaseSolver : BaseSolver, IScoreSolver
 
     public static ScoreFirstBaseSolver Create(Set playerSet)
     {
-        // Note: Set.Tiles never contains wildcards and is already managed
+        // Note: Set.Tiles never contains jokers and is already managed
         var tiles = new List<Tile>(playerSet.Tiles);
         tiles.Sort();
 
-        return new ScoreFirstBaseSolver(tiles.ToArray(), playerSet.WildcardCount);
+        return new ScoreFirstBaseSolver(tiles.ToArray(), playerSet.Jokers);
     }
 
     public bool SearchBestScore(CancellationToken cancellationToken = default)
