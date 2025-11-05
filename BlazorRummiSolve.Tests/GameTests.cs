@@ -25,7 +25,7 @@ public class GameTests
             Assert.Equal(106, game.AllTiles());
         }
 
-        // Vérification finale
+        // Final verification
         Assert.True(game.AllTiles() == 106, $"game.Id = {game.Id}");
     }
 }

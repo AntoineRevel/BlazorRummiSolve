@@ -2,7 +2,7 @@ namespace RummiSolve.Results;
 
 public class SolverResult
 {
-    // Constructeur privé pour forcer l'utilisation des factory methods
+    // Private constructor to enforce use of factory methods
     private SolverResult()
     {
         Source = string.Empty;
@@ -20,7 +20,7 @@ public class SolverResult
     public int JokerToPlay { get; private init; }
     public int Score { get; private init; }
 
-    // Factory method pour les échecs
+    // Factory method for failures
     public static SolverResult Invalid(string source)
     {
         return new SolverResult
@@ -32,7 +32,7 @@ public class SolverResult
         };
     }
 
-    // Factory method pour créer un résultat à partir d'une solution
+    // Factory method to create a result from a solution
     public static SolverResult FromSolution(string source, Solution solution, IEnumerable<Tile> tilesToPlay,
         int jokerToPlay = 0, int score = 0)
     {

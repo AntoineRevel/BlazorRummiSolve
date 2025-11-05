@@ -30,27 +30,27 @@ public class RummiBench
 
         var stopwatch = Stopwatch.StartNew();
 
-        Console.WriteLine("=== DÉBUT DE LA PARTIE ===");
+        Console.WriteLine("=== GAME START ===");
         while (!game.IsGameOver)
         {
             var currentPlayer = game.Players[game.PlayerIndex];
 
-            Console.WriteLine($"=== TOUR {game.Turn} ===");
-            Console.WriteLine($"Joueur actuel: {currentPlayer.Name}");
-            Console.WriteLine("Main du joueur:");
+            Console.WriteLine($"=== TURN {game.Turn} ===");
+            Console.WriteLine($"Current player: {currentPlayer.Name}");
+            Console.WriteLine("Player's hand:");
             currentPlayer.Rack.PrintAllTiles();
 
             await game.PlayAsync();
 
-            Console.WriteLine("\nRésultat du tour:");
-            Console.WriteLine($"Tuiles complètes: {game.AllTiles()}");
+            Console.WriteLine("\nTurn result:");
+            Console.WriteLine($"Total tiles: {game.AllTiles()}");
 
 
-            Console.WriteLine("Main du joueur:");
+            Console.WriteLine("Player's hand:");
             currentPlayer.Rack.PrintAllTiles();
 
 
-            Console.WriteLine("\nPlateau actuel:");
+            Console.WriteLine("\nCurrent board:");
             game.Board.PrintSolution();
 
             Console.WriteLine("\n--------------------------------\n");
@@ -59,7 +59,7 @@ public class RummiBench
         stopwatch.Stop();
         Console.WriteLine($"Game executed in {stopwatch.ElapsedMilliseconds}ms");
 
-        Console.WriteLine("=== FIN DE LA PARTIE ===");
+        Console.WriteLine("=== GAME END ===");
     }
 
 
@@ -274,21 +274,21 @@ public class RummiBench
                 try
                 {
                     if (game.AllTiles() != 106)
-                        throw new Exception("Erreur au départ");
+                        throw new Exception("Error at start");
 
                     while (!game.IsGameOver)
                     {
                         await game.PlayAsync();
                         if (game.AllTiles() != 106)
-                            throw new Exception("Erreur en cours de partie");
+                            throw new Exception("Error during game");
                     }
 
                     if (game.AllTiles() != 106)
-                        throw new Exception("Erreur en fin de partie");
+                        throw new Exception("Error at game end");
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"🛑 Game ID {game.Id} a échoué : {ex.Message}");
+                    Console.WriteLine($"🛑 Game ID {game.Id} failed: {ex.Message}");
 
                     throw;
                 }
@@ -297,11 +297,11 @@ public class RummiBench
         try
         {
             await Task.WhenAll(tasks);
-            Console.WriteLine("✅ Toutes les parties se sont bien déroulées !");
+            Console.WriteLine("✅ All games completed successfully!");
         }
         catch
         {
-            Console.WriteLine("❌ Une erreur a été détectée, arrêt des tests.");
+            Console.WriteLine("❌ An error was detected, stopping tests.");
         }
     }
 
@@ -492,7 +492,7 @@ public class RummiBench
         }
         else
         {
-            Console.WriteLine("Aucune solution trouvée ");
+            Console.WriteLine("No solution found ");
         }
     }
 

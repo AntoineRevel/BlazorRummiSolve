@@ -53,12 +53,12 @@ public sealed class BinaryFirstBaseSolver(Tile[] tiles, int jokers) : BaseSolver
 
             var newSolutionScore = solutionScore + set.GetScore();
 
-            // Vérifier une seule fois si toutes les tuiles sont utilisées et plus de jokers
+            // Check once if all tiles are used and no more jokers
             if (UsedTiles.All(b => b) && Jokers == 0)
             {
                 _finalScore = newSolutionScore;
 
-                // Valider la solution si le score est suffisant (>= 30)
+                // Validate the solution if the score is sufficient (>= 30)
                 if (newSolutionScore > MinScore) solution.IsValid = true;
             }
             else
