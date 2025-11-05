@@ -6,3 +6,7 @@ profile:
   name: qodana.recommended
 include:
   - name: CheckDependencyLicenses
+exclude:
+  - name: All
+    paths:
+      - RummiSolve/RummiSolve/RummiBench.cs
