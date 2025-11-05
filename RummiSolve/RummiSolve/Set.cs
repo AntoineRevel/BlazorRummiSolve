@@ -30,7 +30,7 @@ public class Set
 
     public int Jokers { get; private set; }
 
-    private IEnumerable<Tile> GetAllTilesIncludingJokers()
+    public IEnumerable<Tile> GetAllTilesIncludingJokers()
     {
         foreach (var tile in Tiles)
             yield return tile;

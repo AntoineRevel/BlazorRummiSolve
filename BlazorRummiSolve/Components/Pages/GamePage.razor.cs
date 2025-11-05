@@ -92,8 +92,8 @@ public partial class GamePage
         if (CurrentGameMode == GameMode.FullAI && DisplayedTileCounts.ContainsKey(player))
             return DisplayedTileCounts[player];
 
-        // Otherwise, return actual count
-        return player.Rack.Tiles.Count;
+        // Otherwise, return actual count including jokers
+        return player.Rack.GetAllTilesIncludingJokers().Count();
     }
 
     private bool ShouldShowAIRack()
@@ -149,7 +149,8 @@ public partial class GamePage
                 if (CurrentGameMode == GameMode.FullAI)
                 {
                     DisplayedTileCounts.Clear();
-                    foreach (var player in _currentGame.Players) DisplayedTileCounts[player] = player.Rack.Tiles.Count;
+                    foreach (var player in _currentGame.Players)
+                        DisplayedTileCounts[player] = player.Rack.GetAllTilesIncludingJokers().Count();
                 }
 
                 await PlayAsync();
@@ -594,7 +595,7 @@ public partial class GamePage
 
     private List<Tile> GetSortedTiles()
     {
-        return CurrentPlayer.Rack.Tiles
+        return CurrentPlayer.Rack.GetAllTilesIncludingJokers()
             .OrderBy(tile => tile.IsJoker ? 1 : 0)
             .ThenBy(tile => tile.Color)
             .ThenBy(tile => tile.Value)
