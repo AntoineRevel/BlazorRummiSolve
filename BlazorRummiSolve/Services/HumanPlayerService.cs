@@ -105,12 +105,8 @@ public class HumanPlayerService
         }
 
         if (result.Found)
-        {
             _currentPlayerChoice.TrySetResult(result);
-        }
         else
-        {
             InvalidPlayAttempted?.Invoke(this, errorMessage);
-        }
     }
 }
