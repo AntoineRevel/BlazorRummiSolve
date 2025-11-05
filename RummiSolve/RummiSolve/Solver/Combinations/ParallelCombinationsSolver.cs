@@ -15,7 +15,6 @@ public class ParallelCombinationsSolver : ISolver
     {
         _boardTiles = boardTiles;
         _boardJokers = boardJokers;
-        // playerTiles already excludes jokers (managed by Set class)
         _playerTilesJ = playerTiles;
     }
 
@@ -111,13 +110,11 @@ public class ParallelCombinationsSolver : ISolver
 
     public static ParallelCombinationsSolver Create(Set boardSet, Set playerSet)
     {
-        // Note: Set.Tiles never contains jokers and is managed automatically
         boardSet.Tiles.Sort();
 
-        // Create a temporary list with player tiles including jokers for combination generation
         var playerTilesWithJokers = new List<Tile>(playerSet.Tiles);
         for (var i = 0; i < playerSet.Jokers; i++)
-            playerTilesWithJokers.Add(new Tile(0, isJoker: true));
+            playerTilesWithJokers.Add(new Tile(true));
 
         return new ParallelCombinationsSolver(boardSet.Tiles, boardSet.Jokers, playerTilesWithJokers);
     }

@@ -80,13 +80,11 @@ public class CombinationsSolver : ISolver
 
     public static CombinationsSolver Create(Set boardSet, Set playerSet)
     {
-        // Note: Set.Tiles never contains jokers and is managed automatically
         boardSet.Tiles.Sort();
 
-        // Create a temporary list with player tiles including jokers for combination generation
         var playerTilesWithJokers = new List<Tile>(playerSet.Tiles);
         for (var i = 0; i < playerSet.Jokers; i++)
-            playerTilesWithJokers.Add(new Tile(0, isJoker: true));
+            playerTilesWithJokers.Add(new Tile(true));
 
         return new CombinationsSolver(boardSet.Tiles, boardSet.Jokers, playerTilesWithJokers);
     }

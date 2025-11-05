@@ -64,10 +64,9 @@ public class CombinationsFirstSolver : ISolver
 
     public static CombinationsFirstSolver Create(Set playerSet)
     {
-        // Create a temporary list with player tiles including jokers for combination generation
         var playerTilesWithJokers = new List<Tile>(playerSet.Tiles);
         for (var i = 0; i < playerSet.Jokers; i++)
-            playerTilesWithJokers.Add(new Tile(0, isJoker: true));
+            playerTilesWithJokers.Add(new Tile(true));
 
         return new CombinationsFirstSolver(playerTilesWithJokers);
     }
