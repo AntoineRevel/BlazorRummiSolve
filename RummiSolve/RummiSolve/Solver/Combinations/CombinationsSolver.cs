@@ -14,6 +14,7 @@ public class CombinationsSolver : ISolver
     {
         _boardTiles = boardTiles;
         _boardJokers = boardJokers;
+        // playerTiles may contain wildcards for combination generation
         _playerTilesJ = playerTiles;
     }
 
@@ -79,10 +80,14 @@ public class CombinationsSolver : ISolver
 
     public static CombinationsSolver Create(Set boardSet, Set playerSet)
     {
+        // Note: Set.Tiles never contains wildcards and is managed automatically
         boardSet.Tiles.Sort();
 
-        if (boardSet.Jokers > 0) boardSet.Tiles.RemoveRange(boardSet.Tiles.Count - boardSet.Jokers, boardSet.Jokers);
+        // Create a temporary list with player tiles including wildcards for combination generation
+        var playerTilesWithWildcards = new List<Tile>(playerSet.Tiles);
+        for (int i = 0; i < playerSet.WildcardCount; i++)
+            playerTilesWithWildcards.Add(new Tile(0, isJoker: true));
 
-        return new CombinationsSolver(boardSet.Tiles, boardSet.Jokers, playerSet.Tiles);
+        return new CombinationsSolver(boardSet.Tiles, boardSet.WildcardCount, playerTilesWithWildcards);
     }
 }

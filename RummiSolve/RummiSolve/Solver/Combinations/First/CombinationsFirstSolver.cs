@@ -64,6 +64,11 @@ public class CombinationsFirstSolver : ISolver
 
     public static CombinationsFirstSolver Create(Set playerSet)
     {
-        return new CombinationsFirstSolver(playerSet.Tiles);
+        // Create a temporary list with player tiles including wildcards for combination generation
+        var playerTilesWithWildcards = new List<Tile>(playerSet.Tiles);
+        for (int i = 0; i < playerSet.WildcardCount; i++)
+            playerTilesWithWildcards.Add(new Tile(0, isJoker: true));
+
+        return new CombinationsFirstSolver(playerTilesWithWildcards);
     }
 }

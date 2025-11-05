@@ -49,15 +49,13 @@ public sealed class IncrementalFirstBaseSolver : BaseSolver, ISolver
 
     public static IncrementalFirstBaseSolver Create(in Set playerSet)
     {
+        // Note: Set.Tiles never contains wildcards and is already managed
         var tiles = new List<Tile>(playerSet.Tiles);
-
         tiles.Sort();
-
-        if (playerSet.Jokers > 0) tiles.RemoveRange(tiles.Count - playerSet.Jokers, playerSet.Jokers);
 
         return new IncrementalFirstBaseSolver(
             tiles.ToArray(),
-            playerSet.Jokers
+            playerSet.WildcardCount
         );
     }
 

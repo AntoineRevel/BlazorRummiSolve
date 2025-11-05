@@ -113,7 +113,7 @@ public abstract class BaseSolver(Tile[] tiles, int jokers)
                 yield return new Run
                 {
                     Tiles = [..currentRun],
-                    Jokers = jokersUsed
+                    WildcardCount = jokersUsed
                 };
             }
 
@@ -130,7 +130,7 @@ public abstract class BaseSolver(Tile[] tiles, int jokers)
             yield return new Run
             {
                 Tiles = [..currentRun],
-                Jokers = jokersUsedJ
+                WildcardCount = jokersUsedJ
             };
         }
     }
@@ -200,7 +200,7 @@ public abstract class BaseSolver(Tile[] tiles, int jokers)
                     yield return new Group
                     {
                         Tiles = groupTiles,
-                        Jokers = jokersUsed
+                        WildcardCount = jokersUsed
                     };
                 }
             }
