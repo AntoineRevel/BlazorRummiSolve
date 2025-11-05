@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Fond de la tuile -->
+  <rect x="2" y="2" width="28" height="28" fill="#E8D4A0" rx="2"/>
+
+  <!-- Centre plus clair -->
+  <rect x="4" y="4" width="24" height="24" fill="#F5E6C8"/>
+
+  <!-- Ombres pour effet 3D -->
+  <rect x="2" y="27" width="28" height="3" fill="#D4A574" opacity="0.6"/>
+  <rect x="27" y="2" width="3" height="28" fill="#D4A574" opacity="0.6"/>
+
+  <!-- Chiffre "7" en rouge (style Rummikub) -->
+  <g fill="#E74C3C">
+    <!-- Barre horizontale du 7 -->
+    <rect x="10" y="10" width="12" height="3"/>
+    <!-- Barre verticale du 7 -->
+    <rect x="19" y="13" width="3" height="10"/>
+  </g>
+</svg>
