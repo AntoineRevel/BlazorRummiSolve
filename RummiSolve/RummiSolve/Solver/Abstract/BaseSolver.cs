@@ -108,8 +108,6 @@ public abstract class BaseSolver(Tile[] tiles, int jokers)
 
                 if (currentRun.Count < 3) continue;
 
-                var jokersUsed = Jokers - availableJokers;
-
                 yield return new Run
                 {
                     Tiles = [..currentRun]
@@ -123,8 +121,6 @@ public abstract class BaseSolver(Tile[] tiles, int jokers)
             availableJokers--;
 
             if (currentRun.Count < 3) continue;
-
-            var jokersUsedJ = Jokers - availableJokers;
 
             yield return new Run
             {
