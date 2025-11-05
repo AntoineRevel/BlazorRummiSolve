@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 48">
+  <!-- Fond de la tuile rectangulaire -->
+  <rect x="4" y="2" width="24" height="44" fill="#E8D4A0" rx="2"/>
+
+  <!-- Centre plus clair -->
+  <rect x="6" y="4" width="20" height="40" fill="#F5E6C8"/>
+
+  <!-- Ombres pour effet 3D -->
+  <rect x="4" y="42" width="24" height="4" fill="#D4A574" opacity="0.6"/>
+  <rect x="24" y="2" width="4" height="44" fill="#D4A574" opacity="0.6"/>
+
+  <!-- Chiffre "8" en rouge (style Rummikub) - positionné en haut -->
+  <g fill="#E74C3C">
+    <!-- Boucle supérieure du 8 -->
+    <rect x="12" y="8" width="8" height="2"/>
+    <rect x="12" y="8" width="2" height="6"/>
+    <rect x="18" y="8" width="2" height="6"/>
+    <rect x="12" y="12" width="8" height="2"/>
+
+    <!-- Boucle inférieure du 8 -->
+    <rect x="12" y="14" width="2" height="6"/>
+    <rect x="18" y="14" width="2" height="6"/>
+    <rect x="12" y="18" width="8" height="2"/>
+  </g>
+</svg>
