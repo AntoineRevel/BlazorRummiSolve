@@ -10,7 +10,7 @@ public class GameTests
         // Arrange
         var game = new Game();
 
-        var playerNames = new List<string> { "Antoine", "Matthieu", "Maguy" };
+        var playerNames = new List<string> { "Antoine", "Matthieu", "Maguy", "Bob" };
 
         // Act & Assert - Initialisation
         game.InitializeGame(playerNames);

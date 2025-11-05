@@ -112,8 +112,10 @@ public class ParallelCombinationsSolver : ISolver
     {
         boardSet.Tiles.Sort();
 
-        if (boardSet.Jokers > 0) boardSet.Tiles.RemoveRange(boardSet.Tiles.Count - boardSet.Jokers, boardSet.Jokers);
+        var playerTilesWithJokers = new List<Tile>(playerSet.Tiles);
+        for (var i = 0; i < playerSet.Jokers; i++)
+            playerTilesWithJokers.Add(new Tile(true));
 
-        return new ParallelCombinationsSolver(boardSet.Tiles, boardSet.Jokers, playerSet.Tiles);
+        return new ParallelCombinationsSolver(boardSet.Tiles, boardSet.Jokers, playerTilesWithJokers);
     }
 }

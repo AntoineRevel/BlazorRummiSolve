@@ -64,6 +64,10 @@ public class CombinationsFirstSolver : ISolver
 
     public static CombinationsFirstSolver Create(Set playerSet)
     {
-        return new CombinationsFirstSolver(playerSet.Tiles);
+        var playerTilesWithJokers = new List<Tile>(playerSet.Tiles);
+        for (var i = 0; i < playerSet.Jokers; i++)
+            playerTilesWithJokers.Add(new Tile(true));
+
+        return new CombinationsFirstSolver(playerTilesWithJokers);
     }
 }

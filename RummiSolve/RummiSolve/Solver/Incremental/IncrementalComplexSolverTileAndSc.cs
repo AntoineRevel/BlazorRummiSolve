@@ -70,7 +70,7 @@ public sealed class IncrementalComplexSolverTileAndSc : ComplexSolver, ISolver
             return tileCompare != 0 ? tileCompare : x.isPlayerTile.CompareTo(y.isPlayerTile);
         });
 
-        if (totalJokers > 0) combined.RemoveRange(combined.Count - totalJokers, totalJokers);
+        // No need to remove jokers - they're not in the Tiles lists anymore
 
         var finalTiles = combined.Select(pair => pair.tile).ToArray();
         var isPlayerTile = combined.Select(pair => pair.isPlayerTile).ToArray();

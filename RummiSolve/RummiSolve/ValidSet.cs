@@ -1,9 +1,11 @@
 namespace RummiSolve;
 
+/// <summary>
+///     Represents a validated set (Run or Group) of tiles, contain jokers
+/// </summary>
 public abstract class ValidSet
 {
     public required Tile[] Tiles { get; init; }
-    public int Jokers { get; init; }
 
     public int GetScore()
     {

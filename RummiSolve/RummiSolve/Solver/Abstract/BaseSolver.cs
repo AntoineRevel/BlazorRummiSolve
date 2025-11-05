@@ -108,12 +108,9 @@ public abstract class BaseSolver(Tile[] tiles, int jokers)
 
                 if (currentRun.Count < 3) continue;
 
-                var jokersUsed = Jokers - availableJokers;
-
                 yield return new Run
                 {
-                    Tiles = [..currentRun],
-                    Jokers = jokersUsed
+                    Tiles = [..currentRun]
                 };
             }
 
@@ -125,12 +122,9 @@ public abstract class BaseSolver(Tile[] tiles, int jokers)
 
             if (currentRun.Count < 3) continue;
 
-            var jokersUsedJ = Jokers - availableJokers;
-
             yield return new Run
             {
-                Tiles = [..currentRun],
-                Jokers = jokersUsedJ
+                Tiles = [..currentRun]
             };
         }
     }
@@ -199,8 +193,7 @@ public abstract class BaseSolver(Tile[] tiles, int jokers)
 
                     yield return new Group
                     {
-                        Tiles = groupTiles,
-                        Jokers = jokersUsed
+                        Tiles = groupTiles
                     };
                 }
             }

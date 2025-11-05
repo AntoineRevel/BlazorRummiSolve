@@ -25,6 +25,25 @@
 
             <TileComponent Tile="tile" ShouldHighlight="@shouldHighlight"/>
         }
+
+        @* Display jokers from Set.Jokers counter *@
+        @for (var i = 0; i < Set.Jokers; i++)
+        {
+            var jokerTile = new Tile(true); // Create joker tile for display
+            var shouldHighlight = false;
+
+            if (ShowHint)
+            {
+                var matchingTile = tilesToHighlight!.FirstOrDefault(t => t.IsJoker);
+                if (!matchingTile.IsNull)
+                {
+                    shouldHighlight = true;
+                    tilesToHighlight!.Remove(matchingTile);
+                }
+            }
+
+            <TileComponent Tile="jokerTile" ShouldHighlight="@shouldHighlight"/>
+        }
     </div>
 </div>
 

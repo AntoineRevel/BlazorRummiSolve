@@ -50,10 +50,7 @@ public sealed class IncrementalFirstBaseSolver : BaseSolver, ISolver
     public static IncrementalFirstBaseSolver Create(in Set playerSet)
     {
         var tiles = new List<Tile>(playerSet.Tiles);
-
         tiles.Sort();
-
-        if (playerSet.Jokers > 0) tiles.RemoveRange(tiles.Count - playerSet.Jokers, playerSet.Jokers);
 
         return new IncrementalFirstBaseSolver(
             tiles.ToArray(),

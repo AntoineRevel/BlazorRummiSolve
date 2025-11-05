@@ -14,6 +14,7 @@ public class CombinationsSolver : ISolver
     {
         _boardTiles = boardTiles;
         _boardJokers = boardJokers;
+        // playerTiles may contain jokers for combination generation
         _playerTilesJ = playerTiles;
     }
 
@@ -81,8 +82,10 @@ public class CombinationsSolver : ISolver
     {
         boardSet.Tiles.Sort();
 
-        if (boardSet.Jokers > 0) boardSet.Tiles.RemoveRange(boardSet.Tiles.Count - boardSet.Jokers, boardSet.Jokers);
+        var playerTilesWithJokers = new List<Tile>(playerSet.Tiles);
+        for (var i = 0; i < playerSet.Jokers; i++)
+            playerTilesWithJokers.Add(new Tile(true));
 
-        return new CombinationsSolver(boardSet.Tiles, boardSet.Jokers, playerSet.Tiles);
+        return new CombinationsSolver(boardSet.Tiles, boardSet.Jokers, playerTilesWithJokers);
     }
 }

@@ -24,8 +24,6 @@ public class ComplexScoreSolver(Tile[] tiles, int jokers, bool[] isPlayerTile, i
             return tileCompare != 0 ? tileCompare : x.isPlayerTile.CompareTo(y.isPlayerTile);
         });
 
-        if (totalJokers > 0) combined.RemoveRange(combined.Count - totalJokers, totalJokers);
-
         var finalTiles = combined.Select(pair => pair.tile).ToArray();
         var isPlayerTile = combined.Select(pair => pair.isPlayerTile).ToArray();
 

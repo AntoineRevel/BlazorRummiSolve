@@ -15,10 +15,7 @@ public class ScoreFirstBaseSolver : BaseSolver, IScoreSolver
     public static ScoreFirstBaseSolver Create(Set playerSet)
     {
         var tiles = new List<Tile>(playerSet.Tiles);
-
         tiles.Sort();
-
-        if (playerSet.Jokers > 0) tiles.RemoveRange(tiles.Count - playerSet.Jokers, playerSet.Jokers);
 
         return new ScoreFirstBaseSolver(tiles.ToArray(), playerSet.Jokers);
     }

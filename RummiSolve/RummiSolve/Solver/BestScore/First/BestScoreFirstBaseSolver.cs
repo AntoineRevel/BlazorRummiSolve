@@ -34,11 +34,7 @@ public class BestScoreFirstBaseSolver : BaseSolver, ISolver
     public static BestScoreFirstBaseSolver Create(Set playerSet)
     {
         var tiles = new List<Tile>(playerSet.Tiles);
-
         tiles.Sort();
-
-        if (playerSet.Jokers > 0) tiles.RemoveRange(tiles.Count - playerSet.Jokers, playerSet.Jokers);
-
 
         return new BestScoreFirstBaseSolver(
             tiles.ToArray(),

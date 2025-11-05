@@ -1,19 +1,20 @@
 namespace RummiSolve;
 
+/// <summary>
+///     Represents a set of tiles with explicit joker handling. Tiles list NEVER contains jokers
+/// </summary>
 public class Set
 {
-    public int Jokers;
-    public List<Tile> Tiles;
-
     public Set()
     {
         Tiles = [];
+        Jokers = 0;
     }
 
     public Set(List<Tile> tiles)
     {
         Tiles = [..tiles];
-        Jokers = Tiles.Count(tile => tile.IsJoker);
+        NormalizeAfterMutation();
     }
 
     public Set(Set set)
@@ -22,52 +23,69 @@ public class Set
         Jokers = set.Jokers;
     }
 
-    public int GetScore()
+    /// <summary>
+    ///     never contains jokers
+    /// </summary>
+    public List<Tile> Tiles { get; }
+
+    public int Jokers { get; private set; }
+
+    public IEnumerable<Tile> GetAllTilesIncludingJokers()
     {
-        return Tiles.Sum(t => t.Value);
+        foreach (var tile in Tiles)
+            yield return tile;
+
+        for (var i = 0; i < Jokers; i++)
+            yield return new Tile(0, isJoker: true);
     }
 
     public void AddTile(Tile tile)
     {
-        Tiles.Add(tile);
-        if (tile.IsJoker) Jokers++;
+        if (tile.IsJoker)
+            Jokers++;
+        else
+            Tiles.Add(tile);
     }
 
     public void Concat(ValidSet set)
     {
         ArgumentNullException.ThrowIfNull(set);
 
-        Tiles.AddRange(set.Tiles);
-        Jokers += set.Jokers;
+        // ValidSet.Tiles may contain jokers, so we filter them
+        foreach (var tile in set.Tiles)
+            if (tile.IsJoker)
+                Jokers++;
+            else
+                Tiles.Add(tile);
     }
-
-    public Set ConcatNew(Set set)
-    {
-        ArgumentNullException.ThrowIfNull(set);
-
-        var newSet = new Set
-        {
-            Tiles = [..Tiles],
-            Jokers = Jokers
-        };
-
-        newSet.Tiles.AddRange(set.Tiles);
-        newSet.Jokers += set.Jokers;
-        return newSet;
-    }
-
 
     public void Remove(Tile tile)
     {
-        Tiles.Remove(tile);
-
-        if (tile.IsJoker) Jokers--;
+        if (tile.IsJoker)
+        {
+            if (Jokers > 0)
+                Jokers--;
+        }
+        else
+        {
+            Tiles.Remove(tile);
+        }
     }
-
 
     public void PrintAllTiles()
     {
-        foreach (var tile in Tiles) tile.PrintTile();
+        foreach (var tile in GetAllTilesIncludingJokers())
+            tile.PrintTile();
         Console.WriteLine();
+    }
+
+    private void NormalizeAfterMutation()
+    {
+        var jokerCount = Tiles.Count(t => t.IsJoker);
+        if (jokerCount <= 0) return;
+        {
+            Tiles.RemoveAll(t => t.IsJoker);
+            Jokers += jokerCount;
+        }
     }
 }
