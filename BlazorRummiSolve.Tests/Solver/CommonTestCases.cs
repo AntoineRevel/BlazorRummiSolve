@@ -27,7 +27,11 @@ public static class CommonTestCases
             ]),
             new ExpectedResult(
                 true,
-                3,
+                [
+                    new Tile(10),
+                    new Tile(10, TileColor.Red),
+                    new Tile(10, TileColor.Black)
+                ],
                 0
             )
         ),
@@ -44,7 +48,9 @@ public static class CommonTestCases
             ]),
             new ExpectedResult(
                 true,
-                1,
+                [
+                    new Tile(1, TileColor.Red)
+                ],
                 0
             )
         ),
@@ -63,7 +69,10 @@ public static class CommonTestCases
             ]),
             new ExpectedResult(
                 true,
-                2,
+                [
+                    new Tile(10),
+                    new Tile(10, TileColor.Red)
+                ],
                 0
             )
         ),
@@ -80,7 +89,9 @@ public static class CommonTestCases
             ]),
             new ExpectedResult(
                 true,
-                1,
+                [
+                    new Tile(4, TileColor.Red)
+                ],
                 0
             )
         ),
@@ -98,7 +109,9 @@ public static class CommonTestCases
             ]),
             new ExpectedResult(
                 true,
-                1,
+                [
+                    new Tile(4, TileColor.Red)
+                ],
                 1
             )
         ),
@@ -122,7 +135,14 @@ public static class CommonTestCases
             ]),
             new ExpectedResult(
                 true,
-                6,
+                [
+                    new Tile(10),
+                    new Tile(10, TileColor.Red),
+                    new Tile(10, TileColor.Black),
+                    new Tile(1, TileColor.Red),
+                    new Tile(2, TileColor.Red),
+                    new Tile(3, TileColor.Red)
+                ],
                 0
             )
         ),
@@ -142,13 +162,16 @@ public static class CommonTestCases
             ]),
             new ExpectedResult(
                 true,
-                2,
+                [
+                    new Tile(8, TileColor.Black),
+                    new Tile(8, TileColor.Red)
+                ],
                 0
             )
         ),
 
         new(
-            "ValidNWonIncrscorePlayer",
+            "ValidNWonIncrScorePlayer",
             new Set([
                 new Tile(10),
                 new Tile(11),
@@ -165,7 +188,11 @@ public static class CommonTestCases
             ]),
             new ExpectedResult(
                 true,
-                3,
+                [
+                    new Tile(9, TileColor.Mango),
+                    new Tile(13, TileColor.Red),
+                    new Tile(13)
+                ],
                 0
             )
         ),
@@ -186,7 +213,12 @@ public static class CommonTestCases
             ]),
             new ExpectedResult(
                 true,
-                4,
+                [
+                    new Tile(10),
+                    new Tile(10, TileColor.Red),
+                    new Tile(10, TileColor.Black),
+                    new Tile(5, TileColor.Red)
+                ],
                 1
             )
         ),
@@ -203,7 +235,7 @@ public static class CommonTestCases
             ]),
             new ExpectedResult(
                 true,
-                0,
+                [],
                 1
             )
         ),
@@ -220,7 +252,172 @@ public static class CommonTestCases
             ]),
             new ExpectedResult(
                 false,
-                0,
+                [],
+                0
+            )
+        ),
+        new(
+            "ValidMultipleDuplicates",
+            new Set([
+                new Tile(1, TileColor.Red),
+                new Tile(2, TileColor.Red),
+                new Tile(4, TileColor.Red),
+                new Tile(5, TileColor.Red)
+            ]),
+            new Set([
+                new Tile(3, TileColor.Red),
+                new Tile(3, TileColor.Red)
+            ]),
+            new ExpectedResult(
+                true,
+                [
+                    new Tile(3, TileColor.Red),
+                    new Tile(3, TileColor.Red)
+                ],
+                0
+            )
+        ),
+
+        new(
+            "ValidMultipleDuplicatesGroups",
+            new Set([
+                new Tile(1, TileColor.Red),
+                new Tile(1, TileColor.Black),
+                new Tile(10, TileColor.Red),
+                new Tile(10, TileColor.Black),
+                new Tile(10)
+            ]),
+            new Set([
+                new Tile(1, TileColor.Mango),
+                new Tile(1, TileColor.Mango),
+                new Tile(10, TileColor.Mango),
+                new Tile(10, TileColor.Mango)
+            ]),
+            new ExpectedResult(
+                true,
+                [
+                    new Tile(1, TileColor.Mango),
+                    new Tile(10, TileColor.Mango)
+                ],
+                0
+            )
+        ),
+
+        new(
+            "ValidNotWon2",
+            new Set([
+                new Tile(8),
+                new Tile(9),
+                new Tile(10),
+                new Tile(11)
+            ]),
+            new Set([
+                new Tile(8, TileColor.Black),
+                new Tile(8, TileColor.Red),
+                new Tile(1)
+            ]),
+            new ExpectedResult(
+                true,
+                [
+                    new Tile(8, TileColor.Black),
+                    new Tile(8, TileColor.Red)
+                ],
+                0
+            )
+        ),
+
+        new(
+            "ValidRunEnd",
+            new Set([
+                new Tile(1, TileColor.Red),
+                new Tile(2, TileColor.Red),
+                new Tile(3, TileColor.Red),
+                new Tile(true)
+            ]),
+            new Set([
+                new Tile(12),
+                new Tile(13)
+            ]),
+            new ExpectedResult(
+                true,
+                [
+                    new Tile(12),
+                    new Tile(13)
+                ],
+                0
+            )
+        ),
+
+        new(
+            "ValidJokerOnBoard",
+            new Set([
+                new Tile(5),
+                new Tile(5, TileColor.Red),
+                new Tile(5, TileColor.Black)
+            ]),
+            new Set([
+                new Tile(true)
+            ]),
+            new ExpectedResult(
+                true,
+                [],
+                1
+            )
+        ),
+
+        new(
+            "ReplaceJokerWithRealTile",
+            new Set([
+                new Tile(11, TileColor.Mango),
+                new Tile(true),
+                new Tile(13, TileColor.Mango)
+            ]),
+            new Set([
+                new Tile(12, TileColor.Mango),
+                new Tile(13, TileColor.Red),
+                new Tile(13)
+            ]),
+            new ExpectedResult(
+                true,
+                [
+                    new Tile(12, TileColor.Mango),
+                    new Tile(13, TileColor.Red),
+                    new Tile(13)
+                ],
+                0
+            )
+        ),
+
+        // Complex scenarios with board
+        new(
+            "LargePlayerMultipleSets",
+            new Set([
+                new Tile(1, TileColor.Red),
+                new Tile(2, TileColor.Red),
+                new Tile(3, TileColor.Red)
+            ]),
+            new Set([
+                new Tile(10),
+                new Tile(10, TileColor.Red),
+                new Tile(10, TileColor.Black),
+                new Tile(4),
+                new Tile(8),
+                new Tile(11),
+                new Tile(11),
+                new Tile(13),
+                new Tile(13, TileColor.Red),
+                new Tile(13, TileColor.Black)
+            ]),
+            new ExpectedResult(
+                true,
+                [
+                    new Tile(10),
+                    new Tile(10, TileColor.Red),
+                    new Tile(10, TileColor.Black),
+                    new Tile(13),
+                    new Tile(13, TileColor.Red),
+                    new Tile(13, TileColor.Black)
+                ],
                 0
             )
         )
@@ -235,7 +432,7 @@ public static class CommonTestCases
 
     public record ExpectedResult(
         bool IsValid,
-        int TilesToPlayCount,
+        IEnumerable<Tile> TilesToPlay,
         int JokerToPlay
     );
 }

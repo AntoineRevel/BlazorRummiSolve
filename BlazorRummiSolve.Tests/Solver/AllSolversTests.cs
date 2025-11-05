@@ -3,6 +3,7 @@ using RummiSolve.Solver.BestScore;
 using RummiSolve.Solver.Combinations;
 using RummiSolve.Solver.Incremental;
 using RummiSolve.Solver.Interfaces;
+using Xunit.Abstractions;
 
 namespace BlazorRummiSolve.Tests.Solver;
 
@@ -10,7 +11,7 @@ namespace BlazorRummiSolve.Tests.Solver;
 ///     Tests all solvers with all common test cases.
 ///     To add a solver, add it to the Solvers list.
 /// </summary>
-public class AllSolversTests
+public class AllSolversTests(ITestOutputHelper output)
 {
     /// <summary>
     ///     List of solvers to test. Add or remove solvers here.
@@ -54,18 +55,7 @@ public class AllSolversTests
         // Act
         var result = solver.SearchSolution();
 
-        // Assert
-        Assert.True(
-            testCase.Expected.IsValid == result.BestSolution.IsValid,
-            $"{solverName} - {testCase.Name}: Expected IsValid={testCase.Expected.IsValid}, got {result.BestSolution.IsValid}"
-        );
-        Assert.True(
-            testCase.Expected.TilesToPlayCount == result.TilesToPlay.Count(),
-            $"{solverName} - {testCase.Name}: Expected TilesToPlayCount={testCase.Expected.TilesToPlayCount}, got {result.TilesToPlay.Count()}"
-        );
-        Assert.True(
-            testCase.Expected.JokerToPlay == result.JokerToPlay,
-            $"{solverName} - {testCase.Name}: Expected JokerToPlay={testCase.Expected.JokerToPlay}, got {result.JokerToPlay}"
-        );
+        // Assert - Use shared helper to validate result
+        SolverTestHelpers.AssertSolverResult(solverName, testCase.Name, result, testCase.Expected, output);
     }
 }

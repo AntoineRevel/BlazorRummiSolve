@@ -36,14 +36,16 @@ public class SolverResult
     public static SolverResult FromSolution(string source, Solution solution, IEnumerable<Tile> tilesToPlay,
         int jokerToPlay = 0, int score = 0)
     {
-        return new SolverResult
-        {
-            Source = source,
-            Found = solution.IsValid,
-            BestSolution = solution,
-            TilesToPlay = tilesToPlay,
-            JokerToPlay = jokerToPlay,
-            Score = score
-        };
+        if (solution.IsValid)
+            return new SolverResult
+            {
+                Source = source,
+                Found = solution.IsValid,
+                BestSolution = solution,
+                TilesToPlay = tilesToPlay,
+                JokerToPlay = jokerToPlay,
+                Score = score
+            };
+        return Invalid(source);
     }
 }
