@@ -48,7 +48,7 @@ public class MeasuredSolverStrategy : ISolverStrategy
             await RunSolverAsync("ParallelCombination", parraleleCombiSolver, externalToken)
         };
 
-        Console.WriteLine("\n====== Résultats des stratégies ======\n");
+        Console.WriteLine("\n====== Strategy Results ======\n");
 
         foreach (var res in results)
         {
@@ -62,7 +62,7 @@ public class MeasuredSolverStrategy : ISolverStrategy
             }
             else
             {
-                Console.WriteLine("    ➤ Aucun coup trouvé.");
+                Console.WriteLine("    ➤ No move found.");
             }
 
             Console.WriteLine();

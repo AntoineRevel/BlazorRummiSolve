@@ -92,18 +92,18 @@
 
     private async Task OnTileInstanceClick(TileInstance tileInstance)
     {
-        // Ajouter la tuile à la liste des tuiles en cours de suppression
+        // Add the tile to the list of tiles being removed
         _removingTiles.Add(tileInstance.Id);
         StateHasChanged();
 
-        // Attendre la fin de l'animation (300ms)
+        // Wait for the animation to finish (300ms)
         await Task.Delay(300);
 
-        // Supprimer l'instance de tuile après l'animation
+        // Remove the tile instance after the animation
         _selectedTileInstances.Remove(tileInstance);
         _removingTiles.Remove(tileInstance.Id);
 
-        // Synchroniser avec la liste SelectedTiles
+        // Sync with the SelectedTiles list
         SyncSelectedTiles();
 
         await OnSelectionChanged.InvokeAsync(SelectedTiles);
@@ -126,7 +126,7 @@
 
         if (newSelectedCount > currentSelectedCount)
         {
-            // Ajouter seulement les nouvelles tuiles
+            // Add only the new tiles
             var tilesToAdd = newSelectedCount - currentSelectedCount;
             for (var i = 0; i < tilesToAdd; i++)
             {
@@ -137,11 +137,11 @@
         }
         else if (newSelectedCount < currentSelectedCount)
         {
-            // Supprimer les tuiles en trop en partant de la fin
+            // Remove excess tiles starting from the end
             var tilesToRemove = currentSelectedCount - newSelectedCount;
             for (var i = 0; i < tilesToRemove; i++)
             {
-                // Trouver la dernière occurrence de ce type de tuile
+                // Find the last occurrence of this tile type
                 for (var j = _selectedTileInstances.Count - 1; j >= 0; j--)
                 {
                     if (!_selectedTileInstances[j].Tile.Equals(tileType)) continue;
@@ -154,7 +154,7 @@
         }
         else
         {
-            // newSelectedCount == 0, supprimer toutes les instances
+            // newSelectedCount == 0, remove all instances
             var instancesToRemove = _selectedTileInstances.Where(ti => ti.Tile.Equals(tileType)).ToList();
             foreach (var instance in instancesToRemove)
             {
@@ -163,13 +163,13 @@
             }
         }
 
-        // Synchroniser avec la liste SelectedTiles
+        // Sync with the SelectedTiles list
         SyncSelectedTiles();
 
         await OnSelectionChanged.InvokeAsync(SelectedTiles);
         StateHasChanged();
 
-        // Nettoyer les nouvelles tuiles après l'animation seulement si on a ajouté des tuiles
+        // Clean up new tiles after animation only if we added tiles
         if (newSelectedCount > currentSelectedCount)
         {
             await Task.Delay(300);
@@ -238,7 +238,7 @@
 
     protected override void OnParametersSet()
     {
-        // Synchroniser les instances avec les tuiles sélectionnées passées depuis l'extérieur
+        // Sync instances with selected tiles passed from outside
         if (SelectedTiles.Count != _selectedTileInstances.Count ||
             !SelectedTiles.SequenceEqual(_selectedTileInstances.Select(ti => ti.Tile)))
         {
