@@ -36,9 +36,14 @@
   &lt;Project Location="/Users/antoinerevel/Documents/Projet perso/BlazorRummiSolve/BlazorRummiSolve/BlazorRummiSolve.Tests" Presentation="&amp;lt;BlazorRummiSolve.Tests&amp;gt;" /&gt;
 &lt;/SessionState&gt;</s:String>
     <s:String
-            x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=4f1b7afe_002D5a57_002D44f3_002D84f8_002Dd50b30ccb735/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;Solution /&gt;
+            x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=55f3a6ea_002Dd819_002D4e04_002D8e50_002D304143176f3a/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="AllTiles_ShouldRemainAccountedFor_ThroughoutEntireGame" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;xUnit::1895341F-D9C3-45B8-AA61-444E26C6BF42::net9.0::BlazorRummiSolve.Tests.GameTests.AllTiles_ShouldRemainAccountedFor_ThroughoutEntireGame&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String>
+	
+	
+    
 	
 	
 	

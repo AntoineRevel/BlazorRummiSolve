@@ -133,13 +133,14 @@ public class Game(Guid id)
 
         sum += _tilePool.Count;
 
-        Write(sum + " ");
-
         sum += Players.Sum(player => player.Rack.Tiles.Count);
-        Write(sum + " ");
+        sum += Players.Sum(player => player.Rack.Jokers);
 
-        sum += Board.GetSet().Tiles.Count;
-        WriteLine(sum);
+        var setBoard = Board.GetSet();
+
+        sum += setBoard.Tiles.Count;
+        sum += setBoard.Jokers;
+
 
         return sum;
     }

@@ -1,22 +1,14 @@
 namespace RummiSolve;
 
 /// <summary>
-/// Represents a validated set (Run or Group) of tiles.
-///
-/// DESIGN RULES:
-/// - Tiles array DOES contain jokers (IsJoker == true) because they represent specific positions
-/// - Jokers tracks how many jokers are in this set for quick reference
-/// - ValidSets are immutable (init-only properties)
+/// Represents a validated set (Run or Group) of tiles, contain jokers 
 /// </summary>
 public abstract class ValidSet
 {
-    public required Tile[] Tiles { get; init; }
-
     /// <summary>
-    /// Gets the number of jokers in this ValidSet.
-    /// Note: Unlike Set, ValidSet.Tiles DOES contain the joker tiles.
+    ///     contain the joker tiles.
     /// </summary>
-    public int Jokers { get; init; }
+    public required Tile[] Tiles { get; init; }
 
     public int GetScore()
     {

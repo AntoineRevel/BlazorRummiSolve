@@ -1,72 +1,42 @@
 namespace RummiSolve;
 
 /// <summary>
-/// Represents a set of tiles with explicit joker handling.
-///
-/// DESIGN RULES:
-/// - Tiles list NEVER contains jokers (IsJoker == true tiles are excluded)
-/// - Jokers tracks the number of jokers separately
-/// - Use GetAllTilesIncludingJokers() to get all tiles with jokers for display/validation
-/// - All mutations automatically enforce the "no jokers in Tiles" invariant
+/// Represents a set of tiles with explicit joker handling. Tiles list NEVER contains jokers
 /// </summary>
 public class Set
 {
-    private List<Tile> _tiles = [];
-
-    /// <summary>
-    /// Gets the tiles in this set. INVARIANT: This list never contains jokers (IsJoker == true).
-    /// Jokers are tracked separately in Jokers property.
-    /// </summary>
-    public List<Tile> Tiles
-    {
-        get => _tiles;
-        set
-        {
-            _tiles = value;
-            NormalizeAfterMutation();
-        }
-    }
-
-    /// <summary>
-    /// Gets or sets the number of jokers in this set.
-    /// Jokers are not stored in the Tiles list.
-    /// </summary>
-    public int Jokers { get; set; }
-
     public Set()
     {
-        _tiles = [];
+        Tiles = [];
         Jokers = 0;
     }
 
     public Set(List<Tile> tiles)
     {
-        _tiles = [..tiles];
+        Tiles = [..tiles];
         NormalizeAfterMutation();
     }
 
     public Set(Set set)
     {
-        _tiles = [..set.Tiles];
+        Tiles = [..set.Tiles];
         Jokers = set.Jokers;
     }
 
     /// <summary>
-    /// Returns all tiles including jokers as a unified collection.
-    /// Jokers are appended at the end. Use this for display or validation.
+    /// never contains jokers
     /// </summary>
-    public IEnumerable<Tile> GetAllTilesIncludingJokers()
+    public List<Tile> Tiles { get; }
+
+    public int Jokers { get; private set; }
+
+    private IEnumerable<Tile> GetAllTilesIncludingJokers()
     {
         foreach (var tile in Tiles)
             yield return tile;
 
-        for (int i = 0; i < Jokers; i++)
+        for (var i = 0; i < Jokers; i++)
             yield return new Tile(0, isJoker: true);
-    }
-
-    public int GetScore()
-    {
-        return Tiles.Sum(t => t.Value);
     }
 
     public void AddTile(Tile tile)
@@ -77,7 +47,7 @@ public class Set
         }
         else
         {
-            _tiles.Add(tile);
+            Tiles.Add(tile);
         }
     }
 
@@ -91,23 +61,8 @@ public class Set
             if (tile.IsJoker)
                 Jokers++;
             else
-                _tiles.Add(tile);
+                Tiles.Add(tile);
         }
-    }
-
-    public Set ConcatNew(Set set)
-    {
-        ArgumentNullException.ThrowIfNull(set);
-
-        var newSet = new Set
-        {
-            Tiles = [..Tiles],
-            Jokers = Jokers
-        };
-
-        newSet.Tiles.AddRange(set.Tiles);
-        newSet.Jokers += set.Jokers;
-        return newSet;
     }
 
     public void Remove(Tile tile)
@@ -119,7 +74,7 @@ public class Set
         }
         else
         {
-            _tiles.Remove(tile);
+            Tiles.Remove(tile);
         }
     }
 
@@ -130,16 +85,12 @@ public class Set
         Console.WriteLine();
     }
 
-    /// <summary>
-    /// Ensures the invariant: Tiles list never contains jokers.
-    /// Extracts any jokers from Tiles and updates Jokers count.
-    /// </summary>
     private void NormalizeAfterMutation()
     {
-        var jokerCount = _tiles.Count(t => t.IsJoker);
-        if (jokerCount > 0)
+        var jokerCount = Tiles.Count(t => t.IsJoker);
+        if (jokerCount <= 0) return;
         {
-            _tiles.RemoveAll(t => t.IsJoker);
+            Tiles.RemoveAll(t => t.IsJoker);
             Jokers += jokerCount;
         }
     }
