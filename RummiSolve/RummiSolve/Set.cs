@@ -1,7 +1,7 @@
 namespace RummiSolve;
 
 /// <summary>
-/// Represents a set of tiles with explicit joker handling. Tiles list NEVER contains jokers
+///     Represents a set of tiles with explicit joker handling. Tiles list NEVER contains jokers
 /// </summary>
 public class Set
 {
@@ -24,7 +24,7 @@ public class Set
     }
 
     /// <summary>
-    /// never contains jokers
+    ///     never contains jokers
     /// </summary>
     public List<Tile> Tiles { get; }
 
@@ -42,13 +42,9 @@ public class Set
     public void AddTile(Tile tile)
     {
         if (tile.IsJoker)
-        {
             Jokers++;
-        }
         else
-        {
             Tiles.Add(tile);
-        }
     }
 
     public void Concat(ValidSet set)
@@ -57,12 +53,10 @@ public class Set
 
         // ValidSet.Tiles may contain jokers, so we filter them
         foreach (var tile in set.Tiles)
-        {
             if (tile.IsJoker)
                 Jokers++;
             else
                 Tiles.Add(tile);
-        }
     }
 
     public void Remove(Tile tile)
