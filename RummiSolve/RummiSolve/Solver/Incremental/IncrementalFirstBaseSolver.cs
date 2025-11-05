@@ -49,7 +49,6 @@ public sealed class IncrementalFirstBaseSolver : BaseSolver, ISolver
 
     public static IncrementalFirstBaseSolver Create(in Set playerSet)
     {
-        // Note: Set.Tiles never contains jokers and is already managed
         var tiles = new List<Tile>(playerSet.Tiles);
         tiles.Sort();
 

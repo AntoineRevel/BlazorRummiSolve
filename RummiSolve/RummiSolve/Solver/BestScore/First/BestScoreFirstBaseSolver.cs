@@ -33,7 +33,6 @@ public class BestScoreFirstBaseSolver : BaseSolver, ISolver
 
     public static BestScoreFirstBaseSolver Create(Set playerSet)
     {
-        // Note: Set.Tiles never contains jokers and is already managed
         var tiles = new List<Tile>(playerSet.Tiles);
         tiles.Sort();
 

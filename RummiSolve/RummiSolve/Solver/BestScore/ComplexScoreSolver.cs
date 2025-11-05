@@ -10,7 +10,6 @@ public class ComplexScoreSolver(Tile[] tiles, int jokers, bool[] isPlayerTile, i
 
     public static ComplexScoreSolver Create(Set boardSet, Set playerSet)
     {
-        // Note: Set.Tiles never contains jokers - they are tracked separately in Jokers
         var capacity = boardSet.Tiles.Count + playerSet.Tiles.Count;
         var combined = new List<(Tile tile, bool isPlayerTile)>(capacity);
 
@@ -24,8 +23,6 @@ public class ComplexScoreSolver(Tile[] tiles, int jokers, bool[] isPlayerTile, i
             var tileCompare = x.tile.CompareTo(y.tile);
             return tileCompare != 0 ? tileCompare : x.isPlayerTile.CompareTo(y.isPlayerTile);
         });
-
-        // No need to remove jokers - they're not in the Tiles lists anymore
 
         var finalTiles = combined.Select(pair => pair.tile).ToArray();
         var isPlayerTile = combined.Select(pair => pair.isPlayerTile).ToArray();

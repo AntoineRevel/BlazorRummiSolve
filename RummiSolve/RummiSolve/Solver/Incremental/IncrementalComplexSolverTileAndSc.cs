@@ -56,7 +56,6 @@ public sealed class IncrementalComplexSolverTileAndSc : ComplexSolver, ISolver
 
     public static IncrementalComplexSolverTileAndSc Create(Set boardSet, Set playerSet)
     {
-        // Note: Set.Tiles never contains jokers - they are tracked separately in Jokers
         var capacity = boardSet.Tiles.Count + playerSet.Tiles.Count;
         var combined = new List<(Tile tile, bool isPlayerTile)>(capacity);
 
