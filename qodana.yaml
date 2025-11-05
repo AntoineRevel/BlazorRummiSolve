@@ -1,10 +1,13 @@
-version: "1.0"
-
+version: '1.0'
 dotnet:
   solution: BlazorRummiSolve.sln
-
-linter: jetbrains/qodana-dotnet:2025.2
+linter: 'jetbrains/qodana-dotnet:2025.2'
 profile:
   name: qodana.recommended
 include:
   - name: CheckDependencyLicenses
+exclude:
+  - name: All
+    paths:
+      - RummiSolve
+      - BlazorRummiSolve
