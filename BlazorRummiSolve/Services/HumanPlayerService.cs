@@ -11,7 +11,6 @@ public class HumanPlayerService
     private TaskCompletionSource<SolverResult>? _currentPlayerChoice;
     private bool _hasPlayed;
 
-    public string? LastErrorMessage { get; private set; }
     public bool IsWaitingForNextAfterDraw { get; private set; }
 
     public event EventHandler? PlayerTurnStarted;
@@ -107,12 +106,10 @@ public class HumanPlayerService
 
         if (result.Found)
         {
-            LastErrorMessage = null;
             _currentPlayerChoice.TrySetResult(result);
         }
         else
         {
-            LastErrorMessage = errorMessage;
             InvalidPlayAttempted?.Invoke(this, errorMessage);
         }
     }
