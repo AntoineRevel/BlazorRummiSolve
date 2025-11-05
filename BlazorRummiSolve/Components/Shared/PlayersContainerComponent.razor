@@ -7,7 +7,7 @@
             var isCurrent = player == CurrentPlayer;
             var playerIndex = AllPlayers.IndexOf(player);
             var isHuman = playerIndex >= 0 && playerIndex < PlayerTypes.Count && PlayerTypes[playerIndex];
-            var tileCount = GetTileCount != null ? GetTileCount(player) : player.Rack.Tiles.Count;
+            var tileCount = GetTileCount?.Invoke(player) ?? player.Rack.Tiles.Count;
             <div class="compact-player @(isCurrent ? "current" : "") @(isHuman ? "human" : "ai")">
                 <span class="player-name">@player.Name</span>
                 <span class="tile-count">@tileCount</span>
@@ -22,9 +22,9 @@
 
     [Parameter] public required List<Player> OtherPlayers { get; set; }
 
-    [Parameter] public List<Player> AllPlayers { get; set; } = new();
+    [Parameter] public List<Player> AllPlayers { get; set; } = [];
 
-    [Parameter] public List<bool> PlayerTypes { get; set; } = new();
+    [Parameter] public List<bool> PlayerTypes { get; set; } = [];
 
     [Parameter] public Func<Player, int>? GetTileCount { get; set; }
 

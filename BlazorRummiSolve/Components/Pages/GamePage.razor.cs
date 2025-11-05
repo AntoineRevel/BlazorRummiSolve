@@ -85,8 +85,8 @@ public partial class GamePage
     private int GetDisplayedTileCount(Player player)
     {
         // In Full AI mode, use cached counts if available (before showing solution)
-        if (CurrentGameMode == GameMode.FullAI && DisplayedTileCounts.ContainsKey(player))
-            return DisplayedTileCounts[player];
+        if (CurrentGameMode == GameMode.FullAI && DisplayedTileCounts.TryGetValue(player, out var value))
+            return value;
 
         // Otherwise, return actual count including jokers
         return player.Rack.GetAllTilesIncludingJokers().Count();

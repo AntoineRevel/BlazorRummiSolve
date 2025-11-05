@@ -18,7 +18,7 @@
     [Parameter] public required Solution Solution { get; set; }
     [Parameter] public List<Tile>? HighlightTiles { get; set; }
 
-    private HashSet<int>? HighlightIndices => _highlightIndices ??= ComputeHighlightIndices();
+    private HashSet<int> HighlightIndices => _highlightIndices ??= ComputeHighlightIndices();
     private HashSet<int>? _highlightIndices;
 
     private List<(ValidSet Set, int StartIndex)> GetRunsWithIndices()

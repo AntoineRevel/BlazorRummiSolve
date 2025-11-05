@@ -32,178 +32,186 @@
             <SolutionComponent Solution="_board" HighlightTiles="AIPlayedTiles"/>
         </div>
 
-        @if (CurrentGameMode == GameMode.Interactive && IsWaitingForHumanPlayer && IsCurrentPlayerHuman)
+        @switch (CurrentGameMode)
         {
-            <div class="human-player-actions">
-                <div class="human-player-header">
-                    <h3>@CurrentPlayer.Name's Turn</h3>
-                    <p>Select tiles to play or draw a tile:</p>
-                </div>
-
-                @if (ShowErrorMessage && !string.IsNullOrEmpty(ErrorMessage))
-                {
-                    <div class="error-message">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                             stroke-width="2">
-                            <circle cx="12" cy="12" r="10"/>
-                            <line x1="12" y1="8" x2="12" y2="12"/>
-                            <line x1="12" y1="16" x2="12.01" y2="16"/>
-                        </svg>
-                        <span>@ErrorMessage</span>
+            case GameMode.Interactive when IsWaitingForHumanPlayer && IsCurrentPlayerHuman:
+            {
+                <div class="human-player-actions">
+                    <div class="human-player-header">
+                        <h3>@CurrentPlayer.Name's Turn</h3>
+                        <p>Select tiles to play or draw a tile:</p>
                     </div>
-                }
 
-                @if (SelectedTilesForPlay.Any())
-                {
-                    <div class="selected-tiles-section">
-                        <h4>Selected Tiles (@SelectedTilesForPlay.Count)</h4>
-                        <div
-                            class="selected-tiles-display @(HumanPlayerService.IsWaitingForNextAfterDraw ? "disabled" : "")">
-                            @foreach (var tileInstance in _selectedTileInstances)
+                    @if (ShowErrorMessage && !string.IsNullOrEmpty(ErrorMessage))
+                    {
+                        <div class="error-message">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                 stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="12" y1="8" x2="12" y2="12"/>
+                                <line x1="12" y1="16" x2="12.01" y2="16"/>
+                            </svg>
+                            <span>@ErrorMessage</span>
+                        </div>
+                    }
+
+                    @if (SelectedTilesForPlay.Any())
+                    {
+                        <div class="selected-tiles-section">
+                            <h4>Selected Tiles (@SelectedTilesForPlay.Count)</h4>
+                            <div
+                                class="selected-tiles-display @(HumanPlayerService.IsWaitingForNextAfterDraw ? "disabled" : "")">
+                                @foreach (var tileInstance in _selectedTileInstances)
+                                {
+                                    <div
+                                        class="selected-tile-wrapper @(_removingTiles.Contains(tileInstance.Id) ? "removing" : "") @(_newTiles.Contains(tileInstance.Id) ? "new-tile" : "")"
+                                        @onclick="async () => { if (!HumanPlayerService.IsWaitingForNextAfterDraw) {await OnTileInstanceClick(tileInstance);
+} }">
+                                        <TileComponent Tile="tileInstance.Tile" ShouldHighlight="false"/>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    <div class="available-tiles-section">
+                        <h4>Available Tiles</h4>
+                        <div class="tiles-container @(HumanPlayerService.IsWaitingForNextAfterDraw ? "disabled" : "")">
+                            @foreach (var tileGroup in GetGroupedTiles())
                             {
+                                var tileType = tileGroup.Key;
+                                var totalCount = tileGroup.Count();
+                                var selectedCount = GetSelectedCountForTile(tileType);
+                                var remainingCount = totalCount - selectedCount;
+                                var isFullySelected = remainingCount == 0;
+                                var isDrawnTile = HumanPlayerService.IsWaitingForNextAfterDraw && DrawnTile.HasValue &&
+                                                  DrawnTile.Value.Value == tileType.Value && DrawnTile.Value.Color == tileType.Color && DrawnTile.Value.IsJoker == tileType.IsJoker;
+
                                 <div
-                                    class="selected-tile-wrapper @(_removingTiles.Contains(tileInstance.Id) ? "removing" : "") @(_newTiles.Contains(tileInstance.Id) ? "new-tile" : "")"
-                                    @onclick="async () => { if (!HumanPlayerService.IsWaitingForNextAfterDraw) await OnTileInstanceClick(tileInstance); }">
-                                    <TileComponent Tile="tileInstance.Tile" ShouldHighlight="false"/>
+                                    class="tile-stack @(isFullySelected ? "fully-selected" : "") @(isDrawnTile ? "drawn-tile" : "")"
+                                    @onclick="async () => { if (!HumanPlayerService.IsWaitingForNextAfterDraw) {await OnTileStackClick(tileType);
+} }">
+                                    @if (remainingCount > 0)
+                                    {
+                                        for (var i = 0; i < remainingCount; i++)
+                                        {
+                                            var stackOffset = i * 3;
+
+                                            <div class="stacked-tile"
+                                                 style="z-index: @(100 - i); transform: translate(@(stackOffset)px, @(-stackOffset)px);">
+                                                <TileComponent Tile="tileType" ShouldHighlight="false"/>
+                                            </div>
+                                        }
+
+                                        if (remainingCount > 1)
+                                        {
+                                            <div class="count-indicator">@remainingCount</div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div class="stacked-tile greyed-out">
+                                            <TileComponent Tile="tileType" ShouldHighlight="false"/>
+                                        </div>
+                                    }
                                 </div>
                             }
                         </div>
                     </div>
-                }
 
-                <div class="available-tiles-section">
-                    <h4>Available Tiles</h4>
-                    <div class="tiles-container @(HumanPlayerService.IsWaitingForNextAfterDraw ? "disabled" : "")">
-                        @foreach (var tileGroup in GetGroupedTiles())
+                    <div class="human-actions-buttons">
+                        @if (SelectedTilesForPlay.Any() && !HumanPlayerService.IsWaitingForNextAfterDraw)
                         {
-                            var tileType = tileGroup.Key;
-                            var totalCount = tileGroup.Count();
-                            var selectedCount = GetSelectedCountForTile(tileType);
-                            var remainingCount = totalCount - selectedCount;
-                            var isFullySelected = remainingCount == 0;
-                            var isDrawnTile = HumanPlayerService.IsWaitingForNextAfterDraw && DrawnTile.HasValue &&
-                                              DrawnTile.Value.Value == tileType.Value && DrawnTile.Value.Color == tileType.Color && DrawnTile.Value.IsJoker == tileType.IsJoker;
-
-                            <div
-                                class="tile-stack @(isFullySelected ? "fully-selected" : "") @(isDrawnTile ? "drawn-tile" : "")"
-                                @onclick="async () => { if (!HumanPlayerService.IsWaitingForNextAfterDraw) await OnTileStackClick(tileType); }">
-                                @if (remainingCount > 0)
-                                {
-                                    @for (var i = 0; i < remainingCount; i++)
-                                    {
-                                        var stackOffset = i * 3;
-
-                                        <div class="stacked-tile"
-                                             style="z-index: @(100 - i); transform: translate(@(stackOffset)px, @(-stackOffset)px);">
-                                            <TileComponent Tile="tileType" ShouldHighlight="false"/>
-                                        </div>
-                                    }
-
-                                    @if (remainingCount > 1)
-                                    {
-                                        <div class="count-indicator">@remainingCount</div>
-                                    }
-                                }
-                                else
-                                {
-                                    <div class="stacked-tile greyed-out">
-                                        <TileComponent Tile="tileType" ShouldHighlight="false"/>
-                                    </div>
-                                }
-                            </div>
-                        }
-                    </div>
-                </div>
-
-                <div class="human-actions-buttons">
-                    @if (SelectedTilesForPlay.Any() && !HumanPlayerService.IsWaitingForNextAfterDraw)
-                    {
-                        <button @onclick="OnClearSelection" class="btn-clear">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                 stroke-width="2">
-                                <path d="M18 6L6 18M6 6l12 12"/>
-                            </svg>
-                            Clear
-                        </button>
-                        <button @onclick="OnPlaySelection" class="btn-play">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                 stroke-width="2">
-                                <circle cx="12" cy="12" r="10"/>
-                                <polygon points="10,8 16,12 10,16 10,8"/>
-                            </svg>
-                            Play Selection
-                        </button>
-                    }
-                    else
-                    {
-                        @if (HumanPlayerService.IsWaitingForNextAfterDraw)
-                        {
-                            <button @onclick="OnNextAfterDraw" class="btn-next">
+                            <button @onclick="OnClearSelection" class="btn-clear">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                      stroke-width="2">
-                                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                                    <path d="M18 6L6 18M6 6l12 12"/>
                                 </svg>
-                                Next
+                                Clear
+                            </button>
+                            <button @onclick="OnPlaySelection" class="btn-play">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                     stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <polygon points="10,8 16,12 10,16 10,8"/>
+                                </svg>
+                                Play Selection
                             </button>
                         }
                         else
                         {
-                            <button @onclick="OnDrawTile" class="btn-draw">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                     stroke-width="2">
-                                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                                </svg>
-                                Draw Tile
-                            </button>
-                        }
-                    }
-                </div>
-            </div>
-        }
-        else if (CurrentGameMode == GameMode.FullAI)
-        {
-            <div class="actions">
-                <div class="reset-container">
-                    <button @onclick="ResetGameAsync" class="btn-secondary">
-                        Reset Game
-                    </button>
-                </div>
-                <div class="main-actions">
-                    @if (!_isGameOver)
-                    {
-                        @if (_currentState != ActionState.ShowHint && !IsLoading && !_isGameOver)
-                        {
-                            <button @onclick="HandleActionBack" class="btn-secondary">
-                                Back
-                            </button>
-                        }
-
-                        <button @onclick="HandleActionAsync" disabled="@(IsLoading)" class="btn-primary">
-                            @if (IsLoading)
+                            if (HumanPlayerService.IsWaitingForNextAfterDraw)
                             {
-                                <span class="spinner"></span>
-                                <span style="margin-left: 10px;">Loading...</span>
+                                <button @onclick="OnNextAfterDraw" class="btn-next">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                         stroke-width="2">
+                                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                                    </svg>
+                                    Next
+                                </button>
                             }
                             else
                             {
-                                @GetButtonLabel()
+                                <button @onclick="OnDrawTile" class="btn-draw">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                         stroke-width="2">
+                                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                                    </svg>
+                                    Draw Tile
+                                </button>
                             }
+                        }
+                    </div>
+                </div>
+                break;
+            }
+            case GameMode.FullAI:
+            {
+                <div class="actions">
+                    <div class="reset-container">
+                        <button @onclick="ResetGameAsync" class="btn-secondary">
+                            Reset Game
                         </button>
-                    }
+                    </div>
+                    <div class="main-actions">
+                        @if (!_isGameOver)
+                        {
+                            if (_currentState != ActionState.ShowHint && !IsLoading && !_isGameOver)
+                            {
+                                <button @onclick="HandleActionBack" class="btn-secondary">
+                                    Back
+                                </button>
+                            }
 
+                            <button @onclick="HandleActionAsync" disabled="@IsLoading" class="btn-primary">
+                                @if (IsLoading)
+                                {
+                                    <span class="spinner"></span>
+                                    <span style="margin-left: 10px;">Loading...</span>
+                                }
+                                else
+                                {
+                                    @GetButtonLabel()
+                                }
+                            </button>
+                        }
+
+                    </div>
                 </div>
-            </div>
-        }
-        else if (CurrentGameMode == GameMode.Interactive)
-        {
-            <!-- In Interactive mode, the game flows automatically -->
-            <div class="actions">
-                <div class="reset-container">
-                    <button @onclick="ResetGameAsync" class="btn-secondary">
-                        Reset Game
-                    </button>
+                break;
+            }
+            case GameMode.Interactive:
+                @:<!-- In Interactive mode, the game flows automatically -->
+                <div class="actions">
+                    <div class="reset-container">
+                        <button @onclick="ResetGameAsync" class="btn-secondary">
+                            Reset Game
+                        </button>
+                    </div>
                 </div>
-            </div>
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
         }
         <!-- AI Turn Countdown Overlay -->
         @if (CurrentGameMode == GameMode.Interactive && IsWaitingAfterAITurn)
