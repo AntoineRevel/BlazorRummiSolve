@@ -60,7 +60,8 @@ public static class CommonTestFirstCases
             new Set([
                 new Tile(10),
                 new Tile(10, TileColor.Red),
-                new Tile(10, TileColor.Black)
+                new Tile(10, TileColor.Black),
+                new Tile(true)
             ]),
             new CommonTestCases.ExpectedResult(
                 true,
@@ -69,7 +70,7 @@ public static class CommonTestFirstCases
                     new Tile(10, TileColor.Red),
                     new Tile(10, TileColor.Black)
                 ],
-                0
+                1
             )
         ),
 
@@ -191,6 +192,7 @@ public static class CommonTestFirstCases
             )
         )
     ];
+
 
     public record TestCase(
         string Name,

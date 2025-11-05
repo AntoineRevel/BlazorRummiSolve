@@ -39,7 +39,7 @@ public sealed class IncrementalFirstBaseSolver : BaseSolver, ISolver
             BestSolution = newSolution;
             _bestUsedTiles = UsedTiles.ToArray();
             _remainingJoker = Jokers;
-            if (UsedTiles.All(b => b))
+            if (UsedTiles.All(b => b) && Jokers == 0)
                 return SolverResult.FromSolution(GetType().Name, BestSolution, TilesToPlay, JokerToPlay);
 
             Array.Fill(UsedTiles, false);
