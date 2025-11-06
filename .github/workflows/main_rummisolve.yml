@@ -1,4 +1,6 @@
 name: Build and deploy ASP.Net Core app to Azure Web App - RummiSolve
+permissions:
+  contents: read
 
 on:
   push:
