@@ -283,9 +283,6 @@ public partial class GamePage
                     while (HumanPlayerService
                            .IsWaitingForNextAfterDraw) await Task.Delay(100); // Wait for user to click "Next"
                 }
-
-                // Advance to next player
-                _currentGame.AdvanceToNextPlayer();
             }
             else
             {
@@ -327,18 +324,15 @@ public partial class GamePage
                     _aiTurnTimerCts?.Dispose();
                     _aiTurnTimerCts = null;
                 }
-
-                // Advance to next player
-                _currentGame.AdvanceToNextPlayer();
             }
 
-            // Check if game ended after this turn
+            _currentGame.AdvanceToNextPlayer();
+
+            // Check if the game ended after this turn
             _isGameOver = _currentGame.IsGameOver;
-            if (_isGameOver)
-            {
-                StateHasChanged();
-                break;
-            }
+            if (!_isGameOver) continue;
+            StateHasChanged();
+            break;
         }
     }
 
