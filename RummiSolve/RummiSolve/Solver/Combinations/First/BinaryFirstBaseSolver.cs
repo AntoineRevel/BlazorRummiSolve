@@ -4,7 +4,7 @@ using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Solver.Combinations.First;
 
-public sealed class BinaryFirstBaseSolver(Tile[] tiles, int jokers) : BaseSolver(tiles, jokers), IBinarySolver
+public sealed class BinaryFirstBaseSolver(Tile[] tiles, int jokers) : BaseSolver(tiles, jokers), ISolver
 {
     private int _finalScore;
     public IEnumerable<Tile> TilesToPlay => Tiles;
@@ -59,7 +59,7 @@ public sealed class BinaryFirstBaseSolver(Tile[] tiles, int jokers) : BaseSolver
                 _finalScore = newSolutionScore;
 
                 // Validate the solution if the score is sufficient (>= 30)
-                if (newSolutionScore > MinScore) solution.IsValid = true;
+                if (newSolutionScore > ISolver.MinScore) solution.IsValid = true;
             }
             else
             {

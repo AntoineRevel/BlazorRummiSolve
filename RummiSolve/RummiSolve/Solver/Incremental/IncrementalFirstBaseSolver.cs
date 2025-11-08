@@ -16,7 +16,7 @@ public sealed class IncrementalFirstBaseSolver : BaseSolver, ISolver
     {
         _availableJokers = jokers;
         _bestUsedTiles = UsedTiles;
-        _bestSolutionScore = MinScore;
+        _bestSolutionScore = ISolver.MinScore;
     }
 
     private Solution BestSolution { get; set; } = new();

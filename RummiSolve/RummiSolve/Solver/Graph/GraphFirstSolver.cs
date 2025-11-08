@@ -40,6 +40,8 @@ public class GraphFirstSolver : ISolver
 
         var bestNode = root.LeafNodes.OrderByDescending(node => node.Score).First();
 
+        if (bestNode.Score <= ISolver.MinScore) return SolverResult.Invalid("GraphFirstSolver<30");
+
         var bestSolution = bestNode.GetSolution();
 
         var tilesToPlay = _tiles.Where((_, i) => bestNode.IsTileUsed[i]).ToArray();
