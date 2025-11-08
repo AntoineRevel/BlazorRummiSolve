@@ -7,12 +7,12 @@ public class RummiNode : BaseSolver
 {
     private readonly int _gen;
     private readonly bool _isRun;
-    private readonly bool[] _isTileUsed;
     private readonly RummiNode? _parentNode;
     private readonly ValidSet _set;
     private readonly int _startIndex;
     public readonly List<RummiNode> Children = [];
 
+    public readonly bool[] IsTileUsed;
     public readonly ConcurrentBag<RummiNode> LeafNodes;
     public readonly int Score;
 
@@ -20,8 +20,8 @@ public class RummiNode : BaseSolver
         ConcurrentBag<RummiNode> leafNodes, int score, RummiNode? parentNode, bool isRun) :
         base(tiles, jokers)
     {
-        _isTileUsed = (bool[])isTileUsed.Clone();
-        Array.Copy(_isTileUsed, UsedTiles, Tiles.Length);
+        IsTileUsed = (bool[])isTileUsed.Clone();
+        Array.Copy(IsTileUsed, UsedTiles, Tiles.Length);
         _set = set;
         _startIndex = startIndex;
         _gen = gen;
@@ -42,7 +42,7 @@ public class RummiNode : BaseSolver
 
         for (var i = _startIndex; i < Tiles.Length; i++)
         {
-            if (_isTileUsed[i]) continue;
+            if (IsTileUsed[i]) continue;
 
             UsedTiles[i] = true;
             foreach (var set in GetRuns(i)) CreateChildNode(ref createdNode, i, set, true);
@@ -70,7 +70,7 @@ public class RummiNode : BaseSolver
 
         Console.Write("  Unused: [ ");
         for (var i = 0; i < Tiles.Length; i++)
-            if (!_isTileUsed[i])
+            if (!IsTileUsed[i])
                 Tiles[i].PrintTile();
         for (var i = 0; i < Jokers; i++) Tile.PrintJoker();
         Console.Write("]");

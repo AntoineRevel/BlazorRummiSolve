@@ -5,7 +5,7 @@ public abstract class BaseSolver(Tile[] tiles, int jokers)
     protected const int MinScore = 29;
     protected readonly Tile[] Tiles = tiles;
     protected readonly bool[] UsedTiles = new bool[tiles.Length];
-    protected int Jokers = jokers;
+    public int Jokers = jokers;
 
     protected void MarkTilesAsUsed(ValidSet set, int unusedIndex)
     {
