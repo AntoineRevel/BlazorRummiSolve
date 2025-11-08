@@ -5,7 +5,7 @@ using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Strategies;
 
-public class IncrementalSolverStrategy : ISolverStrategy
+public class IncrementalStrategy : IStrategy
 {
     public Task<SolverResult> GetSolverResult(Set board, Set rack, bool hasPlayed,
         CancellationToken cancellationToken = default)

@@ -3,7 +3,7 @@ using RummiSolve.Results;
 namespace RummiSolve.Strategies;
 
 public class HumanPlayerStrategy(Func<Set, bool, CancellationToken, Task<SolverResult>> getPlayerChoice)
-    : ISolverStrategy
+    : IStrategy
 {
     public async Task<SolverResult> GetSolverResult(Set board, Set rack, bool hasPlayed,
         CancellationToken cancellationToken = default)

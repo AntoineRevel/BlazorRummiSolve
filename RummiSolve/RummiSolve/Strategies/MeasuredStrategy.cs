@@ -4,12 +4,13 @@ using RummiSolve.Solver.BestScore;
 using RummiSolve.Solver.BestScore.First;
 using RummiSolve.Solver.Combinations;
 using RummiSolve.Solver.Combinations.First;
+using RummiSolve.Solver.Graph;
 using RummiSolve.Solver.Incremental;
 using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Strategies;
 
-public class MeasuredSolverStrategy : ISolverStrategy
+public class MeasuredStrategy : IStrategy
 {
     public async Task<SolverResult> GetSolverResult(Set board, Set rack, bool hasPlayed,
         CancellationToken externalToken)
@@ -38,6 +39,10 @@ public class MeasuredSolverStrategy : ISolverStrategy
             ? ParallelCombinationsSolver.Create(new Set(board), rack)
             : CombinationsFirstSolver.Create(rack);
 
+        ISolver graphSolver = hasPlayed
+            ? ParallelCombinationsSolver.Create(new Set(board), rack)
+            : GraphFirstSolver.Create(rack);
+
         var results = new List<TimedResult>
         {
             await RunSolverAsync("Combinations", combiSolver, externalToken),
@@ -45,7 +50,8 @@ public class MeasuredSolverStrategy : ISolverStrategy
             await RunSolverAsync("Incremental", incrementalSolver, externalToken),
             await RunSolverAsync("IncrementalScoreField", incrementalScoreFSolver, externalToken),
             await RunSolverAsync("IncrementalScoreTile", incrementalScoreTileSolver, externalToken),
-            await RunSolverAsync("ParallelCombination", parraleleCombiSolver, externalToken)
+            await RunSolverAsync("ParallelCombination", parraleleCombiSolver, externalToken),
+            await RunSolverAsync("GraphSolver", graphSolver, externalToken)
         };
 
         Console.WriteLine("\n====== Strategy Results ======\n");

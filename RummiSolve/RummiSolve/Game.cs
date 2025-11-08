@@ -97,13 +97,13 @@ public class Game(Guid id)
             Array.Copy(tiles, startIndex, playerTiles, 0, tilesPerPlayer);
 
             // Determine strategy based on player types
-            ISolverStrategy strategy;
+            IStrategy strategy;
             var isRealPlayer = playerTypes?[i] ?? false; // Default to AI if not specified
 
             if (isRealPlayer && humanPlayerCallback != null)
                 strategy = new HumanPlayerStrategy(humanPlayerCallback);
             else
-                strategy = new IncrementalSolverStrategy();
+                strategy = new MeasuredStrategy();
 
             Players.Add(new Player(playerNames[i], playerTiles.ToList(), strategy));
         }

@@ -48,7 +48,7 @@ public partial class GamePage
     [SupplyParameterFromQuery(Name = "playerTypes")]
     public string? PlayerTypesQuery { get; set; }
 
-    private Player CurrentPlayer { get; set; } = new("Default", [], new ParallelSolverStrategy());
+    private Player CurrentPlayer { get; set; } = new("Default", [], new ParallelStrategy());
     private List<Player> OtherPlayers => _currentGame.Players.Where(p => p != CurrentPlayer).ToList();
     private int TurnNumber => _currentGame.Turn;
     private Guid Id => _currentGame.Id;
