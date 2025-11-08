@@ -15,7 +15,12 @@ public class GraphSolver(Tile[] tiles, int jokers) : ISolver
         var root = RummiNode.CreateRoot(tiles, jokers);
         root.GetChildren();
 
-        foreach (var node in root.Children) node.GetChildren();
+        foreach (var child in root.Children)
+        {
+            child.GetChildren();
+            foreach (var childChild in child.Children) childChild.GetChildren();
+        }
+
 
         Console.WriteLine();
         root.PrintTree();

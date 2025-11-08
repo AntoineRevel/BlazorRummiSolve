@@ -15,8 +15,7 @@ public class RummiNode : BaseSolver
     private RummiNode(ValidSet set, Tile[] tiles, bool[] isTileUsed, int jokers, int startIndex, int gen) :
         base(tiles, jokers)
     {
-        IsTileUsed = (bool[])isTileUsed.Clone();
-        Array.Copy(IsTileUsed, UsedTiles, Tiles.Length);
+        IsTileUsed = (bool[])isTileUsed.Clone(); //TODO reduire de Tiles.Lenght - startIndex
         Set = set;
         _startIndex = startIndex;
         _gen = gen;
@@ -54,7 +53,7 @@ public class RummiNode : BaseSolver
         Set.Print();
 
         Console.Write("  Unused: [ ");
-        for (var i = 0; i < Tiles.Length; i++)
+        for (var i = _startIndex; i < Tiles.Length; i++)
             if (!IsTileUsed[i])
                 Tiles[i].PrintTile();
         for (var i = 0; i < Jokers; i++) Tile.PrintJoker();
