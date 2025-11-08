@@ -1,14 +1,19 @@
 using RummiSolve.Solver.Abstract;
 
+// ReSharper disable MemberCanBePrivate.Global
+
 namespace RummiSolve.Solver.Graph;
 
 public class RummiNode(int nodeNumber, ValidSet set, Tile[] tiles, bool[] isTileUsed, int jokers)
     : BaseSolver(tiles, jokers)
 {
     public readonly bool[] IsTileUsed = (bool[])isTileUsed.Clone();
+    public readonly int NodeNumber = nodeNumber;
+    public readonly ValidSet Set = set;
+
+    // ReSharper disable once CollectionNeverQueried.Global
+    // ReSharper disable once FieldCanBeMadeReadOnly.Global
     public List<RummiNode> Children = [];
-    public int NodeNumber = nodeNumber;
-    public ValidSet Set = set;
 
     private void GetChildren()
     {
@@ -20,9 +25,17 @@ public class RummiNode(int nodeNumber, ValidSet set, Tile[] tiles, bool[] isTile
             foreach (var set in GetRuns(i).Concat<ValidSet>(GetGroups(i)))
             {
                 cratedNode++;
-                Children.Add(new RummiNode(cratedNode, set, Tiles, IsTileUsed, Jokers));
+                var child = new RummiNode(NodeNumber + cratedNode, set, Tiles, IsTileUsed, Jokers);
+                child.Print();
+                Children.Add(child);
                 Array.Copy(IsTileUsed, UsedTiles, Tiles.Length);
             }
         }
+    }
+
+    private void Print()
+    {
+        Console.Write($"Node {NodeNumber}: ");
+        Set.Print();
     }
 }
