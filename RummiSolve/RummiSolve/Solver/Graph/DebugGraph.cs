@@ -14,21 +14,21 @@ public class DebugGraph
             new Tile(true)
         ]);
 
-        var tiles2 = new[]
-        {
+        var set2 = new Set([
             new Tile(10),
             new Tile(10, TileColor.Red),
             new Tile(10, TileColor.Black),
             new Tile(4),
-            new Tile(6),
+            new Tile(8),
             new Tile(11),
-            new Tile(11, TileColor.Red),
+            new Tile(11),
             new Tile(13),
             new Tile(13, TileColor.Red),
-            new Tile(13, TileColor.Black)
-        };
+            new Tile(13, TileColor.Black),
+            new Tile(true)
+        ]);
 
-        var gs = GraphFirstSolver.Create(set1);
+        var gs = GraphFirstSolver.Create(set2);
         gs.SearchSolution();
     }
 }

@@ -36,7 +36,6 @@ public class GraphFirstSolver : ISolver
             currentLevel = nextLevel;
         }
 
-
         root.PrintTree();
         return SolverResult.Invalid("GraphConstruction");
     }
