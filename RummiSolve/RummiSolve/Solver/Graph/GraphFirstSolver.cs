@@ -44,6 +44,10 @@ public class GraphFirstSolver : ISolver
 
         bestNode.PrintTree();
 
+        var bestSolution = bestNode.GetSolution();
+
+        bestSolution.PrintSolution();
+
         return SolverResult.Invalid("GraphFirstSolver");
     }
 

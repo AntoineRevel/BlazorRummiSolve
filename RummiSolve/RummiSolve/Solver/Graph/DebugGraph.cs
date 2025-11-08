@@ -63,7 +63,21 @@ public class DebugGraph
             new Tile(4, TileColor.Black),
             new Tile(8, TileColor.Mango),
             new Tile(9, TileColor.Mango),
-            new Tile(1)
+            new Tile(1),
+            new Tile(1),
+            new Tile(2),
+            new Tile(3),
+            new Tile(4),
+            new Tile(4, TileColor.Red),
+            new Tile(4, TileColor.Mango),
+            new Tile(7, TileColor.Black),
+            new Tile(9, TileColor.Red),
+            new Tile(11, TileColor.Mango),
+            new Tile(13),
+            new Tile(5, TileColor.Red),
+            new Tile(8, TileColor.Black),
+            new Tile(12, TileColor.Mango),
+            new Tile(6)
         ]);
 
         var gs = GraphFirstSolver.Create(set1);

@@ -2,7 +2,6 @@ namespace RummiSolve.Results;
 
 public class SolverResult
 {
-    // Private constructor to enforce use of factory methods
     private SolverResult()
     {
         Source = string.Empty;
