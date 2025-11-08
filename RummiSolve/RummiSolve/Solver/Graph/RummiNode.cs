@@ -31,22 +31,20 @@ public class RummiNode : BaseSolver
     {
         var createdNode = 0;
 
-        var firstUnusedTileIndex =
-            Array.FindIndex(IsTileUsed, _startIndex, used => !used);
-        UsedTiles[firstUnusedTileIndex] = true;
-
-        for (var i = firstUnusedTileIndex; i < Tiles.Length; i++)
+        for (var i = _startIndex; i < Tiles.Length; i++)
         {
             if (IsTileUsed[i]) continue;
-
+            UsedTiles[i] = true;
             foreach (var set in GetRuns(i).Concat(GetGroups(i)))
             {
                 createdNode++;
                 MarkTilesAsUsed(set, i);
-                var child = new RummiNode(set, Tiles, UsedTiles, Jokers, firstUnusedTileIndex, createdNode);
+                var child = new RummiNode(set, Tiles, UsedTiles, Jokers, i + 1, createdNode);
                 MarkTilesAsUnused(set, i);
                 Children.Add(child);
             }
+
+            UsedTiles[i] = false;
         }
     }
 
