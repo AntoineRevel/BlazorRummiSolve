@@ -4,15 +4,15 @@ public class DebugGraph
 {
     public static void Test()
     {
-        var tiles1 = new[]
-        {
+        var set1 = new Set([
             new Tile(1),
             new Tile(2),
             new Tile(3),
             new Tile(4),
             new Tile(4, TileColor.Red),
-            new Tile(4, TileColor.Mango)
-        };
+            new Tile(4, TileColor.Mango),
+            new Tile(true)
+        ]);
 
         var tiles2 = new[]
         {
@@ -28,7 +28,7 @@ public class DebugGraph
             new Tile(13, TileColor.Black)
         };
 
-        var gs = new GraphFirstSolver(tiles1, 1);
-        gs.Test();
+        var gs = GraphFirstSolver.Create(set1);
+        gs.SearchSolution();
     }
 }

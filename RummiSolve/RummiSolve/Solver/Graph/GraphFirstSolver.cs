@@ -3,18 +3,21 @@ using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Solver.Graph;
 
-public class GraphFirstSolver(Tile[] tiles, int jokers) : ISolver
+public class GraphFirstSolver : ISolver
 {
-    public SolverResult SearchSolution(CancellationToken cancellationToken = default)
+    private readonly int _jokers;
+    private readonly Tile[] _tiles;
+
+    private GraphFirstSolver(Tile[] tiles, int jokers)
     {
-        throw new NotImplementedException();
+        _tiles = tiles;
+        _jokers = jokers;
     }
 
-    public void Test()
+    public SolverResult SearchSolution(CancellationToken cancellationToken = default)
     {
-        var root = RummiNode.CreateRoot(tiles, jokers);
+        var root = RummiNode.CreateRoot(_tiles, _jokers);
         root.GetChildren();
-
         foreach (var child in root.Children)
         {
             child.GetChildren();
@@ -24,5 +27,15 @@ public class GraphFirstSolver(Tile[] tiles, int jokers) : ISolver
 
         Console.WriteLine();
         root.PrintTree();
+        return SolverResult.Invalid("TestGraph");
+    }
+
+    public static GraphFirstSolver Create(Set playerSet)
+    {
+        playerSet.Tiles.Sort();
+        return new GraphFirstSolver(
+            playerSet.Tiles.ToArray(),
+            playerSet.Jokers
+        );
     }
 }
