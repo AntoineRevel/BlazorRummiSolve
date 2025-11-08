@@ -11,4 +11,12 @@ public abstract class ValidSet
     {
         return Tiles.Sum(t => t.Value);
     }
+
+    public void Print()
+    {
+        Console.Write("[ ");
+        foreach (var tile in Tiles) tile.PrintTile();
+
+        Console.WriteLine("]");
+    }
 }
