@@ -3,7 +3,7 @@ using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Solver.Graph;
 
-public class GraphSolver(Tile[] tiles, int jokers) : ISolver
+public class GraphFirstSolver(Tile[] tiles, int jokers) : ISolver
 {
     public SolverResult SearchSolution(CancellationToken cancellationToken = default)
     {

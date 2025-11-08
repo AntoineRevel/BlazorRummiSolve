@@ -47,7 +47,7 @@ public sealed class IncrementalFirstBaseSolver : BaseSolver, ISolver
         }
     }
 
-    public static IncrementalFirstBaseSolver Create(in Set playerSet)
+    public static IncrementalFirstBaseSolver Create(Set playerSet)
     {
         var tiles = new List<Tile>(playerSet.Tiles);
         tiles.Sort();

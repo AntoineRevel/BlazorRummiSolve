@@ -28,7 +28,7 @@ public class DebugGraph
             new Tile(13, TileColor.Black)
         };
 
-        var gs = new GraphSolver(tiles1, 1);
+        var gs = new GraphFirstSolver(tiles1, 1);
         gs.Test();
     }
 }

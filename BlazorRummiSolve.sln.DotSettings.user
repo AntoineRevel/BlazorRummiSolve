@@ -33,9 +33,10 @@
 
     <s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=AI/@EntryIndexedValue">AI</s:String>
     <s:String
-            x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=078f4dc0_002Dd3cb_002D4171_002D92bc_002D995697f565c0/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from &amp;lt;BlazorRummiSolve.Tests&amp;gt;" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;Project Location="/Users/antoinerevel/Documents/Projet perso/BlazorRummiSolve/BlazorRummiSolve/BlazorRummiSolve.Tests" Presentation="&amp;lt;BlazorRummiSolve.Tests&amp;gt;" /&gt;
+            x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=f42e04a2_002D5283_002D4a3d_002D8707_002D62efd496d00a/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;Solution /&gt;
 &lt;/SessionState&gt;</s:String>
+    
     
 	
 	
