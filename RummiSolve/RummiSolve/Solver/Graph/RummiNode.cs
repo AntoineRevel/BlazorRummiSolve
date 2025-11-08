@@ -20,16 +20,20 @@ public class RummiNode(int nodeNumber, ValidSet set, Tile[] tiles, bool[] isTile
     public void GetChildren()
     {
         var cratedNode = 0;
-        for (var i = 0; i < Tiles.Length; i++)
+        var startIndex = Array.FindIndex(UsedTiles, 0, used => !used); //TODO add startIndex
+        UsedTiles[startIndex] = true;
+
+        for (var i = startIndex; i < Tiles.Length; i++)
         {
             if (IsTileUsed[i]) continue;
 
             foreach (var set in GetRuns(i).Concat(GetGroups(i)))
             {
                 cratedNode++;
-                var child = new RummiNode(NodeNumber + cratedNode, set, Tiles, IsTileUsed, Jokers);
+                MarkTilesAsUsed(set, i);
+                var child = new RummiNode(NodeNumber + cratedNode, set, Tiles, UsedTiles, Jokers);
+                MarkTilesAsUnused(set, i);
                 Children.Add(child);
-                Array.Copy(IsTileUsed, UsedTiles, Tiles.Length);
             }
         }
     }
