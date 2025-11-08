@@ -38,4 +38,16 @@ public class RummiNode(int nodeNumber, ValidSet set, Tile[] tiles, bool[] isTile
         Console.Write($"Node {NodeNumber}: ");
         Set.Print();
     }
+
+    public void PrintTree()
+    {
+        PrintTreeRecursive(0);
+    }
+
+    private void PrintTreeRecursive(int depth)
+    {
+        Console.Write(new string(' ', depth * 2));
+        Print();
+        foreach (var child in Children) child.PrintTreeRecursive(depth + 1);
+    }
 }
