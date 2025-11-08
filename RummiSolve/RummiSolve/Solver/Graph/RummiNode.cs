@@ -4,17 +4,17 @@ using RummiSolve.Solver.Abstract;
 
 namespace RummiSolve.Solver.Graph;
 
-public class RummiNode(int nodeNumber, ValidSet set, Tile[] tiles, bool[] isTileUsed, int jokers)
+public class RummiNode(string nodeId, ValidSet set, Tile[] tiles, bool[] isTileUsed, int jokers)
     : BaseSolver(tiles, jokers)
 {
+    public readonly List<RummiNode> Children = [];
     public readonly bool[] IsTileUsed = (bool[])isTileUsed.Clone();
-    public readonly int NodeNumber = nodeNumber;
+    public readonly string NodeId = nodeId;
     public readonly ValidSet Set = set;
-    public List<RummiNode> Children = [];
 
     public static RummiNode CreateRoot(Tile[] tiles, int jokers)
     {
-        return new RummiNode(0, new ValidSet([]), tiles, new bool[tiles.Length], jokers);
+        return new RummiNode("n", new ValidSet([]), tiles, new bool[tiles.Length], jokers);
     }
 
     public void GetChildren()
@@ -31,7 +31,7 @@ public class RummiNode(int nodeNumber, ValidSet set, Tile[] tiles, bool[] isTile
             {
                 cratedNode++;
                 MarkTilesAsUsed(set, i);
-                var child = new RummiNode(NodeNumber + cratedNode, set, Tiles, UsedTiles, Jokers);
+                var child = new RummiNode(nodeId + cratedNode, set, Tiles, UsedTiles, Jokers);
                 MarkTilesAsUnused(set, i);
                 Children.Add(child);
             }
@@ -40,7 +40,7 @@ public class RummiNode(int nodeNumber, ValidSet set, Tile[] tiles, bool[] isTile
 
     private void Print()
     {
-        Console.Write($"Node {NodeNumber}: ");
+        Console.Write($"{NodeId}: ");
         Set.Print();
 
         Console.Write("  Unused: [ ");
