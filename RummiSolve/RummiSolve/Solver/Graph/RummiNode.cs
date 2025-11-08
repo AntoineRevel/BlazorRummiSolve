@@ -4,26 +4,40 @@ using RummiSolve.Solver.Abstract;
 
 namespace RummiSolve.Solver.Graph;
 
-public class RummiNode(string nodeId, ValidSet set, Tile[] tiles, bool[] isTileUsed, int jokers)
-    : BaseSolver(tiles, jokers)
+public class RummiNode : BaseSolver
 {
+    private readonly string _nodeId;
+    private readonly int _startindex;
     public readonly List<RummiNode> Children = [];
-    public readonly bool[] IsTileUsed = (bool[])isTileUsed.Clone();
-    public readonly string NodeId = nodeId;
-    public readonly ValidSet Set = set;
+    public readonly bool[] IsTileUsed;
+    public readonly string NodeId;
+    public readonly ValidSet Set;
+
+    private RummiNode(string nodeId, ValidSet set, Tile[] tiles, bool[] isTileUsed, int jokers, int startindex) :
+        base(tiles, jokers)
+    {
+        _nodeId = nodeId;
+        IsTileUsed = (bool[])isTileUsed.Clone();
+        Array.Copy(IsTileUsed, UsedTiles, Tiles.Length);
+        NodeId = nodeId;
+        Set = set;
+        _startindex = startindex;
+    }
 
     public static RummiNode CreateRoot(Tile[] tiles, int jokers)
     {
-        return new RummiNode("n", new ValidSet([]), tiles, new bool[tiles.Length], jokers);
+        return new RummiNode("n", new ValidSet([]), tiles, new bool[tiles.Length], jokers, 0);
     }
 
     public void GetChildren()
     {
         var cratedNode = 0;
-        var startIndex = Array.FindIndex(UsedTiles, 0, used => !used); //TODO add startIndex
-        UsedTiles[startIndex] = true;
 
-        for (var i = startIndex; i < Tiles.Length; i++)
+        var firstUnusedTileIndex =
+            Array.FindIndex(IsTileUsed, _startindex, used => !used); //TODO add startIndex = nodeId ?
+        UsedTiles[firstUnusedTileIndex] = true;
+
+        for (var i = firstUnusedTileIndex; i < Tiles.Length; i++)
         {
             if (IsTileUsed[i]) continue;
 
@@ -31,7 +45,7 @@ public class RummiNode(string nodeId, ValidSet set, Tile[] tiles, bool[] isTileU
             {
                 cratedNode++;
                 MarkTilesAsUsed(set, i);
-                var child = new RummiNode(nodeId + cratedNode, set, Tiles, UsedTiles, Jokers);
+                var child = new RummiNode(_nodeId + cratedNode, set, Tiles, UsedTiles, Jokers, firstUnusedTileIndex);
                 MarkTilesAsUnused(set, i);
                 Children.Add(child);
             }
