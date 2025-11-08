@@ -37,6 +37,12 @@ public class GraphFirstSolver : ISolver
         }
 
         root.PrintTree();
+
+        Console.WriteLine();
+        Console.WriteLine();
+
+        foreach (var leaf in root.LeafNodes) leaf.PrintTree();
+
         return SolverResult.Invalid("GraphConstruction");
     }
 

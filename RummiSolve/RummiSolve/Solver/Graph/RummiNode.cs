@@ -1,29 +1,32 @@
+using System.Collections.Concurrent;
 using RummiSolve.Solver.Abstract;
-
-// ReSharper disable MemberCanBePrivate.Global
 
 namespace RummiSolve.Solver.Graph;
 
 public class RummiNode : BaseSolver
 {
     private readonly int _gen;
+    private readonly bool[] _isTileUsed;
+    private readonly ValidSet _set;
     private readonly int _startIndex;
     public readonly List<RummiNode> Children = [];
-    public readonly bool[] IsTileUsed;
-    public readonly ValidSet Set;
 
-    private RummiNode(ValidSet set, Tile[] tiles, bool[] isTileUsed, int jokers, int startIndex, int gen) :
+    public ConcurrentBag<RummiNode> LeafNodes;
+
+    private RummiNode(ValidSet set, Tile[] tiles, bool[] isTileUsed, int jokers, int startIndex, int gen,
+        ConcurrentBag<RummiNode> leafNodes) :
         base(tiles, jokers)
     {
-        IsTileUsed = (bool[])isTileUsed.Clone(); //TODO reduire de Tiles.Lenght - startIndex
-        Set = set;
+        _isTileUsed = (bool[])isTileUsed.Clone(); //TODO reduire de Tiles.Lenght - startIndex
+        _set = set;
         _startIndex = startIndex;
         _gen = gen;
+        LeafNodes = leafNodes;
     }
 
     public static RummiNode CreateRoot(Tile[] tiles, int jokers)
     {
-        return new RummiNode(new ValidSet([]), tiles, new bool[tiles.Length], jokers, 0, 0);
+        return new RummiNode(new ValidSet([]), tiles, new bool[tiles.Length], jokers, 0, 0, []);
     }
 
     public void GetChildren()
@@ -32,29 +35,31 @@ public class RummiNode : BaseSolver
 
         for (var i = _startIndex; i < Tiles.Length; i++)
         {
-            if (IsTileUsed[i]) continue;
+            if (_isTileUsed[i]) continue;
             UsedTiles[i] = true;
             foreach (var set in GetRuns(i).Concat(GetGroups(i)))
             {
                 createdNode++;
                 MarkTilesAsUsed(set, i);
-                var child = new RummiNode(set, Tiles, UsedTiles, Jokers, i + 1, createdNode);
+                var child = new RummiNode(set, Tiles, UsedTiles, Jokers, i + 1, createdNode, LeafNodes);
                 MarkTilesAsUnused(set, i);
                 Children.Add(child);
             }
 
             UsedTiles[i] = false;
         }
+
+        if (createdNode == 0) LeafNodes.Add(this);
     }
 
     private void Print()
     {
         Console.Write($"{_gen}: ");
-        Set.Print();
+        _set.Print();
 
         Console.Write("  Unused: [ ");
         for (var i = _startIndex; i < Tiles.Length; i++)
-            if (!IsTileUsed[i])
+            if (!_isTileUsed[i])
                 Tiles[i].PrintTile();
         for (var i = 0; i < Jokers; i++) Tile.PrintJoker();
         Console.WriteLine("]");

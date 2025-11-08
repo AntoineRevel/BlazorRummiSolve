@@ -28,7 +28,7 @@ public class DebugGraph
             new Tile(true)
         ]);
 
-        var gs = GraphFirstSolver.Create(set2);
+        var gs = GraphFirstSolver.Create(set1);
         gs.SearchSolution();
     }
 }
