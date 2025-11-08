@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using RummiSolve.Results;
 using RummiSolve.Solver.Interfaces;
 
@@ -17,17 +18,27 @@ public class GraphFirstSolver : ISolver
     public SolverResult SearchSolution(CancellationToken cancellationToken = default)
     {
         var root = RummiNode.CreateRoot(_tiles, _jokers);
-        root.GetChildren();
-        foreach (var child in root.Children)
+        var currentLevel = new ConcurrentBag<RummiNode> { root };
+
+        while (!cancellationToken.IsCancellationRequested)
         {
-            child.GetChildren();
-            foreach (var childChild in child.Children) childChild.GetChildren();
+            var nextLevel = new ConcurrentBag<RummiNode>();
+
+            Parallel.ForEach(currentLevel,
+                new ParallelOptions { CancellationToken = cancellationToken },
+                node =>
+                {
+                    node.GetChildren();
+                    foreach (var child in node.Children) nextLevel.Add(child);
+                }
+            );
+            if (nextLevel.IsEmpty) break;
+            currentLevel = nextLevel;
         }
 
 
-        Console.WriteLine();
         root.PrintTree();
-        return SolverResult.Invalid("TestGraph");
+        return SolverResult.Invalid("GraphConstruction");
     }
 
     public static GraphFirstSolver Create(Set playerSet)
