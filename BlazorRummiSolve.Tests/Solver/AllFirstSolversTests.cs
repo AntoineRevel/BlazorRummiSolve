@@ -1,5 +1,8 @@
 using RummiSolve;
+using RummiSolve.Solver.BestScore.First;
+using RummiSolve.Solver.Combinations.First;
 using RummiSolve.Solver.Graph;
+using RummiSolve.Solver.Incremental;
 using RummiSolve.Solver.Interfaces;
 using Xunit.Abstractions;
 
@@ -18,9 +21,9 @@ public class AllFirstSolversTests(ITestOutputHelper output)
     /// </summary>
     private static readonly (string Name, Func<Set, ISolver> Create)[] Solvers =
     [
-        // ("CombinationsFirstSolver", CombinationsFirstSolver.Create),
-        // ("BestScoreFirstBaseSolver", BestScoreFirstBaseSolver.Create),
-        // ("IncrementalFirstBaseSolver", IncrementalFirstBaseSolver.Create),
+        ("CombinationsFirstSolver", CombinationsFirstSolver.Create),
+        ("BestScoreFirstBaseSolver", BestScoreFirstBaseSolver.Create),
+        ("IncrementalFirstBaseSolver", IncrementalFirstBaseSolver.Create),
         ("GraphFirstSolver", GraphFirstSolver.Create)
     ];
 
