@@ -36,13 +36,18 @@ public class GraphFirstSolver : ISolver
             currentLevel = nextLevel;
         }
 
+        root.PrintTree();
+
         if (root.LeafNodes.IsEmpty) return SolverResult.Invalid("GraphFirstSolver");
 
         var bestNode = root.LeafNodes.OrderByDescending(node => node.Score).First();
 
-        if (bestNode.Score <= ISolver.MinScore) return SolverResult.Invalid("GraphFirstSolver<30");
+        bestNode.PrintTree();
+
+        if (bestNode.Score < ISolver.MinScore) return SolverResult.Invalid("GraphFirstSolver<30");
 
         var bestSolution = bestNode.GetSolution();
+
 
         var tilesToPlay = _tiles.Where((_, i) => bestNode.IsTileUsed[i]).ToArray();
         var jokerToPlay = _jokers - bestNode.Jokers;

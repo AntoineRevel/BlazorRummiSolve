@@ -80,7 +80,14 @@ public class DebugGraph
             new Tile(6)
         ]);
 
-        var gs = GraphFirstSolver.Create(set1);
+        var fourTilesOneExtra = new Set([
+            new Tile(1),
+            new Tile(10),
+            new Tile(10, TileColor.Red),
+            new Tile(10, TileColor.Black)
+        ]);
+
+        var gs = GraphFirstSolver.Create(fourTilesOneExtra);
         gs.SearchSolution();
     }
 }

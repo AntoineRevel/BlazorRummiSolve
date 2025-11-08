@@ -59,7 +59,7 @@ public sealed class BinaryFirstBaseSolver(Tile[] tiles, int jokers) : BaseSolver
                 _finalScore = newSolutionScore;
 
                 // Validate the solution if the score is sufficient (>= 30)
-                if (newSolutionScore > ISolver.MinScore) solution.IsValid = true;
+                if (newSolutionScore >= ISolver.MinScore) solution.IsValid = true;
             }
             else
             {
