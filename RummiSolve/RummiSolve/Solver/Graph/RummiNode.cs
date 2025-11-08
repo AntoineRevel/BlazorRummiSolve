@@ -34,7 +34,7 @@ public class RummiNode : BaseSolver
         var cratedNode = 0;
 
         var firstUnusedTileIndex =
-            Array.FindIndex(IsTileUsed, _startindex, used => !used); //TODO add startIndex = nodeId ?
+            Array.FindIndex(IsTileUsed, _startindex, used => !used);
         UsedTiles[firstUnusedTileIndex] = true;
 
         for (var i = firstUnusedTileIndex; i < Tiles.Length; i++)
