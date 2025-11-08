@@ -13,7 +13,7 @@ public class RummiNode : BaseSolver
     public readonly string NodeId;
     public readonly ValidSet Set;
 
-    private RummiNode(string nodeId, ValidSet set, Tile[] tiles, bool[] isTileUsed, int jokers, int startindex) :
+    private RummiNode(string nodeId, ValidSet set, Tile[] tiles, bool[] isTileUsed, int jokers, int startIndex) :
         base(tiles, jokers)
     {
         _nodeId = nodeId;
@@ -21,7 +21,7 @@ public class RummiNode : BaseSolver
         Array.Copy(IsTileUsed, UsedTiles, Tiles.Length);
         NodeId = nodeId;
         Set = set;
-        _startIndex = startindex;
+        _startIndex = startIndex;
     }
 
     public static RummiNode CreateRoot(Tile[] tiles, int jokers)
@@ -31,7 +31,7 @@ public class RummiNode : BaseSolver
 
     public void GetChildren()
     {
-        var cratedNode = 0;
+        var createdNode = 0;
 
         var firstUnusedTileIndex =
             Array.FindIndex(IsTileUsed, _startIndex, used => !used);
@@ -43,9 +43,9 @@ public class RummiNode : BaseSolver
 
             foreach (var set in GetRuns(i).Concat(GetGroups(i)))
             {
-                cratedNode++;
+                createdNode++;
                 MarkTilesAsUsed(set, i);
-                var child = new RummiNode(_nodeId + cratedNode, set, Tiles, UsedTiles, Jokers, firstUnusedTileIndex);
+                var child = new RummiNode(_nodeId + createdNode, set, Tiles, UsedTiles, Jokers, firstUnusedTileIndex);
                 MarkTilesAsUnused(set, i);
                 Children.Add(child);
             }
