@@ -14,7 +14,7 @@ public class DebugGraph
             new Tile(4, TileColor.Mango)
         };
 
-        var gs = new GraphSolver(tiles, 0);
+        var gs = new GraphSolver(tiles, 1);
         gs.Test();
     }
 }

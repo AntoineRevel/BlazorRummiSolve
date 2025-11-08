@@ -59,7 +59,7 @@ public class RummiNode : BaseSolver
         for (var i = 0; i < Tiles.Length; i++)
             if (!IsTileUsed[i])
                 Tiles[i].PrintTile();
-
+        for (var i = 0; i < Jokers; i++) Tile.PrintJoker();
         Console.WriteLine("]");
     }
 
