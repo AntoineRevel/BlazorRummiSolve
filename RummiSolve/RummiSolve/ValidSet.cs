@@ -17,6 +17,6 @@ public class ValidSet(Tile[] tiles)
         Console.Write("[ ");
         foreach (var tile in Tiles) tile.PrintTile();
 
-        Console.WriteLine("]");
+        Console.Write("]");
     }
 }

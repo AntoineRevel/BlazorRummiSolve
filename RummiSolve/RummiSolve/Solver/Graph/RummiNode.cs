@@ -38,6 +38,13 @@ public class RummiNode(int nodeNumber, ValidSet set, Tile[] tiles, bool[] isTile
     {
         Console.Write($"Node {NodeNumber}: ");
         Set.Print();
+
+        Console.Write("  Unused: [ ");
+        for (var i = 0; i < Tiles.Length; i++)
+            if (!IsTileUsed[i])
+                Tiles[i].PrintTile();
+
+        Console.WriteLine("]");
     }
 
     public void PrintTree()
