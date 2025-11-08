@@ -36,14 +36,15 @@ public class GraphFirstSolver : ISolver
             currentLevel = nextLevel;
         }
 
-        root.PrintTree();
+        root.PrintTree(); //Debug
 
-        Console.WriteLine();
-        Console.WriteLine();
+        if (root.LeafNodes.IsEmpty) return SolverResult.Invalid("GraphFirstSolver");
 
-        foreach (var leaf in root.LeafNodes) leaf.PrintTree();
+        var bestNode = root.LeafNodes.OrderByDescending(node => node.Score).First();
 
-        return SolverResult.Invalid("GraphConstruction");
+        bestNode.PrintTree();
+
+        return SolverResult.Invalid("GraphFirstSolver");
     }
 
     public static GraphFirstSolver Create(Set playerSet)
