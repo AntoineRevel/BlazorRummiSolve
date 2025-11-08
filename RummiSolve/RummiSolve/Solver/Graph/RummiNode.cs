@@ -7,7 +7,7 @@ namespace RummiSolve.Solver.Graph;
 public class RummiNode : BaseSolver
 {
     private readonly string _nodeId;
-    private readonly int _startindex;
+    private readonly int _startIndex;
     public readonly List<RummiNode> Children = [];
     public readonly bool[] IsTileUsed;
     public readonly string NodeId;
@@ -21,7 +21,7 @@ public class RummiNode : BaseSolver
         Array.Copy(IsTileUsed, UsedTiles, Tiles.Length);
         NodeId = nodeId;
         Set = set;
-        _startindex = startindex;
+        _startIndex = startindex;
     }
 
     public static RummiNode CreateRoot(Tile[] tiles, int jokers)
@@ -34,7 +34,7 @@ public class RummiNode : BaseSolver
         var cratedNode = 0;
 
         var firstUnusedTileIndex =
-            Array.FindIndex(IsTileUsed, _startindex, used => !used);
+            Array.FindIndex(IsTileUsed, _startIndex, used => !used);
         UsedTiles[firstUnusedTileIndex] = true;
 
         for (var i = firstUnusedTileIndex; i < Tiles.Length; i++)
