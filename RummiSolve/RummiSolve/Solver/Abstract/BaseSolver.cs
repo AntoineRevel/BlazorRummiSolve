@@ -80,7 +80,7 @@ public abstract class BaseSolver(Tile[] tiles, int jokers)
         }
     }
 
-    protected IEnumerable<Run> GetRuns(int tileIndex, CancellationToken cancellationToken = default)
+    protected IEnumerable<ValidSet> GetRuns(int tileIndex, CancellationToken cancellationToken = default)
     {
         var availableJokers = Jokers;
         var color = Tiles[tileIndex].Color;
@@ -108,10 +108,7 @@ public abstract class BaseSolver(Tile[] tiles, int jokers)
 
                 if (currentRun.Count < 3) continue;
 
-                yield return new Run
-                {
-                    Tiles = [..currentRun]
-                };
+                yield return new ValidSet([..currentRun]);
             }
 
             if (availableJokers <= 0) yield break;
@@ -122,14 +119,11 @@ public abstract class BaseSolver(Tile[] tiles, int jokers)
 
             if (currentRun.Count < 3) continue;
 
-            yield return new Run
-            {
-                Tiles = [..currentRun]
-            };
+            yield return new ValidSet([..currentRun]);
         }
     }
 
-    protected IEnumerable<Group> GetGroups(int firstTileIndex, CancellationToken cancellationToken = default)
+    protected IEnumerable<ValidSet> GetGroups(int firstTileIndex, CancellationToken cancellationToken = default)
     {
         var sameNumberTiles = new HashSet<Tile>();
 
@@ -149,7 +143,7 @@ public abstract class BaseSolver(Tile[] tiles, int jokers)
 
             groupTiles.AddRange(sameNumberTiles);
 
-            yield return new Group { Tiles = groupTiles.ToArray() };
+            yield return new ValidSet(groupTiles.ToArray());
 
             if (groupTiles.Count != 4) yield break;
             var uniqueTilesList = sameNumberTiles.ToList();
@@ -160,10 +154,7 @@ public abstract class BaseSolver(Tile[] tiles, int jokers)
                 if (cancellationToken.IsCancellationRequested)
                     yield break;
 
-                yield return new Group
-                {
-                    Tiles = [Tiles[firstTileIndex], uniqueTilesList[i], uniqueTilesList[j]]
-                };
+                yield return new ValidSet([Tiles[firstTileIndex], uniqueTilesList[i], uniqueTilesList[j]]);
             }
         }
         else
@@ -191,10 +182,7 @@ public abstract class BaseSolver(Tile[] tiles, int jokers)
                     for (var k = 0; k < jokersUsed; k++)
                         groupTiles[tilesUsed + k] = new Tile(Tiles[firstTileIndex].Value, isJoker: true);
 
-                    yield return new Group
-                    {
-                        Tiles = groupTiles
-                    };
+                    yield return new ValidSet(groupTiles);
                 }
             }
         }

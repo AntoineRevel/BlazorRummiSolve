@@ -12,5 +12,6 @@ public class GraphSolver(Tile[] tiles, int jokers) : ISolver
 
     public void Test()
     {
+        //var root = new RummiNode(0, new ValidSet([]))
     }
 }

@@ -3,8 +3,8 @@ namespace RummiSolve;
 public class Solution
 {
     public static readonly Solution InvalidSolution = new() { IsValid = false };
-    public readonly List<Group> Groups = [];
-    public readonly List<Run> Runs = [];
+    public readonly List<ValidSet> Groups = [];
+    public readonly List<ValidSet> Runs = [];
     public bool IsValid;
 
     public Solution AddSolution(Solution solution)
@@ -15,13 +15,13 @@ public class Solution
         return this;
     }
 
-    public void AddRun(Run run)
+    public void AddRun(ValidSet run)
     {
         Runs.Add(run);
     }
 
 
-    public void AddGroup(Group group)
+    public void AddGroup(ValidSet group)
     {
         Groups.Add(group);
     }
