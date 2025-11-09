@@ -92,4 +92,55 @@ public class DebugGraph
         var gs = GraphFirstSolver.Create(fourTilesOneExtra);
         gs.SearchSolution();
     }
+
+
+    public static void Test2()
+    {
+        var boardSet = new Set([
+            new Tile(1, TileColor.Red),
+            new Tile(2, TileColor.Red),
+            new Tile(3, TileColor.Red)
+        ]);
+
+        var playerSet = new Set([
+            new Tile(10),
+            new Tile(10, TileColor.Red),
+            new Tile(10, TileColor.Black)
+        ]);
+
+        var gs = GraphSolver.Create(boardSet, playerSet);
+
+        var sr = gs.SearchSolution();
+
+        sr.BestSolution.PrintSolution();
+
+        foreach (var tile in sr.TilesToPlay) tile.PrintTile();
+
+        Console.WriteLine(sr.BestSolution.IsValid);
+    }
+
+    public static void Test3()
+    {
+        var boardSet = new Set([
+            new Tile(2),
+            new Tile(3),
+            new Tile(4)
+        ]);
+
+        var playerSet = new Set([
+            new Tile(1),
+            new Tile(10, TileColor.Red),
+            new Tile(10, TileColor.Black)
+        ]);
+
+        var gs = GraphSolver.Create(boardSet, playerSet);
+
+        var sr = gs.SearchSolution();
+
+        sr.BestSolution.PrintSolution();
+
+        foreach (var tile in sr.TilesToPlay) tile.PrintTile();
+
+        Console.WriteLine(sr.BestSolution.IsValid);
+    }
 }

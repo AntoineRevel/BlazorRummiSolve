@@ -46,13 +46,15 @@ public class GraphSolver : ISolver
             currentLevel = nextLevel;
         }
 
+        root.PrintTree();
+
         if (root.LeafNodes.IsEmpty) return SolverResult.Invalid("GraphFirstSolver");
 
         var bestNode = root.LeafNodes.MaxBy(node => node.Score);
 
         var bestSolution = bestNode!.GetSolution();
 
-        var tilesToPlay = _tiles.Where((_, i) => bestNode.IsTileUsed[i]).ToArray();
+        var tilesToPlay = _tiles.Where((_, i) => bestNode.IsTileUsed[i] && _isPlayerTile[i]).ToArray();
         var jokerToPlay = _jokers - bestNode.Jokers - _boardJokers;
 
         return SolverResult.FromSolution("GraphFirstSolver", bestSolution, tilesToPlay, jokerToPlay, bestNode.Score);

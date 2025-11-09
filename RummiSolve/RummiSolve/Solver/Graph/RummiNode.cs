@@ -66,7 +66,7 @@ public class RummiNode : BaseSolver
         var played = _played;
         MarkTilesAsUsed(set, index, ref played);
         var child = new RummiNode(set, Tiles, UsedTiles, Jokers, index + 1, createdNode, LeafNodes,
-            Score + set.GetScore(), this, isRun, _isPlayerTile, _played);
+            Score + set.GetScore(), this, isRun, _isPlayerTile, played);
         MarkTilesAsUnused(set, index);
         Children.Add(child);
     }
@@ -83,11 +83,11 @@ public class RummiNode : BaseSolver
                 continue;
             }
 
-            if (_isPlayerTile[tIndex]) played = true;
-
             for (; unusedIndex < Tiles.Length; unusedIndex++)
             {
                 if (UsedTiles[unusedIndex] || !Tiles[unusedIndex].Equals(tile)) continue;
+
+                if (_isPlayerTile[unusedIndex]) played = true;
 
                 UsedTiles[unusedIndex] = true;
                 break;
