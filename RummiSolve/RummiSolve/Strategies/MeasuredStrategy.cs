@@ -41,7 +41,7 @@ public class MeasuredStrategy : IStrategy
 
         ISolver graphSolver = hasPlayed
             ? ParallelCombinationsSolver.Create(new Set(board), rack)
-            : GraphFirstSolver.Create(rack);
+            : GraphSolver.CreateFirst(rack);
 
         var results = new List<TimedResult>
         {
