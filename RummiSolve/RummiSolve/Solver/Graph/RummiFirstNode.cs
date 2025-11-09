@@ -3,21 +3,21 @@ using RummiSolve.Solver.Abstract;
 
 namespace RummiSolve.Solver.Graph;
 
-public class RummiNode : BaseSolver
+public class RummiFirstNode : BaseSolver
 {
     private readonly int _gen;
     private readonly bool _isRun;
-    private readonly RummiNode? _parentNode;
+    private readonly RummiFirstNode? _parentNode;
     private readonly ValidSet _set;
     private readonly int _startIndex;
-    public readonly List<RummiNode> Children = [];
+    public readonly List<RummiFirstNode> Children = [];
 
     public readonly bool[] IsTileUsed;
-    public readonly ConcurrentBag<RummiNode> LeafNodes;
+    public readonly ConcurrentBag<RummiFirstNode> LeafNodes;
     public readonly int Score;
 
-    private RummiNode(ValidSet set, Tile[] tiles, bool[] isTileUsed, int jokers, int startIndex, int gen,
-        ConcurrentBag<RummiNode> leafNodes, int score, RummiNode? parentNode, bool isRun) :
+    private RummiFirstNode(ValidSet set, Tile[] tiles, bool[] isTileUsed, int jokers, int startIndex, int gen,
+        ConcurrentBag<RummiFirstNode> leafNodes, int score, RummiFirstNode? parentNode, bool isRun) :
         base(tiles, jokers)
     {
         IsTileUsed = (bool[])isTileUsed.Clone();
@@ -31,9 +31,9 @@ public class RummiNode : BaseSolver
         _isRun = isRun;
     }
 
-    public static RummiNode CreateRoot(Tile[] tiles, int jokers)
+    public static RummiFirstNode CreateRoot(Tile[] tiles, int jokers)
     {
-        return new RummiNode(new ValidSet([]), tiles, new bool[tiles.Length], jokers, 0, 0, [], 0, null, false);
+        return new RummiFirstNode(new ValidSet([]), tiles, new bool[tiles.Length], jokers, 0, 0, [], 0, null, false);
     }
 
     public void GetChildren()
@@ -57,7 +57,7 @@ public class RummiNode : BaseSolver
     {
         createdNode++;
         MarkTilesAsUsed(set, index);
-        var child = new RummiNode(set, Tiles, UsedTiles, Jokers, index + 1, createdNode, LeafNodes,
+        var child = new RummiFirstNode(set, Tiles, UsedTiles, Jokers, index + 1, createdNode, LeafNodes,
             Score + set.GetScore(), this, isRun);
         MarkTilesAsUnused(set, index);
         Children.Add(child);

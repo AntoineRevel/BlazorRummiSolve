@@ -17,14 +17,14 @@ public class GraphFirstSolver : ISolver
 
     public SolverResult SearchSolution(CancellationToken cancellationToken = default)
     {
-        var root = RummiNode.CreateRoot(_tiles, _jokers);
-        var currentLevel = new ConcurrentBag<RummiNode> { root };
+        var root = RummiFirstNode.CreateRoot(_tiles, _jokers);
+        var currentLevel = new ConcurrentBag<RummiFirstNode> { root };
 
         var level = 0; //debug
 
         while (!cancellationToken.IsCancellationRequested)
         {
-            var nextLevel = new ConcurrentBag<RummiNode>();
+            var nextLevel = new ConcurrentBag<RummiFirstNode>();
 
             level++;
 
