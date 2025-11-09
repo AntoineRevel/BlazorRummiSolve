@@ -1,3 +1,5 @@
+using RummiSolve.Solver.Graph.First;
+
 namespace RummiSolve.Solver.Graph;
 
 public class DebugGraph

@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using RummiSolve.Solver.Abstract;
 
-namespace RummiSolve.Solver.Graph;
+namespace RummiSolve.Solver.Graph.First;
 
 public class RummiFirstNode : BaseSolver
 {

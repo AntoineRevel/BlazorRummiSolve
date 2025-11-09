@@ -2,7 +2,7 @@ using System.Collections.Concurrent;
 using RummiSolve.Results;
 using RummiSolve.Solver.Interfaces;
 
-namespace RummiSolve.Solver.Graph;
+namespace RummiSolve.Solver.Graph.First;
 
 public class GraphFirstSolver : ISolver
 {

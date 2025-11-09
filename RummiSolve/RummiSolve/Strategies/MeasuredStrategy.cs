@@ -4,7 +4,7 @@ using RummiSolve.Solver.BestScore;
 using RummiSolve.Solver.BestScore.First;
 using RummiSolve.Solver.Combinations;
 using RummiSolve.Solver.Combinations.First;
-using RummiSolve.Solver.Graph;
+using RummiSolve.Solver.Graph.First;
 using RummiSolve.Solver.Incremental;
 using RummiSolve.Solver.Interfaces;
 
