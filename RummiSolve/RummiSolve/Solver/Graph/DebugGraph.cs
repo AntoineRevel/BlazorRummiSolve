@@ -87,7 +87,7 @@ public class DebugGraph
             new Tile(10, TileColor.Black)
         ]);
 
-        var gs = GraphSolver.CreateFirst(fourTilesOneExtra);
+        var gs = GraphSolver.CreateFirst(set1);
         gs.SearchSolution();
     }
 }

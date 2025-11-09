@@ -20,9 +20,13 @@ public class GraphSolver : ISolver
         var root = RummiNode.CreateRoot(_tiles, _jokers);
         var currentLevel = new ConcurrentBag<RummiNode> { root };
 
+        var level = 0; //debug
+
         while (!cancellationToken.IsCancellationRequested)
         {
             var nextLevel = new ConcurrentBag<RummiNode>();
+
+            level++;
 
             Parallel.ForEach(currentLevel,
                 new ParallelOptions { CancellationToken = cancellationToken },
@@ -32,6 +36,8 @@ public class GraphSolver : ISolver
                     foreach (var child in node.Children) nextLevel.Add(child);
                 }
             );
+
+            Console.WriteLine(level);
             if (nextLevel.IsEmpty) break;
             currentLevel = nextLevel;
         }
