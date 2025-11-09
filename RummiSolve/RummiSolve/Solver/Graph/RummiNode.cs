@@ -52,18 +52,18 @@ public class RummiNode : BaseSolver
             if (IsTileUsed[i]) continue;
 
             UsedTiles[i] = true;
-            foreach (var set in GetRuns(i)) CreateChildNode(ref createdNode, i, set, true);
-            foreach (var set in GetGroups(i)) CreateChildNode(ref createdNode, i, set, false);
+            var played = _played || _isPlayerTile[i];
+            foreach (var set in GetRuns(i)) CreateChildNode(ref createdNode, i, set, true, played);
+            foreach (var set in GetGroups(i)) CreateChildNode(ref createdNode, i, set, false, played);
             UsedTiles[i] = false;
         }
 
         if (createdNode == 0 && _played) LeafNodes.Add(this);
     }
 
-    private void CreateChildNode(ref int createdNode, int index, ValidSet set, bool isRun)
+    private void CreateChildNode(ref int createdNode, int index, ValidSet set, bool isRun, bool played)
     {
         createdNode++;
-        var played = _played;
         MarkTilesAsUsed(set, index, ref played);
         var child = new RummiNode(set, Tiles, UsedTiles, Jokers, index + 1, createdNode, LeafNodes,
             Score + set.GetScore(), this, isRun, _isPlayerTile, played);
