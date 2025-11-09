@@ -420,6 +420,26 @@ public static class CommonTestCases
                 ],
                 0
             )
+        ),
+        new(
+            "ValidJustOneFirstToPlay",
+            new Set([
+                new Tile(2),
+                new Tile(3),
+                new Tile(4)
+            ]),
+            new Set([
+                new Tile(1),
+                new Tile(10, TileColor.Red),
+                new Tile(10, TileColor.Black)
+            ]),
+            new ExpectedResult(
+                true,
+                [
+                    new Tile(1)
+                ],
+                0
+            )
         )
     ];
 
