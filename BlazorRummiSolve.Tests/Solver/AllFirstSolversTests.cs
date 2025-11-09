@@ -24,7 +24,7 @@ public class AllFirstSolversTests(ITestOutputHelper output)
         ("CombinationsFirstSolver", CombinationsFirstSolver.Create),
         ("BestScoreFirstBaseSolver", BestScoreFirstBaseSolver.Create),
         ("IncrementalFirstBaseSolver", IncrementalFirstBaseSolver.Create),
-        ("GraphFirstSolver", GraphSolver.CreateFirst)
+        ("GraphFirstSolver", GraphFirstSolver.Create)
     ];
 
     /// <summary>

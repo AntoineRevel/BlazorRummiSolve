@@ -4,12 +4,12 @@ using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Solver.Graph;
 
-public class GraphSolver : ISolver
+public class GraphFirstSolver : ISolver
 {
     private readonly int _jokers;
     private readonly Tile[] _tiles;
 
-    private GraphSolver(Tile[] tiles, int jokers)
+    private GraphFirstSolver(Tile[] tiles, int jokers)
     {
         _tiles = tiles;
         _jokers = jokers;
@@ -56,10 +56,10 @@ public class GraphSolver : ISolver
         return SolverResult.FromSolution("GraphFirstSolver", bestSolution, tilesToPlay, jokerToPlay, bestNode.Score);
     }
 
-    public static GraphSolver CreateFirst(Set playerSet)
+    public static GraphFirstSolver Create(Set playerSet)
     {
         playerSet.Tiles.Sort();
-        return new GraphSolver(
+        return new GraphFirstSolver(
             playerSet.Tiles.ToArray(),
             playerSet.Jokers
         );
