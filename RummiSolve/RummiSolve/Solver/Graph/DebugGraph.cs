@@ -143,4 +143,27 @@ public class DebugGraph
 
         Console.WriteLine(sr.BestSolution.IsValid);
     }
+
+    public static void Test4()
+    {
+        var boardSet = new Set([
+            new Tile(2),
+            new Tile(3),
+            new Tile(4)
+        ]);
+
+        var playerSet = new Set([
+            new Tile(true)
+        ]);
+
+        var gs = GraphSolver.Create(boardSet, playerSet);
+
+        var sr = gs.SearchSolution();
+
+        sr.BestSolution.PrintSolution();
+
+        foreach (var tile in sr.TilesToPlay) tile.PrintTile();
+
+        Console.WriteLine(sr.BestSolution.IsValid);
+    }
 }

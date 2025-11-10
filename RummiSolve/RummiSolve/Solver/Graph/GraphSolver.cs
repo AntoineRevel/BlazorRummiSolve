@@ -21,7 +21,7 @@ public class GraphSolver : ISolver
 
     public SolverResult SearchSolution(CancellationToken cancellationToken = default)
     {
-        var root = RummiNode.CreateRoot(_tiles, _jokers, _isPlayerTile);
+        var root = RummiNode.CreateRoot(_tiles, _jokers, _isPlayerTile, _boardJokers);
         var currentLevel = new ConcurrentBag<RummiNode> { root };
 
         var level = 0; //debug
