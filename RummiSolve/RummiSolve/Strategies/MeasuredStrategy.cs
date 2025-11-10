@@ -4,6 +4,7 @@ using RummiSolve.Solver.BestScore;
 using RummiSolve.Solver.BestScore.First;
 using RummiSolve.Solver.Combinations;
 using RummiSolve.Solver.Combinations.First;
+using RummiSolve.Solver.Graph;
 using RummiSolve.Solver.Graph.First;
 using RummiSolve.Solver.Incremental;
 using RummiSolve.Solver.Interfaces;
@@ -40,7 +41,7 @@ public class MeasuredStrategy : IStrategy
             : CombinationsFirstSolver.Create(rack);
 
         ISolver graphSolver = hasPlayed
-            ? ParallelCombinationsSolver.Create(new Set(board), rack)
+            ? GraphSolver.Create(new Set(board), rack)
             : GraphFirstSolver.Create(rack);
 
         var results = new List<TimedResult>
