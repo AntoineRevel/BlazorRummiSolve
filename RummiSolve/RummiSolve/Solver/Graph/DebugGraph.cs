@@ -166,4 +166,31 @@ public class DebugGraph
 
         Console.WriteLine(sr.BestSolution.IsValid);
     }
+
+    public static void Test5()
+    {
+        var boardSet = new Set([
+            new Tile(1, TileColor.Red),
+            new Tile(2, TileColor.Red),
+            new Tile(3, TileColor.Red)
+        ]);
+
+        var playerSet = new Set([
+            new Tile(10),
+            new Tile(10, TileColor.Red),
+            new Tile(10, TileColor.Black),
+            new Tile(5, TileColor.Red),
+            new Tile(true)
+        ]);
+
+        var gs = GraphSolver.Create(boardSet, playerSet);
+
+        var sr = gs.SearchSolution();
+
+        sr.BestSolution.PrintSolution();
+
+        foreach (var tile in sr.TilesToPlay) tile.PrintTile();
+
+        Console.WriteLine(sr.BestSolution.IsValid);
+    }
 }

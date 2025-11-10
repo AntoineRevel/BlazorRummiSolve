@@ -50,7 +50,7 @@ public class GraphSolver : ISolver
 
         if (root.LeafNodes.IsEmpty) return SolverResult.Invalid("GraphFirstSolver");
 
-        var bestNode = root.LeafNodes.MaxBy(node => node.Score);
+        var bestNode = root.LeafNodes.MaxBy(node => (node.PlayerTilePlayed, node.Score));
 
         var bestSolution = bestNode!.GetSolution();
 
