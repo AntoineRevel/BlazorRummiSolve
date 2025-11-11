@@ -103,7 +103,7 @@ public class Game(Guid id)
             if (isRealPlayer && humanPlayerCallback != null)
                 strategy = new HumanPlayerStrategy(humanPlayerCallback);
             else
-                strategy = new MeasuredStrategy();
+                strategy = new GraphStrategy();
 
             Players.Add(new Player(playerNames[i], playerTiles.ToList(), strategy));
         }

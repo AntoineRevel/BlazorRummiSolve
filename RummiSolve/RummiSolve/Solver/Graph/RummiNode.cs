@@ -7,7 +7,6 @@ public class RummiNode : BaseSolver
 {
     private readonly int _boardJokers;
     private readonly int _boardTileNotPlayed;
-    private readonly int _gen;
     private readonly bool[] _isPlayerTile;
     private readonly bool _isRun;
     private readonly RummiNode? _parentNode;
@@ -22,7 +21,7 @@ public class RummiNode : BaseSolver
     public readonly int Score;
 
 
-    private RummiNode(ValidSet set, Tile[] tiles, bool[] isTileUsed, int jokers, int startIndex, int gen,
+    private RummiNode(ValidSet set, Tile[] tiles, bool[] isTileUsed, int jokers, int startIndex,
         ConcurrentBag<RummiNode> leafNodes, int score, RummiNode? parentNode, bool isRun, bool[] isPlayerTile,
         int boardJokers, int totalJoker, int playerTilePlayed, int boardTileNotPlayed) :
         base(tiles, jokers)
@@ -31,7 +30,6 @@ public class RummiNode : BaseSolver
         Array.Copy(IsTileUsed, UsedTiles, Tiles.Length);
         _set = set;
         _startIndex = startIndex;
-        _gen = gen;
         LeafNodes = leafNodes;
         Score = score;
         _parentNode = parentNode;
@@ -45,7 +43,7 @@ public class RummiNode : BaseSolver
 
     public static RummiNode CreateRoot(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardTile, int boardJokers)
     {
-        return new RummiNode(new ValidSet([]), tiles, new bool[tiles.Length], jokers, 0, 0, [], 0, null, false,
+        return new RummiNode(new ValidSet([]), tiles, new bool[tiles.Length], jokers, 0, [], 0, null, false,
             isPlayerTile, boardJokers, jokers, 0, boardTile);
     }
 
@@ -84,7 +82,7 @@ public class RummiNode : BaseSolver
     {
         createdNode++;
         MarkTilesAsUsed(set, index, ref playerTilePlayed, ref boardTileNotPlayed);
-        var child = new RummiNode(set, Tiles, UsedTiles, Jokers, index + 1, createdNode, LeafNodes,
+        var child = new RummiNode(set, Tiles, UsedTiles, Jokers, index + 1, LeafNodes,
             Score + set.GetScore(), this, isRun, _isPlayerTile, _boardJokers, _totalJoker,
             playerTilePlayed, boardTileNotPlayed);
         MarkTilesAsUnused(set, index);
@@ -119,7 +117,6 @@ public class RummiNode : BaseSolver
 
     private void Print()
     {
-        Console.Write($"{_gen}: ");
         _set.Print();
 
         Console.Write("  Unused: [ ");
