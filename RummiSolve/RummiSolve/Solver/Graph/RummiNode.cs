@@ -61,7 +61,7 @@ public class RummiNode : BaseSolver
             foreach (var set in GetRuns(i)) CreateChildNode(ref createdNode, i, set, true, playerTilePlayed);
             foreach (var set in GetGroups(i)) CreateChildNode(ref createdNode, i, set, false, playerTilePlayed);
 
-            if (createdNode == 0 && !_isPlayerTile[i]) break;
+            if (createdNode == 0 && !_isPlayerTile[i]) return;
 
             UsedTiles[i] = false;
             totalCreatedNode += createdNode;
