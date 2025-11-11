@@ -137,7 +137,7 @@ public sealed class IncrementalComplexSolverTileAndSc : ComplexSolver, ISolver
     }
 
     private Solution TrySet<TS>(IEnumerable<TS> sets, Solution solution, int solutionScore, int firstUnusedTileIndex,
-        Action<Solution, TS> addSetToSolution, CancellationToken cancellationToken = default)
+        Action<Solution, ValidSet> addSetToSolution, CancellationToken cancellationToken = default)
         where TS : ValidSet
     {
         UsedTiles[firstUnusedTileIndex] = true;

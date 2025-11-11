@@ -16,7 +16,7 @@ public sealed class IncrementalFirstBaseSolver : BaseSolver, ISolver
     {
         _availableJokers = jokers;
         _bestUsedTiles = UsedTiles;
-        _bestSolutionScore = MinScore;
+        _bestSolutionScore = ISolver.MinScore - 1;
     }
 
     private Solution BestSolution { get; set; } = new();
@@ -47,7 +47,7 @@ public sealed class IncrementalFirstBaseSolver : BaseSolver, ISolver
         }
     }
 
-    public static IncrementalFirstBaseSolver Create(in Set playerSet)
+    public static IncrementalFirstBaseSolver Create(Set playerSet)
     {
         var tiles = new List<Tile>(playerSet.Tiles);
         tiles.Sort();

@@ -1,6 +1,7 @@
 using RummiSolve;
 using RummiSolve.Solver.BestScore;
 using RummiSolve.Solver.Combinations;
+using RummiSolve.Solver.Graph;
 using RummiSolve.Solver.Incremental;
 using RummiSolve.Solver.Interfaces;
 using Xunit.Abstractions;
@@ -23,7 +24,8 @@ public class AllSolversTests(ITestOutputHelper output)
         ("BestScoreComplexSolver", BestScoreComplexSolver.Create),
         ("IncrementalComplexSolver", IncrementalComplexSolver.Create),
         ("IncrementalScoreFieldComplexSolver", IncrementalScoreFieldComplexSolver.Create),
-        ("IncrementalComplexSolverTileAndSc", IncrementalComplexSolverTileAndSc.Create)
+        ("IncrementalComplexSolverTileAndSc", IncrementalComplexSolverTileAndSc.Create),
+        ("GraphSolver", GraphSolver.Create)
     ];
 
     /// <summary>

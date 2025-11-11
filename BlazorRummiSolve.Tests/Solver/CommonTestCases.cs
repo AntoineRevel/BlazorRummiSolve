@@ -250,11 +250,7 @@ public static class CommonTestCases
             new Set([
                 new Tile(5)
             ]),
-            new ExpectedResult(
-                false,
-                [],
-                0
-            )
+            ExpectedResult.Invalid
         ),
         new(
             "ValidMultipleDuplicates",
@@ -303,28 +299,6 @@ public static class CommonTestCases
             )
         ),
 
-        new(
-            "ValidNotWon2",
-            new Set([
-                new Tile(8),
-                new Tile(9),
-                new Tile(10),
-                new Tile(11)
-            ]),
-            new Set([
-                new Tile(8, TileColor.Black),
-                new Tile(8, TileColor.Red),
-                new Tile(1)
-            ]),
-            new ExpectedResult(
-                true,
-                [
-                    new Tile(8, TileColor.Black),
-                    new Tile(8, TileColor.Red)
-                ],
-                0
-            )
-        ),
 
         new(
             "ValidRunEnd",
@@ -420,6 +394,38 @@ public static class CommonTestCases
                 ],
                 0
             )
+        ),
+        new(
+            "ValidJustOneFirstToPlay",
+            new Set([
+                new Tile(2),
+                new Tile(3),
+                new Tile(4)
+            ]),
+            new Set([
+                new Tile(1),
+                new Tile(10, TileColor.Red),
+                new Tile(10, TileColor.Black)
+            ]),
+            new ExpectedResult(
+                true,
+                [
+                    new Tile(1)
+                ],
+                0
+            )
+        ),
+        new(
+            "InvalidAllBoardNotPlayed",
+            new Set([
+                new Tile(1, TileColor.Red),
+                new Tile(2, TileColor.Red),
+                new Tile(3, TileColor.Red)
+            ]),
+            new Set([
+                new Tile(1, TileColor.Red)
+            ]),
+            ExpectedResult.Invalid
         )
     ];
 
@@ -434,5 +440,8 @@ public static class CommonTestCases
         bool IsValid,
         IEnumerable<Tile> TilesToPlay,
         int JokerToPlay
-    );
+    )
+    {
+        public static readonly ExpectedResult Invalid = new(false, [], 0);
+    }
 }

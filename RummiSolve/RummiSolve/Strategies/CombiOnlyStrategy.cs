@@ -5,7 +5,7 @@ using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Strategies;
 
-public class CombiOnlyStrategy : ISolverStrategy
+public class CombiOnlyStrategy : IStrategy
 {
     public Task<SolverResult> GetSolverResult(Set board, Set rack, bool hasPlayed, CancellationToken token)
     {

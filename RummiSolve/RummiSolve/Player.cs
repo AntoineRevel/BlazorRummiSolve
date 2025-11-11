@@ -4,7 +4,7 @@ using static System.Console;
 
 namespace RummiSolve;
 
-public class Player(string name, List<Tile> tiles, ISolverStrategy solverStrategy)
+public class Player(string name, List<Tile> tiles, IStrategy strategy)
 {
     public bool Played { get; private set; }
     public string Name { get; } = name;
@@ -17,7 +17,7 @@ public class Player(string name, List<Tile> tiles, ISolverStrategy solverStrateg
     {
         TilesToPlay.Clear();
 
-        var solver = await solverStrategy.GetSolverResult(boardSolution.GetSet(), new Set(Rack), Played,
+        var solver = await strategy.GetSolverResult(boardSolution.GetSet(), new Set(Rack), Played,
             externalCancellationToken);
 
         WriteLine($"{solver.Source} Selected");

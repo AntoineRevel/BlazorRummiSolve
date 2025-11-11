@@ -4,7 +4,7 @@ using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Solver.Combinations;
 
-public sealed class BinaryBaseSolver(Tile[] tiles, int jokers) : BaseSolver(tiles, jokers), IBinarySolver
+public sealed class BinaryBaseSolver(Tile[] tiles, int jokers) : BaseSolver(tiles, jokers), ISolver
 {
     public required int JokerToPlay { private get; init; }
     public required IEnumerable<Tile> TilesToPlay { private get; init; }

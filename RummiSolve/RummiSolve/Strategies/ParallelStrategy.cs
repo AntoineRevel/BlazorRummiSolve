@@ -7,7 +7,7 @@ using RummiSolve.Solver.Interfaces;
 
 namespace RummiSolve.Strategies;
 
-public class ParallelSolverStrategy : ISolverStrategy
+public class ParallelStrategy : IStrategy
 {
     public async Task<SolverResult> GetSolverResult(Set board, Set rack, bool hasPlayed,
         CancellationToken externalToken = default)

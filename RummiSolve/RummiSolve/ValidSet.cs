@@ -3,12 +3,19 @@ namespace RummiSolve;
 /// <summary>
 ///     Represents a validated set (Run or Group) of tiles, contain jokers
 /// </summary>
-public abstract class ValidSet
+public class ValidSet(Tile[] tiles)
 {
-    public required Tile[] Tiles { get; init; }
+    public readonly Tile[] Tiles = tiles;
 
     public int GetScore()
     {
         return Tiles.Sum(t => t.Value);
+    }
+
+    public void Print()
+    {
+        Console.Write("[ ");
+        foreach (var tile in Tiles) tile.PrintTile();
+        Console.Write("]");
     }
 }

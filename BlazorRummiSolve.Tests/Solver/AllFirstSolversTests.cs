@@ -1,6 +1,7 @@
 using RummiSolve;
 using RummiSolve.Solver.BestScore.First;
 using RummiSolve.Solver.Combinations.First;
+using RummiSolve.Solver.Graph.First;
 using RummiSolve.Solver.Incremental;
 using RummiSolve.Solver.Interfaces;
 using Xunit.Abstractions;
@@ -22,7 +23,8 @@ public class AllFirstSolversTests(ITestOutputHelper output)
     [
         ("CombinationsFirstSolver", CombinationsFirstSolver.Create),
         ("BestScoreFirstBaseSolver", BestScoreFirstBaseSolver.Create),
-        ("IncrementalFirstBaseSolver", playerSet => IncrementalFirstBaseSolver.Create(playerSet)) //TODO why
+        ("IncrementalFirstBaseSolver", IncrementalFirstBaseSolver.Create),
+        ("GraphFirstSolver", GraphFirstSolver.Create)
     ];
 
     /// <summary>

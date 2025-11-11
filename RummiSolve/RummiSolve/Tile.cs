@@ -65,10 +65,11 @@ public readonly struct Tile : IComparable<Tile>, IEquatable<Tile>
         Console.ResetColor();
     }
 
-    private static void PrintJoker()
+    public static void PrintJoker()
     {
         Console.ForegroundColor = ConsoleColor.Magenta;
         Console.Write("J ");
+        Console.ResetColor();
     }
 
     public bool Equals(Tile other)
