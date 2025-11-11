@@ -7,21 +7,23 @@ namespace RummiSolve.Solver.Graph;
 public class GraphSolver : ISolver
 {
     private readonly int _boardJokers;
+    private readonly int _boardTile;
     private readonly bool[] _isPlayerTile;
     private readonly int _jokers;
     private readonly Tile[] _tiles;
 
-    private GraphSolver(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardJokers)
+    private GraphSolver(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardJokers, int boardTile)
     {
         _tiles = tiles;
         _jokers = jokers;
         _isPlayerTile = isPlayerTile;
         _boardJokers = boardJokers;
+        _boardTile = boardTile;
     }
 
     public SolverResult SearchSolution(CancellationToken cancellationToken = default)
     {
-        var root = RummiNode.CreateRoot(_tiles, _jokers, _isPlayerTile, _boardJokers);
+        var root = RummiNode.CreateRoot(_tiles, _jokers, _isPlayerTile, _boardTile, _boardJokers);
         var currentLevel = new ConcurrentBag<RummiNode> { root };
 
         var level = 0; //debug
@@ -62,6 +64,7 @@ public class GraphSolver : ISolver
 
     public static GraphSolver Create(Set boardSet, Set playerSet)
     {
+        var boardTile = boardSet.Tiles.Count;
         var capacity = boardSet.Tiles.Count + playerSet.Tiles.Count;
         var combined = new List<(Tile tile, bool isPlayerTile)>(capacity);
 
@@ -79,12 +82,12 @@ public class GraphSolver : ISolver
         var finalTiles = combined.Select(pair => pair.tile).ToArray();
         var isPlayerTile = combined.Select(pair => pair.isPlayerTile).ToArray();
 
-        playerSet.Tiles.Sort();
         return new GraphSolver(
             finalTiles,
             totalJokers,
             isPlayerTile,
-            boardSet.Jokers
+            boardSet.Jokers,
+            boardTile
         );
     }
 }
