@@ -27,9 +27,12 @@
 
     <s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=AI/@EntryIndexedValue">AI</s:String>
     <s:String
-            x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=8e5ff20f_002Dfecb_002D4c42_002Dbc56_002Dbbffb7d51125/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+            x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=c43b9a8d_002Dff1a_002D4c54_002D8ff3_002Dcdefd061d89d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;Solution /&gt;
 &lt;/SessionState&gt;</s:String>
+	
+	
+    
 	
 	
 	
