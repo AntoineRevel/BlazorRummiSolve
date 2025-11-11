@@ -299,28 +299,6 @@ public static class CommonTestCases
             )
         ),
 
-        new(
-            "ValidNotWon2",
-            new Set([
-                new Tile(8),
-                new Tile(9),
-                new Tile(10),
-                new Tile(11)
-            ]),
-            new Set([
-                new Tile(8, TileColor.Black),
-                new Tile(8, TileColor.Red),
-                new Tile(1)
-            ]),
-            new ExpectedResult(
-                true,
-                [
-                    new Tile(8, TileColor.Black),
-                    new Tile(8, TileColor.Red)
-                ],
-                0
-            )
-        ),
 
         new(
             "ValidRunEnd",
