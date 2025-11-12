@@ -52,4 +52,5 @@ jobs:
           app-name: 'Rummikub'
           slot-name: 'Production'
           package: .
+          clean: true
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_D2DA8E77239141D3B8F7FE3F25B9A988 }}
