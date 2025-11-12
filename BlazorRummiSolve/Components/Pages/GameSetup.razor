@@ -36,7 +36,7 @@
                             <label for="player@(i + 1)" class="player-label">Player @(i + 1)</label>
                             <input id="player@(i + 1)" @bind="PlayerNames[index]" type="text" class="player-input"
                                    placeholder="@GetDefaultPlayerName(i)" maxlength="20"
-                                   @onkeydown="@(e => HandlePlayerNameKeyDown(e, index))"/>
+                                   @onkeydown="@((KeyboardEventArgs e) => HandlePlayerNameKeyDown(e, index))"/>
                         </div>
 
                         <div class="player-type-section">
