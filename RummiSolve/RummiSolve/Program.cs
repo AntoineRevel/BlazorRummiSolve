@@ -1,11 +1,20 @@
+using BenchmarkDotNet.Running;
+
 namespace RummiSolve;
 
 public static class Program
 {
-    private static async Task Main()
+    private static void Main()
     {
-        //BenchmarkRunner.Run<ParallelSolverBenchmark>();
+        BenchmarkRunner.Run<GraphSolverBenchmark>();
+    }
 
-        await RummiBench.TestSimpleGame2();
+    public static void TestBenchmark()
+    {
+        var gsb = new GraphSolverBenchmark();
+
+        gsb.Setup();
+
+        gsb.GraphSolver_Turn8Config();
     }
 }
