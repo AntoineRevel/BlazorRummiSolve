@@ -290,4 +290,33 @@ public class DebugGraph
 
         Console.WriteLine(sr.BestSolution.IsValid);
     }
+
+    public static void TestValidNotWon2Id()
+    {
+        var boardSet = new Set([
+            new Tile(8),
+            new Tile(9),
+            new Tile(10),
+            new Tile(11)
+        ]);
+
+        var playerSet = new Set([
+            new Tile(1),
+            new Tile(2),
+            new Tile(3),
+            new Tile(4),
+            new Tile(1, TileColor.Red),
+            new Tile(1, TileColor.Black)
+        ]);
+
+        var gs = GraphSolver.Create(boardSet, playerSet);
+
+        var sr = gs.SearchSolution();
+
+        sr.BestSolution.PrintSolution();
+
+        foreach (var tile in sr.TilesToPlay) tile.PrintTile();
+
+        Console.WriteLine(sr.BestSolution.IsValid);
+    }
 }

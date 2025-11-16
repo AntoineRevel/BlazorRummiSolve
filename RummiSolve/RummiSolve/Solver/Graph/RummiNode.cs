@@ -19,6 +19,7 @@ public class RummiNode : BaseSolver
     public readonly ConcurrentBag<RummiNode> LeafNodes;
     public readonly int PlayerTilePlayed;
     public readonly int Score;
+    private string? _id;
 
 
     private RummiNode(ValidSet set, Tile[] tiles, bool[] isTileUsed, int jokers, int startIndex,
@@ -115,6 +116,21 @@ public class RummiNode : BaseSolver
         }
     }
 
+    private string GetId()
+    {
+        if (_id != null)
+            return _id;
+
+        var id = new char[Tiles.Length];
+
+        for (var i = 0; i < _startIndex; i++) id[i] = '0';
+
+        for (var i = _startIndex; i < Tiles.Length; i++) id[i] = UsedTiles[i] ? '1' : '0';
+
+        _id = new string(id);
+        return _id;
+    }
+
     private void Print()
     {
         _set.Print();
@@ -127,7 +143,7 @@ public class RummiNode : BaseSolver
         Console.Write("]");
 
         Console.WriteLine(
-            $" sc: {Score}, tilePlayed: {PlayerTilePlayed}, borad tile not played: {_boardTileNotPlayed}");
+            $" sc: {Score}, tilePlayed: {PlayerTilePlayed}, borad tile not played: {_boardTileNotPlayed}, id: {GetId()}");
     }
 
     public void PrintTree()
