@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using RummiSolve.Solver.Abstract;
 
 namespace RummiSolve.Solver.Graph;
@@ -16,14 +15,13 @@ public class RummiNode : BaseSolver
 
     public readonly List<RummiNode> Children = [];
     public readonly bool[] IsTileUsed;
-    public readonly ConcurrentBag<RummiNode> LeafNodes;
     public readonly int PlayerTilePlayed;
     public readonly int Score;
     private string? _id;
 
 
-    private RummiNode(ValidSet set, Tile[] tiles, bool[] isTileUsed, int jokers, int startIndex,
-        ConcurrentBag<RummiNode> leafNodes, int score, RummiNode? parentNode, bool isRun, bool[] isPlayerTile,
+    private RummiNode(ValidSet set, Tile[] tiles, bool[] isTileUsed, int jokers, int startIndex, int score,
+        RummiNode? parentNode, bool isRun, bool[] isPlayerTile,
         int boardJokers, int totalJoker, int playerTilePlayed, int boardTileNotPlayed) :
         base(tiles, jokers)
     {
@@ -31,7 +29,6 @@ public class RummiNode : BaseSolver
         Array.Copy(IsTileUsed, UsedTiles, Tiles.Length);
         _set = set;
         _startIndex = startIndex;
-        LeafNodes = leafNodes;
         Score = score;
         _parentNode = parentNode;
         _isRun = isRun;
@@ -44,11 +41,11 @@ public class RummiNode : BaseSolver
 
     public static RummiNode CreateRoot(Tile[] tiles, int jokers, bool[] isPlayerTile, int boardTile, int boardJokers)
     {
-        return new RummiNode(new ValidSet([]), tiles, new bool[tiles.Length], jokers, 0, [], 0, null, false,
+        return new RummiNode(new ValidSet([]), tiles, new bool[tiles.Length], jokers, 0, 0, null, false,
             isPlayerTile, boardJokers, jokers, 0, boardTile);
     }
 
-    public void GetChildren()
+    public bool GetChildren()
     {
         var totalCreatedNode = 0;
 
@@ -66,7 +63,7 @@ public class RummiNode : BaseSolver
             foreach (var set in GetGroups(i))
                 CreateChildNode(ref createdNode, i, set, false, playerTilePlayed, boardTileNotPlayed);
 
-            if (createdNode == 0 && !_isPlayerTile[i]) return;
+            if (createdNode == 0 && !_isPlayerTile[i]) return false;
 
             UsedTiles[i] = false;
 
@@ -74,8 +71,9 @@ public class RummiNode : BaseSolver
         }
 
         var jokerPlayer = _totalJoker - Jokers - _boardJokers;
-        if (totalCreatedNode == 0 && _boardTileNotPlayed == 0 && (PlayerTilePlayed > 0 || jokerPlayer > 0))
-            LeafNodes.Add(this);
+        var isLeaf = totalCreatedNode == 0 && _boardTileNotPlayed == 0 && (PlayerTilePlayed > 0 || jokerPlayer > 0);
+
+        return isLeaf;
     }
 
     private void CreateChildNode(ref int createdNode, int index, ValidSet set, bool isRun, int playerTilePlayed,
@@ -83,7 +81,7 @@ public class RummiNode : BaseSolver
     {
         createdNode++;
         MarkTilesAsUsed(set, index, ref playerTilePlayed, ref boardTileNotPlayed);
-        var child = new RummiNode(set, Tiles, UsedTiles, Jokers, index + 1, LeafNodes,
+        var child = new RummiNode(set, Tiles, UsedTiles, Jokers, index + 1,
             Score + set.GetScore(), this, isRun, _isPlayerTile, _boardJokers, _totalJoker,
             playerTilePlayed, boardTileNotPlayed);
         MarkTilesAsUnused(set, index);
@@ -127,7 +125,8 @@ public class RummiNode : BaseSolver
 
         for (var i = _startIndex; i < Tiles.Length; i++) id[i] = UsedTiles[i] ? '1' : '0';
 
-        _id = new string(id);
+        // Inclure le nombre de jokers dans l'ID pour différencier les états
+        _id = $"{new string(id)}_{Jokers}";
         return _id;
     }
 

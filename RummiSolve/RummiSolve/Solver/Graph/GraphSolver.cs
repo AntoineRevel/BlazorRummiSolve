@@ -25,6 +25,7 @@ public class GraphSolver : ISolver
     {
         var root = RummiNode.CreateRoot(_tiles, _jokers, _isPlayerTile, _boardTile, _boardJokers);
         var currentLevel = new ConcurrentBag<RummiNode> { root };
+        var leafNodes = new ConcurrentBag<RummiNode>();
 
         while (!cancellationToken.IsCancellationRequested)
         {
@@ -34,8 +35,11 @@ public class GraphSolver : ISolver
                 new ParallelOptions { CancellationToken = cancellationToken },
                 node =>
                 {
-                    node.GetChildren();
-                    foreach (var child in node.Children) nextLevel.Add(child);
+                    var isLeaf = node.GetChildren();
+                    if (isLeaf) leafNodes.Add(node);
+                    else
+                        foreach (var child in node.Children)
+                            nextLevel.Add(child);
                 }
             );
 
@@ -43,11 +47,9 @@ public class GraphSolver : ISolver
             currentLevel = nextLevel;
         }
 
-        if (root.LeafNodes.IsEmpty) return SolverResult.Invalid("GraphFirstSolver");
+        if (leafNodes.IsEmpty) return SolverResult.Invalid("GraphFirstSolver");
 
-        root.PrintTree();
-
-        var bestNode = root.LeafNodes.MaxBy(node => (node.PlayerTilePlayed, node.Score));
+        var bestNode = leafNodes.MaxBy(node => (node.PlayerTilePlayed, node.Score));
 
         var bestSolution = bestNode!.GetSolution();
 
