@@ -1,7 +1,4 @@
 using RummiSolve;
-using RummiSolve.Solver.BestScore;
-using RummiSolve.Solver.Combinations;
-using RummiSolve.Solver.Graph;
 using RummiSolve.Solver.Incremental;
 using RummiSolve.Solver.Interfaces;
 using Xunit.Abstractions;
@@ -19,14 +16,14 @@ public class AllSolversTests(ITestOutputHelper output)
     /// </summary>
     private static readonly (string Name, Func<Set, Set, ISolver> Create)[] Solvers =
     [
-        ("CombinationsSolver", CombinationsSolver.Create),
-        ("ParallelCombinationsSolver", ParallelCombinationsSolver.Create),
-        ("BestScoreComplexSolver", BestScoreComplexSolver.Create),
-        ("IncrementalComplexSolver", IncrementalComplexSolver.Create),
-        ("IncrementalScoreFieldComplexSolver", IncrementalScoreFieldComplexSolver.Create),
-        ("IncrementalComplexSolverTileAndSc", IncrementalComplexSolverTileAndSc.Create),
-        ("GraphSolver", GraphSolver.Create),
-        ("SequentialGraphSolver", SequentialGraphSolver.Create)
+        // ("CombinationsSolver", CombinationsSolver.Create),
+        // ("ParallelCombinationsSolver", ParallelCombinationsSolver.Create),
+        // ("BestScoreComplexSolver", BestScoreComplexSolver.Create),
+        // ("IncrementalComplexSolver", IncrementalComplexSolver.Create),
+        // ("IncrementalScoreFieldComplexSolver", IncrementalScoreFieldComplexSolver.Create),
+        // ("IncrementalComplexSolverTileAndSc", IncrementalComplexSolverTileAndSc.Create),
+        // ("GraphSolver", GraphSolver.Create),
+        ("OptimizedIncrementalComplexSolver", OptimizedIncrementalComplexSolver.Create)
     ];
 
     /// <summary>

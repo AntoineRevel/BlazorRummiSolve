@@ -1,7 +1,5 @@
 using BenchmarkDotNet.Attributes;
-using RummiSolve.Solver.BestScore;
 using RummiSolve.Solver.Combinations;
-using RummiSolve.Solver.Graph;
 using RummiSolve.Solver.Incremental;
 
 namespace RummiSolve;
@@ -106,54 +104,16 @@ public class AllSolversBenchmark
     }
 
     [Benchmark]
-    public void ParallelCombinationsSolver_Test()
-    {
-        var solver = ParallelCombinationsSolver.Create(_boardSet, _playerSet);
-        solver.SearchSolution();
-    }
-
-    // BestScore Solvers
-    [Benchmark]
-    public void BestScoreComplexSolver_Test()
-    {
-        var solver = BestScoreComplexSolver.Create(_boardSet, _playerSet);
-        solver.SearchSolution();
-    }
-
-    // Incremental Solvers
-    [Benchmark]
-    public void IncrementalComplexSolver_Test()
-    {
-        var solver = IncrementalComplexSolver.Create(_boardSet, _playerSet);
-        solver.SearchSolution();
-    }
-
-    [Benchmark]
-    public void IncrementalScoreFieldComplexSolver_Test()
-    {
-        var solver = IncrementalScoreFieldComplexSolver.Create(_boardSet, _playerSet);
-        solver.SearchSolution();
-    }
-
-    [Benchmark]
     public void IncrementalComplexSolverTileAndSc_Test()
     {
         var solver = IncrementalComplexSolverTileAndSc.Create(_boardSet, _playerSet);
         solver.SearchSolution();
     }
 
-    // Graph Solvers
-    [Benchmark(Baseline = true)]
-    public void GraphSolver_Test()
-    {
-        var solver = GraphSolver.Create(_boardSet, _playerSet);
-        solver.SearchSolution();
-    }
-
     [Benchmark]
-    public void SequentialGraphSolver_Test()
+    public void OptimizedIncrementalComplexSolver_Test()
     {
-        var solver = SequentialGraphSolver.Create(_boardSet, _playerSet);
+        var solver = OptimizedIncrementalComplexSolver.Create(_boardSet, _playerSet);
         solver.SearchSolution();
     }
 }
