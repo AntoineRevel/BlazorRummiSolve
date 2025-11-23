@@ -25,7 +25,8 @@ public class AllSolversTests(ITestOutputHelper output)
         ("IncrementalComplexSolver", IncrementalComplexSolver.Create),
         ("IncrementalScoreFieldComplexSolver", IncrementalScoreFieldComplexSolver.Create),
         ("IncrementalComplexSolverTileAndSc", IncrementalComplexSolverTileAndSc.Create),
-        ("GraphSolver", GraphSolver.Create)
+        ("GraphSolver", GraphSolver.Create),
+        ("SequentialGraphSolver", SequentialGraphSolver.Create)
     ];
 
     /// <summary>

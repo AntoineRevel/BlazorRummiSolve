@@ -93,10 +93,17 @@ public class GraphSolverBenchmark
         _playerSet.AddTile(new Tile(4, TileColor.Mango));
     }
 
-    [Benchmark]
+    [Benchmark(Baseline = true)]
     public void GraphSolver_Turn8Config()
     {
         var solver = GraphSolver.Create(_boardSet, _playerSet);
+        solver.SearchSolution();
+    }
+
+    [Benchmark]
+    public void SequentialGraphSolver_Turn8Config()
+    {
+        var solver = SequentialGraphSolver.Create(_boardSet, _playerSet);
         solver.SearchSolution();
     }
 }
