@@ -5,9 +5,13 @@ namespace RummiSolve;
 
 public static class Program
 {
-    private static void Main()
+    private static void Main(string[] args)
     {
-        BenchmarkRunner.Run<GraphSolverBenchmark>();
+        // Permettre de choisir le benchmark via les arguments
+        if (args.Length > 0 && args[0] == "--all-solvers")
+            BenchmarkRunner.Run<AllSolversBenchmark>();
+        else
+            BenchmarkRunner.Run<GraphSolverBenchmark>();
     }
 
     public static void TestBenchmark()

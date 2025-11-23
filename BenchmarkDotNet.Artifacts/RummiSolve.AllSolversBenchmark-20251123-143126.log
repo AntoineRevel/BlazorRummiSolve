@@ -1,0 +1,689 @@
+// Validating benchmarks:
+// ***** BenchmarkRunner: Start   *****
+// ***** Found 8 benchmark(s) in total *****
+// ***** Building 1 exe(s) in Parallel: Start   *****
+// start dotnet  restore --nodeReuse:false /p:UseSharedCompilation=false /p:Deterministic=true /p:Optimize=true /p:ArtifactsPath="/Users/antoinerevel/Documents/Projet perso/BlazorRummiSolve/BlazorRummiSolve/RummiSolve/RummiSolve/bin/Release/net10.0/RummiSolve-Job-KDXSYM-1/" /p:OutDir="/Users/antoinerevel/Documents/Projet perso/BlazorRummiSolve/BlazorRummiSolve/RummiSolve/RummiSolve/bin/Release/net10.0/RummiSolve-Job-KDXSYM-1/bin/Release/net10.0/" /p:OutputPath="/Users/antoinerevel/Documents/Projet perso/BlazorRummiSolve/BlazorRummiSolve/RummiSolve/RummiSolve/bin/Release/net10.0/RummiSolve-Job-KDXSYM-1/bin/Release/net10.0/" /p:PublishDir="/Users/antoinerevel/Documents/Projet perso/BlazorRummiSolve/BlazorRummiSolve/RummiSolve/RummiSolve/bin/Release/net10.0/RummiSolve-Job-KDXSYM-1/publish/" in /Users/antoinerevel/Documents/Projet perso/BlazorRummiSolve/BlazorRummiSolve/RummiSolve/RummiSolve/bin/Release/net10.0/RummiSolve-Job-KDXSYM-1
+// command took 1.07 sec and exited with 0
+// start dotnet  build -c Release --no-restore --nodeReuse:false /p:UseSharedCompilation=false /p:Deterministic=true /p:Optimize=true /p:ArtifactsPath="/Users/antoinerevel/Documents/Projet perso/BlazorRummiSolve/BlazorRummiSolve/RummiSolve/RummiSolve/bin/Release/net10.0/RummiSolve-Job-KDXSYM-1/" /p:OutDir="/Users/antoinerevel/Documents/Projet perso/BlazorRummiSolve/BlazorRummiSolve/RummiSolve/RummiSolve/bin/Release/net10.0/RummiSolve-Job-KDXSYM-1/bin/Release/net10.0/" /p:OutputPath="/Users/antoinerevel/Documents/Projet perso/BlazorRummiSolve/BlazorRummiSolve/RummiSolve/RummiSolve/bin/Release/net10.0/RummiSolve-Job-KDXSYM-1/bin/Release/net10.0/" /p:PublishDir="/Users/antoinerevel/Documents/Projet perso/BlazorRummiSolve/BlazorRummiSolve/RummiSolve/RummiSolve/bin/Release/net10.0/RummiSolve-Job-KDXSYM-1/publish/" --output "/Users/antoinerevel/Documents/Projet perso/BlazorRummiSolve/BlazorRummiSolve/RummiSolve/RummiSolve/bin/Release/net10.0/RummiSolve-Job-KDXSYM-1/bin/Release/net10.0/" in /Users/antoinerevel/Documents/Projet perso/BlazorRummiSolve/BlazorRummiSolve/RummiSolve/RummiSolve/bin/Release/net10.0/RummiSolve-Job-KDXSYM-1
+// command took 2.75 sec and exited with 0
+// ***** Done, took 00:00:03 (3.93 sec)   *****
+// Found 8 benchmarks:
+//   AllSolversBenchmark.CombinationsSolver_Test: Job-KDXSYM(IterationCount=3, WarmupCount=2)
+//   AllSolversBenchmark.ParallelCombinationsSolver_Test: Job-KDXSYM(IterationCount=3, WarmupCount=2)
+//   AllSolversBenchmark.BestScoreComplexSolver_Test: Job-KDXSYM(IterationCount=3, WarmupCount=2)
+//   AllSolversBenchmark.IncrementalComplexSolver_Test: Job-KDXSYM(IterationCount=3, WarmupCount=2)
+//   AllSolversBenchmark.IncrementalScoreFieldComplexSolver_Test: Job-KDXSYM(IterationCount=3, WarmupCount=2)
+//   AllSolversBenchmark.IncrementalComplexSolverTileAndSc_Test: Job-KDXSYM(IterationCount=3, WarmupCount=2)
+//   AllSolversBenchmark.GraphSolver_Test: Job-KDXSYM(IterationCount=3, WarmupCount=2)
+//   AllSolversBenchmark.SequentialGraphSolver_Test: Job-KDXSYM(IterationCount=3, WarmupCount=2)
+
+// **************************
+// Benchmark: AllSolversBenchmark.CombinationsSolver_Test: Job-KDXSYM(IterationCount=3, WarmupCount=2)
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet RummiSolve-Job-KDXSYM-1.dll --anonymousPipes 121 122 --benchmarkName RummiSolve.AllSolversBenchmark.CombinationsSolver_Test --job "IterationCount=3, WarmupCount=2" --benchmarkId 0 in /Users/antoinerevel/Documents/Projet perso/BlazorRummiSolve/BlazorRummiSolve/RummiSolve/RummiSolve/bin/Release/net10.0/RummiSolve-Job-KDXSYM-1/bin/Release/net10.0
+// Failed to set up high priority (Permission denied). In order to run benchmarks with high priority, make sure you have the right permissions.
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.15.6
+// Runtime=.NET 10.0.0 (10.0.0, 10.0.25.52411), Arm64 RyuJIT armv8.0-a
+// GC=Concurrent Workstation
+// HardwareIntrinsics=ArmBase+AdvSimd,AES,CRC32,DP,RDM,SHA1,SHA256 VectorSize=128
+// Job: Job-KDXSYM(IterationCount=3, WarmupCount=2)
+
+OverheadJitting  1: 1 op, 73167.00 ns, 73.1670 us/op
+WorkloadJitting  1: 1 op, 173668791.00 ns, 173.6688 ms/op
+
+WorkloadPilot    1: 2 op, 71099792.00 ns, 35.5499 ms/op
+WorkloadPilot    2: 3 op, 104655625.00 ns, 34.8852 ms/op
+WorkloadPilot    3: 4 op, 149439000.00 ns, 37.3598 ms/op
+WorkloadPilot    4: 5 op, 176945625.00 ns, 35.3891 ms/op
+WorkloadPilot    5: 6 op, 211345834.00 ns, 35.2243 ms/op
+WorkloadPilot    6: 7 op, 240693625.00 ns, 34.3848 ms/op
+WorkloadPilot    7: 8 op, 278525458.00 ns, 34.8157 ms/op
+WorkloadPilot    8: 9 op, 316741208.00 ns, 35.1935 ms/op
+WorkloadPilot    9: 10 op, 345361416.00 ns, 34.5361 ms/op
+WorkloadPilot   10: 11 op, 380747166.00 ns, 34.6134 ms/op
+WorkloadPilot   11: 12 op, 416646333.00 ns, 34.7205 ms/op
+WorkloadPilot   12: 13 op, 448805291.00 ns, 34.5235 ms/op
+WorkloadPilot   13: 14 op, 483045208.00 ns, 34.5032 ms/op
+WorkloadPilot   14: 15 op, 522993291.00 ns, 34.8662 ms/op
+
+WorkloadWarmup   1: 15 op, 519470875.00 ns, 34.6314 ms/op
+WorkloadWarmup   2: 15 op, 520929250.00 ns, 34.7286 ms/op
+
+// BeforeActualRun
+WorkloadActual   1: 15 op, 522911709.00 ns, 34.8608 ms/op
+WorkloadActual   2: 15 op, 521842166.00 ns, 34.7895 ms/op
+WorkloadActual   3: 15 op, 521744625.00 ns, 34.7830 ms/op
+
+// AfterActualRun
+WorkloadResult   1: 15 op, 522911709.00 ns, 34.8608 ms/op
+WorkloadResult   2: 15 op, 521842166.00 ns, 34.7895 ms/op
+WorkloadResult   3: 15 op, 521744625.00 ns, 34.7830 ms/op
+// GC:  165 2 0 1386409544 15
+// Threading:  0 0 15
+
+// AfterAll
+// Benchmark Process 37035 has exited with code 0.
+
+Mean = 34.811 ms, StdErr = 0.025 ms (0.07%), N = 3, StdDev = 0.043 ms
+Min = 34.783 ms, Q1 = 34.786 ms, Median = 34.789 ms, Q3 = 34.825 ms, Max = 34.861 ms
+IQR = 0.039 ms, LowerFence = 34.728 ms, UpperFence = 34.883 ms
+ConfidenceInterval = [34.024 ms; 35.599 ms] (CI 99.9%), Margin = 0.788 ms (2.26% of Mean)
+Skewness = 0.38, Kurtosis = 0.67, MValue = 2
+
+// ** Remained 7 (87,5 %) benchmark(s) to run. Estimated finish 2025-11-23 14:32 (0h 0m from now) **
+// **************************
+// Benchmark: AllSolversBenchmark.ParallelCombinationsSolver_Test: Job-KDXSYM(IterationCount=3, WarmupCount=2)
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet RummiSolve-Job-KDXSYM-1.dll --anonymousPipes 121 122 --benchmarkName RummiSolve.AllSolversBenchmark.ParallelCombinationsSolver_Test --job "IterationCount=3, WarmupCount=2" --benchmarkId 1 in /Users/antoinerevel/Documents/Projet perso/BlazorRummiSolve/BlazorRummiSolve/RummiSolve/RummiSolve/bin/Release/net10.0/RummiSolve-Job-KDXSYM-1/bin/Release/net10.0
+// Failed to set up high priority (Permission denied). In order to run benchmarks with high priority, make sure you have the right permissions.
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.15.6
+// Runtime=.NET 10.0.0 (10.0.0, 10.0.25.52411), Arm64 RyuJIT armv8.0-a
+// GC=Concurrent Workstation
+// HardwareIntrinsics=ArmBase+AdvSimd,AES,CRC32,DP,RDM,SHA1,SHA256 VectorSize=128
+// Job: Job-KDXSYM(IterationCount=3, WarmupCount=2)
+
+OverheadJitting  1: 1 op, 304500.00 ns, 304.5000 us/op
+WorkloadJitting  1: 1 op, 124536000.00 ns, 124.5360 ms/op
+
+WorkloadPilot    1: 2 op, 151544458.00 ns, 75.7722 ms/op
+WorkloadPilot    2: 3 op, 183609500.00 ns, 61.2032 ms/op
+WorkloadPilot    3: 4 op, 55861917.00 ns, 13.9655 ms/op
+WorkloadPilot    4: 5 op, 62233791.00 ns, 12.4468 ms/op
+WorkloadPilot    5: 6 op, 72443208.00 ns, 12.0739 ms/op
+WorkloadPilot    6: 7 op, 86981125.00 ns, 12.4259 ms/op
+WorkloadPilot    7: 8 op, 91320458.00 ns, 11.4151 ms/op
+WorkloadPilot    8: 9 op, 138908084.00 ns, 15.4342 ms/op
+WorkloadPilot    9: 10 op, 132599709.00 ns, 13.2600 ms/op
+WorkloadPilot   10: 11 op, 124944625.00 ns, 11.3586 ms/op
+WorkloadPilot   11: 12 op, 135173917.00 ns, 11.2645 ms/op
+WorkloadPilot   12: 13 op, 147344084.00 ns, 11.3342 ms/op
+WorkloadPilot   13: 14 op, 161089958.00 ns, 11.5064 ms/op
+WorkloadPilot   14: 15 op, 180548708.00 ns, 12.0366 ms/op
+WorkloadPilot   15: 16 op, 186573750.00 ns, 11.6609 ms/op
+WorkloadPilot   16: 32 op, 367949458.00 ns, 11.4984 ms/op
+WorkloadPilot   17: 64 op, 747100458.00 ns, 11.6734 ms/op
+
+WorkloadWarmup   1: 64 op, 725555292.00 ns, 11.3368 ms/op
+WorkloadWarmup   2: 64 op, 746512417.00 ns, 11.6643 ms/op
+
+// BeforeActualRun
+WorkloadActual   1: 64 op, 751737583.00 ns, 11.7459 ms/op
+WorkloadActual   2: 64 op, 783136917.00 ns, 12.2365 ms/op
+WorkloadActual   3: 64 op, 753916667.00 ns, 11.7799 ms/op
+
+// AfterActualRun
+WorkloadResult   1: 64 op, 751737583.00 ns, 11.7459 ms/op
+WorkloadResult   2: 64 op, 783136917.00 ns, 12.2365 ms/op
+WorkloadResult   3: 64 op, 753916667.00 ns, 11.7799 ms/op
+// GC:  710 64 11 5922947472 64
+// Threading:  886 0 64
+
+// AfterAll
+// Benchmark Process 37039 has exited with code 0.
+
+Mean = 11.921 ms, StdErr = 0.158 ms (1.33%), N = 3, StdDev = 0.274 ms
+Min = 11.746 ms, Q1 = 11.763 ms, Median = 11.780 ms, Q3 = 12.008 ms, Max = 12.237 ms
+IQR = 0.245 ms, LowerFence = 11.395 ms, UpperFence = 12.376 ms
+ConfidenceInterval = [6.923 ms; 16.919 ms] (CI 99.9%), Margin = 4.998 ms (41.93% of Mean)
+Skewness = 0.38, Kurtosis = 0.67, MValue = 2
+
+// ** Remained 6 (75,0 %) benchmark(s) to run. Estimated finish 2025-11-23 14:32 (0h 0m from now) **
+// **************************
+// Benchmark: AllSolversBenchmark.BestScoreComplexSolver_Test: Job-KDXSYM(IterationCount=3, WarmupCount=2)
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet RummiSolve-Job-KDXSYM-1.dll --anonymousPipes 121 122 --benchmarkName RummiSolve.AllSolversBenchmark.BestScoreComplexSolver_Test --job "IterationCount=3, WarmupCount=2" --benchmarkId 2 in /Users/antoinerevel/Documents/Projet perso/BlazorRummiSolve/BlazorRummiSolve/RummiSolve/RummiSolve/bin/Release/net10.0/RummiSolve-Job-KDXSYM-1/bin/Release/net10.0
+// Failed to set up high priority (Permission denied). In order to run benchmarks with high priority, make sure you have the right permissions.
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.15.6
+// Runtime=.NET 10.0.0 (10.0.0, 10.0.25.52411), Arm64 RyuJIT armv8.0-a
+// GC=Concurrent Workstation
+// HardwareIntrinsics=ArmBase+AdvSimd,AES,CRC32,DP,RDM,SHA1,SHA256 VectorSize=128
+// Job: Job-KDXSYM(IterationCount=3, WarmupCount=2)
+
+OverheadJitting  1: 1 op, 61000.00 ns, 61.0000 us/op
+WorkloadJitting  1: 1 op, 9540875.00 ns, 9.5409 ms/op
+
+OverheadJitting  2: 16 op, 142292.00 ns, 8.8933 us/op
+WorkloadJitting  2: 16 op, 58640125.00 ns, 3.6650 ms/op
+
+WorkloadPilot    1: 16 op, 53198584.00 ns, 3.3249 ms/op
+WorkloadPilot    2: 32 op, 103509125.00 ns, 3.2347 ms/op
+WorkloadPilot    3: 64 op, 135191416.00 ns, 2.1124 ms/op
+WorkloadPilot    4: 128 op, 82054125.00 ns, 641.0479 us/op
+WorkloadPilot    5: 256 op, 143880583.00 ns, 562.0335 us/op
+WorkloadPilot    6: 512 op, 276910667.00 ns, 540.8411 us/op
+WorkloadPilot    7: 1024 op, 553045875.00 ns, 540.0839 us/op
+
+OverheadWarmup   1: 1024 op, 3458.00 ns, 3.3770 ns/op
+OverheadWarmup   2: 1024 op, 2500.00 ns, 2.4414 ns/op
+OverheadWarmup   3: 1024 op, 2500.00 ns, 2.4414 ns/op
+OverheadWarmup   4: 1024 op, 2375.00 ns, 2.3193 ns/op
+OverheadWarmup   5: 1024 op, 2292.00 ns, 2.2383 ns/op
+OverheadWarmup   6: 1024 op, 2333.00 ns, 2.2783 ns/op
+OverheadWarmup   7: 1024 op, 2333.00 ns, 2.2783 ns/op
+
+OverheadActual   1: 1024 op, 2292.00 ns, 2.2383 ns/op
+OverheadActual   2: 1024 op, 2167.00 ns, 2.1162 ns/op
+OverheadActual   3: 1024 op, 2208.00 ns, 2.1563 ns/op
+OverheadActual   4: 1024 op, 2125.00 ns, 2.0752 ns/op
+OverheadActual   5: 1024 op, 2292.00 ns, 2.2383 ns/op
+OverheadActual   6: 1024 op, 3291.00 ns, 3.2139 ns/op
+OverheadActual   7: 1024 op, 2166.00 ns, 2.1152 ns/op
+OverheadActual   8: 1024 op, 2209.00 ns, 2.1572 ns/op
+OverheadActual   9: 1024 op, 2208.00 ns, 2.1563 ns/op
+OverheadActual  10: 1024 op, 2167.00 ns, 2.1162 ns/op
+OverheadActual  11: 1024 op, 2125.00 ns, 2.0752 ns/op
+OverheadActual  12: 1024 op, 2167.00 ns, 2.1162 ns/op
+OverheadActual  13: 1024 op, 2208.00 ns, 2.1563 ns/op
+OverheadActual  14: 1024 op, 2167.00 ns, 2.1162 ns/op
+OverheadActual  15: 1024 op, 2250.00 ns, 2.1973 ns/op
+
+WorkloadWarmup   1: 1024 op, 553880541.00 ns, 540.8990 us/op
+WorkloadWarmup   2: 1024 op, 551203375.00 ns, 538.2845 us/op
+
+// BeforeActualRun
+WorkloadActual   1: 1024 op, 550639292.00 ns, 537.7337 us/op
+WorkloadActual   2: 1024 op, 563438666.00 ns, 550.2331 us/op
+WorkloadActual   3: 1024 op, 552402875.00 ns, 539.4559 us/op
+
+// AfterActualRun
+WorkloadResult   1: 1024 op, 550637084.00 ns, 537.7315 us/op
+WorkloadResult   2: 1024 op, 563436458.00 ns, 550.2309 us/op
+WorkloadResult   3: 1024 op, 552400667.00 ns, 539.4538 us/op
+// GC:  194 2 0 1624233680 1024
+// Threading:  0 0 1024
+
+// AfterAll
+// Benchmark Process 37100 has exited with code 0.
+
+Mean = 542.472 μs, StdErr = 3.911 μs (0.72%), N = 3, StdDev = 6.774 μs
+Min = 537.732 μs, Q1 = 538.593 μs, Median = 539.454 μs, Q3 = 544.842 μs, Max = 550.231 μs
+IQR = 6.250 μs, LowerFence = 529.218 μs, UpperFence = 554.217 μs
+ConfidenceInterval = [418.883 μs; 666.061 μs] (CI 99.9%), Margin = 123.589 μs (22.78% of Mean)
+Skewness = 0.36, Kurtosis = 0.67, MValue = 2
+
+// ** Remained 5 (62,5 %) benchmark(s) to run. Estimated finish 2025-11-23 14:32 (0h 0m from now) **
+// **************************
+// Benchmark: AllSolversBenchmark.IncrementalComplexSolver_Test: Job-KDXSYM(IterationCount=3, WarmupCount=2)
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet RummiSolve-Job-KDXSYM-1.dll --anonymousPipes 121 122 --benchmarkName RummiSolve.AllSolversBenchmark.IncrementalComplexSolver_Test --job "IterationCount=3, WarmupCount=2" --benchmarkId 3 in /Users/antoinerevel/Documents/Projet perso/BlazorRummiSolve/BlazorRummiSolve/RummiSolve/RummiSolve/bin/Release/net10.0/RummiSolve-Job-KDXSYM-1/bin/Release/net10.0
+// Failed to set up high priority (Permission denied). In order to run benchmarks with high priority, make sure you have the right permissions.
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.15.6
+// Runtime=.NET 10.0.0 (10.0.0, 10.0.25.52411), Arm64 RyuJIT armv8.0-a
+// GC=Concurrent Workstation
+// HardwareIntrinsics=ArmBase+AdvSimd,AES,CRC32,DP,RDM,SHA1,SHA256 VectorSize=128
+// Job: Job-KDXSYM(IterationCount=3, WarmupCount=2)
+
+OverheadJitting  1: 1 op, 60375.00 ns, 60.3750 us/op
+WorkloadJitting  1: 1 op, 8057458.00 ns, 8.0575 ms/op
+
+OverheadJitting  2: 16 op, 148500.00 ns, 9.2813 us/op
+WorkloadJitting  2: 16 op, 41972917.00 ns, 2.6233 ms/op
+
+WorkloadPilot    1: 16 op, 38405250.00 ns, 2.4003 ms/op
+WorkloadPilot    2: 32 op, 75109042.00 ns, 2.3472 ms/op
+WorkloadPilot    3: 64 op, 112842917.00 ns, 1.7632 ms/op
+WorkloadPilot    4: 128 op, 67003292.00 ns, 523.4632 us/op
+WorkloadPilot    5: 256 op, 119450667.00 ns, 466.6042 us/op
+WorkloadPilot    6: 512 op, 227365125.00 ns, 444.0725 us/op
+WorkloadPilot    7: 1024 op, 454120708.00 ns, 443.4773 us/op
+WorkloadPilot    8: 2048 op, 907522000.00 ns, 443.1260 us/op
+
+OverheadWarmup   1: 2048 op, 6291.00 ns, 3.0718 ns/op
+OverheadWarmup   2: 2048 op, 4667.00 ns, 2.2788 ns/op
+OverheadWarmup   3: 2048 op, 4792.00 ns, 2.3398 ns/op
+OverheadWarmup   4: 2048 op, 4625.00 ns, 2.2583 ns/op
+OverheadWarmup   5: 2048 op, 4625.00 ns, 2.2583 ns/op
+OverheadWarmup   6: 2048 op, 4584.00 ns, 2.2383 ns/op
+
+OverheadActual   1: 2048 op, 4750.00 ns, 2.3193 ns/op
+OverheadActual   2: 2048 op, 4833.00 ns, 2.3599 ns/op
+OverheadActual   3: 2048 op, 4875.00 ns, 2.3804 ns/op
+OverheadActual   4: 2048 op, 4833.00 ns, 2.3599 ns/op
+OverheadActual   5: 2048 op, 4750.00 ns, 2.3193 ns/op
+OverheadActual   6: 2048 op, 4416.00 ns, 2.1563 ns/op
+OverheadActual   7: 2048 op, 4583.00 ns, 2.2378 ns/op
+OverheadActual   8: 2048 op, 4542.00 ns, 2.2178 ns/op
+OverheadActual   9: 2048 op, 4500.00 ns, 2.1973 ns/op
+OverheadActual  10: 2048 op, 4458.00 ns, 2.1768 ns/op
+OverheadActual  11: 2048 op, 4458.00 ns, 2.1768 ns/op
+OverheadActual  12: 2048 op, 4083.00 ns, 1.9937 ns/op
+OverheadActual  13: 2048 op, 4625.00 ns, 2.2583 ns/op
+OverheadActual  14: 2048 op, 4584.00 ns, 2.2383 ns/op
+OverheadActual  15: 2048 op, 4625.00 ns, 2.2583 ns/op
+
+WorkloadWarmup   1: 2048 op, 1053240750.00 ns, 514.2777 us/op
+WorkloadWarmup   2: 2048 op, 915371750.00 ns, 446.9589 us/op
+
+// BeforeActualRun
+WorkloadActual   1: 2048 op, 920761042.00 ns, 449.5904 us/op
+WorkloadActual   2: 2048 op, 912424667.00 ns, 445.5199 us/op
+WorkloadActual   3: 2048 op, 910507459.00 ns, 444.5837 us/op
+
+// AfterActualRun
+WorkloadResult   1: 2048 op, 920756458.00 ns, 449.5881 us/op
+WorkloadResult   2: 2048 op, 912420083.00 ns, 445.5176 us/op
+WorkloadResult   3: 2048 op, 910502875.00 ns, 444.5815 us/op
+// GC:  327 5 0 2739368832 2048
+// Threading:  0 0 2048
+
+// AfterAll
+// Benchmark Process 37107 has exited with code 0.
+
+Mean = 446.562 μs, StdErr = 1.537 μs (0.34%), N = 3, StdDev = 2.662 μs
+Min = 444.581 μs, Q1 = 445.050 μs, Median = 445.518 μs, Q3 = 447.553 μs, Max = 449.588 μs
+IQR = 2.503 μs, LowerFence = 441.295 μs, UpperFence = 451.308 μs
+ConfidenceInterval = [398.001 μs; 495.124 μs] (CI 99.9%), Margin = 48.561 μs (10.87% of Mean)
+Skewness = 0.33, Kurtosis = 0.67, MValue = 2
+
+// ** Remained 4 (50,0 %) benchmark(s) to run. Estimated finish 2025-11-23 14:32 (0h 0m from now) **
+// **************************
+// Benchmark: AllSolversBenchmark.IncrementalScoreFieldComplexSolver_Test: Job-KDXSYM(IterationCount=3, WarmupCount=2)
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet RummiSolve-Job-KDXSYM-1.dll --anonymousPipes 121 122 --benchmarkName RummiSolve.AllSolversBenchmark.IncrementalScoreFieldComplexSolver_Test --job "IterationCount=3, WarmupCount=2" --benchmarkId 4 in /Users/antoinerevel/Documents/Projet perso/BlazorRummiSolve/BlazorRummiSolve/RummiSolve/RummiSolve/bin/Release/net10.0/RummiSolve-Job-KDXSYM-1/bin/Release/net10.0
+// Failed to set up high priority (Permission denied). In order to run benchmarks with high priority, make sure you have the right permissions.
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.15.6
+// Runtime=.NET 10.0.0 (10.0.0, 10.0.25.52411), Arm64 RyuJIT armv8.0-a
+// GC=Concurrent Workstation
+// HardwareIntrinsics=ArmBase+AdvSimd,AES,CRC32,DP,RDM,SHA1,SHA256 VectorSize=128
+// Job: Job-KDXSYM(IterationCount=3, WarmupCount=2)
+
+OverheadJitting  1: 1 op, 61708.00 ns, 61.7080 us/op
+WorkloadJitting  1: 1 op, 7875291.00 ns, 7.8753 ms/op
+
+OverheadJitting  2: 16 op, 191375.00 ns, 11.9609 us/op
+WorkloadJitting  2: 16 op, 42663125.00 ns, 2.6664 ms/op
+
+WorkloadPilot    1: 16 op, 38549709.00 ns, 2.4094 ms/op
+WorkloadPilot    2: 32 op, 75871666.00 ns, 2.3710 ms/op
+WorkloadPilot    3: 64 op, 113033917.00 ns, 1.7662 ms/op
+WorkloadPilot    4: 128 op, 60100958.00 ns, 469.5387 us/op
+WorkloadPilot    5: 256 op, 118583625.00 ns, 463.2173 us/op
+WorkloadPilot    6: 512 op, 231534541.00 ns, 452.2159 us/op
+WorkloadPilot    7: 1024 op, 463579125.00 ns, 452.7140 us/op
+WorkloadPilot    8: 2048 op, 933710750.00 ns, 455.9135 us/op
+
+OverheadWarmup   1: 2048 op, 5542.00 ns, 2.7061 ns/op
+OverheadWarmup   2: 2048 op, 4083.00 ns, 1.9937 ns/op
+OverheadWarmup   3: 2048 op, 4125.00 ns, 2.0142 ns/op
+OverheadWarmup   4: 2048 op, 4875.00 ns, 2.3804 ns/op
+OverheadWarmup   5: 2048 op, 4583.00 ns, 2.2378 ns/op
+OverheadWarmup   6: 2048 op, 4833.00 ns, 2.3599 ns/op
+OverheadWarmup   7: 2048 op, 4667.00 ns, 2.2788 ns/op
+
+OverheadActual   1: 2048 op, 4625.00 ns, 2.2583 ns/op
+OverheadActual   2: 2048 op, 4625.00 ns, 2.2583 ns/op
+OverheadActual   3: 2048 op, 4583.00 ns, 2.2378 ns/op
+OverheadActual   4: 2048 op, 4625.00 ns, 2.2583 ns/op
+OverheadActual   5: 2048 op, 4667.00 ns, 2.2788 ns/op
+OverheadActual   6: 2048 op, 4709.00 ns, 2.2993 ns/op
+OverheadActual   7: 2048 op, 4541.00 ns, 2.2173 ns/op
+OverheadActual   8: 2048 op, 4583.00 ns, 2.2378 ns/op
+OverheadActual   9: 2048 op, 4084.00 ns, 1.9941 ns/op
+OverheadActual  10: 2048 op, 4625.00 ns, 2.2583 ns/op
+OverheadActual  11: 2048 op, 4459.00 ns, 2.1772 ns/op
+OverheadActual  12: 2048 op, 4583.00 ns, 2.2378 ns/op
+OverheadActual  13: 2048 op, 4541.00 ns, 2.2173 ns/op
+OverheadActual  14: 2048 op, 4583.00 ns, 2.2378 ns/op
+OverheadActual  15: 2048 op, 4583.00 ns, 2.2378 ns/op
+
+WorkloadWarmup   1: 2048 op, 928142542.00 ns, 453.1946 us/op
+WorkloadWarmup   2: 2048 op, 925511334.00 ns, 451.9098 us/op
+
+// BeforeActualRun
+WorkloadActual   1: 2048 op, 920810208.00 ns, 449.6144 us/op
+WorkloadActual   2: 2048 op, 919200000.00 ns, 448.8281 us/op
+WorkloadActual   3: 2048 op, 921987875.00 ns, 450.1894 us/op
+
+// AfterActualRun
+WorkloadResult   1: 2048 op, 920805625.00 ns, 449.6121 us/op
+WorkloadResult   2: 2048 op, 919195417.00 ns, 448.8259 us/op
+WorkloadResult   3: 2048 op, 921983292.00 ns, 450.1872 us/op
+// GC:  327 5 0 2739376704 2048
+// Threading:  0 0 2048
+
+// AfterAll
+// Benchmark Process 37111 has exited with code 0.
+
+Mean = 449.542 μs, StdErr = 0.395 μs (0.09%), N = 3, StdDev = 0.683 μs
+Min = 448.826 μs, Q1 = 449.219 μs, Median = 449.612 μs, Q3 = 449.900 μs, Max = 450.187 μs
+IQR = 0.681 μs, LowerFence = 448.198 μs, UpperFence = 450.921 μs
+ConfidenceInterval = [437.075 μs; 462.009 μs] (CI 99.9%), Margin = 12.467 μs (2.77% of Mean)
+Skewness = -0.1, Kurtosis = 0.67, MValue = 2
+
+// ** Remained 3 (37,5 %) benchmark(s) to run. Estimated finish 2025-11-23 14:32 (0h 0m from now) **
+// **************************
+// Benchmark: AllSolversBenchmark.IncrementalComplexSolverTileAndSc_Test: Job-KDXSYM(IterationCount=3, WarmupCount=2)
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet RummiSolve-Job-KDXSYM-1.dll --anonymousPipes 121 122 --benchmarkName RummiSolve.AllSolversBenchmark.IncrementalComplexSolverTileAndSc_Test --job "IterationCount=3, WarmupCount=2" --benchmarkId 5 in /Users/antoinerevel/Documents/Projet perso/BlazorRummiSolve/BlazorRummiSolve/RummiSolve/RummiSolve/bin/Release/net10.0/RummiSolve-Job-KDXSYM-1/bin/Release/net10.0
+// Failed to set up high priority (Permission denied). In order to run benchmarks with high priority, make sure you have the right permissions.
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.15.6
+// Runtime=.NET 10.0.0 (10.0.0, 10.0.25.52411), Arm64 RyuJIT armv8.0-a
+// GC=Concurrent Workstation
+// HardwareIntrinsics=ArmBase+AdvSimd,AES,CRC32,DP,RDM,SHA1,SHA256 VectorSize=128
+// Job: Job-KDXSYM(IterationCount=3, WarmupCount=2)
+
+OverheadJitting  1: 1 op, 61458.00 ns, 61.4580 us/op
+WorkloadJitting  1: 1 op, 8087041.00 ns, 8.0870 ms/op
+
+OverheadJitting  2: 16 op, 120542.00 ns, 7.5339 us/op
+WorkloadJitting  2: 16 op, 45977750.00 ns, 2.8736 ms/op
+
+WorkloadPilot    1: 16 op, 41370667.00 ns, 2.5857 ms/op
+WorkloadPilot    2: 32 op, 80573125.00 ns, 2.5179 ms/op
+WorkloadPilot    3: 64 op, 107551417.00 ns, 1.6805 ms/op
+WorkloadPilot    4: 128 op, 95498917.00 ns, 746.0853 us/op
+WorkloadPilot    5: 256 op, 121679000.00 ns, 475.3086 us/op
+WorkloadPilot    6: 512 op, 241127542.00 ns, 470.9522 us/op
+WorkloadPilot    7: 1024 op, 482219250.00 ns, 470.9172 us/op
+WorkloadPilot    8: 2048 op, 968600625.00 ns, 472.9495 us/op
+
+OverheadWarmup   1: 2048 op, 5750.00 ns, 2.8076 ns/op
+OverheadWarmup   2: 2048 op, 4750.00 ns, 2.3193 ns/op
+OverheadWarmup   3: 2048 op, 4584.00 ns, 2.2383 ns/op
+OverheadWarmup   4: 2048 op, 4542.00 ns, 2.2178 ns/op
+OverheadWarmup   5: 2048 op, 4750.00 ns, 2.3193 ns/op
+OverheadWarmup   6: 2048 op, 4625.00 ns, 2.2583 ns/op
+OverheadWarmup   7: 2048 op, 4041.00 ns, 1.9731 ns/op
+OverheadWarmup   8: 2048 op, 4583.00 ns, 2.2378 ns/op
+OverheadWarmup   9: 2048 op, 4583.00 ns, 2.2378 ns/op
+
+OverheadActual   1: 2048 op, 4750.00 ns, 2.3193 ns/op
+OverheadActual   2: 2048 op, 4875.00 ns, 2.3804 ns/op
+OverheadActual   3: 2048 op, 4750.00 ns, 2.3193 ns/op
+OverheadActual   4: 2048 op, 4584.00 ns, 2.2383 ns/op
+OverheadActual   5: 2048 op, 4708.00 ns, 2.2988 ns/op
+OverheadActual   6: 2048 op, 4625.00 ns, 2.2583 ns/op
+OverheadActual   7: 2048 op, 4542.00 ns, 2.2178 ns/op
+OverheadActual   8: 2048 op, 4625.00 ns, 2.2583 ns/op
+OverheadActual   9: 2048 op, 4584.00 ns, 2.2383 ns/op
+OverheadActual  10: 2048 op, 4708.00 ns, 2.2988 ns/op
+OverheadActual  11: 2048 op, 4584.00 ns, 2.2383 ns/op
+OverheadActual  12: 2048 op, 4417.00 ns, 2.1567 ns/op
+OverheadActual  13: 2048 op, 4375.00 ns, 2.1362 ns/op
+OverheadActual  14: 2048 op, 4458.00 ns, 2.1768 ns/op
+OverheadActual  15: 2048 op, 4459.00 ns, 2.1772 ns/op
+
+WorkloadWarmup   1: 2048 op, 964367250.00 ns, 470.8824 us/op
+WorkloadWarmup   2: 2048 op, 966332959.00 ns, 471.8423 us/op
+
+// BeforeActualRun
+WorkloadActual   1: 2048 op, 964589083.00 ns, 470.9908 us/op
+WorkloadActual   2: 2048 op, 961765000.00 ns, 469.6118 us/op
+WorkloadActual   3: 2048 op, 963738083.00 ns, 470.5752 us/op
+
+// AfterActualRun
+WorkloadResult   1: 2048 op, 964584499.00 ns, 470.9885 us/op
+WorkloadResult   2: 2048 op, 961760416.00 ns, 469.6096 us/op
+WorkloadResult   3: 2048 op, 963733499.00 ns, 470.5730 us/op
+// GC:  327 4 0 2739374080 2048
+// Threading:  0 0 2048
+
+// AfterAll
+// Benchmark Process 37168 has exited with code 0.
+
+Mean = 470.390 μs, StdErr = 0.408 μs (0.09%), N = 3, StdDev = 0.707 μs
+Min = 469.610 μs, Q1 = 470.091 μs, Median = 470.573 μs, Q3 = 470.781 μs, Max = 470.989 μs
+IQR = 0.689 μs, LowerFence = 469.057 μs, UpperFence = 471.815 μs
+ConfidenceInterval = [457.485 μs; 483.296 μs] (CI 99.9%), Margin = 12.905 μs (2.74% of Mean)
+Skewness = -0.24, Kurtosis = 0.67, MValue = 2
+
+// ** Remained 2 (25,0 %) benchmark(s) to run. Estimated finish 2025-11-23 14:32 (0h 0m from now) **
+// **************************
+// Benchmark: AllSolversBenchmark.GraphSolver_Test: Job-KDXSYM(IterationCount=3, WarmupCount=2)
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet RummiSolve-Job-KDXSYM-1.dll --anonymousPipes 121 122 --benchmarkName RummiSolve.AllSolversBenchmark.GraphSolver_Test --job "IterationCount=3, WarmupCount=2" --benchmarkId 6 in /Users/antoinerevel/Documents/Projet perso/BlazorRummiSolve/BlazorRummiSolve/RummiSolve/RummiSolve/bin/Release/net10.0/RummiSolve-Job-KDXSYM-1/bin/Release/net10.0
+// Failed to set up high priority (Permission denied). In order to run benchmarks with high priority, make sure you have the right permissions.
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.15.6
+// Runtime=.NET 10.0.0 (10.0.0, 10.0.25.52411), Arm64 RyuJIT armv8.0-a
+// GC=Concurrent Workstation
+// HardwareIntrinsics=ArmBase+AdvSimd,AES,CRC32,DP,RDM,SHA1,SHA256 VectorSize=128
+// Job: Job-KDXSYM(IterationCount=3, WarmupCount=2)
+
+OverheadJitting  1: 1 op, 59000.00 ns, 59.0000 us/op
+WorkloadJitting  1: 1 op, 4566813583.00 ns, 4.5668 s/op
+
+OverheadJitting  2: 1 op, 458.00 ns, 458.0000 ns/op
+WorkloadJitting  2: 1 op, 4253137458.00 ns, 4.2531 s/op
+
+WorkloadWarmup   1: 1 op, 4965736208.00 ns, 4.9657 s/op
+WorkloadWarmup   2: 1 op, 5074764791.00 ns, 5.0748 s/op
+
+// BeforeActualRun
+WorkloadActual   1: 1 op, 6439575875.00 ns, 6.4396 s/op
+WorkloadActual   2: 1 op, 6297205708.00 ns, 6.2972 s/op
+WorkloadActual   3: 1 op, 5719844375.00 ns, 5.7198 s/op
+
+// AfterActualRun
+WorkloadResult   1: 1 op, 6439575875.00 ns, 6.4396 s/op
+WorkloadResult   2: 1 op, 6297205708.00 ns, 6.2972 s/op
+WorkloadResult   3: 1 op, 5719844375.00 ns, 5.7198 s/op
+// GC:  572 192 2 4832405696 1
+// Threading:  715 1423 1
+
+// AfterAll
+// Benchmark Process 37169 has exited with code 0.
+
+Mean = 6.152 s, StdErr = 0.220 s (3.58%), N = 3, StdDev = 0.381 s
+Min = 5.720 s, Q1 = 6.009 s, Median = 6.297 s, Q3 = 6.368 s, Max = 6.440 s
+IQR = 0.360 s, LowerFence = 5.469 s, UpperFence = 6.908 s
+ConfidenceInterval = [-0.801 s; 13.106 s] (CI 99.9%), Margin = 6.954 s (113.02% of Mean)
+Skewness = -0.33, Kurtosis = 0.67, MValue = 2
+
+// ** Remained 1 (12,5 %) benchmark(s) to run. Estimated finish 2025-11-23 14:33 (0h 0m from now) **
+// **************************
+// Benchmark: AllSolversBenchmark.SequentialGraphSolver_Test: Job-KDXSYM(IterationCount=3, WarmupCount=2)
+// *** Execute ***
+// Launch: 1 / 1
+// Execute: dotnet RummiSolve-Job-KDXSYM-1.dll --anonymousPipes 121 122 --benchmarkName RummiSolve.AllSolversBenchmark.SequentialGraphSolver_Test --job "IterationCount=3, WarmupCount=2" --benchmarkId 7 in /Users/antoinerevel/Documents/Projet perso/BlazorRummiSolve/BlazorRummiSolve/RummiSolve/RummiSolve/bin/Release/net10.0/RummiSolve-Job-KDXSYM-1/bin/Release/net10.0
+// Failed to set up high priority (Permission denied). In order to run benchmarks with high priority, make sure you have the right permissions.
+// BeforeAnythingElse
+
+// Benchmark Process Environment Information:
+// BenchmarkDotNet v0.15.6
+// Runtime=.NET 10.0.0 (10.0.0, 10.0.25.52411), Arm64 RyuJIT armv8.0-a
+// GC=Concurrent Workstation
+// HardwareIntrinsics=ArmBase+AdvSimd,AES,CRC32,DP,RDM,SHA1,SHA256 VectorSize=128
+// Job: Job-KDXSYM(IterationCount=3, WarmupCount=2)
+
+OverheadJitting  1: 1 op, 62500.00 ns, 62.5000 us/op
+WorkloadJitting  1: 1 op, 4328763000.00 ns, 4.3288 s/op
+
+OverheadJitting  2: 1 op, 459.00 ns, 459.0000 ns/op
+WorkloadJitting  2: 1 op, 4100782708.00 ns, 4.1008 s/op
+
+WorkloadWarmup   1: 1 op, 4079792000.00 ns, 4.0798 s/op
+WorkloadWarmup   2: 1 op, 4029386042.00 ns, 4.0294 s/op
+
+// BeforeActualRun
+WorkloadActual   1: 1 op, 4403013375.00 ns, 4.4030 s/op
+WorkloadActual   2: 1 op, 4117502333.00 ns, 4.1175 s/op
+WorkloadActual   3: 1 op, 4077007208.00 ns, 4.0770 s/op
+
+// AfterActualRun
+WorkloadResult   1: 1 op, 4403013375.00 ns, 4.4030 s/op
+WorkloadResult   2: 1 op, 4117502333.00 ns, 4.1175 s/op
+WorkloadResult   3: 1 op, 4077007208.00 ns, 4.0770 s/op
+// GC:  568 205 6 4812171064 1
+// Threading:  0 0 1
+
+// AfterAll
+// Benchmark Process 37418 has exited with code 0.
+
+Mean = 4.199 s, StdErr = 0.103 s (2.44%), N = 3, StdDev = 0.178 s
+Min = 4.077 s, Q1 = 4.097 s, Median = 4.118 s, Q3 = 4.260 s, Max = 4.403 s
+IQR = 0.163 s, LowerFence = 3.853 s, UpperFence = 4.505 s
+ConfidenceInterval = [0.957 s; 7.441 s] (CI 99.9%), Margin = 3.242 s (77.20% of Mean)
+Skewness = 0.36, Kurtosis = 0.67, MValue = 2
+
+// ** Remained 0 (0,0 %) benchmark(s) to run. Estimated finish 2025-11-23 14:33 (0h 0m from now) **
+// ***** BenchmarkRunner: Finish  *****
+
+// * Export *
+  BenchmarkDotNet.Artifacts/results/RummiSolve.AllSolversBenchmark-report.csv
+  BenchmarkDotNet.Artifacts/results/RummiSolve.AllSolversBenchmark-report-github.md
+  BenchmarkDotNet.Artifacts/results/RummiSolve.AllSolversBenchmark-report.html
+
+// * Detailed results *
+AllSolversBenchmark.CombinationsSolver_Test: Job-KDXSYM(IterationCount=3, WarmupCount=2)
+Runtime = .NET 10.0.0 (10.0.0, 10.0.25.52411), Arm64 RyuJIT armv8.0-a; GC = Concurrent Workstation
+Mean = 34.811 ms, StdErr = 0.025 ms (0.07%), N = 3, StdDev = 0.043 ms
+Min = 34.783 ms, Q1 = 34.786 ms, Median = 34.789 ms, Q3 = 34.825 ms, Max = 34.861 ms
+IQR = 0.039 ms, LowerFence = 34.728 ms, UpperFence = 34.883 ms
+ConfidenceInterval = [34.024 ms; 35.599 ms] (CI 99.9%), Margin = 0.788 ms (2.26% of Mean)
+Skewness = 0.38, Kurtosis = 0.67, MValue = 2
+-------------------- Histogram --------------------
+[34.783 ms ; 34.861 ms) | @@@
+---------------------------------------------------
+
+AllSolversBenchmark.ParallelCombinationsSolver_Test: Job-KDXSYM(IterationCount=3, WarmupCount=2)
+Runtime = .NET 10.0.0 (10.0.0, 10.0.25.52411), Arm64 RyuJIT armv8.0-a; GC = Concurrent Workstation
+Mean = 11.921 ms, StdErr = 0.158 ms (1.33%), N = 3, StdDev = 0.274 ms
+Min = 11.746 ms, Q1 = 11.763 ms, Median = 11.780 ms, Q3 = 12.008 ms, Max = 12.237 ms
+IQR = 0.245 ms, LowerFence = 11.395 ms, UpperFence = 12.376 ms
+ConfidenceInterval = [6.923 ms; 16.919 ms] (CI 99.9%), Margin = 4.998 ms (41.93% of Mean)
+Skewness = 0.38, Kurtosis = 0.67, MValue = 2
+-------------------- Histogram --------------------
+[11.742 ms ; 12.241 ms) | @@@
+---------------------------------------------------
+
+AllSolversBenchmark.BestScoreComplexSolver_Test: Job-KDXSYM(IterationCount=3, WarmupCount=2)
+Runtime = .NET 10.0.0 (10.0.0, 10.0.25.52411), Arm64 RyuJIT armv8.0-a; GC = Concurrent Workstation
+Mean = 542.472 μs, StdErr = 3.911 μs (0.72%), N = 3, StdDev = 6.774 μs
+Min = 537.732 μs, Q1 = 538.593 μs, Median = 539.454 μs, Q3 = 544.842 μs, Max = 550.231 μs
+IQR = 6.250 μs, LowerFence = 529.218 μs, UpperFence = 554.217 μs
+ConfidenceInterval = [418.883 μs; 666.061 μs] (CI 99.9%), Margin = 123.589 μs (22.78% of Mean)
+Skewness = 0.36, Kurtosis = 0.67, MValue = 2
+-------------------- Histogram --------------------
+[531.567 μs ; 544.758 μs) | @@
+[544.758 μs ; 556.396 μs) | @
+---------------------------------------------------
+
+AllSolversBenchmark.IncrementalComplexSolver_Test: Job-KDXSYM(IterationCount=3, WarmupCount=2)
+Runtime = .NET 10.0.0 (10.0.0, 10.0.25.52411), Arm64 RyuJIT armv8.0-a; GC = Concurrent Workstation
+Mean = 446.562 μs, StdErr = 1.537 μs (0.34%), N = 3, StdDev = 2.662 μs
+Min = 444.581 μs, Q1 = 445.050 μs, Median = 445.518 μs, Q3 = 447.553 μs, Max = 449.588 μs
+IQR = 2.503 μs, LowerFence = 441.295 μs, UpperFence = 451.308 μs
+ConfidenceInterval = [398.001 μs; 495.124 μs] (CI 99.9%), Margin = 48.561 μs (10.87% of Mean)
+Skewness = 0.33, Kurtosis = 0.67, MValue = 2
+-------------------- Histogram --------------------
+[442.159 μs ; 452.010 μs) | @@@
+---------------------------------------------------
+
+AllSolversBenchmark.IncrementalScoreFieldComplexSolver_Test: Job-KDXSYM(IterationCount=3, WarmupCount=2)
+Runtime = .NET 10.0.0 (10.0.0, 10.0.25.52411), Arm64 RyuJIT armv8.0-a; GC = Concurrent Workstation
+Mean = 449.542 μs, StdErr = 0.395 μs (0.09%), N = 3, StdDev = 0.683 μs
+Min = 448.826 μs, Q1 = 449.219 μs, Median = 449.612 μs, Q3 = 449.900 μs, Max = 450.187 μs
+IQR = 0.681 μs, LowerFence = 448.198 μs, UpperFence = 450.921 μs
+ConfidenceInterval = [437.075 μs; 462.009 μs] (CI 99.9%), Margin = 12.467 μs (2.77% of Mean)
+Skewness = -0.1, Kurtosis = 0.67, MValue = 2
+-------------------- Histogram --------------------
+[448.204 μs ; 450.809 μs) | @@@
+---------------------------------------------------
+
+AllSolversBenchmark.IncrementalComplexSolverTileAndSc_Test: Job-KDXSYM(IterationCount=3, WarmupCount=2)
+Runtime = .NET 10.0.0 (10.0.0, 10.0.25.52411), Arm64 RyuJIT armv8.0-a; GC = Concurrent Workstation
+Mean = 470.390 μs, StdErr = 0.408 μs (0.09%), N = 3, StdDev = 0.707 μs
+Min = 469.610 μs, Q1 = 470.091 μs, Median = 470.573 μs, Q3 = 470.781 μs, Max = 470.989 μs
+IQR = 0.689 μs, LowerFence = 469.057 μs, UpperFence = 471.815 μs
+ConfidenceInterval = [457.485 μs; 483.296 μs] (CI 99.9%), Margin = 12.905 μs (2.74% of Mean)
+Skewness = -0.24, Kurtosis = 0.67, MValue = 2
+-------------------- Histogram --------------------
+[468.966 μs ; 471.632 μs) | @@@
+---------------------------------------------------
+
+AllSolversBenchmark.GraphSolver_Test: Job-KDXSYM(IterationCount=3, WarmupCount=2)
+Runtime = .NET 10.0.0 (10.0.0, 10.0.25.52411), Arm64 RyuJIT armv8.0-a; GC = Concurrent Workstation
+Mean = 6.152 s, StdErr = 0.220 s (3.58%), N = 3, StdDev = 0.381 s
+Min = 5.720 s, Q1 = 6.009 s, Median = 6.297 s, Q3 = 6.368 s, Max = 6.440 s
+IQR = 0.360 s, LowerFence = 5.469 s, UpperFence = 6.908 s
+ConfidenceInterval = [-0.801 s; 13.106 s] (CI 99.9%), Margin = 6.954 s (113.02% of Mean)
+Skewness = -0.33, Kurtosis = 0.67, MValue = 2
+-------------------- Histogram --------------------
+[5.373 s ; 6.022 s) | @
+[6.022 s ; 6.786 s) | @@
+---------------------------------------------------
+
+AllSolversBenchmark.SequentialGraphSolver_Test: Job-KDXSYM(IterationCount=3, WarmupCount=2)
+Runtime = .NET 10.0.0 (10.0.0, 10.0.25.52411), Arm64 RyuJIT armv8.0-a; GC = Concurrent Workstation
+Mean = 4.199 s, StdErr = 0.103 s (2.44%), N = 3, StdDev = 0.178 s
+Min = 4.077 s, Q1 = 4.097 s, Median = 4.118 s, Q3 = 4.260 s, Max = 4.403 s
+IQR = 0.163 s, LowerFence = 3.853 s, UpperFence = 4.505 s
+ConfidenceInterval = [0.957 s; 7.441 s] (CI 99.9%), Margin = 3.242 s (77.20% of Mean)
+Skewness = 0.36, Kurtosis = 0.67, MValue = 2
+-------------------- Histogram --------------------
+[3.915 s ; 4.259 s) | @@
+[4.259 s ; 4.565 s) | @
+---------------------------------------------------
+
+// * Summary *
+
+BenchmarkDotNet v0.15.6, macOS 26.1 (25B78) [Darwin 25.1.0]
+Apple M3, 1 CPU, 8 logical and 8 physical cores
+.NET SDK 10.0.100
+  [Host]     : .NET 10.0.0 (10.0.0, 10.0.25.52411), Arm64 RyuJIT armv8.0-a
+  Job-KDXSYM : .NET 10.0.0 (10.0.0, 10.0.25.52411), Arm64 RyuJIT armv8.0-a
+
+IterationCount=3  WarmupCount=2  
+
+| Method                                  | Mean           | Error           | StdDev        | Ratio | RatioSD | Rank | Gen0        | Gen1        | Gen2      | Allocated  | Alloc Ratio |
+|---------------------------------------- |---------------:|----------------:|--------------:|------:|--------:|-----:|------------:|------------:|----------:|-----------:|------------:|
+| CombinationsSolver_Test                 |    34,811.1 μs |       787.52 μs |      43.17 μs | 0.006 |    0.00 |    3 |  11000.0000 |    133.3333 |         - |   88.15 MB |       0.019 |
+| ParallelCombinationsSolver_Test         |    11,920.8 μs |     4,998.00 μs |     273.96 μs | 0.002 |    0.00 |    2 |  11093.7500 |   1000.0000 |  171.8750 |   88.26 MB |       0.019 |
+| BestScoreComplexSolver_Test             |       542.5 μs |       123.59 μs |       6.77 μs | 0.000 |    0.00 |    1 |    189.4531 |      1.9531 |         - |    1.51 MB |       0.000 |
+| IncrementalComplexSolver_Test           |       446.6 μs |        48.56 μs |       2.66 μs | 0.000 |    0.00 |    1 |    159.6680 |      2.4414 |         - |    1.28 MB |       0.000 |
+| IncrementalScoreFieldComplexSolver_Test |       449.5 μs |        12.47 μs |       0.68 μs | 0.000 |    0.00 |    1 |    159.6680 |      2.4414 |         - |    1.28 MB |       0.000 |
+| IncrementalComplexSolverTileAndSc_Test  |       470.4 μs |        12.91 μs |       0.71 μs | 0.000 |    0.00 |    1 |    159.6680 |      1.9531 |         - |    1.28 MB |       0.000 |
+| GraphSolver_Test                        | 6,152,208.7 μs | 6,953,502.61 μs | 381,144.94 μs | 1.003 |    0.08 |    5 | 572000.0000 | 192000.0000 | 2000.0000 | 4608.54 MB |       1.000 |
+| SequentialGraphSolver_Test              | 4,199,174.3 μs | 3,241,675.86 μs | 177,687.19 μs | 0.684 |    0.05 |    4 | 568000.0000 | 205000.0000 | 6000.0000 | 4589.24 MB |       0.996 |
+
+// * Legends *
+  Mean        : Arithmetic mean of all measurements
+  Error       : Half of 99.9% confidence interval
+  StdDev      : Standard deviation of all measurements
+  Ratio       : Mean of the ratio distribution ([Current]/[Baseline])
+  RatioSD     : Standard deviation of the ratio distribution ([Current]/[Baseline])
+  Rank        : Relative position of current benchmark mean among all benchmarks (Arabic style)
+  Gen0        : GC Generation 0 collects per 1000 operations
+  Gen1        : GC Generation 1 collects per 1000 operations
+  Gen2        : GC Generation 2 collects per 1000 operations
+  Allocated   : Allocated memory per single operation (managed only, inclusive, 1KB = 1024B)
+  Alloc Ratio : Allocated memory ratio distribution ([Current]/[Baseline])
+  1 μs        : 1 Microsecond (0.000001 sec)
+
+// * Diagnostic Output - MemoryDiagnoser *
+
+
+// ***** BenchmarkRunner: End *****
+Run time: 00:02:20 (140.85 sec), executed benchmarks: 8
+
+Global total time: 00:02:25 (145.08 sec), executed benchmarks: 8
+// * Artifacts cleanup *
+Artifacts cleanup is finished

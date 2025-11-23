@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>RummiSolve.AllSolversBenchmark-20251123-143130</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; text-align: right; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet v0.15.6, macOS 26.1 (25B78) [Darwin 25.1.0]
+Apple M3, 1 CPU, 8 logical and 8 physical cores
+.NET SDK 10.0.100
+  [Host]     : .NET 10.0.0 (10.0.0, 10.0.25.52411), Arm64 RyuJIT armv8.0-a
+  Job-KDXSYM : .NET 10.0.0 (10.0.0, 10.0.25.52411), Arm64 RyuJIT armv8.0-a
+</code></pre>
+<pre><code>IterationCount=3  WarmupCount=2  
+</code></pre>
+
+<table>
+<thead><tr><th>Method                           </th><th>Mean    </th><th>Error    </th><th>StdDev </th><th>Ratio</th><th>RatioSD</th><th>Rank</th><th>Gen0 </th><th>Gen1 </th><th>Gen2</th><th>Allocated</th><th>Alloc Ratio</th>
+</tr>
+</thead><tbody><tr><td>CombinationsSolver_Test</td><td>34,811.1 &mu;s</td><td>787.52 &mu;s</td><td>43.17 &mu;s</td><td>0.006</td><td>0.00</td><td>3</td><td>11000.0000</td><td>133.3333</td><td>-</td><td>88.15 MB</td><td>0.019</td>
+</tr><tr><td>ParallelCombinationsSolver_Test</td><td>11,920.8 &mu;s</td><td>4,998.00 &mu;s</td><td>273.96 &mu;s</td><td>0.002</td><td>0.00</td><td>2</td><td>11093.7500</td><td>1000.0000</td><td>171.8750</td><td>88.26 MB</td><td>0.019</td>
+</tr><tr><td>BestScoreComplexSolver_Test</td><td>542.5 &mu;s</td><td>123.59 &mu;s</td><td>6.77 &mu;s</td><td>0.000</td><td>0.00</td><td>1</td><td>189.4531</td><td>1.9531</td><td>-</td><td>1.51 MB</td><td>0.000</td>
+</tr><tr><td>IncrementalComplexSolver_Test</td><td>446.6 &mu;s</td><td>48.56 &mu;s</td><td>2.66 &mu;s</td><td>0.000</td><td>0.00</td><td>1</td><td>159.6680</td><td>2.4414</td><td>-</td><td>1.28 MB</td><td>0.000</td>
+</tr><tr><td>IncrementalScoreFieldComplexSolver_Test</td><td>449.5 &mu;s</td><td>12.47 &mu;s</td><td>0.68 &mu;s</td><td>0.000</td><td>0.00</td><td>1</td><td>159.6680</td><td>2.4414</td><td>-</td><td>1.28 MB</td><td>0.000</td>
+</tr><tr><td>IncrementalComplexSolverTileAndSc_Test</td><td>470.4 &mu;s</td><td>12.91 &mu;s</td><td>0.71 &mu;s</td><td>0.000</td><td>0.00</td><td>1</td><td>159.6680</td><td>1.9531</td><td>-</td><td>1.28 MB</td><td>0.000</td>
+</tr><tr><td>GraphSolver_Test</td><td>6,152,208.7 &mu;s</td><td>6,953,502.61 &mu;s</td><td>381,144.94 &mu;s</td><td>1.003</td><td>0.08</td><td>5</td><td>572000.0000</td><td>192000.0000</td><td>2000.0000</td><td>4608.54 MB</td><td>1.000</td>
+</tr><tr><td>SequentialGraphSolver_Test</td><td>4,199,174.3 &mu;s</td><td>3,241,675.86 &mu;s</td><td>177,687.19 &mu;s</td><td>0.684</td><td>0.05</td><td>4</td><td>568000.0000</td><td>205000.0000</td><td>6000.0000</td><td>4589.24 MB</td><td>0.996</td>
+</tr></tbody></table>
+</body>
+</html>
